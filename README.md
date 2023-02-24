@@ -1,4 +1,4 @@
-### Thesis Abstract Management System for College of Engineering
+# Thesis Abstract Management System for College of Engineering
 The Thesis Abstract Management System for College of Engineering is a web-based platform designed to streamline the process of managing thesis abstracts for students, professors, and administrators in the College of Engineering.
 
 ## Features

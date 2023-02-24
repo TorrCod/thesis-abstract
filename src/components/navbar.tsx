@@ -94,7 +94,7 @@ const NavBar = () => {
         bodyStyle={{ padding: 0 }}
       >
         <Menu
-          className="text-lg"
+          className="text-lg text-black/70"
           onClick={() => setOpen(!open)}
           defaultSelectedKeys={["1"]}
           defaultOpenKeys={["sub1"]}

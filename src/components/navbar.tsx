@@ -64,9 +64,9 @@ const NavBar = () => {
   const { pathname } = useLocation();
 
   return (
-    <div className="p-2 fixed top-0 z-10 w-full">
+    <div className="p-2 fixed top-0 z-10 w-full bg-[var(--primary-color)]">
       <Button
-        className="flex justify-center place-items-center text-3xl w-fit md:hidden"
+        className="flex justify-center place-items-center text-3xl w-fit md:hidden auto-rows-fr"
         type="ghost"
         icon={<FaBars />}
         style={{ color: "rgba(255, 255, 255, 0.80)" }}

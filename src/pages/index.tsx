@@ -17,7 +17,7 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <main>
-        <header className="relative text-white grid md:grid-cols-2 md:place-items-center md:h-screen md:overflow-hidden">
+        <header className="relative text-white grid md:grid-cols-2 place-items-center md:h-screen">
           <div className="flex flex-col gap-2 max-w-sm">
             <h1>
               Thesis Abstract Management System for College of Engineering
@@ -30,13 +30,15 @@ export default function Home() {
               <PriButton size="large">Get Started</PriButton>
             </div>
           </div>
-          <div>
+          <div className="relative w-full h-[25em] md:w-full md:h-3/4 md:min-h-96">
             <Image
+              className="object-cover md:object-contain"
               src="/PC.png"
               alt="background"
-              height={1000}
-              width={1000}
-              style={{ objectFit: "cover" }}
+              fill
+              style={{
+                overflow: "visible",
+              }}
             />
           </div>
         </header>

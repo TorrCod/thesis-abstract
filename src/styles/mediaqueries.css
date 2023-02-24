@@ -1,0 +1,16 @@
+
+@media (min-width: 768px) { 
+    main {
+        padding-top: 0;
+    }
+
+    .bg-circle{
+        position: absolute;
+        width: 180%;
+        height: 180%;
+        min-width: 130em;
+        top: -80%;
+        left: -50%;
+        z-index: -10;
+      }
+}

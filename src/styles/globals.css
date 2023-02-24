@@ -2,13 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --font-mono: ui-monospace, Menlo, Monaco, 'Cascadia Mono', 'Segoe UI Mono',
-    'Roboto Mono', 'Oxygen Mono', 'Ubuntu Monospace', 'Source Code Pro',
-    'Fira Mono', 'Droid Sans Mono', 'Courier New', monospace;
-  --primary-color:"#F8B49C"
+@layer base {
+  :root {
+    --font-mono: ui-monospace, Menlo, Monaco, 'Cascadia Mono', 'Segoe UI Mono',
+      'Roboto Mono', 'Oxygen Mono', 'Ubuntu Monospace', 'Source Code Pro',
+      'Fira Mono', 'Droid Sans Mono', 'Courier New', monospace;
+    --primary-color:"#F8B49C";
+    --secondary-color:"#38649C";
+  }
 }
-
 * {
   box-sizing: border-box;
   padding: 0;
@@ -40,6 +42,7 @@ a {
   position: absolute;
   width: 180%;
   height: 180%;
+  max-height: 350em;
   min-width: 130em;
   top: -80%;
   left: -100%;

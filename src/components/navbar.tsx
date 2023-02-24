@@ -5,9 +5,10 @@ import { NavItemProps } from "./types.d";
 import { AiOutlineHome } from "react-icons/ai";
 import { BiGroup } from "react-icons/bi";
 import { BsBook } from "react-icons/bs";
-import { Button, Drawer, Menu, MenuProps } from "antd";
+import { Button, Divider, Drawer, Menu, MenuProps } from "antd";
 import { FaBars } from "react-icons/fa";
 import { useLocation } from "react-use";
+import Search from "./search";
 
 const MENU_LIST = [
   { text: "Home", href: "/", icon: <AiOutlineHome /> },
@@ -64,7 +65,10 @@ const NavBar = () => {
   const { pathname } = useLocation();
 
   return (
-    <div className="p-2 fixed top-0 z-10 w-full bg-[var(--primary-color)]">
+    <div
+      className="p-2 fixed top-0 z-10 w-full shadow-md flex"
+      style={{ backgroundColor: "#38649C" }}
+    >
       <Button
         className="flex justify-center place-items-center text-3xl w-fit md:hidden auto-rows-fr"
         type="ghost"
@@ -72,6 +76,8 @@ const NavBar = () => {
         style={{ color: "rgba(255, 255, 255, 0.80)" }}
         onClick={() => setOpen(!open)}
       />
+      <Divider type="vertical" />
+      <Search />
       <div className="hidden md:flex md:gap-10 text-white/70 place-content-center">
         {MENU_LIST.map(({ text, href, icon }, index) => (
           <NavItem

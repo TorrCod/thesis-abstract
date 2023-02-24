@@ -1,7 +1,7 @@
 import Head from "next/head";
 import Image from "next/image";
-import SearchBar from "@/components/searchbar";
 import { PriButton } from "@/components/button";
+import Search from "@/components/search";
 
 export default function Home() {
   return (
@@ -24,7 +24,7 @@ export default function Home() {
             </h1>
             <div className="text-white/80">
               Find related Ideas for your projects
-              <SearchBar />
+              <Search />
             </div>
             <div>
               <PriButton size="large">Get Started</PriButton>

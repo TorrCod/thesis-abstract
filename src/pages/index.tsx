@@ -32,13 +32,16 @@ export default function Home() {
           </div>
           <div className="relative w-full h-[25em] md:w-full md:h-3/4 md:min-h-96">
             <Image
+              priority={true}
               className="object-cover md:object-contain"
               src="/PC.png"
               alt="background"
+              placeholder="blur"
+              blurDataURL={"/PC.png"}
+              sizes="(max-width: 768px) 100vw,
+              (max-width: 1200px) 50vw,
+              33vw"
               fill
-              style={{
-                overflow: "visible",
-              }}
             />
           </div>
         </header>

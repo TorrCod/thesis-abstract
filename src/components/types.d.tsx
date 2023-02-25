@@ -1,6 +1,5 @@
-export interface NavItemProps {
-  href: string;
+export type NavItemProps = {
   text: string;
-  active: boolean;
   icon: React.ReactNode;
-}
+  href: string;
+};

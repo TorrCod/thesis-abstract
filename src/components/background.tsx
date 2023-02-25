@@ -4,7 +4,7 @@ import Image from "next/image";
 const Background = () => {
   return (
     <div className="bg-circle">
-      <Image src="bg-circles.svg" alt="background" fill />
+      <Image priority={true} src="bg-circles.svg" alt="background" fill />
     </div>
   );
 };

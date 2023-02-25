@@ -8,7 +8,7 @@ const Thesis = () => {
     <>
       <main>
         <Search />
-        <Divider />
+        <Divider className="bg-white/30" />
         <div className="grid gap-2 shadow-md">
           <Items />
           <Items />

@@ -7,7 +7,7 @@ const Thesis = () => {
   return (
     <>
       <main className="md:mt-20 md:flex md:place-items-center md:flex-col">
-        <div className="grid w-full bg-[#38649C]">
+        <div className="grid w-full">
           <Search className="max-w-[30em] place-self-center w-full my-5" />
           <Divider className="bg-white/30" />
         </div>

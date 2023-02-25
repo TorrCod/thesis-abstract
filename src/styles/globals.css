@@ -40,19 +40,17 @@ a {
 
 .bg-circle{
   position: absolute;
-  width: 180%;
-  height: 180%;
-  max-height: 350em;
-  min-width: 130em;
-  top: -80%;
-  left: -100%;
+  width: 80em;
+  height: 80em;
+  top: -20em;
+  left: -20em;
   z-index: -10;
+  border: 1px solid red
 }
 
 h1 {
   font-size: 2rem;
 }
 
-/* for desktop future ref */
 
-
+  

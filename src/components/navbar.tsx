@@ -30,7 +30,7 @@ const NavItem = (props: NavItemProps) => {
 
 const items: MenuProps["items"] = [
   {
-    key: "home",
+    key: "/",
     icon: (
       <Link href={"/"}>
         <AiOutlineHome size={"1.25em"} />
@@ -39,7 +39,7 @@ const items: MenuProps["items"] = [
     label: "Home",
   },
   {
-    key: "thesis",
+    key: "/thesis",
     icon: (
       <Link href={"/thesis"}>
         <BsBook size={"1.25em"} />
@@ -48,7 +48,7 @@ const items: MenuProps["items"] = [
     label: "Thesis",
   },
   {
-    key: "about",
+    key: "/aboutus",
     icon: (
       <Link href={"/aboutus"}>
         <BiGroup size={"1.25em"} />
@@ -62,17 +62,24 @@ const NavBar = () => {
   const [open, setOpen] = useState(false);
   const { y } = useWindowScroll();
   const [active, setActive] = useState("/");
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    if (pathname) {
+      setActive(pathname);
+    }
+  }, [pathname]);
 
   const handleActive = (href: string) => setActive(href);
 
   return (
     <div
       className={
-        "p-2 fixed md:block top-0 z-10 w-full " +
-        (y > 60 ? "shadow-md flex bg-[#38649C] md:bg-transparent" : "")
+        "px-2 py-5 fixed md:flex top-0 z-10 w-full md:justify-center md:items-center " +
+        (y > 60 ? "shadow-md flex bg-[#38649C] " : "md:bg-transparent")
       }
     >
-      <div className="md:hidden">
+      <div className="md:hidden flex relative w-full gap-5">
         <Button
           className="flex justify-center place-items-center text-3xl w-fit md:hidden auto-rows-fr"
           type="ghost"
@@ -80,15 +87,16 @@ const NavBar = () => {
           style={{ color: "rgba(255, 255, 255, 0.80)" }}
           onClick={() => setOpen(!open)}
         />
-        <Divider type="vertical" />
-        {y > 60 ? <Search /> : ""}
+        {y > 60 ? <Search className="w-full" /> : ""}
       </div>
-      <div className="hidden md:flex md:gap-10 text-white/70 place-content-center">
+      <div className="hidden md:flex md:gap-10 text-white/70 align-center justify-center">
         {MENU_LIST.map(({ text, href, icon }, index) => (
           <div
-            onClick={() => handleActive(href)}
             key={index}
-            className={" " + (active === href ? "text-white" : "")}
+            className={
+              "flex align-center justify-center " +
+              (active === href ? "text-white" : "")
+            }
           >
             <NavItem href={href} text={text} icon={icon} />
           </div>
@@ -107,8 +115,7 @@ const NavBar = () => {
         <Menu
           className="text-lg text-black/70"
           onClick={() => setOpen(!open)}
-          defaultSelectedKeys={["1"]}
-          defaultOpenKeys={["sub1"]}
+          defaultSelectedKeys={[active]}
           mode="inline"
           items={items}
         />

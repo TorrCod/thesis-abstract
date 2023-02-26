@@ -1,7 +1,7 @@
 import { PriButton } from "./button";
 
 function Login() {
-  return <PriButton>Signin / Sign Up</PriButton>;
+  return <PriButton>SigninS</PriButton>;
 }
 
 export default Login;

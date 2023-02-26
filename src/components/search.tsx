@@ -1,31 +1,11 @@
-import { Checkbox, Dropdown, Input, InputRef, MenuProps, Space } from "antd";
-import React, { Ref, useRef, useState } from "react";
+import { Checkbox, Dropdown, Input, MenuProps, Space } from "antd";
+import React, { Ref, useEffect, useReducer, useRef, useState } from "react";
 import { BsSearch } from "react-icons/bs";
 import { PriButton } from "./button";
 import { DownOutlined } from "@ant-design/icons";
-
-const items: MenuProps["items"] = [
-  {
-    label: <Checkbox defaultChecked>All</Checkbox>,
-    key: "0",
-  },
-  {
-    label: <Checkbox>Computer Engineer</Checkbox>,
-    key: "1",
-  },
-  {
-    label: <Checkbox>Mechanical Engineer</Checkbox>,
-    key: "2",
-  },
-  {
-    label: <Checkbox>Electrical Engineer</Checkbox>,
-    key: "3",
-  },
-  {
-    label: <Checkbox>Civil Engineer</Checkbox>,
-    key: "4",
-  },
-];
+import { CheckboxChangeEvent } from "antd/es/checkbox";
+import { CheckboxValueType } from "antd/es/checkbox/Group";
+import { SearchAction, SearchState, searchState_init } from "./types.d";
 
 const itemDate: MenuProps["items"] = [
   {
@@ -42,34 +22,158 @@ const itemDate: MenuProps["items"] = [
   },
 ];
 
+const courseOption = [
+  "Computer Engineer",
+  "Mechanical Engineer",
+  "Electrical Engineer",
+  "Civil Engineer",
+];
+
+const dateOption = ["2020", "2021", "2022"];
+
+const searchReducer: (
+  state: SearchState,
+  action: SearchAction
+) => SearchState = (state, action) => {
+  switch (action.type) {
+    case "focus":
+      return { ...state, searchFocus: action.payload };
+    case "dropdown":
+      return { ...state, dropDownState: action.payload };
+    case "populate-option": {
+      const newState = { ...state };
+      newState["checkBox"]["course"]["option"] = action.payload["course"];
+      newState["checkBox"]["date"]["option"] = action.payload["date"];
+      return newState;
+    }
+    case "oncheck-all": {
+      const newState = { ...state };
+      newState["checkBox"][action.payload.type]["all"] = action.payload.all;
+      newState["checkBox"][action.payload.type]["option"] =
+        action.payload.option;
+      return newState;
+    }
+  }
+};
+
 const Search = ({ className }: { className?: string }) => {
-  const [active, setActive] = useState(false);
-  const [course, setCourse] = useState(false);
-  const [date, setDate] = useState(false);
   const inputRef = useRef<any>(null);
+  const [searchState, searchDispatch] = useReducer(
+    searchReducer,
+    searchState_init
+  );
+  useEffect(() => {
+    searchDispatch({
+      type: "populate-option",
+      payload: { course: courseOption, date: dateOption },
+    });
+    return () => {};
+  }, []);
 
   const handleOpenCourse = (flag: boolean) => {
-    setCourse(flag);
+    searchDispatch({
+      type: "dropdown",
+      payload: { ...searchState.dropDownState, course: flag },
+    });
   };
 
   const handleOpenDate = (flag: boolean) => {
-    setDate(flag);
+    searchDispatch({
+      type: "dropdown",
+      payload: { ...searchState.dropDownState, date: flag },
+    });
   };
 
   const handleSearch = () => {
-    setActive(false);
+    searchDispatch({ type: "focus", payload: false });
     inputRef.current?.blur();
   };
+
+  const handleCheckBxCourse = (valueType: CheckboxValueType[]) => {
+    const isCheckAll = valueType.length === courseOption.length;
+    const item = valueType as string[];
+    searchDispatch({
+      type: "oncheck-all",
+      payload: { type: "course", option: item, all: isCheckAll },
+    });
+  };
+
+  const handleCheckBxDate = (valueType: CheckboxValueType[]) => {
+    const isCheckAll = valueType.length === dateOption.length;
+    console.log(isCheckAll);
+
+    const item = valueType as string[];
+    searchDispatch({
+      type: "oncheck-all",
+      payload: { type: "date", option: item, all: isCheckAll },
+    });
+  };
+
+  const handleCheckBxAllCourse = (e: CheckboxChangeEvent) => {
+    const isChecked = e.target.checked;
+    searchDispatch({
+      type: "oncheck-all",
+      payload: {
+        type: "course",
+        all: isChecked,
+        option: isChecked ? courseOption : [],
+      },
+    });
+  };
+
+  const handleCheckBxAllDate = (e: CheckboxChangeEvent) => {
+    const isChecked = e.target.checked;
+    searchDispatch({
+      type: "oncheck-all",
+      payload: {
+        type: "date",
+        all: isChecked,
+        option: isChecked ? dateOption : [],
+      },
+    });
+  };
+
+  const dropdownContentCourse = () => (
+    <div className="bg-white p-2 shadow-lg relative rounded-md">
+      <Checkbox
+        checked={searchState.checkBox.course.all}
+        onChange={handleCheckBxAllCourse}
+      >
+        All
+      </Checkbox>
+      <Checkbox.Group
+        options={courseOption}
+        value={searchState.checkBox.course.option}
+        onChange={handleCheckBxCourse}
+      />
+    </div>
+  );
+
+  const dropdownContentDate = () => (
+    <div className="bg-white p-2 shadow-lg relative rounded-md">
+      <Checkbox
+        checked={searchState.checkBox.date.all}
+        onChange={handleCheckBxAllDate}
+      >
+        All
+      </Checkbox>
+      <Checkbox.Group
+        options={dateOption}
+        value={searchState.checkBox.date.option}
+        onChange={handleCheckBxDate}
+      />
+    </div>
+  );
 
   return (
     <div
       className={
         "p-2 bg-slate-100 rounded-md grid transition-all ease-in-out duration-300 " +
         className +
-        (active ? " gap-2" : " gap-0")
+        (searchState.searchFocus ? " gap-2" : " gap-0")
       }
-      onFocus={() => setActive(true)}
-      onBlur={() => setActive(false)}
+      onFocus={() => searchDispatch({ type: "focus", payload: true })}
+      onBlur={() => searchDispatch({ type: "focus", payload: false })}
       tabIndex={0}
     >
       <div className="flex gap-2">
@@ -85,14 +189,14 @@ const Search = ({ className }: { className?: string }) => {
       </div>
       <div
         className={`transition-all ease-in-out duration-300 overflow-hidden relative ${
-          active ? "max-h-28" : "max-h-0"
+          searchState.searchFocus ? "max-h-28" : "max-h-0"
         }`}
       >
         <Space>
           <Dropdown
-            open={course}
+            open={searchState.dropDownState.course}
             onOpenChange={handleOpenCourse}
-            menu={{ items }}
+            dropdownRender={dropdownContentCourse}
             trigger={["click"]}
           >
             <a
@@ -106,9 +210,9 @@ const Search = ({ className }: { className?: string }) => {
             </a>
           </Dropdown>
           <Dropdown
-            open={date}
+            open={searchState.dropDownState.date}
             onOpenChange={handleOpenDate}
-            menu={{ items: itemDate }}
+            dropdownRender={dropdownContentDate}
             trigger={["click"]}
           >
             <a

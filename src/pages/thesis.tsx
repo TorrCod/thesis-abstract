@@ -1,8 +1,6 @@
 import { PriButton } from "@/components/button";
-import NavBar from "@/components/navbar";
 import Search from "@/components/search";
-import { Affix, Divider } from "antd";
-import { Head } from "next/document";
+import { Divider } from "antd";
 
 const Thesis = () => {
   return (

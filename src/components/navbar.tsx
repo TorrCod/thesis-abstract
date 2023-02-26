@@ -9,6 +9,7 @@ import { Button, Divider, Drawer, Menu, MenuProps } from "antd";
 import { FaBars } from "react-icons/fa";
 import { useLocation, useWindowScroll } from "react-use";
 import Search from "./search";
+import Login from "./signin_signup";
 
 const MENU_LIST = [
   { text: "Home", href: "/", icon: <AiOutlineHome /> },
@@ -101,7 +102,7 @@ const NavBar = () => {
             <NavItem href={href} text={text} icon={icon} />
           </div>
         ))}
-        <PriButton>Signin / Sign Up</PriButton>
+        <Login />
       </div>
       <Drawer
         title="Thesis Abstract Management System"
@@ -109,7 +110,7 @@ const NavBar = () => {
         open={open}
         onClose={() => setOpen(!open)}
         width={300}
-        footer={<PriButton>Signin / Sign Up</PriButton>}
+        footer={<Login />}
         bodyStyle={{ padding: 0 }}
       >
         <Menu

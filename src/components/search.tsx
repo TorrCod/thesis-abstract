@@ -1,26 +1,12 @@
-import { Checkbox, Dropdown, Input, MenuProps, Space } from "antd";
-import React, { Ref, useEffect, useReducer, useRef, useState } from "react";
+import { Checkbox, Dropdown, Form, Input, Space } from "antd";
+import React, { useEffect, useReducer, useRef } from "react";
 import { BsSearch } from "react-icons/bs";
 import { PriButton } from "./button";
 import { DownOutlined } from "@ant-design/icons";
 import { CheckboxChangeEvent } from "antd/es/checkbox";
 import { CheckboxValueType } from "antd/es/checkbox/Group";
 import { SearchAction, SearchState, searchState_init } from "./types.d";
-
-const itemDate: MenuProps["items"] = [
-  {
-    label: <Checkbox defaultChecked>All</Checkbox>,
-    key: "0",
-  },
-  {
-    label: <Checkbox>2020</Checkbox>,
-    key: "1",
-  },
-  {
-    label: <Checkbox>2021</Checkbox>,
-    key: "2",
-  },
-];
+import Link from "next/link";
 
 const courseOption = [
   "Computer Engineer",
@@ -176,17 +162,19 @@ const Search = ({ className }: { className?: string }) => {
       onBlur={() => searchDispatch({ type: "focus", payload: false })}
       tabIndex={0}
     >
-      <div className="flex gap-2">
+      <Form className="flex gap-2">
         <Input
           ref={inputRef}
-          onPressEnter={handleSearch}
           prefix={<BsSearch color="#38649C" />}
           placeholder="Search"
         />
-        <PriButton onClick={handleSearch}>
-          <BsSearch color="white" />
-        </PriButton>
-      </div>
+
+        <Link href={"/thesis"}>
+          <PriButton htmlType="submit" onClick={handleSearch}>
+            <BsSearch color="white" />
+          </PriButton>
+        </Link>
+      </Form>
       <div
         className={`transition-all ease-in-out duration-300 overflow-hidden relative ${
           searchState.searchFocus ? "max-h-28" : "max-h-0"

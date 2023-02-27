@@ -152,7 +152,7 @@ const Search = ({ className }: { className?: string }) => {
   return (
     <div
       className={
-        "p-2 bg-slate-100 rounded-md grid transition-all ease-in-out duration-300 " +
+        "p-2 bg-slate-100 rounded-md grid transition-all ease-in-out duration-300 max-w-[30em] w-full " +
         className +
         (searchState.searchFocus ? " gap-2" : " gap-0")
       }

@@ -11,6 +11,7 @@
     --secondary-color:"#38649C";
   }
 }
+
 * {
   box-sizing: border-box;
   padding: 0;
@@ -20,10 +21,24 @@
   /* border: 1px solid red; */
 }
 
-main {
-  min-height: 100vh;
-  padding-inline: 1em;
+section {
   padding-top: 5em;
+  padding-inline: 1em;
+  min-height: 100vh
+}
+
+main::before {
+  background: url(/bg-circles.svg) no-repeat center center fixed; 
+  -webkit-background-size: contain;
+  -moz-background-size: contain;
+  -o-background-size: contain;
+  background-size: 50em;
+  position: fixed;
+  height: 100%;
+  width: 100vw;
+  z-index: -100;
+  background-position: -20em -10em;
+  content: "";
 }
 
 html,

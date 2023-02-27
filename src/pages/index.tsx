@@ -16,8 +16,8 @@ export default function Home() {
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
-      <main>
-        <header className="relative text-white grid md:grid-cols-2 place-items-center md:h-screen">
+      <section>
+        <header className="relative text-white md:grid md:grid-cols-2 place-items-center md:h-screen">
           <div className="flex flex-col gap-2 max-w-sm">
             <h1>
               Thesis Abstract Management System for College of Engineering
@@ -30,7 +30,7 @@ export default function Home() {
               <PriButton size="large">Get Started</PriButton>
             </div>
           </div>
-          <div className="relative w-full h-[25em] md:w-full md:h-3/4 md:min-h-96">
+          <div className="relative md:min-w-[50em] w-full h-[25em] md:w-full md:h-3/4 md:min-h-96">
             <Image
               priority={true}
               className="object-cover md:object-contain"
@@ -45,7 +45,7 @@ export default function Home() {
             />
           </div>
         </header>
-      </main>
+      </section>
     </>
   );
 }

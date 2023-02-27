@@ -77,7 +77,7 @@ const NavBar = () => {
     <div
       className={
         "px-2 py-5 fixed md:flex top-0 z-10 w-full md:justify-center md:items-center " +
-        (y > 60 ? "shadow-md flex bg-[#38649C] " : "md:bg-transparent")
+        (y > 0 ? "shadow-md flex bg-[#38649C] " : "md:bg-transparent ")
       }
     >
       <div className="md:hidden flex relative w-full gap-5">
@@ -88,7 +88,7 @@ const NavBar = () => {
           style={{ color: "rgba(255, 255, 255, 0.80)" }}
           onClick={() => setOpen(!open)}
         />
-        {y > 60 ? <Search className="w-full" /> : ""}
+        {y > 60 ? <Search className="w-full" /> : <></>}
       </div>
       <div className="hidden md:flex md:gap-10 text-white/70 align-center justify-center">
         {MENU_LIST.map(({ text, href, icon }, index) => (

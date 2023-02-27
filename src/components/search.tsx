@@ -86,8 +86,6 @@ const Search = ({ className }: { className?: string }) => {
 
   const handleCheckBxDate = (valueType: CheckboxValueType[]) => {
     const isCheckAll = valueType.length === dateOption.length;
-    console.log(isCheckAll);
-
     const item = valueType as string[];
     searchDispatch({
       type: "oncheck-all",

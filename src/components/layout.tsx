@@ -4,11 +4,13 @@ import NavBar from "./navbar";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <AntD_Config>
-      <Background />
-      <NavBar />
-      {children}
-    </AntD_Config>
+    <main>
+      <AntD_Config>
+        {/* <Background /> */}
+        <NavBar />
+        {children}
+      </AntD_Config>
+    </main>
   );
 };
 

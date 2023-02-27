@@ -1,0 +1,175 @@
+[
+    {
+        "id": "1",
+        "title": "The Impact of Artificial Intelligence on Business",
+        "researchers": [
+            "John Doe",
+            "Jane Smith"
+        ],
+        "course": "Computer Engineer",
+        "abstract": "This paper discusses the potential impacts of artificial intelligence on various aspects of business, including productivity, employment, and decision-making processes.",
+        "date": "2022-01-15"
+    },
+    {
+        "id": "2",
+        "title": "Efficient Energy Usage in Manufacturing Processes",
+        "researchers": [
+            "David Lee",
+            "Sarah Johnson",
+            "Mike Chen"
+        ],
+        "course": "Mechanical Engineer",
+        "abstract": "This research explores various techniques for improving energy efficiency in manufacturing processes, including the use of renewable energy sources and optimizing equipment.",
+        "date": "2021-11-03"
+    },
+    {
+        "id": "3",
+        "title": "Smart Grid Technologies for Improving Electrical Grid Resilience",
+        "researchers": [
+            "Karen Wong",
+            "Ahmed Khan"
+        ],
+        "course": "Electrical Engineer",
+        "abstract": "This study examines the use of smart grid technologies to improve the resilience of electrical grids to various disruptions, such as weather events and cyberattacks.",
+        "date": "2022-02-05"
+    },
+    {
+        "id": "4",
+        "title": "Sustainable Building Practices for Reducing Carbon Footprint",
+        "researchers": [
+            "Anna Kim",
+            "Jack Smith"
+        ],
+        "course": "Civil Engineer",
+        "abstract": "This research evaluates the potential of sustainable building practices, such as green roofs and renewable energy systems, to reduce the carbon footprint of buildings.",
+        "date": "2022-03-20"
+    },
+    {
+        "id": "5",
+        "title": "The Use of Drones in Civil Engineering Projects",
+        "researchers": [
+            "Carlos Perez",
+            "Michelle Lee",
+            "Hannah Chen"
+        ],
+        "course": "Civil Engineer",
+        "abstract": "This paper examines the potential uses of drones in various civil engineering projects, such as surveying, mapping, and inspection of infrastructure.",
+        "date": "2021-12-10"
+    },
+    {
+        "id": "6",
+        "title": "The Impact of Artificial Intelligence on Society",
+        "researchers": [
+            "John Smith",
+            "Mary Johnson"
+        ],
+        "course": "Computer Engineer",
+        "abstract": "This study investigates the potential benefits and drawbacks of artificial intelligence on society.",
+        "date": "2022-01-15"
+    },
+    {
+        "id": "7",
+        "title": "Improving Wind Turbine Efficiency with Machine Learning",
+        "researchers": [
+            "David Kim",
+            "Sara Lee",
+            "Michael Chen"
+        ],
+        "course": "Mechanical Engineer",
+        "abstract": "This research explores how machine learning can be used to optimize the performance of wind turbines.",
+        "date": "2022-02-01"
+    },
+    {
+        "id": "8",
+        "title": "Designing Smart Homes for Elderly People",
+        "researchers": [
+            "Emily Davis",
+            "Ryan Johnson"
+        ],
+        "course": "Electrical Engineer",
+        "abstract": "This project aims to create a smart home system that meets the specific needs of elderly people.",
+        "date": "2022-03-10"
+    },
+    {
+        "id": "9",
+        "title": "Sustainable Urban Development",
+        "researchers": [
+            "Alex Nguyen",
+            "Alicia Rodriguez",
+            "Daniel Garcia"
+        ],
+        "course": "Civil Engineer",
+        "abstract": "This research analyzes the factors that contribute to sustainable urban development and proposes strategies for achieving it.",
+        "date": "2022-04-20"
+    },
+    {
+        "id": "10",
+        "title": "Predicting Traffic Congestion with Data Analytics",
+        "researchers": [
+            "Jessica Kim",
+            "David Lee",
+            "Ethan Park"
+        ],
+        "course": "Computer Engineer",
+        "abstract": "This study develops a data analytics model to predict traffic congestion in urban areas.",
+        "date": "2022-05-05"
+    },
+    {
+        "id": "11",
+        "title": "Smart Grid Technology for Energy Management",
+        "researchers": [
+            "Thomas Johnson",
+            "Karen Kim",
+            "Olivia Park"
+        ],
+        "course": "Electrical Engineer",
+        "abstract": "This project aims to develop a smart grid technology to optimize energy management and reduce costs.",
+        "date": "2022-11-15"
+    },
+    {
+        "id": "12",
+        "title": "Designing Efficient Solar Cells",
+        "researchers": [
+            "David Lee",
+            "Sophia Kim"
+        ],
+        "course": "Mechanical Engineer",
+        "abstract": "This research investigates ways to design solar cells that are more efficient and cost-effective.",
+        "date": "2022-12-01"
+    },
+    {
+        "id": "13",
+        "title": "The Impact of Climate Change on Water Resources",
+        "researchers": [
+            "Sarah Johnson",
+            "John Park",
+            "Daniel Lee"
+        ],
+        "course": "Civil Engineer",
+        "abstract": "This study analyzes the impact of climate change on water resources and proposes strategies to adapt to the changing conditions.",
+        "date": "2023-01-10"
+    },
+    {
+        "id": "14",
+        "title": "Machine Learning for Stock Price Prediction",
+        "researchers": [
+            "Ethan Lee",
+            "Ava Kim",
+            "Jacob Park"
+        ],
+        "course": "Computer Engineer",
+        "abstract": "This research develops a machine learning model to predict stock prices and analyze market trends.",
+        "date": "2023-02-20"
+    },
+    {
+        "id": "15",
+        "title": "Sustainable Transportation Systems",
+        "researchers": [
+            "Emily Kim",
+            "Michael Park"
+        ],
+        "course": "Electrical Engineer",
+        "abstract": "This project aims to design sustainable transportation systems that reduce emissions and improve efficiency.",
+        "date": "2023-03-05"
+    }
+]

@@ -19,9 +19,7 @@ export default function Home() {
       <section>
         <header className="relative text-white md:grid md:grid-cols-2 place-items-center md:h-screen">
           <div className="flex flex-col gap-2 max-w-sm">
-            <h1>
-              Thesis Abstract Management System for College of Engineering
-            </h1>
+            <h1>Thesis Abstract Manager System for College of Engineering</h1>
             <div className="text-white/80">
               Find related Ideas for your projects
               <Search />

@@ -50,7 +50,7 @@ const ThesisItemsView = (props: { data: ThesisItems; hasError: boolean }) => {
       <div className="rs-container bg-slate-100 rounded-md max-w-5xl grid p-5 gap-2 md:gap-5 w-full relative">
         <div className="rs-preview p-3 bg-white shadow-md rounded-sm h-52 overflow-hidden text-[0.1em] relative max-w-[100em] text-justify justify-self-center">
           <div className="w-full h-full overflow-hidden">
-            <h3 className="text-center">Abstract</h3>
+            <div className="text-center">Abstract</div>
             <p className="indent-3">{props.data.abstract}</p>
           </div>
         </div>
@@ -74,8 +74,8 @@ const ThesisItemsView = (props: { data: ThesisItems; hasError: boolean }) => {
           <span className="text-sm text-[#38649C]">Researchers</span>
           <div className="pl-5">
             <ul className="list-disc">
-              {props.data.researchers.map((child) => (
-                <li>{child}</li>
+              {props.data.researchers.map((child, index) => (
+                <li key={index}>{child}</li>
               ))}
             </ul>
           </div>

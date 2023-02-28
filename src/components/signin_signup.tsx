@@ -1,16 +1,30 @@
 import { useState } from "react";
-import { Modal, Form, Input, Button } from "antd";
+import { Modal, Form, Input, Divider, Select } from "antd";
 import { PriButton } from "./button";
+import { Course } from "@/context/types.d";
 
 const SignInSignUp = () => {
   const [open, setOpen] = useState(false);
-  const [form] = Form.useForm();
+  const [formSignIn] = Form.useForm();
+  const [formSignUp] = Form.useForm();
 
-  const handleOk = async () => {
+  const handleSignIn = async () => {
     try {
-      await form.validateFields();
+      await formSignIn.validateFields();
       // TODO: handle sign in/signup logic
       setOpen(false); // close the modal after successful sign in/signup
+      formSignUp.resetFields();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleSignUp = async () => {
+    try {
+      await formSignUp.validateFields();
+      // TODO: handle sign in/signup logic
+      setOpen(false); // close the modal after successful sign in/signup
+      formSignUp.resetFields();
     } catch (error) {
       console.error(error);
     }
@@ -24,76 +38,77 @@ const SignInSignUp = () => {
     setOpen(true);
   };
 
-  const buttonStyle = {
-    backgroundColor: "#1890ff",
-    borderColor: "#1890ff",
-    color: "#fff",
-    borderRadius: "4px",
-    marginRight: "10px",
-    marginBottom: "10px",
-    fontSize: "16px",
-  };
+  const courseOpt: { value: Course; label: Course }[] = [
+    { value: "Civil Engineer", label: "Civil Engineer" },
+    { value: "Computer Engineer", label: "Computer Engineer" },
+    { value: "Electrical Engineer", label: "Electrical Engineer" },
+    { value: "Mechanical Engineer", label: "Mechanical Engineer" },
+  ];
 
   return (
     <>
       <PriButton type="primary" onClick={showModal}>
         Sign In/Sign Up
       </PriButton>
-      <Modal open={open} onCancel={handleCancel} footer={null}>
-        <h2>Sign In/Sign Up</h2>
-        <Form form={form} layout="vertical">
+      <Modal
+        centered
+        bodyStyle={{ padding: "2em" }}
+        open={open}
+        onCancel={handleCancel}
+        footer={null}
+      >
+        <h3 className="text-center my-5 text-[#38649C]">Sign In</h3>
+        <Form form={formSignIn} layout="vertical">
           <Form.Item
-            label="Email"
             name="email"
             rules={[{ required: true, message: "Please enter your email" }]}
           >
-            <Input type="email" />
+            <Input placeholder="Email" type="email" />
           </Form.Item>
           <Form.Item
-            label="Password"
             name="password"
             rules={[{ required: true, message: "Please enter your password" }]}
           >
-            <Input.Password />
+            <Input.Password placeholder="Password" />
           </Form.Item>
-          <Form.Item>
-            <Button style={buttonStyle} type="primary" onClick={handleOk}>
-              Sign In
-            </Button>
+          <Form.Item className="grid place-items-end">
+            <PriButton onClick={handleSignIn}>Sign In</PriButton>
           </Form.Item>
-          <hr />
+        </Form>
+        <Divider />
+        <Form form={formSignUp}>
+          <h3 className="text-center my-5 text-[#38649C]">Sign Up</h3>
           <Form.Item
-            label="First Name"
             name="firstName"
             rules={[
               { required: true, message: "Please enter your first name" },
             ]}
           >
-            <Input />
+            <Input placeholder="Username" />
           </Form.Item>
           <Form.Item
-            label="Last Name"
-            name="lastName"
-            rules={[{ required: true, message: "Please enter your last name" }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            label="Email"
             name="signupEmail"
             rules={[{ required: true, message: "Please enter your email" }]}
           >
-            <Input type="email" />
+            <Input type="email" placeholder="Email" />
           </Form.Item>
           <Form.Item
-            label="Password"
+            name="course"
+            rules={[{ required: true, message: "Please enter your course" }]}
+          >
+            <Select
+              style={{ width: "fit-content" }}
+              placeholder="Course"
+              options={courseOpt}
+            />
+          </Form.Item>
+          <Form.Item
             name="signupPassword"
             rules={[{ required: true, message: "Please enter your password" }]}
           >
-            <Input.Password />
+            <Input.Password placeholder="Password" />
           </Form.Item>
           <Form.Item
-            label="Confirm Password"
             name="confirmPassword"
             dependencies={["signupPassword"]}
             rules={[
@@ -110,12 +125,10 @@ const SignInSignUp = () => {
               }),
             ]}
           >
-            <Input.Password />
+            <Input.Password placeholder="Confirm Password" />
           </Form.Item>
-          <Form.Item>
-            <Button style={buttonStyle} type="primary" onClick={handleOk}>
-              Sign Up
-            </Button>
+          <Form.Item className="grid place-items-end">
+            <PriButton onClick={handleSignUp}>Sign Up</PriButton>
           </Form.Item>
         </Form>
       </Modal>

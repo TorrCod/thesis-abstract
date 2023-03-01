@@ -97,7 +97,7 @@ const SignInSignUp = () => {
             rules={[{ required: true, message: "Please enter your course" }]}
           >
             <Select
-              style={{ width: "fit-content" }}
+              style={{ width: "auto", textAlign: "center" }}
               placeholder="Course"
               options={courseOpt}
             />

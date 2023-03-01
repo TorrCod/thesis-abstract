@@ -16,3 +16,10 @@ export type ThesisItems = {
   abstract: string;
   date: string;
 };
+
+export type GlobalAction =
+  | {
+      type: "add-thesis";
+      payload: ThesisItems;
+    }
+  | { type: "load-data"; payload: ThesisItems[] };

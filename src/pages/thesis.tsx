@@ -14,7 +14,7 @@ const Thesis = () => {
           <Search className="place-self-center my-5" />
           <Divider className="bg-white/30" />
         </div>
-        <div className="grid gap-2 w-full place-items-center lg:grid-cols-2">
+        <div className="grid gap-2 w-full place-items-center lg:grid-cols-2 relative">
           {thesisItems.map((props) => {
             return <Items key={props.id} {...props} />;
           })}
@@ -36,8 +36,10 @@ const Items = ({
     <div className="thesis_items w-full bg-slate-100 max-w-[50em] shadow-md rounded-md p-5 gap-2 md:gap-5 grid">
       <div className="div2 flex flex-col gap-2">
         <div>
-          <span className="text-sm text-[#38649C]">Title</span>
-          <h2>{title}</h2>
+          <Link href={`/thesis/${id}`}>
+            <span className="text-sm text-[#38649C]">Title</span>
+            <h2>{title}</h2>
+          </Link>
         </div>
         <div>
           <span className="text-sm text-[#38649C]">Course</span>
@@ -58,9 +60,8 @@ const Items = ({
           </ul>
         </div>
       </div>
-
-      <div className="div1 p-3 bg-white shadow-md rounded-sm h-52 overflow-hidden text-[0.1em] relative max-w-[100em] text-justify justify-self-center leading-3 cursor-pointer transition ease-in-out duration-300 hover:scale-105">
-        <Link href={"/thesis/" + id}>
+      <div className="div1 p-3 bg-white shadow-md rounded-sm h-52 overflow-hidden text-[0.1em] relative max-w-[100em] text-justify justify-self-center leading-3">
+        <Link href={`/thesis/${id}`}>
           <div className="overflow-hidden w-full h-full">
             <h4 className="text-center">Abstract</h4>
             <p className="indent-3">{abstract}</p>

@@ -6,7 +6,7 @@ import { Divider } from "antd";
 import Link from "next/link";
 
 const Thesis = () => {
-  const { thesisItems } = useGlobalContext();
+  const { state } = useGlobalContext();
   return (
     <section>
       <div className="md:pt-20 md:flex md:place-items-center md:flex-col">
@@ -15,7 +15,7 @@ const Thesis = () => {
           <Divider className="bg-white/30" />
         </div>
         <div className="grid gap-2 w-full place-items-center lg:grid-cols-2 relative">
-          {thesisItems.map((props) => {
+          {state.searchItems.map((props) => {
             return <Items key={props.id} {...props} />;
           })}
         </div>

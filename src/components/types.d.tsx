@@ -1,3 +1,5 @@
+import { Course } from "@/context/types.d";
+
 export type NavItemProps = {
   text: string;
   icon: React.ReactNode;
@@ -5,6 +7,7 @@ export type NavItemProps = {
 };
 
 export type SearchState = {
+  searchTitle: string;
   searchFocus: boolean;
   dropDownState: { course: boolean; date: boolean };
   checkBox: {
@@ -14,6 +17,10 @@ export type SearchState = {
 };
 
 export type SearchAction =
+  | {
+      type: "onchange";
+      payload: string;
+    }
   | {
       type: "focus";
       payload: boolean;
@@ -32,10 +39,15 @@ export type SearchAction =
     };
 
 export const searchState_init: SearchState = {
+  searchTitle: "",
   searchFocus: false,
   dropDownState: { course: false, date: false },
   checkBox: {
     course: { all: true, option: [] },
     date: { all: true, option: [] },
   },
+};
+
+export type SearchProps = {
+  className: string;
 };

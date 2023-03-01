@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Modal, Form, Input, Divider, Select } from "antd";
+import { Modal, Form, Input, Divider, Select, message} from "antd";
 import { PriButton } from "./button";
 import { Course } from "@/context/types.d";
 
@@ -25,9 +25,14 @@ const SignInSignUp = () => {
       // TODO: handle sign in/signup logic
       setOpen(false); // close the modal after successful sign in/signup
       formSignUp.resetFields();
+      message.success({
+        type: 'success',
+        content: 'Registered Successfully! Please wait for the admins approval.',
+      });
     } catch (error) {
       console.error(error);
     }
+    
   };
 
   const handleCancel = () => {
@@ -44,6 +49,7 @@ const SignInSignUp = () => {
     { value: "Electrical Engineer", label: "Electrical Engineer" },
     { value: "Mechanical Engineer", label: "Mechanical Engineer" },
   ];
+
 
   return (
     <>

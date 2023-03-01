@@ -17,7 +17,9 @@ export type ThesisItems = {
   date: string;
 };
 
-export type GlobalAction = {
-  type: "add-thesis";
-  payload: ThesisItems;
-};
+export type GlobalAction =
+  | {
+      type: "add-thesis";
+      payload: ThesisItems;
+    }
+  | { type: "load-data"; payload: ThesisItems[] };

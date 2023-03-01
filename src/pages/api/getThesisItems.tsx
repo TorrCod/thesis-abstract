@@ -1,5 +1,5 @@
 import { ThesisItems } from "@/context/types.d";
-import { connectToDatabase } from "@/lib/mongo";
+import { connectToDatabase, getData } from "@/lib/mongo";
 import { NextApiRequest, NextApiResponse } from "next";
 
 const handler = async (
@@ -7,12 +7,18 @@ const handler = async (
   res: NextApiResponse<ThesisItems[]>
 ) => {
   try {
-    const client = await connectToDatabase();
-    const db = client.db("thesis-abstract");
-    const items: ThesisItems[] = (await db
-      .collection("thesis-items")
-      .find()
-      .toArray()) as unknown as ThesisItems[];
+    // const client = await connectToDatabase();
+    // const db = client.db("thesis-abstract");
+    // const items: ThesisItems[] = (await db
+    //   .collection("thesis-items")
+    //   .find()
+    //   .toArray()) as unknown as ThesisItems[];
+
+    const items: ThesisItems[] = (await getData(
+      "thesis-abstract",
+      "thesis-items"
+    )) as any;
+
     return res.json(items);
   } catch (e) {
     console.error(e);

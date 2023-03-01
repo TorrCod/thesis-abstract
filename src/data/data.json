@@ -1,6 +1,5 @@
 [
     {
-        "id": "1",
         "title": "The Impact of Artificial Intelligence on Business",
         "researchers": [
             "John Doe",
@@ -11,7 +10,6 @@
         "date": "2022-01-15"
     },
     {
-        "id": "2",
         "title": "Efficient Energy Usage in Manufacturing Processes",
         "researchers": [
             "David Lee",
@@ -23,7 +21,6 @@
         "date": "2021-11-03"
     },
     {
-        "id": "3",
         "title": "Smart Grid Technologies for Improving Electrical Grid Resilience",
         "researchers": [
             "Karen Wong",
@@ -34,7 +31,6 @@
         "date": "2022-02-05"
     },
     {
-        "id": "4",
         "title": "Sustainable Building Practices for Reducing Carbon Footprint",
         "researchers": [
             "Anna Kim",
@@ -45,7 +41,6 @@
         "date": "2022-03-20"
     },
     {
-        "id": "5",
         "title": "The Use of Drones in Civil Engineering Projects",
         "researchers": [
             "Carlos Perez",
@@ -57,7 +52,6 @@
         "date": "2021-12-10"
     },
     {
-        "id": "6",
         "title": "The Impact of Artificial Intelligence on Society",
         "researchers": [
             "John Smith",
@@ -68,7 +62,6 @@
         "date": "2022-01-15"
     },
     {
-        "id": "7",
         "title": "Improving Wind Turbine Efficiency with Machine Learning",
         "researchers": [
             "David Kim",
@@ -80,7 +73,6 @@
         "date": "2022-02-01"
     },
     {
-        "id": "8",
         "title": "Designing Smart Homes for Elderly People",
         "researchers": [
             "Emily Davis",
@@ -91,7 +83,6 @@
         "date": "2022-03-10"
     },
     {
-        "id": "9",
         "title": "Sustainable Urban Development",
         "researchers": [
             "Alex Nguyen",
@@ -103,7 +94,6 @@
         "date": "2022-04-20"
     },
     {
-        "id": "10",
         "title": "Predicting Traffic Congestion with Data Analytics",
         "researchers": [
             "Jessica Kim",
@@ -115,7 +105,6 @@
         "date": "2022-05-05"
     },
     {
-        "id": "11",
         "title": "Smart Grid Technology for Energy Management",
         "researchers": [
             "Thomas Johnson",
@@ -127,7 +116,6 @@
         "date": "2022-11-15"
     },
     {
-        "id": "12",
         "title": "Designing Efficient Solar Cells",
         "researchers": [
             "David Lee",
@@ -138,7 +126,6 @@
         "date": "2022-12-01"
     },
     {
-        "id": "13",
         "title": "The Impact of Climate Change on Water Resources",
         "researchers": [
             "Sarah Johnson",
@@ -150,7 +137,6 @@
         "date": "2023-01-10"
     },
     {
-        "id": "14",
         "title": "Machine Learning for Stock Price Prediction",
         "researchers": [
             "Ethan Lee",
@@ -162,7 +148,6 @@
         "date": "2023-02-20"
     },
     {
-        "id": "15",
         "title": "Sustainable Transportation Systems",
         "researchers": [
             "Emily Kim",

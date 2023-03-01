@@ -1,12 +1,19 @@
-import { Checkbox, Dropdown, Form, Input, Space } from "antd";
-import React, { useEffect, useReducer, useRef } from "react";
+import { Checkbox, Dropdown, Form, Input, InputRef, Space } from "antd";
+import React, { useEffect, useReducer, useRef, useState } from "react";
 import { BsSearch } from "react-icons/bs";
 import { PriButton } from "./button";
 import { DownOutlined } from "@ant-design/icons";
 import { CheckboxChangeEvent } from "antd/es/checkbox";
 import { CheckboxValueType } from "antd/es/checkbox/Group";
-import { SearchAction, SearchState, searchState_init } from "./types.d";
+import {
+  SearchAction,
+  SearchProps,
+  SearchState,
+  searchState_init,
+} from "./types.d";
 import Link from "next/link";
+import { Course } from "@/context/types.d";
+import useGlobalContext from "@/context/globalContext";
 
 const courseOption = [
   "Computer Engineer",
@@ -14,8 +21,6 @@ const courseOption = [
   "Electrical Engineer",
   "Civil Engineer",
 ];
-
-const dateOption = ["2020", "2021", "2022"];
 
 const searchReducer: (
   state: SearchState,
@@ -39,22 +44,27 @@ const searchReducer: (
         action.payload.option;
       return newState;
     }
+    case "onchange": {
+      const newState = { ...state };
+      newState["searchTitle"] = action.payload;
+      return newState;
+    }
   }
 };
 
-const Search = ({ className }: { className?: string }) => {
-  const inputRef = useRef<any>(null);
+const Search = ({ className }: SearchProps) => {
+  const searchRef: React.Ref<InputRef> | undefined = useRef(null);
   const [searchState, searchDispatch] = useReducer(
     searchReducer,
     searchState_init
   );
+  const globalCtx = useGlobalContext();
   useEffect(() => {
     searchDispatch({
       type: "populate-option",
-      payload: { course: courseOption, date: dateOption },
+      payload: { course: courseOption, date: globalCtx.state.dateOption },
     });
-    return () => {};
-  }, []);
+  }, [globalCtx.state.thesisItems]);
 
   const handleOpenCourse = (flag: boolean) => {
     searchDispatch({
@@ -72,7 +82,17 @@ const Search = ({ className }: { className?: string }) => {
 
   const handleSearch = () => {
     searchDispatch({ type: "focus", payload: false });
-    inputRef.current?.blur();
+    searchRef.current?.blur();
+    const searchTitle = searchState.searchTitle;
+    const filterCourse: Course[] = searchState.checkBox.course.option as any;
+    const filterDate = searchState.checkBox.date.option;
+    globalCtx.dispatch({
+      type: "search-data",
+      payload: {
+        text: searchTitle,
+        filter: { course: filterCourse, date: filterDate },
+      },
+    });
   };
 
   const handleCheckBxCourse = (valueType: CheckboxValueType[]) => {
@@ -85,8 +105,10 @@ const Search = ({ className }: { className?: string }) => {
   };
 
   const handleCheckBxDate = (valueType: CheckboxValueType[]) => {
-    const isCheckAll = valueType.length === dateOption.length;
+    const isCheckAll = valueType.length === globalCtx.state.dateOption.length;
     const item = valueType as string[];
+    console.log(valueType);
+
     searchDispatch({
       type: "oncheck-all",
       payload: { type: "date", option: item, all: isCheckAll },
@@ -112,9 +134,13 @@ const Search = ({ className }: { className?: string }) => {
       payload: {
         type: "date",
         all: isChecked,
-        option: isChecked ? dateOption : [],
+        option: isChecked ? globalCtx.state.dateOption : [],
       },
     });
+  };
+
+  const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+    searchDispatch({ type: "onchange", payload: e.target.value });
   };
 
   const dropdownContentCourse = () => (
@@ -142,7 +168,7 @@ const Search = ({ className }: { className?: string }) => {
         All
       </Checkbox>
       <Checkbox.Group
-        options={dateOption}
+        options={globalCtx.state.dateOption}
         value={searchState.checkBox.date.option}
         onChange={handleCheckBxDate}
       />
@@ -162,7 +188,8 @@ const Search = ({ className }: { className?: string }) => {
     >
       <Form className="flex gap-2">
         <Input
-          ref={inputRef}
+          onChange={handleChange}
+          ref={searchRef}
           prefix={<BsSearch color="#38649C" />}
           placeholder="Search"
         />

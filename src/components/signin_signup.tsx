@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Modal, Form, Input, Divider, Select, message} from "antd";
+import { Modal, Form, Input, Divider, Select, message } from "antd";
 import { PriButton } from "./button";
 import { Course } from "@/context/types.d";
 

@@ -1,5 +1,11 @@
+import { UserDetails } from "@/context/types.d";
 import { initializeApp } from "firebase/app";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  getAuth,
+  signInWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBZlCW7q74uaLWyQs6Nzf8CGduhQpZNcs8",
@@ -16,6 +22,16 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 export const signIn = async (email: string, password: string) => {
-  const res = await signInWithEmailAndPassword(auth, email, password);
-  return res.user;
+  await signInWithEmailAndPassword(auth, email, password);
+};
+
+export const signUp = async (details: UserDetails) => {
+  const res = await createUserWithEmailAndPassword(
+    auth,
+    details.email,
+    details.password
+  );
+  updateProfile(res.user, {
+    displayName: details.userName,
+  });
 };

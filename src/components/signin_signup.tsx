@@ -1,20 +1,23 @@
 import { useState } from "react";
 import { Modal, Form, Input, Divider, Select, message } from "antd";
 import { PriButton } from "./button";
-import { Course } from "@/context/types.d";
-import { signIn } from "@/lib/firebase";
+import { Course, UserDetails } from "@/context/types.d";
+import { signUp } from "@/lib/firebase";
+import useUserContext from "@/context/userContext";
+// import { signIn, signUp } from "@/lib/firebase";
 
 const SignInSignUp = () => {
   const [open, setOpen] = useState(false);
   const [formSignIn] = Form.useForm();
   const [formSignUp] = Form.useForm();
+  const { state: userState, dispatch: userDispatch } = useUserContext();
 
   const handleSignIn = async () => {
     try {
       await formSignIn.validateFields();
       const email = formSignIn.getFieldValue("email");
       const password = formSignIn.getFieldValue("password");
-      const user = await signIn(email, password);
+      // await signIn(email, password);
       setOpen(false);
       formSignIn.resetFields();
     } catch (error) {
@@ -22,6 +25,7 @@ const SignInSignUp = () => {
       if (errorMessage) {
         message.error("User Not Found");
       }
+      console.error(error);
     }
   };
 
@@ -29,6 +33,17 @@ const SignInSignUp = () => {
     try {
       await formSignUp.validateFields();
       // TODO: handle sign in/signup logic
+      const payload = formSignUp.getFieldsValue();
+      console.log();
+      const userDetails: UserDetails = {
+        email: payload["sign-up-email"],
+        password: payload["sign-up-password"],
+        userName: payload["username"],
+        course: payload["course"],
+        firstName: payload["firstname"],
+        lastName: payload["lastname"],
+      };
+
       setOpen(false); // close the modal after successful sign in/signup
       formSignUp.resetFields();
       message.success({
@@ -37,6 +52,10 @@ const SignInSignUp = () => {
           "Registered Successfully! Please wait for the admins approval.",
       });
     } catch (error) {
+      const errmessage = (error as any).message;
+      if (errmessage) {
+        message.error(errmessage);
+      }
       console.error(error);
     }
   };
@@ -71,13 +90,13 @@ const SignInSignUp = () => {
         <h3 className="text-center my-5 text-[#38649C]">Sign In</h3>
         <Form form={formSignIn} layout="vertical">
           <Form.Item
-            name="email"
+            name="sign-in-email"
             rules={[{ required: true, message: "Please enter your email" }]}
           >
             <Input placeholder="Email" type="email" />
           </Form.Item>
           <Form.Item
-            name="password"
+            name="sign-in-password"
             rules={[{ required: true, message: "Please enter your password" }]}
           >
             <Input.Password placeholder="Password" />
@@ -90,15 +109,27 @@ const SignInSignUp = () => {
         <Form form={formSignUp}>
           <h3 className="text-center my-5 text-[#38649C]">Sign Up</h3>
           <Form.Item
-            name="firstName"
+            name="firstname"
             rules={[
               { required: true, message: "Please enter your first name" },
             ]}
           >
+            <Input placeholder="First Name" />
+          </Form.Item>
+          <Form.Item
+            name="lastname"
+            rules={[{ required: true, message: "Please enter your last name" }]}
+          >
+            <Input placeholder="Last name" />
+          </Form.Item>
+          <Form.Item
+            name="username"
+            rules={[{ required: true, message: "Please enter your Username" }]}
+          >
             <Input placeholder="Username" />
           </Form.Item>
           <Form.Item
-            name="signupEmail"
+            name="sign-up-email"
             rules={[{ required: true, message: "Please enter your email" }]}
           >
             <Input type="email" placeholder="Email" />
@@ -114,19 +145,19 @@ const SignInSignUp = () => {
             />
           </Form.Item>
           <Form.Item
-            name="signupPassword"
+            name="sign-up-password"
             rules={[{ required: true, message: "Please enter your password" }]}
           >
             <Input.Password placeholder="Password" />
           </Form.Item>
           <Form.Item
-            name="confirmPassword"
-            dependencies={["signupPassword"]}
+            name="confirm-password"
+            dependencies={["sign-up-password"]}
             rules={[
               { required: true, message: "Please confirm your password" },
               ({ getFieldValue }) => ({
                 validator(_, value) {
-                  if (!value || getFieldValue("signupPassword") === value) {
+                  if (!value || getFieldValue("sign-up-password") === value) {
                     return Promise.resolve();
                   }
                   return Promise.reject(

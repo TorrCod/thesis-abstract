@@ -44,14 +44,15 @@ export type UserState = {
   userDetails: UserDetails | null;
 };
 
-type UserDetails = {
-  name: string;
+export type UserDetails = {
+  firstName: string;
   lastName: string;
   course: Course;
   email: string;
   userName: string;
   password: string;
-  profilePic: string;
+  profilePic?: string;
+  approove?: string;
 };
 
 export type UserValue = {
@@ -59,4 +60,6 @@ export type UserValue = {
   dispatch: Dispatch<UserAction>;
 };
 
-export type UserAction = { type: "load-user"; payload: UserDetails };
+export type UserAction =
+  | { type: "on-signin"; payload: UserDetails }
+  | { type: "on-signup"; payload: UserDetails };

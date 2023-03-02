@@ -1,4 +1,4 @@
-import { signUp } from "@/lib/firebase";
+import { signIn, signUp } from "@/lib/firebase";
 import { addUserAccount } from "@/utils/account";
 import { createContext, useContext, useEffect, useReducer } from "react";
 import { UserAction, UserDetails, UserState, UserValue } from "./types.d";
@@ -35,6 +35,7 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
   const userSignUp = async (userDetails: UserDetails) => {
     const uid = await signUp(userDetails);
     addUserAccount({ ...userDetails, _id: uid });
+    signIn(userDetails.email, userDetails.password);
   };
 
   return (

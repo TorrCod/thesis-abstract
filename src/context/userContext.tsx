@@ -1,5 +1,5 @@
 import { signUp } from "@/lib/firebase";
-import { addUserAccount } from "@/utils/addAccount";
+import { addUserAccount } from "@/utils/account";
 import { createContext, useContext, useEffect, useReducer } from "react";
 import { UserAction, UserDetails, UserState, UserValue } from "./types.d";
 

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Modal, Form, Input, Divider, Select, message } from "antd";
 import { PriButton } from "./button";
 import { Course } from "@/context/types.d";
+import { signIn } from "@/lib/firebase";
 
 const SignInSignUp = () => {
   const [open, setOpen] = useState(false);
@@ -11,11 +12,16 @@ const SignInSignUp = () => {
   const handleSignIn = async () => {
     try {
       await formSignIn.validateFields();
-      // TODO: handle sign in/signup logic
-      setOpen(false); // close the modal after successful sign in/signup
-      formSignUp.resetFields();
+      const email = formSignIn.getFieldValue("email");
+      const password = formSignIn.getFieldValue("password");
+      const user = await signIn(email, password);
+      setOpen(false);
+      formSignIn.resetFields();
     } catch (error) {
-      console.error(error);
+      const errorMessage: string = (error as any).message;
+      if (errorMessage) {
+        message.error("User Not Found");
+      }
     }
   };
 
@@ -26,13 +32,13 @@ const SignInSignUp = () => {
       setOpen(false); // close the modal after successful sign in/signup
       formSignUp.resetFields();
       message.success({
-        type: 'success',
-        content: 'Registered Successfully! Please wait for the admins approval.',
+        type: "success",
+        content:
+          "Registered Successfully! Please wait for the admins approval.",
       });
     } catch (error) {
       console.error(error);
     }
-    
   };
 
   const handleCancel = () => {
@@ -49,7 +55,6 @@ const SignInSignUp = () => {
     { value: "Electrical Engineer", label: "Electrical Engineer" },
     { value: "Mechanical Engineer", label: "Mechanical Engineer" },
   ];
-
 
   return (
     <>

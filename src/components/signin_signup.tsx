@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Modal, Form, Input, Divider, Select, message } from "antd";
 import { PriButton } from "./button";
 import { Course, UserDetails } from "@/context/types.d";
-import { signUp } from "@/lib/firebase";
+import { signIn } from "@/lib/firebase";
 import useUserContext from "@/context/userContext";
 // import { signIn, signUp } from "@/lib/firebase";
 
@@ -15,9 +15,11 @@ const SignInSignUp = () => {
   const handleSignIn = async () => {
     try {
       await formSignIn.validateFields();
-      const email = formSignIn.getFieldValue("email");
-      const password = formSignIn.getFieldValue("password");
-      // await signIn(email, password);
+      const email = formSignIn.getFieldValue("sign-in-email");
+      const password = formSignIn.getFieldValue("sign-in-password");
+      console.log(email, password);
+
+      await signIn(email, password);
       setOpen(false);
       formSignIn.resetFields();
     } catch (error) {

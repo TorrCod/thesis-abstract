@@ -1,14 +1,10 @@
-import { connectToDatabase } from "@/lib/mongo";
+import { addData } from "@/lib/mongo";
 import { NextApiRequest, NextApiResponse } from "next";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
-    const client = await connectToDatabase();
-    const db = client.db("accounts");
-    const requestItems = req.body;
-
-    const items = await db.collection("user").insertOne(requestItems);
-
+    const userData = req.body;
+    const items = await addData("accounts", "user", userData);
     return res.json(items);
   } catch (e) {
     console.error(e);

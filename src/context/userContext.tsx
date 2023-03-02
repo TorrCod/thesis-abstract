@@ -1,5 +1,6 @@
-import { signIn, signUp } from "@/lib/firebase";
-import { addUserAccount } from "@/utils/account";
+import { auth, signUp } from "@/lib/firebase";
+import { addUserAccount, getUserDetails } from "@/utils/account";
+import { onAuthStateChanged } from "firebase/auth";
 import { createContext, useContext, useEffect, useReducer } from "react";
 import { UserAction, UserDetails, UserState, UserValue } from "./types.d";
 
@@ -29,13 +30,20 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(userReducer, userStateInit);
 
   useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const id = user.uid;
+        getUserDetails(id).then((res) => {
+          dispatch({ type: "on-signin", payload: res });
+        });
+      }
+    });
     return () => {};
   }, []);
 
   const userSignUp = async (userDetails: UserDetails) => {
     const uid = await signUp(userDetails);
-    addUserAccount({ ...userDetails, _id: uid });
-    signIn(userDetails.email, userDetails.password);
+    addUserAccount({ ...userDetails, uid: uid });
   };
 
   return (

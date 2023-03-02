@@ -53,6 +53,7 @@ export type UserDetails = {
   password: string;
   profilePic?: string;
   approove?: string;
+  uid?: string;
 };
 
 export type UserValue = {

@@ -39,3 +39,24 @@ export type GlobalValue = {
   state: GlobalState;
   dispatch: Dispatch<GlobalAction>;
 };
+
+export type UserState = {
+  userDetails: UserDetails | null;
+};
+
+type UserDetails = {
+  name: string;
+  lastName: string;
+  course: Course;
+  email: string;
+  userName: string;
+  password: string;
+  profilePic: string;
+};
+
+export type UserValue = {
+  state: UserState;
+  dispatch: Dispatch<UserAction>;
+};
+
+export type UserAction = { type: "load-user"; payload: UserDetails };

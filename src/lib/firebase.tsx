@@ -34,4 +34,5 @@ export const signUp = async (details: UserDetails) => {
   updateProfile(res.user, {
     displayName: details.userName,
   });
+  return res.user.uid;
 };

@@ -58,6 +58,7 @@ export type UserDetails = {
 export type UserValue = {
   state: UserState;
   dispatch: Dispatch<UserAction>;
+  userSignUp?: (userDetails: UserDetails) => Promise<void>;
 };
 
 export type UserAction =

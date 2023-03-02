@@ -10,7 +10,7 @@ const SignInSignUp = () => {
   const [open, setOpen] = useState(false);
   const [formSignIn] = Form.useForm();
   const [formSignUp] = Form.useForm();
-  const { state: userState, dispatch: userDispatch } = useUserContext();
+  const userCtx = useUserContext();
 
   const handleSignIn = async () => {
     try {
@@ -34,7 +34,6 @@ const SignInSignUp = () => {
       await formSignUp.validateFields();
       // TODO: handle sign in/signup logic
       const payload = formSignUp.getFieldsValue();
-      console.log();
       const userDetails: UserDetails = {
         email: payload["sign-up-email"],
         password: payload["sign-up-password"],
@@ -43,7 +42,7 @@ const SignInSignUp = () => {
         firstName: payload["firstname"],
         lastName: payload["lastname"],
       };
-
+      userCtx.userSignUp?.(userDetails);
       setOpen(false); // close the modal after successful sign in/signup
       formSignUp.resetFields();
       message.success({

@@ -1,5 +1,5 @@
 import { MongoClient } from "mongodb";
-import { CollectionName, DatabaseName } from "./types";
+import { CollectionName, DatabaseName, PostAccount } from "./types";
 
 const DB_CONNECTION =
   "mongodb+srv://torrcod:cSnQY7wi4ztWG7rJ@cluster0.yfqhgfs.mongodb.net/?retryWrites=true&w=majority";

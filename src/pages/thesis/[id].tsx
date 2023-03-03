@@ -1,18 +1,16 @@
-import Background from "@/components/background";
 import { PriButton } from "@/components/button";
-import Layout from "@/components/layout";
 import Search from "@/components/search";
-import useGlobalContext from "@/context/globalContext";
 import { ThesisItems } from "@/context/types.d";
 import { Divider } from "antd";
 import { GetStaticPaths, GetStaticProps } from "next";
 import { useRouter } from "next/router";
-import thesisData from "@/data/data.json";
+import { generateId, getData } from "@/lib/mongo";
 
 export const getStaticProps: GetStaticProps = async (context) => {
-  const thesisItems: ThesisItems[] = thesisData as unknown as ThesisItems[];
+  const res = await getData("thesis-abstract", "thesis-items");
+  const thesisItems: ThesisItems[] = generateId(res);
   const itemId = context.params?.id;
-  const foundItem = thesisItems.find((item) => itemId === item.id);
+  const foundItem = thesisItems.find((item) => itemId === item["id"]);
   if (!foundItem) {
     return {
       props: { hasError: true },
@@ -24,7 +22,8 @@ export const getStaticProps: GetStaticProps = async (context) => {
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const thesisItems: ThesisItems[] = thesisData as unknown as ThesisItems[];
+  const res = await getData("thesis-abstract", "thesis-items");
+  const thesisItems: ThesisItems[] = generateId(res);
   const pathWithParams = thesisItems.map((item) => ({
     params: { id: item.id },
   }));

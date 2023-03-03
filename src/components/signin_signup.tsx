@@ -4,6 +4,7 @@ import { PriButton } from "./button";
 import { Course, UserDetails } from "@/context/types.d";
 import { signIn } from "@/lib/firebase";
 import useUserContext from "@/context/userContext";
+import Link from "next/link";
 // import { signIn, signUp } from "@/lib/firebase";
 
 const SignInSignUp = () => {
@@ -76,13 +77,14 @@ const SignInSignUp = () => {
     { value: "Electrical Engineer", label: "Electrical Engineer" },
     { value: "Mechanical Engineer", label: "Mechanical Engineer" },
   ];
-
-
+    
   return (
     <>
-      <PriButton type="primary" onClick={showModal}>
+      {userCtx.state.userDetails?<PriButton type="primary" onClick={showModal}>
+        <Link href="admin-dashboard">Open Dashboard</Link>
+      </PriButton>:<PriButton type="primary" onClick={showModal}>
         Sign In/Sign Up
-      </PriButton>
+      </PriButton>}
       <Modal
         centered
         bodyStyle={{ padding: "2em" }}

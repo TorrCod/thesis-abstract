@@ -48,9 +48,9 @@ const SignInSignUp = () => {
       setOpen(false); // close the modal after successful sign in/signup
       formSignUp.resetFields();
       message.success({
-        type: "success",
-        content:
-          "Registered Successfully! Please wait for the admins approval.",
+      type: "success",
+      content:
+        "Registered Successfully! Please wait for the admins approval.",
       });
     } catch (error) {
       const errmessage = (error as any).message;
@@ -59,6 +59,7 @@ const SignInSignUp = () => {
       }
       console.error(error);
     }
+    
   };
 
   const handleCancel = () => {
@@ -75,6 +76,7 @@ const SignInSignUp = () => {
     { value: "Electrical Engineer", label: "Electrical Engineer" },
     { value: "Mechanical Engineer", label: "Mechanical Engineer" },
   ];
+
 
   return (
     <>

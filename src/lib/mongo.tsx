@@ -43,3 +43,10 @@ export const addData = async (
     throw new Error(e as string).message;
   }
 };
+
+export const generateId = (items: any[]) =>
+  items.map((child) => ({
+    ...child,
+    _id: child._id.toString(),
+    id: child._id.toString(),
+  }));

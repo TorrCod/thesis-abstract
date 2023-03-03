@@ -1,5 +1,5 @@
 import { ThesisItems } from "@/context/types.d";
-import { getData } from "@/lib/mongo";
+import { generateId, getData } from "@/lib/mongo";
 import { NextApiRequest, NextApiResponse } from "next";
 
 const handler = async (
@@ -8,11 +8,7 @@ const handler = async (
 ) => {
   try {
     const items = (await getData("thesis-abstract", "thesis-items")) as any[];
-    const itemsList: ThesisItems[] = items.map((child) => ({
-      ...child,
-      _id: child._id.toString(),
-      id: child._id.toString(),
-    }));
+    const itemsList: ThesisItems[] = generateId(items);
     return res.json(itemsList);
   } catch (e) {
     console.error(e);

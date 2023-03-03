@@ -7,17 +7,26 @@ const styles = {
   title: {
     fontSize: "48px",
     fontWeight: "bold",
-    color: "#333",
+    color: "#53326",
     marginBottom: "16px",
     marginTop: "50px",
   },
 
   paragraph: {
-    fontSize: "24px",
-    color: "#666",
+    fontSize: "14px",
+    color: 'black',
     marginBottom: "32px",
     maxWidth: "600px",
   },
+
+  contactbutton: {
+    alignitems: 'flex',
+    margin: '20px',
+    background: 'aqua',
+    marginRight: '40px',
+    display: "flex",
+    marginLeft: 'auto',
+  }
 };
 
 interface FormValues {
@@ -47,7 +56,7 @@ const ContactUs = () => {
 
   return (
     <>
-      <Button type="primary" onClick={showModal}>
+      <Button type="primary" onClick={showModal} style={styles.contactbutton}>
         Contact Us
       </Button>
       <Modal
@@ -101,12 +110,34 @@ const AboutUs = () => {
       </header>
       <Row gutter={[16, 16]} justify="center">
         <Paragraph style={styles.paragraph}>
-          Welcome to our Thesis Abstract Management System for the College of
+          <p>Welcome to our Thesis Abstract Management System for the College of
           Engineering in Morong Rizal! We are a team of undergraduate computer
           engineering students from the University of Rizal System in Morong
           Rizal, Philippines. Our goal is to provide a user-friendly and
           efficient system for managing thesis abstract submissions for the
-          College of Engineering.
+          College of Engineering.</p>
+          <p>Our mission is to streamline the thesis submission process for students and faculty. 
+            We understand that submitting a thesis can be a daunting and time-consuming task, 
+            which is why we developed our Thesis Abstract Management System to simplify the process and reduce errors.</p>
+          <p>The development of our Thesis Abstract Management System began as a response 
+            to the challenges faced by students and faculty in managing thesis abstract submissions. 
+            We are proud to have achieved several milestones along the way, including the 
+            successful completion of the system's prototype and beta testing.</p>
+          <p>Our team is composed of dedicated computer engineering students with 
+            expertise in software development and programming. We are passionate 
+            about creating innovative solutions to complex problems.</p>
+          <p>Our system's key features include a user-friendly interface, 
+            an easy-to-use submission process, and a real-time tracking system. 
+            These features allow students and faculty to submit and manage their 
+            thesis abstracts with ease and transparency.</p>
+          <p>By using our system, students and faculty will benefit from improved efficiency, 
+            reduced errors, and increased transparency. In addition, our Thesis Abstract Management System 
+            also provides a platform for real-time feedback and support.</p>
+          <p>Don't just take our word for it, here's what some of our users have to say: [insert testimonials from users]</p>
+          <p>If you have any questions or need technical support, please don't hesitate to contact our team. 
+            You can find our contact information on our website.</p>
+          <p>We invite you to try our Thesis Abstract Management System for the College of Engineering 
+            in Morong Rizal. Sign up today and experience a streamlined and efficient thesis submission process.</p>
         </Paragraph>
       </Row>
       <ContactUs />

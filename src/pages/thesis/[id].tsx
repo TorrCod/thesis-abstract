@@ -4,14 +4,11 @@ import { ThesisItems } from "@/context/types.d";
 import { Divider } from "antd";
 import { GetStaticPaths, GetStaticProps } from "next";
 import { useRouter } from "next/router";
-import { getData } from "@/lib/mongo";
+import { generateId, getData } from "@/lib/mongo";
 
 export const getStaticProps: GetStaticProps = async (context) => {
-  const thesisItems: ThesisItems[] = (await getData(
-    "thesis-abstract",
-    "thesis-items"
-  )) as any;
-
+  const res = await getData("thesis-abstract", "thesis-items");
+  const thesisItems: ThesisItems[] = generateId(res);
   const itemId = context.params?.id;
   const foundItem = thesisItems.find((item) => itemId === item["id"]);
   if (!foundItem) {
@@ -25,11 +22,8 @@ export const getStaticProps: GetStaticProps = async (context) => {
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const thesisItems: ThesisItems[] = (await getData(
-    "thesis-abstract",
-    "thesis-items"
-  )) as any;
-
+  const res = await getData("thesis-abstract", "thesis-items");
+  const thesisItems: ThesisItems[] = generateId(res);
   const pathWithParams = thesisItems.map((item) => ({
     params: { id: item.id },
   }));

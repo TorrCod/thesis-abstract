@@ -49,5 +49,5 @@ export const searchState_init: SearchState = {
 };
 
 export type SearchProps = {
-  className: string;
+  className?: string;
 };

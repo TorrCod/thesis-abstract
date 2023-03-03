@@ -39,3 +39,29 @@ export type GlobalValue = {
   state: GlobalState;
   dispatch: Dispatch<GlobalAction>;
 };
+
+export type UserState = {
+  userDetails: UserDetails | null;
+};
+
+export type UserDetails = {
+  firstName: string;
+  lastName: string;
+  course: Course;
+  email: string;
+  userName: string;
+  password: string;
+  profilePic?: string;
+  approove?: string;
+  uid?: string;
+};
+
+export type UserValue = {
+  state: UserState;
+  dispatch: Dispatch<UserAction>;
+  userSignUp?: (userDetails: UserDetails) => Promise<void>;
+};
+
+export type UserAction =
+  | { type: "on-signin"; payload: UserDetails }
+  | { type: "on-signup"; payload: UserDetails };

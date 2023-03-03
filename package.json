@@ -15,6 +15,7 @@
     "antd": "^5.2.2",
     "eslint": "8.34.0",
     "eslint-config-next": "13.1.6",
+    "firebase": "^9.17.1",
     "install": "^0.13.0",
     "mongodb": "^5.1.0",
     "next": "13.1.6",

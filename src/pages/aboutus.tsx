@@ -8,9 +8,9 @@ import { CiLocationOn } from "react-icons/ci";
 const AboutUs = () => {
   return (
     <>
-      <section>
-        <div className="text-white">
-          <div className="relative h-[15em] w-3/4 m-auto ">
+      <section className="md:pt-40 md:grid md:place-content-center">
+        <div className="text-white md:grid md:grid-cols-2 place-items-center md:h-[30em]">
+          <div className="relative h-[20em] w-[40em] md:w-[35em] md:h-full m-auto md:order-2">
             <Image
               style={{ objectFit: "cover" }}
               src={"/book.svg"}
@@ -18,15 +18,19 @@ const AboutUs = () => {
               fill
             />
           </div>
-          <h1 className="text-center my-4" style={{ fontSize: "1.4rem" }}>
-            THESIS ABSTRACT MANAGEMENT SYSTEM FOR COLLEGE OF ENGINEERING
-          </h1>
-          <p className="opacity-80 text-center">
-            Welcome to our Thesis Abstract Management System for the College of
-            Engineering in Morong Rizal! We are a team of undergraduate computer
-            engineering students from the University of Rizal System in Morong
-            Rizal, Philippines.
-          </p>
+          <div className="md:order-1">
+            <div className="md:max-w-[43em]">
+              <h1 className="text-center md:text-left my-4 text-[1.4rem] md:text-[2rem] md:max-w-lg">
+                THESIS ABSTRACT MANAGEMENT SYSTEM FOR COLLEGE OF ENGINEERING
+              </h1>
+              <p className="opacity-80 text-center md:text-left">
+                Welcome to our Thesis Abstract Management System for the College
+                of Engineering in Morong Rizal! We are a team of undergraduate
+                computer engineering students from the University of Rizal
+                System in Morong Rizal, Philippines.
+              </p>
+            </div>
+          </div>
         </div>
         <div className="pt-32">
           <div className="relative h-[15em] w-3/4 m-auto">

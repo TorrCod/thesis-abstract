@@ -2,8 +2,16 @@ import Head from "next/head";
 import Image from "next/image";
 import { PriButton } from "@/components/button";
 import Search from "@/components/search";
+import { useEffect } from "react";
 
 export default function Home() {
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "visible";
+    };
+  }, []);
+
   return (
     <>
       <Head>
@@ -17,12 +25,12 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <section>
-        <header className="relative text-white md:grid md:grid-cols-2 place-items-center md:h-screen">
+        <header className="relative text-white md:grid md:grid-cols-2 place-items-center md:h-screen md:max-h-[70em]">
           <div className="flex flex-col gap-2 max-w-sm">
-            <h1>
+            <h1 className="drop-shadow-lg">
               Thesis Abstract Management System for College of Engineering
             </h1>
-            <div className="text-white/80">
+            <div className="text-white/80 drop-shadow-lg">
               Find related Ideas for your projects
               <Search />
             </div>

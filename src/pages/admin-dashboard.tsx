@@ -1,54 +1,65 @@
-import React from 'react';
-import { Layout, Menu } from 'antd';
-const { Header, Content } = Layout;
-const { SubMenu } = Menu;
-
-interface DashboardProps {
-  children: React.ReactNode;
-  selectedMenu: string;
-  onMenuSelect: (key: string) => void;
-}
-
-function Dashboard({ children, selectedMenu, onMenuSelect }: DashboardProps) {
-  return (
-    <Layout style={{ background: 'transparent' }}>
-      <Header className="header">
-        <div className="logo" />
-        <Menu theme="dark" mode="horizontal" selectedKeys={[selectedMenu]} onSelect={(info) => onMenuSelect(info.key as string)} defaultSelectedKeys={['dashboard']}>
-          <Menu.Item key="dashboard" title="Dashboard">
-            Dashboard
-          </Menu.Item>
-          <Menu.Item key="settings" title="Settings">
-            Settings
-          </Menu.Item>
-        </Menu>
-      </Header>
-      <Layout>
-        <Layout style={{ padding: '0 24px 24px', background: 'transparent' }}>
-          <Content
-            style={{
-              padding: 24,
-              margin: 0,
-              minHeight: 900,
-            }}
-          >
-            {selectedMenu === 'dashboard' && (
-              <>
-                <div>Dashboard content</div>
-                {children}
-              </>
-            )}
-            {selectedMenu === 'settings' && (
-              <>
-                <div>Settings content</div>
-                {children}
-              </>
-            )}
-          </Content>
+import {
+    MenuFoldOutlined,
+    MenuUnfoldOutlined,
+    BellOutlined,
+    UserOutlined,
+    SettingOutlined,
+  } from '@ant-design/icons';
+  import { Layout, Menu } from 'antd';
+  import React, { useState } from 'react';
+  const { Header, Sider, Content } = Layout;
+  
+  export default function Home() {
+    const [collapsed, setCollapsed] = useState(false);
+    return (
+        <Layout className="layout" style={{ paddingTop: '70px'}}>
+          <Sider trigger={null} collapsible collapsed={collapsed}>
+            <div className="logo" />
+            <Menu
+                theme="dark"
+                mode="inline"
+                defaultSelectedKeys={['1']}
+                items={[
+                  {
+                    key: '/dashboard',
+                    icon: <UserOutlined />,
+                    label: 'Dashboard',
+                  },
+                  {
+                    key: '/settings',
+                    icon: <SettingOutlined />,
+                    label: 'Settings',
+                  },
+                  {
+                    key: '/notification',
+                    icon: <BellOutlined />,
+                    label: 'Notifications',
+                  },
+                ]}
+            />
+          </Sider>
+          <Layout className="site-layout">
+            <Header
+                className="site-layout-background"
+                style={{
+                  padding: 0,
+                }}
+            >
+              {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
+                className: 'trigger',
+                onClick: () => setCollapsed(!collapsed),
+              })}
+            </Header>
+            <Content
+                className="site-layout-background"
+                style={{
+                  margin: '24px 16px',
+                  padding: 24,
+                }}
+            >
+              Content
+            </Content>
+          </Layout>
         </Layout>
-      </Layout>
-    </Layout>
-  );
-}
-
-export default Dashboard;
+    )
+  }

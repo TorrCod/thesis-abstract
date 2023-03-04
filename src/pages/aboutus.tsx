@@ -31,7 +31,7 @@ const AboutUs = () => {
             </div>
           </div>
         </div>
-        <div className="pt-32 md:grid md:grid-cols-2 md:place-items-center">
+        <div className="pt-32 md:pt-32 md:grid md:grid-cols-2 md:place-items-center">
           <div className="relative h-80 w-full m-auto max-w-sm lg:h-[32em] lg:max-w-lg">
             <Image
               style={{ objectFit: "cover" }}
@@ -53,7 +53,7 @@ const AboutUs = () => {
             </p>
           </div>
         </div>
-        <div className="pt-32 md:grid md:grid-cols-2 md:place-items-center lg:h-[35em]">
+        <div className="pt-32 md:pt-0 md:grid md:grid-cols-2 md:place-items-center lg:h-[35em]">
           <div className="relative h-72 w-full m-auto max-w-sm lg:max-w-lg order-2 lg:h-96">
             <Image
               style={{ objectFit: "cover" }}

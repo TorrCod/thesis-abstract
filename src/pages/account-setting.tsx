@@ -72,7 +72,7 @@ const AccountSetting = () => {
     } catch (e) {
       const errMsg = (e as any).message;
       if (errMsg) {
-        message.error(errMsg);
+        message.error("email / password incorrect");
       } else {
         message.error("Something Went Wrong! Please try in another time");
       }
@@ -156,7 +156,7 @@ const AccountSetting = () => {
             </PriButton>
           </Form>
         </div>
-        <div className="md:grid md:grid-cols-2 gap-2">
+        <div className="grid md:grid-cols-2 gap-2">
           <div className="bg-slate-100 p-5 rounded-md shadow-md">
             <p>Change Password</p>
             <Divider />
@@ -209,11 +209,11 @@ const AccountSetting = () => {
             <p>Profile Picture</p>
             <Divider />
             <div className="grid place-items-center relative">
-              <div className="absolute w-[8.57em] rounded-full h-full bg-black/30 z-10 grid place-items-center cursor-pointer">
+              <div className="absolute w-[17.5em] rounded-full h-full bg-black/30 z-10 grid place-items-center cursor-pointer">
                 <BsImage size={"2em"} color="white" />
               </div>
               <AdminProfile
-                size={{ height: "10em", width: "10em" }}
+                size={{ height: "20em", width: "20em" }}
                 userDetails={userDetails!}
               />
             </div>

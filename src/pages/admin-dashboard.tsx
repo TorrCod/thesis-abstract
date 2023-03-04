@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-function Dashboard() {
+export default function Dashboard() {
   // useEffect(() => {
   //   Array.from(
   //     document.getElementsByClassName("navbar") as HTMLCollectionOf<HTMLElement>
@@ -16,5 +16,3 @@ function Dashboard() {
 
   return <div></div>;
 }
-
-export default Dashboard;

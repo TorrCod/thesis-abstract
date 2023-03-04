@@ -3,6 +3,7 @@
   section {
     padding-top: 0;
     padding-inline: 0;
+    overflow-y: hidden;
   }
 
   .bg-circle {

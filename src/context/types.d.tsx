@@ -50,7 +50,6 @@ export type UserDetails = {
   course: Course;
   email: string;
   userName: string;
-  password: string;
   profilePic?: string;
   approove?: string;
   uid?: string;
@@ -62,6 +61,7 @@ export type UserValue = {
   dispatch: Dispatch<UserAction>;
   userSignUp?: (userDetails: UserDetails) => Promise<void>;
   userUpdateInfo?: (userDetails: UserDetails) => Promise<void>;
+  changePass?: (currpass: string, newpass: string) => Promise<void>;
 };
 
 export type UserAction =

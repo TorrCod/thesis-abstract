@@ -7,6 +7,7 @@ import { Divider, Form, Input, message, Select } from "antd";
 import { useForm } from "antd/es/form/Form";
 import React, { useEffect, useState } from "react";
 import { BsImage } from "react-icons/bs";
+import { useDebounce } from "react-use";
 
 const courseOpt: { value: Course; label: Course }[] = [
   { value: "Civil Engineer", label: "Civil Engineer" },
@@ -19,6 +20,7 @@ const AccountSetting = () => {
   const userCtx = useUserContext();
   const userDetails = userCtx.state.userDetails;
   const [form] = useForm();
+  const [passForm] = useForm();
   const [infoSave, setInfoSave] = useState(true);
   const [newData, setNewData] = useState<UserDetails>();
   const [chngPassSave, setChngPassSave] = useState(true);
@@ -50,6 +52,33 @@ const AccountSetting = () => {
     }
   };
 
+  const handlePassChange = async () => {
+    try {
+      await passForm.validateFields();
+      setChngPassSave(false);
+    } catch (e) {
+      setChngPassSave(true);
+    }
+  };
+
+  const handlePassSave = async () => {
+    try {
+      const data = passForm.getFieldsValue();
+      const currPass = data["currPass"];
+      const newPass = data["newPass"];
+      await userCtx.changePass!(currPass, newPass);
+      message.success("Your info is saved");
+      passForm.resetFields();
+    } catch (e) {
+      const errMsg = (e as any).message;
+      if (errMsg) {
+        message.error(errMsg);
+      } else {
+        message.error("Something Went Wrong! Please try in another time");
+      }
+    }
+  };
+
   return (
     <section className="pb-10 w-full md:pt-20">
       <div className="grid gap-2 relative max-w-3xl m-auto">
@@ -62,6 +91,7 @@ const AccountSetting = () => {
             initialValues={{ ...userDetails }}
             form={form}
             layout="vertical"
+            name="info"
           >
             <div className="md:grid md:grid-cols-2 md:place-items-center">
               <div className="relative w-full px-10">
@@ -130,22 +160,50 @@ const AccountSetting = () => {
           <div className="bg-slate-100 p-5 rounded-md shadow-md">
             <p>Change Password</p>
             <Divider />
-            <Form className="px-10" layout="vertical">
+            <Form
+              onValuesChange={handlePassChange}
+              form={passForm}
+              className="px-10"
+              layout="vertical"
+              name="change-password"
+            >
               <Form.Item
-                name="new-password"
+                name="newPass"
                 label={<div className="opacity-80">New Password</div>}
               >
-                <Input />
+                <Input.Password />
               </Form.Item>
               <Form.Item
-                name="current-password"
+                dependencies={["newPass"]}
+                name="confirm-new-password"
+                label={<div className="opacity-80">Confirm New Password</div>}
+                rules={[
+                  { required: true, message: "Please confirm your password" },
+                  ({ getFieldValue }) => ({
+                    validator(_, value) {
+                      if (!value || getFieldValue("newPass") === value) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject(
+                        new Error("The two passwords do not match")
+                      );
+                    },
+                  }),
+                ]}
+              >
+                <Input.Password />
+              </Form.Item>
+              <Form.Item
+                name="currPass"
                 label={<div className="opacity-80">Current Password</div>}
               >
-                <Input />
+                <Input.Password />
               </Form.Item>
             </Form>
             <Divider />
-            <PriButton disabled={chngPassSave}>Save</PriButton>
+            <PriButton onClick={handlePassSave} disabled={chngPassSave}>
+              Save
+            </PriButton>
           </div>
           <div className="bg-slate-100 p-5 rounded-md shadow-md">
             <p>Profile Picture</p>

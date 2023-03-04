@@ -1,5 +1,5 @@
 import { UserDetails } from "@/context/types.d";
-import { addData, updateUser } from "@/lib/mongo";
+import { updateUser } from "@/lib/mongo";
 import { NextApiRequest, NextApiResponse } from "next";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {

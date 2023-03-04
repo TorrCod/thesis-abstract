@@ -1,6 +1,11 @@
 import { auth, signUp } from "@/lib/firebase";
 import { addUserAccount, getUserDetails, updateUser } from "@/utils/account";
-import { onAuthStateChanged } from "firebase/auth";
+import {
+  EmailAuthProvider,
+  onAuthStateChanged,
+  reauthenticateWithCredential,
+  updatePassword,
+} from "firebase/auth";
 import { createContext, useContext, useEffect, useReducer } from "react";
 import { UserAction, UserDetails, UserState, UserValue } from "./types.d";
 
@@ -51,9 +56,18 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
     dispatch({ type: "on-signin", payload: userDetails });
   };
 
+  const changePass = async (currpass: string, newpass: string) => {
+    const cred = EmailAuthProvider.credential(
+      state.userDetails!.email,
+      currpass
+    );
+    await reauthenticateWithCredential(auth.currentUser!, cred);
+    await updatePassword(auth.currentUser!, newpass);
+  };
+
   return (
     <UserContext.Provider
-      value={{ state, dispatch, userSignUp, userUpdateInfo }}
+      value={{ state, dispatch, userSignUp, userUpdateInfo, changePass }}
     >
       {children}
     </UserContext.Provider>

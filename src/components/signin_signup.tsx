@@ -40,7 +40,6 @@ const SignInSignUp = () => {
       const payload = formSignUp.getFieldsValue();
       const userDetails: UserDetails = {
         email: payload["sign-up-email"],
-        password: payload["sign-up-password"],
         userName: payload["username"],
         course: payload["course"],
         firstName: payload["firstname"],

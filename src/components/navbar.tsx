@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { PriButton } from "./button";
 import { NavItemProps } from "./types.d";
 import { AiOutlineHome } from "react-icons/ai";
-import { BiGroup } from "react-icons/bi";
+import { BiGroup, BiLogOut } from "react-icons/bi";
 import { BsBook } from "react-icons/bs";
 import { Button, Divider, Drawer, Dropdown, Menu, MenuProps } from "antd";
 import { FaBars } from "react-icons/fa";
@@ -13,6 +13,7 @@ import Login from "./signin_signup";
 import useUserContext from "@/context/userContext";
 import { RiDashboardLine } from "react-icons/ri";
 import { GrUserSettings } from "react-icons/gr";
+import { auth } from "@/lib/firebase";
 
 const MENU_LIST = [
   { text: "Home", href: "/", icon: <AiOutlineHome /> },
@@ -80,6 +81,14 @@ const userMenu: MenuProps["items"] = [
       </Link>
     ),
     label: <Link href={"/dashboard"}>Dashboard</Link>,
+  },
+  {
+    key: "logout",
+    icon: <BiLogOut />,
+    label: "Logout",
+    onClick: () => {
+      auth.signOut();
+    },
   },
 ];
 

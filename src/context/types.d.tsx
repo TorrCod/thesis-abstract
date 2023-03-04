@@ -65,5 +65,5 @@ export type UserValue = {
 };
 
 export type UserAction =
-  | { type: "on-signin"; payload: UserDetails }
+  | { type: "on-signin"; payload: UserDetails | null }
   | { type: "on-signup"; payload: UserDetails };

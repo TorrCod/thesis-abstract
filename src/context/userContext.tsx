@@ -41,6 +41,8 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
         getUserDetails(id).then((res) => {
           dispatch({ type: "on-signin", payload: res });
         });
+      } else {
+        dispatch({ type: "on-signin", payload: null });
       }
     });
     return () => {};

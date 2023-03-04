@@ -70,7 +70,7 @@ const userMenu: MenuProps["items"] = [
         <GrUserSettings size={"1.25em"} />
       </Link>
     ),
-    label: "Account Setting",
+    label: <Link href={"/account-setting"}>Account Setting</Link>,
   },
   {
     key: "/dashboard",
@@ -79,7 +79,7 @@ const userMenu: MenuProps["items"] = [
         <RiDashboardLine size={"1.25em"} />
       </Link>
     ),
-    label: "Dashboard",
+    label: <Link href={"/dashboard"}>Dashboard</Link>,
   },
 ];
 
@@ -128,7 +128,7 @@ const NavBar = () => {
 
         {userCtx.userDetails ? (
           <Dropdown
-            placement="bottomCenter"
+            placement="bottom"
             trigger={["click"]}
             dropdownRender={() => (
               <div className="bg-white rounded-md pt-5">
@@ -136,7 +136,7 @@ const NavBar = () => {
                   <Login />
                   <div>
                     <p>{`${userCtx.userDetails?.firstName} ${userCtx.userDetails?.lastName}`}</p>
-                    <p className="text-[0.8em]">
+                    <p className="text-[0.8em] opacity-80">
                       {userCtx.userDetails?.course}
                     </p>
                   </div>
@@ -167,7 +167,7 @@ const NavBar = () => {
         <Menu
           className="text-lg text-black/70"
           onClick={() => setOpen(!open)}
-          defaultSelectedKeys={[active]}
+          selectedKeys={[active]}
           items={items}
         />
         <Divider />
@@ -175,7 +175,12 @@ const NavBar = () => {
           <Login />
         </div>
         {userCtx.userDetails ? (
-          <Menu className="text-black/70" items={userMenu} />
+          <Menu
+            selectedKeys={[active]}
+            className="opacity-70 text-lg"
+            items={userMenu}
+            onClick={() => setOpen(!open)}
+          />
         ) : (
           ""
         )}

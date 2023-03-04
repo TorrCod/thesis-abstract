@@ -54,12 +54,14 @@ export type UserDetails = {
   profilePic?: string;
   approove?: string;
   uid?: string;
+  _id?: any;
 };
 
 export type UserValue = {
   state: UserState;
   dispatch: Dispatch<UserAction>;
   userSignUp?: (userDetails: UserDetails) => Promise<void>;
+  userUpdateInfo?: (userDetails: UserDetails) => Promise<void>;
 };
 
 export type UserAction =

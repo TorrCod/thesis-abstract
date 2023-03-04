@@ -1,4 +1,5 @@
 import { UserDetails } from "@/context/types.d";
+import axios from "axios";
 
 export const addUserAccount = async (userDetails: UserDetails) => {
   fetch("/api/addUser", {
@@ -22,6 +23,11 @@ export const getUserDetails = async (id: string): Promise<UserDetails> => {
   });
   const userDetails = await res.json();
   return userDetails;
+};
+
+export const updateUser = async (payload: UserDetails) => {
+  const res = await axios.post("/api/updateUser", payload);
+  return res;
 };
 
 export const findUser = (_id: string, arr: UserDetails[]) =>

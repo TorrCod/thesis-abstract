@@ -1,5 +1,5 @@
 import { auth, signUp } from "@/lib/firebase";
-import { addUserAccount, getUserDetails } from "@/utils/account";
+import { addUserAccount, getUserDetails, updateUser } from "@/utils/account";
 import { onAuthStateChanged } from "firebase/auth";
 import { createContext, useContext, useEffect, useReducer } from "react";
 import { UserAction, UserDetails, UserState, UserValue } from "./types.d";
@@ -46,8 +46,15 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
     addUserAccount({ ...userDetails, uid: uid });
   };
 
+  const userUpdateInfo = async (userDetails: UserDetails) => {
+    await updateUser(userDetails);
+    dispatch({ type: "on-signin", payload: userDetails });
+  };
+
   return (
-    <UserContext.Provider value={{ state, dispatch, userSignUp }}>
+    <UserContext.Provider
+      value={{ state, dispatch, userSignUp, userUpdateInfo }}
+    >
       {children}
     </UserContext.Provider>
   );

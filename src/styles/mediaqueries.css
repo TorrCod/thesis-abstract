@@ -1,5 +1,6 @@
 @media (min-width: 768px) {
-  main {
+  main,
+  section {
     padding-top: 0;
   }
 
@@ -29,10 +30,6 @@
 }
 
 @media (min-width: 690px) {
-  section {
-    padding-top: 0;
-  }
-
   .thesis_items {
     display: grid;
     grid-template-columns: repeat(3, 1fr);

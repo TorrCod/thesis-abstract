@@ -35,7 +35,7 @@ body {
 }
 
 main {
-  overflow-y: hidden;
+  overflow-x: hidden;
   position: relative;
 }
 
@@ -47,11 +47,14 @@ a {
 .bg-circle {
   position: absolute;
   width: 100%;
-  min-width: 40em;
-  top: 0em;
-  left: 0em;
-  transform: scale(2);
+  height: 50em;
+  display: grid;
+  min-width: 50em;
+  top: -3em;
+  right: -10em;
   z-index: -100;
+  place-content: center;
+  transform: scale(1.4);
 }
 
 h1 {

@@ -2,16 +2,15 @@
   main,
   section {
     padding-top: 0;
+    padding-inline: 0;
   }
 
   .bg-circle {
     position: absolute;
-    width: 100%;
     min-width: 60em;
-    max-width: 200em;
-    top: -10em;
+    top: -30em;
     left: -10em;
-    transform: scale(1);
+    height: 80em;
   }
 }
 

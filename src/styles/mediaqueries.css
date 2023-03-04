@@ -1,38 +1,21 @@
 @media (min-width: 768px) {
-  main {
+  main,
+  section {
     padding-top: 0;
+    padding-inline: 0;
+    overflow-y: hidden;
   }
 
   .bg-circle {
     position: absolute;
-    width: 180%;
-    height: 180%;
-    min-width: 130em;
-    top: -80%;
-    left: -50%;
-    z-index: -10;
-  }
-
-  main::before {
-    background: url(/bg-circles.svg) no-repeat center center fixed;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: 135em;
-    position: fixed;
-    height: 100%;
-    width: 100vw;
-    z-index: -100;
-    background-position: -30em -50em;
-    content: "";
+    min-width: 60em;
+    top: -30em;
+    left: -10em;
+    height: 80em;
   }
 }
 
 @media (min-width: 690px) {
-  section {
-    padding-top: 0;
-  }
-
   .thesis_items {
     display: grid;
     grid-template-columns: repeat(3, 1fr);

@@ -138,7 +138,7 @@ const AboutUs = () => {
       </section>
       <div className="mt-40">
         <div className="text-white p-2 bg-[#38649C]">
-          <h1 className="text-center py-10 opacity-80">RESEARCHER</h1>
+          <h1 className="text-center py-10">RESEARCHER</h1>
           <div className="grid grid-cols-2 gap-5 md:grid-cols-4 max-w-3xl m-auto">
             <div className="flex flex-col gap-2 place-items-center">
               <Avatar className="h-28 w-28" size={"large"} />

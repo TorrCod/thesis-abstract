@@ -31,7 +31,7 @@ export default function Home() {
               Thesis Abstract Management System for College of Engineering
             </h1>
             <div className="text-white/80 drop-shadow-lg">
-              Find related Ideas for your projects
+              Find related Ideas for your projects Hello World
               <Search />
             </div>
             <div>

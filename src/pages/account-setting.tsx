@@ -2,12 +2,8 @@ import AdminProfile from "@/components/admin";
 import { PriButton, SecButton } from "@/components/button";
 import { Course, UserDetails } from "@/context/types.d";
 import useUserContext from "@/context/userContext";
-import { auth, uploadProfile } from "@/lib/firebase";
-import {
-  base64toBinaryData,
-  getBase64,
-  isObjectIncluded,
-} from "@/utils/helper";
+import { uploadProfile } from "@/lib/firebase";
+import { getBase64, isObjectIncluded } from "@/utils/helper";
 import {
   Divider,
   Form,
@@ -17,12 +13,12 @@ import {
   Select,
   Space,
   Upload,
-  UploadFile,
   UploadProps,
 } from "antd";
 import { useForm } from "antd/es/form/Form";
 import { RcFile } from "antd/es/upload";
 import { uploadBytes } from "firebase/storage";
+import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { BsImage } from "react-icons/bs";
 import { useDebounce } from "react-use";
@@ -45,6 +41,7 @@ const AccountSetting = () => {
   const [chngProfSave, setChngProfSave] = useState(true);
   const [newProfile, setNewProfile] = useState<string | undefined>();
   const [cfrmDltAcc, setCfrmDltAcc] = useState("");
+  const router = useRouter();
 
   useEffect(() => {
     form.resetFields();
@@ -145,6 +142,7 @@ const AccountSetting = () => {
       onOk: async () => {
         try {
           await userCtx.deleteAccount!(cfrmDltAcc);
+          router.push("/");
         } catch {
           message.error("Wrong Password");
         }

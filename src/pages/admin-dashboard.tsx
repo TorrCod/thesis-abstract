@@ -1,85 +1,54 @@
-import { Button, Modal, Menu, Layout } from "antd";
-import React, { useState } from "react";
-import Link from "next/link";
+import React from 'react';
+import { Layout, Menu } from 'antd';
+const { Header, Content } = Layout;
+const { SubMenu } = Menu;
 
-const { Content } = Layout;
+interface DashboardProps {
+  children: React.ReactNode;
+  selectedMenu: string;
+  onMenuSelect: (key: string) => void;
+}
 
-const styles = {
-    contactbutton: {
-        alignitems: "flex",
-        background: "gray",
-        marginRight: "40px",
-        display: "flex",
-        marginLeft: "auto",
-        marginTop: "200px",
-    },
-};
-
-const Dashboard = () => {
-    const [isModalVisible, setIsModalVisible] = useState(false);
-
-    const showModal = () => {
-        setIsModalVisible(true);
-    };
-
-    const handleOk = () => {
-        setIsModalVisible(false);
-    };
-
-    const handleCancel = () => {
-        setIsModalVisible(false);
-    };
-
-
-    return (
-        <>
-        
-            <Button type="primary" onClick={showModal} style={styles.contactbutton}>
-                Admin Dashboard
-            </Button>
-            <Modal
-                title="Admin Dashboard"
-                visible={isModalVisible}
-                onOk={handleOk}
-                onCancel={handleCancel}
-            >
-                <Layout>
-                    <Content>
-                        <Menu
-                            theme="light"
-                            mode="inline"
-                            defaultSelectedKeys={['dashboard']}
-                        >
-                            <Menu.Item key="dashboard">
-                                <Link href="/dashboard">
-                                    Dashboard
-                                </Link>
-                            </Menu.Item>
-                            <Menu.Item key="settings">
-                                <Link href="/settings">
-                                    General Settings
-                                </Link>
-                            </Menu.Item>
-                            <Menu.Item key="editthesis">
-                                <Content>
-                                    <Link href="/editthesis">
-                                        Thesis Abstract
-                                    </Link>
-                                </Content>
-                            </Menu.Item>
-                            <Menu.Item key="requests">
-                                <Content>
-                                    <Link href="/requests">
-                                        Pending Requests
-                                    </Link>
-                                </Content>
-                            </Menu.Item>
-                        </Menu>
-                    </Content>
-                </Layout>
-            </Modal>
-        </>
-    );
-};
+function Dashboard({ children, selectedMenu, onMenuSelect }: DashboardProps) {
+  return (
+    <Layout style={{ background: 'transparent' }}>
+      <Header className="header">
+        <div className="logo" />
+        <Menu theme="dark" mode="horizontal" selectedKeys={[selectedMenu]} onSelect={(info) => onMenuSelect(info.key as string)} defaultSelectedKeys={['dashboard']}>
+          <Menu.Item key="dashboard" title="Dashboard">
+            Dashboard
+          </Menu.Item>
+          <Menu.Item key="settings" title="Settings">
+            Settings
+          </Menu.Item>
+        </Menu>
+      </Header>
+      <Layout>
+        <Layout style={{ padding: '0 24px 24px', background: 'transparent' }}>
+          <Content
+            style={{
+              padding: 24,
+              margin: 0,
+              minHeight: 900,
+            }}
+          >
+            {selectedMenu === 'dashboard' && (
+              <>
+                <div>Dashboard content</div>
+                {children}
+              </>
+            )}
+            {selectedMenu === 'settings' && (
+              <>
+                <div>Settings content</div>
+                {children}
+              </>
+            )}
+          </Content>
+        </Layout>
+      </Layout>
+    </Layout>
+  );
+}
 
 export default Dashboard;

@@ -1,4 +1,4 @@
-import { Course } from "@/context/types.d";
+import { Course, UserDetails } from "@/context/types.d";
 
 export type NavItemProps = {
   text: string;
@@ -50,4 +50,10 @@ export const searchState_init: SearchState = {
 
 export type SearchProps = {
   className?: string;
+};
+
+export type AdminProps = {
+  size?: { height: string; width: string };
+  userDetails: UserDetails;
+  src?: string;
 };

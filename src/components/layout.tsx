@@ -7,16 +7,17 @@ import Link from "next/link"
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <main>
-      <GlobalWrapper>
-        <UserWrapper>
-          <AntD_Config>
-            <NavBar />
+    <GlobalWrapper>
+      <UserWrapper>
+        <AntD_Config>
+          <NavBar />
+          <main>
+            <Background />
             {children}
-          </AntD_Config>
-        </UserWrapper>
-      </GlobalWrapper>
-    </main>
+          </main>
+        </AntD_Config>
+      </UserWrapper>
+    </GlobalWrapper>
   );
 };
 

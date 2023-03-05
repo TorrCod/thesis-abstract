@@ -64,7 +64,7 @@ const Search = ({ className }: SearchProps) => {
       type: "populate-option",
       payload: { course: courseOption, date: globalCtx.state.dateOption },
     });
-  }, [globalCtx.state.thesisItems]);
+  }, [globalCtx.state.dateOption]);
 
   const handleOpenCourse = (flag: boolean) => {
     searchDispatch({

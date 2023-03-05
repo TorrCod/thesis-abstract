@@ -79,6 +79,16 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
     dispatch({ type: "on-signin", payload: userDetails });
   };
 
+  const deleteAccount = async (currpass: string) => {
+    console.log(currpass);
+    const cred = EmailAuthProvider.credential(
+      state.userDetails!.email,
+      currpass
+    );
+    await reauthenticateWithCredential(auth.currentUser!, cred);
+    await auth.currentUser?.delete();
+  };
+
   return (
     <UserContext.Provider
       value={{
@@ -88,6 +98,7 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
         userUpdateInfo,
         changePass,
         updateProfileUrl,
+        deleteAccount,
       }}
     >
       {children}

@@ -13,6 +13,7 @@ import {
   Form,
   Input,
   message,
+  Modal,
   Select,
   Space,
   Upload,
@@ -43,6 +44,7 @@ const AccountSetting = () => {
   const [chngPassSave, setChngPassSave] = useState(true);
   const [chngProfSave, setChngProfSave] = useState(true);
   const [newProfile, setNewProfile] = useState<string | undefined>();
+  const [cfrmDltAcc, setCfrmDltAcc] = useState("");
 
   useEffect(() => {
     form.resetFields();
@@ -122,6 +124,31 @@ const AccountSetting = () => {
       setNewProfile(url!);
       userCtx.updateProfileUrl!(newProf);
       setChngProfSave(true);
+    });
+  };
+
+  const warning = () => {
+    const warning = Modal.warning({
+      title: "Please type the account's password",
+      content: (
+        <Input.Password
+          onChange={(e) => {
+            setCfrmDltAcc(e.target.value);
+          }}
+          placeholder="password"
+        />
+      ),
+      okButtonProps: {
+        type: "primary",
+        style: { backgroundColor: "#F8B49C" },
+      },
+      onOk: async () => {
+        try {
+          await userCtx.deleteAccount!(cfrmDltAcc);
+        } catch {
+          message.error("Wrong Password");
+        }
+      },
     });
   };
 
@@ -289,7 +316,10 @@ const AccountSetting = () => {
               This will wipe all your data including your saved thesis but not
               approoved thesis abstract.
             </p>
-            <p className="text-red-600 decoration-red-600 decoration-1 underline cursor-pointer">
+            <p
+              onClick={warning}
+              className="text-red-600 decoration-red-600 decoration-1 underline cursor-pointer"
+            >
               I want to delete my account
             </p>
           </div>

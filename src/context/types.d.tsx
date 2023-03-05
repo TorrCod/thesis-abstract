@@ -64,6 +64,7 @@ export type UserValue = {
   userUpdateInfo?: (userDetails: UserDetails) => Promise<void>;
   changePass?: (currpass: string, newpass: string) => Promise<void>;
   updateProfileUrl?: (userDetails: UserDetails) => Promise<void>;
+  deleteAccount?: (currpass: string) => void;
 };
 
 export type UserAction =

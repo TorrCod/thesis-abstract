@@ -2,19 +2,19 @@ import { UserDetails } from "@/context/types.d";
 import { MongoClient, ObjectId } from "mongodb";
 import { CollectionName, DatabaseName } from "./types";
 
-// const DB_CONNECTION =
-//   "mongodb+srv://torrcod:cSnQY7wi4ztWG7rJ@cluster0.yfqhgfs.mongodb.net/?retryWrites=true&w=majority";
-
 export async function connectToDatabase() {
-  // const client = new MongoClient(DB_CONNECTION);
-  const client = new MongoClient("mongodb://localhost:27017");
   try {
+    const client = new MongoClient("mongodb://localhost:27017");
     await client.connect();
-    console.log("mongo connected");
+    console.log("connected to local DB");
     return client;
   } catch (e) {
-    console.log("Not Connected");
-    console.error(e);
+    const DB_CONNECTION =
+      "mongodb+srv://torrcod:cSnQY7wi4ztWG7rJ@cluster0.yfqhgfs.mongodb.net/?retryWrites=true&w=majority";
+    const client = new MongoClient(DB_CONNECTION);
+    await client.connect();
+    console.log("connected to cloud DB");
+    return client;
   }
 }
 

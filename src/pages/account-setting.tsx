@@ -2,12 +2,8 @@ import AdminProfile from "@/components/admin";
 import { PriButton, SecButton } from "@/components/button";
 import { Course, UserDetails } from "@/context/types.d";
 import useUserContext from "@/context/userContext";
-import { auth, uploadProfile } from "@/lib/firebase";
-import {
-  base64toBinaryData,
-  getBase64,
-  isObjectIncluded,
-} from "@/utils/helper";
+import { uploadProfile } from "@/lib/firebase";
+import { getBase64, isObjectIncluded } from "@/utils/helper";
 import {
   Divider,
   Form,
@@ -17,7 +13,6 @@ import {
   Select,
   Space,
   Upload,
-  UploadFile,
   UploadProps,
 } from "antd";
 import { useForm } from "antd/es/form/Form";

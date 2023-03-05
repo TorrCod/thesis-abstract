@@ -1,67 +1,85 @@
-    import {
-        MenuFoldOutlined,
-        MenuUnfoldOutlined,
-        BellOutlined,
-        UserOutlined,
-        SettingOutlined,
-    } from '@ant-design/icons';
-    import { Layout, Menu } from 'antd';
-    import React, { useState } from 'react';
-    import Link from "next/link";
+import { Button, Modal, Menu, Layout } from "antd";
+import React, { useState } from "react";
+import Link from "next/link";
+
+const { Content } = Layout;
+
+const styles = {
+    contactbutton: {
+        alignitems: "flex",
+        background: "gray",
+        marginRight: "40px",
+        display: "flex",
+        marginLeft: "auto",
+        marginTop: "200px",
+    },
+};
+
+const Dashboard = () => {
+    const [isModalVisible, setIsModalVisible] = useState(false);
+
+    const showModal = () => {
+        setIsModalVisible(true);
+    };
+
+    const handleOk = () => {
+        setIsModalVisible(false);
+    };
+
+    const handleCancel = () => {
+        setIsModalVisible(false);
+    };
 
 
-    const { Header, Sider, Content } = Layout;
-
-    function Dashboard() {
-        const [collapsed, setCollapsed] = useState(false);
-        return (
-            <Layout style={{ paddingTop: '70px' }}>
-                <Sider trigger={null} collapsible collapsed={collapsed}>
-                    <div className="logo" />
-                    <Menu
-                        theme="dark"
-                        mode="inline"
-                        defaultSelectedKeys={['dashboard']}
-                    >
-                    <Menu.Item key="dashboard">
-                        <Link href="/dashboard">
-                            Dashboard
-                        </Link>
-                    </Menu.Item>
-                    <Menu.Item key="settings">
-                        <Content>
-                        <Link href="/thesis">
-                            Thesis
-                        </Link>
-                        </Content>
-                    </Menu.Item>
-                    </Menu>
-                </Sider>
-                <Layout className="site-layout">
-                    <Header
-                        className="site-layout-background"
-                        style={{
-                            padding: 0,
-                        }}
-                    >
-                        {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
-                            className: 'trigger',
-                            onClick: () => setCollapsed(!collapsed),
-                        })}
-                        Welcome to your Dashboard -User-
-                    </Header>
-                    <Content
-                        className="site-layout-background"
-                        style={{
-                            margin: '24px 16px',
-                            padding: 24,
-                        }}
-                    >
-                        Content
+    return (
+        <>
+        
+            <Button type="primary" onClick={showModal} style={styles.contactbutton}>
+                Admin Dashboard
+            </Button>
+            <Modal
+                title="Admin Dashboard"
+                visible={isModalVisible}
+                onOk={handleOk}
+                onCancel={handleCancel}
+            >
+                <Layout>
+                    <Content>
+                        <Menu
+                            theme="light"
+                            mode="inline"
+                            defaultSelectedKeys={['dashboard']}
+                        >
+                            <Menu.Item key="dashboard">
+                                <Link href="/dashboard">
+                                    Dashboard
+                                </Link>
+                            </Menu.Item>
+                            <Menu.Item key="settings">
+                                <Link href="/settings">
+                                    General Settings
+                                </Link>
+                            </Menu.Item>
+                            <Menu.Item key="editthesis">
+                                <Content>
+                                    <Link href="/editthesis">
+                                        Thesis Abstract
+                                    </Link>
+                                </Content>
+                            </Menu.Item>
+                            <Menu.Item key="requests">
+                                <Content>
+                                    <Link href="/requests">
+                                        Pending Requests
+                                    </Link>
+                                </Content>
+                            </Menu.Item>
+                        </Menu>
                     </Content>
                 </Layout>
-            </Layout>
-        )
-    }
+            </Modal>
+        </>
+    );
+};
 
-    export default Dashboard;
+export default Dashboard;

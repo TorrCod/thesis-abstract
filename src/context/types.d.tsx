@@ -41,7 +41,7 @@ export type GlobalValue = {
 };
 
 export type UserState = {
-  userDetails: UserDetails | null;
+  userDetails: UserDetails | undefined;
 };
 
 export type UserDetails = {
@@ -64,9 +64,9 @@ export type UserValue = {
   userUpdateInfo?: (userDetails: UserDetails) => Promise<void>;
   changePass?: (currpass: string, newpass: string) => Promise<void>;
   updateProfileUrl?: (userDetails: UserDetails) => Promise<void>;
-  deleteAccount?: (currpass: string) => void;
+  deleteAccount?: (currpass: string) => Promise<void>;
 };
 
 export type UserAction =
-  | { type: "on-signin"; payload: UserDetails | null }
+  | { type: "on-signin"; payload: UserDetails | undefined }
   | { type: "on-signup"; payload: UserDetails };

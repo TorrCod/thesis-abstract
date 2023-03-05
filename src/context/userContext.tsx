@@ -4,15 +4,20 @@ import {
   EmailAuthProvider,
   onAuthStateChanged,
   reauthenticateWithCredential,
-  updateCurrentUser,
   updatePassword,
   updateProfile,
 } from "firebase/auth";
-import { createContext, useContext, useEffect, useReducer } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useReducer,
+  useState,
+} from "react";
 import { UserAction, UserDetails, UserState, UserValue } from "./types.d";
 
 const userStateInit: UserState = {
-  userDetails: null,
+  userDetails: undefined,
 };
 
 const userValueInit: UserValue = {
@@ -35,26 +40,34 @@ const userReducer = (state: UserState, action: UserAction): UserState => {
 
 export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(userReducer, userStateInit);
+  const [triggerUpdate, setTriggerUpdate] = useState(false);
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
         const id = user.uid;
-        getUserDetails(id).then((res) => {
-          res["profilePic"] = auth.currentUser?.photoURL!;
-          dispatch({ type: "on-signin", payload: res });
-        });
-        console.log("triggered");
+        getUserDetails(id)
+          .then((res) => {
+            if (typeof res === "object" && res !== null) {
+              res.profilePic = auth.currentUser?.photoURL ?? undefined;
+              dispatch({ type: "on-signin", payload: res });
+            }
+          })
+          .catch((e) => {
+            console.error(e);
+          });
       } else {
-        dispatch({ type: "on-signin", payload: null });
+        dispatch({ type: "on-signin", payload: undefined });
       }
     });
     return () => {};
-  }, []);
+  }, [triggerUpdate]);
 
   const userSignUp = async (userDetails: UserDetails) => {
     const uid = await signUp(userDetails);
-    addUserAccount({ ...userDetails, uid: uid });
+    delete userDetails.password;
+    await addUserAccount({ ...userDetails, uid: uid });
+    setTriggerUpdate(!triggerUpdate);
   };
 
   const userUpdateInfo = async (userDetails: UserDetails) => {
@@ -80,13 +93,18 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
   };
 
   const deleteAccount = async (currpass: string) => {
+    console.log("hello");
     console.log(currpass);
     const cred = EmailAuthProvider.credential(
       state.userDetails!.email,
       currpass
     );
-    await reauthenticateWithCredential(auth.currentUser!, cred);
-    await auth.currentUser?.delete();
+    try {
+      await reauthenticateWithCredential(auth.currentUser!, cred);
+      await auth.currentUser?.delete();
+    } catch (e) {
+      throw new Error(e as string);
+    }
   };
 
   return (

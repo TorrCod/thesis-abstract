@@ -4,9 +4,7 @@ import { PriButton } from "./button";
 import { Course, UserDetails } from "@/context/types.d";
 import { signIn } from "@/lib/firebase";
 import useUserContext from "@/context/userContext";
-import Link from "next/link";
 import AdminProfile from "./admin";
-// import { signIn, signUp } from "@/lib/firebase";
 
 const SignInSignUp = () => {
   const [open, setOpen] = useState(false);
@@ -44,8 +42,11 @@ const SignInSignUp = () => {
         course: payload["course"],
         firstName: payload["firstname"],
         lastName: payload["lastname"],
+        password: payload["sign-up-password"],
+        profilePic: undefined,
+        approove: undefined,
       };
-      userCtx.userSignUp?.(userDetails);
+      await userCtx.userSignUp?.(userDetails);
       setOpen(false); // close the modal after successful sign in/signup
       formSignUp.resetFields();
       message.success({
@@ -109,7 +110,9 @@ const SignInSignUp = () => {
             <Input.Password placeholder="Password" />
           </Form.Item>
           <Form.Item className="grid place-items-end">
-            <PriButton onClick={handleSignIn}>Sign In</PriButton>
+            <PriButton htmlType="submit" onClick={handleSignIn}>
+              Sign In
+            </PriButton>
           </Form.Item>
         </Form>
         <Divider />
@@ -177,7 +180,9 @@ const SignInSignUp = () => {
             <Input.Password placeholder="Confirm Password" />
           </Form.Item>
           <Form.Item className="grid place-items-end">
-            <PriButton onClick={handleSignUp}>Sign Up</PriButton>
+            <PriButton htmlType="submit" onClick={handleSignUp}>
+              Sign Up
+            </PriButton>
           </Form.Item>
         </Form>
         <Divider />

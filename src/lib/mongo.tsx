@@ -13,7 +13,6 @@ export async function connectToDatabase() {
       "mongodb+srv://torrcod:cSnQY7wi4ztWG7rJ@cluster0.yfqhgfs.mongodb.net/?retryWrites=true&w=majority";
     const client = new MongoClient(DB_CONNECTION);
     await client.connect();
-    console.log("connected to cloud DB");
     return client;
   }
 }

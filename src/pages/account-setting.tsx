@@ -15,13 +15,11 @@ import {
   Upload,
   UploadProps,
 } from "antd";
-import { useForm } from "antd/es/form/Form";
-import { RcFile } from "antd/es/upload";
-import { uploadBytes } from "firebase/storage";
+import { useForm } from "antd/lib/form/Form";
+import { RcFile } from "antd/lib/upload";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { BsImage } from "react-icons/bs";
-import { useDebounce } from "react-use";
 
 const courseOpt: { value: Course; label: Course }[] = [
   { value: "Civil Engineer", label: "Civil Engineer" },
@@ -41,6 +39,7 @@ const AccountSetting = () => {
   const [chngProfSave, setChngProfSave] = useState(true);
   const [newProfile, setNewProfile] = useState<string | undefined>();
   const [cfrmDltAcc, setCfrmDltAcc] = useState("");
+  const [onConfirm, setOnConfirm] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -125,30 +124,43 @@ const AccountSetting = () => {
   };
 
   const warning = () => {
-    const warning = Modal.warning({
+    Modal.warning({
       title: "Please type the account's password",
+      closable: true,
       content: (
-        <Input.Password
+        <Input
           onChange={(e) => {
             setCfrmDltAcc(e.target.value);
           }}
           placeholder="password"
         />
       ),
+      maskClosable: true,
       okButtonProps: {
+        htmlType: "submit",
         type: "primary",
         style: { backgroundColor: "#F8B49C" },
       },
-      onOk: async () => {
-        try {
-          await userCtx.deleteAccount!(cfrmDltAcc);
-          router.push("/");
-        } catch {
-          message.error("Wrong Password");
-        }
+      onOk() {
+        setOnConfirm(!onConfirm);
       },
     });
   };
+
+  useEffect(() => {
+    if (cfrmDltAcc) {
+      userCtx.deleteAccount!(cfrmDltAcc)
+        .then(() => {
+          router.push("/");
+          message.success("Account Deleted");
+        })
+        .catch((e) => {
+          console.error(e);
+          message.error("Wrong Password");
+        });
+      setCfrmDltAcc("");
+    }
+  }, [onConfirm]);
 
   return (
     <section className="pb-10 w-full md:pt-20">
@@ -315,7 +327,7 @@ const AccountSetting = () => {
               approoved thesis abstract.
             </p>
             <p
-              onClick={warning}
+              onClick={() => warning()}
               className="text-red-600 decoration-red-600 decoration-1 underline cursor-pointer"
             >
               I want to delete my account

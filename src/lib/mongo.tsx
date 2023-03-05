@@ -2,13 +2,20 @@ import { UserDetails } from "@/context/types.d";
 import { MongoClient, ObjectId } from "mongodb";
 import { CollectionName, DatabaseName } from "./types";
 
-const DB_CONNECTION =
-  "mongodb+srv://torrcod:cSnQY7wi4ztWG7rJ@cluster0.yfqhgfs.mongodb.net/?retryWrites=true&w=majority";
+// const DB_CONNECTION =
+//   "mongodb+srv://torrcod:cSnQY7wi4ztWG7rJ@cluster0.yfqhgfs.mongodb.net/?retryWrites=true&w=majority";
 
 export async function connectToDatabase() {
-  const client = new MongoClient(DB_CONNECTION);
-  await client.connect();
-  return client;
+  // const client = new MongoClient(DB_CONNECTION);
+  const client = new MongoClient("mongodb://localhost:27017");
+  try {
+    await client.connect();
+    console.log("mongo connected");
+    return client;
+  } catch (e) {
+    console.log("Not Connected");
+    console.error(e);
+  }
 }
 
 export const getData = async (
@@ -18,7 +25,7 @@ export const getData = async (
 ) => {
   try {
     const client = await connectToDatabase();
-    const database = client.db(dbName);
+    const database = client!.db(dbName);
     const collection = database.collection(colName);
     const res = await collection.find(option?.option).toArray();
     return res;
@@ -35,7 +42,7 @@ export const addData = async (
 ) => {
   try {
     const client = await connectToDatabase();
-    const database = client.db(dbName);
+    const database = client!.db(dbName);
     const collection = database.collection(colName);
     const res = await collection.insertOne(payload);
     return res;
@@ -57,10 +64,10 @@ export const updateUser = async (userDetails: UserDetails) => {
     const dbName: DatabaseName = "accounts";
     const colName: CollectionName = "user";
     const client = await connectToDatabase();
-    const database = client.db(dbName);
-    const collection = database.collection(colName);
+    const database = client?.db(dbName);
+    const collection = database?.collection(colName);
     userDetails["_id"] = new ObjectId(userDetails["_id"]);
-    const res = await collection.replaceOne(
+    const res = await collection?.replaceOne(
       { uid: userDetails.uid },
       userDetails
     );

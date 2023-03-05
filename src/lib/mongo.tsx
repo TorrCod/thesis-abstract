@@ -1,4 +1,5 @@
-import { MongoClient } from "mongodb";
+import { UserDetails } from "@/context/types.d";
+import { MongoClient, ObjectId } from "mongodb";
 import { CollectionName, DatabaseName } from "./types";
 
 const DB_CONNECTION =
@@ -50,3 +51,30 @@ export const generateId = (items: any[]) =>
     _id: child._id.toString(),
     id: child._id.toString(),
   }));
+
+export const updateUser = async (userDetails: UserDetails) => {
+  try {
+    const dbName: DatabaseName = "accounts";
+    const colName: CollectionName = "user";
+    const client = await connectToDatabase();
+    const database = client.db(dbName);
+    const collection = database.collection(colName);
+    userDetails["_id"] = new ObjectId(userDetails["_id"]);
+    const res = await collection.replaceOne(
+      { uid: userDetails.uid },
+      userDetails
+    );
+    return res;
+  } catch (e) {
+    console.error(e);
+    throw new Error(e as string).message;
+  }
+};
+
+export const db_UpdateProfile = async ({
+  uid,
+  payload,
+}: {
+  uid: string;
+  payload: any;
+}) => {};

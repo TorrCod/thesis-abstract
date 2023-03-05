@@ -4,6 +4,8 @@ import { PriButton } from "./button";
 import { Course, UserDetails } from "@/context/types.d";
 import { signIn } from "@/lib/firebase";
 import useUserContext from "@/context/userContext";
+import Link from "next/link";
+import AdminProfile from "./admin";
 // import { signIn, signUp } from "@/lib/firebase";
 
 const SignInSignUp = () => {
@@ -38,7 +40,6 @@ const SignInSignUp = () => {
       const payload = formSignUp.getFieldsValue();
       const userDetails: UserDetails = {
         email: payload["sign-up-email"],
-        password: payload["sign-up-password"],
         userName: payload["username"],
         course: payload["course"],
         firstName: payload["firstname"],
@@ -48,9 +49,9 @@ const SignInSignUp = () => {
       setOpen(false); // close the modal after successful sign in/signup
       formSignUp.resetFields();
       message.success({
-      type: "success",
-      content:
-        "Registered Successfully! Please wait for the admins approval.",
+        type: "success",
+        content:
+          "Registered Successfully! Please wait for the admins approval.",
       });
     } catch (error) {
       const errmessage = (error as any).message;
@@ -59,7 +60,6 @@ const SignInSignUp = () => {
       }
       console.error(error);
     }
-    
   };
 
   const handleCancel = () => {
@@ -77,18 +77,22 @@ const SignInSignUp = () => {
     { value: "Mechanical Engineer", label: "Mechanical Engineer" },
   ];
 
-
   return (
     <>
-      <PriButton type="primary" onClick={showModal}>
-        Sign In/Sign Up
-      </PriButton>
+      {userCtx.state.userDetails ? (
+        <AdminProfile userDetails={userCtx.state.userDetails} />
+      ) : (
+        <PriButton type="primary" onClick={showModal}>
+          Sign In / Sign Up
+        </PriButton>
+      )}
       <Modal
         centered
         bodyStyle={{ padding: "2em" }}
         open={open}
         onCancel={handleCancel}
-        footer={null}
+        okButtonProps={{ hidden: true }}
+        cancelButtonProps={{ hidden: true }}
       >
         <h3 className="text-center my-5 text-[#38649C]">Sign In</h3>
         <Form form={formSignIn} layout="vertical">
@@ -176,6 +180,10 @@ const SignInSignUp = () => {
             <PriButton onClick={handleSignUp}>Sign Up</PriButton>
           </Form.Item>
         </Form>
+        <Divider />
+        <div className="text-center opacity-80">
+          This Feature is for admin only
+        </div>
       </Modal>
     </>
   );

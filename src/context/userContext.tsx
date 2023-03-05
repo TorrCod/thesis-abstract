@@ -1,6 +1,13 @@
 import { auth, signUp } from "@/lib/firebase";
-import { addUserAccount, getUserDetails } from "@/utils/account";
-import { onAuthStateChanged } from "firebase/auth";
+import { addUserAccount, getUserDetails, updateUser } from "@/utils/account";
+import {
+  EmailAuthProvider,
+  onAuthStateChanged,
+  reauthenticateWithCredential,
+  updateCurrentUser,
+  updatePassword,
+  updateProfile,
+} from "firebase/auth";
 import { createContext, useContext, useEffect, useReducer } from "react";
 import { UserAction, UserDetails, UserState, UserValue } from "./types.d";
 
@@ -34,8 +41,12 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
       if (user) {
         const id = user.uid;
         getUserDetails(id).then((res) => {
+          res["profilePic"] = auth.currentUser?.photoURL!;
           dispatch({ type: "on-signin", payload: res });
         });
+        console.log("triggered");
+      } else {
+        dispatch({ type: "on-signin", payload: null });
       }
     });
     return () => {};
@@ -46,8 +57,50 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
     addUserAccount({ ...userDetails, uid: uid });
   };
 
+  const userUpdateInfo = async (userDetails: UserDetails) => {
+    await updateUser(userDetails);
+    dispatch({ type: "on-signin", payload: userDetails });
+  };
+
+  const changePass = async (currpass: string, newpass: string) => {
+    const cred = EmailAuthProvider.credential(
+      state.userDetails!.email,
+      currpass
+    );
+    await reauthenticateWithCredential(auth.currentUser!, cred);
+    await updatePassword(auth.currentUser!, newpass);
+  };
+
+  const updateProfileUrl = async (userDetails: UserDetails) => {
+    await updateProfile(auth.currentUser!, {
+      photoURL: userDetails.profilePic,
+    });
+    await auth.updateCurrentUser(auth.currentUser);
+    dispatch({ type: "on-signin", payload: userDetails });
+  };
+
+  const deleteAccount = async (currpass: string) => {
+    console.log(currpass);
+    const cred = EmailAuthProvider.credential(
+      state.userDetails!.email,
+      currpass
+    );
+    await reauthenticateWithCredential(auth.currentUser!, cred);
+    await auth.currentUser?.delete();
+  };
+
   return (
-    <UserContext.Provider value={{ state, dispatch, userSignUp }}>
+    <UserContext.Provider
+      value={{
+        state,
+        dispatch,
+        userSignUp,
+        userUpdateInfo,
+        changePass,
+        updateProfileUrl,
+        deleteAccount,
+      }}
+    >
       {children}
     </UserContext.Provider>
   );

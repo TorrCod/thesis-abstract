@@ -50,18 +50,23 @@ export type UserDetails = {
   course: Course;
   email: string;
   userName: string;
-  password: string;
   profilePic?: string;
   approove?: string;
   uid?: string;
+  _id?: any;
+  password?: string;
 };
 
 export type UserValue = {
   state: UserState;
   dispatch: Dispatch<UserAction>;
   userSignUp?: (userDetails: UserDetails) => Promise<void>;
+  userUpdateInfo?: (userDetails: UserDetails) => Promise<void>;
+  changePass?: (currpass: string, newpass: string) => Promise<void>;
+  updateProfileUrl?: (userDetails: UserDetails) => Promise<void>;
+  deleteAccount?: (currpass: string) => void;
 };
 
 export type UserAction =
-  | { type: "on-signin"; payload: UserDetails }
+  | { type: "on-signin"; payload: UserDetails | null }
   | { type: "on-signup"; payload: UserDetails };

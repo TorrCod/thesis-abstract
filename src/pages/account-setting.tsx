@@ -1,10 +1,27 @@
 import AdminProfile from "@/components/admin";
-import { PriButton } from "@/components/button";
+import { PriButton, SecButton } from "@/components/button";
 import { Course, UserDetails } from "@/context/types.d";
 import useUserContext from "@/context/userContext";
-import { isObjectIncluded } from "@/utils/helper";
-import { Divider, Form, Input, message, Select } from "antd";
+import { auth, uploadProfile } from "@/lib/firebase";
+import {
+  base64toBinaryData,
+  getBase64,
+  isObjectIncluded,
+} from "@/utils/helper";
+import {
+  Divider,
+  Form,
+  Input,
+  message,
+  Select,
+  Space,
+  Upload,
+  UploadFile,
+  UploadProps,
+} from "antd";
 import { useForm } from "antd/es/form/Form";
+import { RcFile } from "antd/es/upload";
+import { uploadBytes } from "firebase/storage";
 import React, { useEffect, useState } from "react";
 import { BsImage } from "react-icons/bs";
 import { useDebounce } from "react-use";
@@ -25,9 +42,12 @@ const AccountSetting = () => {
   const [newData, setNewData] = useState<UserDetails>();
   const [chngPassSave, setChngPassSave] = useState(true);
   const [chngProfSave, setChngProfSave] = useState(true);
+  const [newProfile, setNewProfile] = useState<string | undefined>();
 
   useEffect(() => {
     form.resetFields();
+    setNewProfile(userDetails?.profilePic);
+    setChngProfSave(true);
   }, [userDetails, form]);
 
   useEffect(() => {
@@ -77,6 +97,32 @@ const AccountSetting = () => {
         message.error("Something Went Wrong! Please try in another time");
       }
     }
+  };
+
+  const uploadProps: UploadProps = {
+    onChange(info) {
+      getBase64(info.file as RcFile).then((url) => {
+        setNewProfile(url);
+        setChngProfSave(false);
+      });
+    },
+    showUploadList: false,
+    accept: ".jpg, .jpeg, .png",
+    beforeUpload: () => false,
+  };
+
+  const handleProfCancel = () => {
+    setNewProfile(userDetails?.profilePic);
+    setChngProfSave(true);
+  };
+
+  const handleProfSave = () => {
+    uploadProfile(newProfile!, userDetails?.uid!).then((url) => {
+      const newProf: UserDetails = { ...userDetails!, profilePic: url };
+      setNewProfile(url!);
+      userCtx.updateProfileUrl!(newProf);
+      setChngProfSave(true);
+    });
   };
 
   return (
@@ -205,20 +251,31 @@ const AccountSetting = () => {
               Save
             </PriButton>
           </div>
-          <div className="bg-slate-100 p-5 rounded-md shadow-md">
+          <div className="bg-slate-100 p-5 rounded-md shadow-md w-full">
             <p>Profile Picture</p>
             <Divider />
-            <div className="grid place-items-center relative">
-              <div className="absolute w-[17.5em] rounded-full h-full bg-black/30 z-10 grid place-items-center cursor-pointer">
+            <Upload
+              {...uploadProps}
+              className="grid place-items-center relative"
+            >
+              <div className="absolute w-[16.8em] rounded-full h-full bg-black/30 z-10 grid place-items-center cursor-pointer">
                 <BsImage size={"2em"} color="white" />
               </div>
               <AdminProfile
-                size={{ height: "20em", width: "20em" }}
+                src={newProfile ?? undefined}
+                size={{ height: "16.8em", width: "16.8em" }}
                 userDetails={userDetails!}
               />
-            </div>
+            </Upload>
             <Divider />
-            <PriButton disabled={chngProfSave}>Save</PriButton>
+            <Space>
+              <SecButton onClick={handleProfCancel} disabled={chngProfSave}>
+                cancel
+              </SecButton>
+              <PriButton onClick={handleProfSave} disabled={chngProfSave}>
+                Save
+              </PriButton>
+            </Space>
           </div>
         </div>
         <div className="bg-slate-100 p-5 rounded-md shadow-md">

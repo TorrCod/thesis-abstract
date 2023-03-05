@@ -70,3 +70,11 @@ export const updateUser = async (userDetails: UserDetails) => {
     throw new Error(e as string).message;
   }
 };
+
+export const db_UpdateProfile = async ({
+  uid,
+  payload,
+}: {
+  uid: string;
+  payload: any;
+}) => {};

@@ -4,7 +4,9 @@ import {
   EmailAuthProvider,
   onAuthStateChanged,
   reauthenticateWithCredential,
+  updateCurrentUser,
   updatePassword,
+  updateProfile,
 } from "firebase/auth";
 import { createContext, useContext, useEffect, useReducer } from "react";
 import { UserAction, UserDetails, UserState, UserValue } from "./types.d";
@@ -39,8 +41,10 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
       if (user) {
         const id = user.uid;
         getUserDetails(id).then((res) => {
+          res["profilePic"] = auth.currentUser?.photoURL!;
           dispatch({ type: "on-signin", payload: res });
         });
+        console.log("triggered");
       } else {
         dispatch({ type: "on-signin", payload: null });
       }
@@ -67,9 +71,24 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
     await updatePassword(auth.currentUser!, newpass);
   };
 
+  const updateProfileUrl = async (userDetails: UserDetails) => {
+    await updateProfile(auth.currentUser!, {
+      photoURL: userDetails.profilePic,
+    });
+    await auth.updateCurrentUser(auth.currentUser);
+    dispatch({ type: "on-signin", payload: userDetails });
+  };
+
   return (
     <UserContext.Provider
-      value={{ state, dispatch, userSignUp, userUpdateInfo, changePass }}
+      value={{
+        state,
+        dispatch,
+        userSignUp,
+        userUpdateInfo,
+        changePass,
+        updateProfileUrl,
+      }}
     >
       {children}
     </UserContext.Provider>

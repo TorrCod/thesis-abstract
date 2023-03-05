@@ -55,4 +55,5 @@ export type SearchProps = {
 export type AdminProps = {
   size?: { height: string; width: string };
   userDetails: UserDetails;
+  src?: string;
 };

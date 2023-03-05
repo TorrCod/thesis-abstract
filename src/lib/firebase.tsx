@@ -6,6 +6,13 @@ import {
   signInWithEmailAndPassword,
   updateProfile,
 } from "firebase/auth";
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytes,
+  uploadString,
+} from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBZlCW7q74uaLWyQs6Nzf8CGduhQpZNcs8",
@@ -20,6 +27,7 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
+export const firebaseStorage = getStorage(app);
 
 export const signIn = async (email: string, password: string) => {
   await signInWithEmailAndPassword(auth, email, password);
@@ -29,10 +37,25 @@ export const signUp = async (details: UserDetails) => {
   const res = await createUserWithEmailAndPassword(
     auth,
     details.email,
-    details.password
+    details.password!
   );
   updateProfile(res.user, {
     displayName: details.userName,
   });
   return res.user.uid;
+};
+
+export const uploadProfile = async (dataUrl: string, uid: string) => {
+  try {
+    const storageRef = ref(firebaseStorage, "profile-pictures/" + uid);
+    const { ref: fileRef } = await uploadString(
+      storageRef,
+      dataUrl,
+      "data_url"
+    );
+    const url = await getDownloadURL(fileRef);
+    return url;
+  } catch (e) {
+    console.error(e);
+  }
 };

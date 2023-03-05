@@ -5,3 +5,7 @@ export const PriButton = (Props: ButtonProps) => {
     <Button className="bg-[#F8B49C] shadow-lg" type="primary" {...Props} />
   );
 };
+
+export const SecButton = (Props: ButtonProps) => {
+  return <Button className="shadow-lg" type="default" {...Props} />;
+};

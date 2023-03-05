@@ -54,6 +54,7 @@ export type UserDetails = {
   approove?: string;
   uid?: string;
   _id?: any;
+  password?: string;
 };
 
 export type UserValue = {
@@ -62,6 +63,7 @@ export type UserValue = {
   userSignUp?: (userDetails: UserDetails) => Promise<void>;
   userUpdateInfo?: (userDetails: UserDetails) => Promise<void>;
   changePass?: (currpass: string, newpass: string) => Promise<void>;
+  updateProfileUrl?: (userDetails: UserDetails) => Promise<void>;
 };
 
 export type UserAction =

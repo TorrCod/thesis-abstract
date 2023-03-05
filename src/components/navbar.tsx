@@ -108,7 +108,7 @@ const NavBar = () => {
   return (
     <div
       className={
-        "px-2 py-5 fixed md:flex top-0 z-50 w-full md:justify-center md:items-center " +
+        "navbar px-2 py-5 fixed md:flex top-0 z-50 w-full md:justify-center md:items-center " +
         (y > 0 ? "shadow-md flex bg-[#38649C] " : "md:bg-transparent ")
       }
     >

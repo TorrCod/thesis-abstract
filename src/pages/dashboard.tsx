@@ -8,6 +8,8 @@ import { MenuProps } from 'antd';
 import { DashboardSetting } from '@/components/dasboardSetting';
 import DashboardOverview from '@/components/dashboardOverview';
 import { DashboardThesis } from '@/components/dashboardThesis';
+import UsersTable from '@/components/dashboardUsers';
+import AdminsTable from '@/components/dashboardAdmins';
 
 type SelectedKey = "Overview"|"User"|"Deleted Thesis"|"Users"|"Admins"|"Activity Log"|"Thesis"
 
@@ -25,7 +27,7 @@ function Dashboard() {
   const menuItem:MenuProps["items"] = [
     {key:"/dashboard",label:<Link href="/dashboard">Dashboard</Link>},
     {key:"/setting",label:"Settings"},
-    {key:"/back",label:<Link href="/"><PriButton>Home</PriButton></Link>}
+    {key:"/back",label:<Link href="/"><PriButton style={{ marginLeft: 'auto', marginRight: '40px'}}>Home</PriButton></Link>}
   ]
 
   const siderMenu:MenuProps ["items"] =[
@@ -68,12 +70,12 @@ function Dashboard() {
                   )}
                   {selectedSider === "Users" && (
                     <Content className='min-h-screen'>
-                      Tset2
+                      <UsersTable/>
                     </Content>
                   )}
                   {selectedSider === "Admins" && (
                     <Content className='min-h-screen'>
-                      Test3
+                      <AdminsTable/>
                     </Content>
                   )}
                   {selectedSider === "Activity Log" && (

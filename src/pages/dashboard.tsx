@@ -10,6 +10,7 @@ import DashboardOverview from '@/components/dashboardOverview';
 import { DashboardThesis } from '@/components/dashboardThesis';
 import UsersTable from '@/components/dashboardUsers';
 import AdminsTable from '@/components/dashboardAdmins';
+import ActivityLog from '@/components/dashboardActivityLog';
 
 type SelectedKey = "Overview"|"User"|"Deleted Thesis"|"Users"|"Admins"|"Activity Log"|"Thesis"
 
@@ -79,8 +80,8 @@ function Dashboard() {
                     </Content>
                   )}
                   {selectedSider === "Activity Log" && (
-                    <Content className='min-h-screen'>
-                      test4
+                    <Content className='min-h-screen' style={{ margin: '30px'}}>
+                      <ActivityLog/>
                     </Content>
                   )}
                   

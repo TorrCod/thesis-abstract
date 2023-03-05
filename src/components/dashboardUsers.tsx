@@ -35,21 +35,21 @@ const data = [
     name: "John Doe",
     date: "2022-02-01",
     email: "johndoe@example.com",
-    course: "Introduction to React"
+    course: "Computer Engineering"
   },
   {
     key: "2",
     name: "Jane Doe",
     date: "2022-02-02",
     email: "janedoe@example.com",
-    course: "Advanced JavaScript"
+    course: "Mechanical Engineering"
   },
   {
     key: "3",
     name: "Bob Smith",
     date: "2022-02-03",
     email: "bobsmith@example.com",
-    course: "CSS Layouts"
+    course: "Civil Engineering"
   }
 ];
 

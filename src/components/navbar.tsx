@@ -14,6 +14,7 @@ import useUserContext from "@/context/userContext";
 import { RiDashboardLine } from "react-icons/ri";
 import { GrUserSettings } from "react-icons/gr";
 import { auth } from "@/lib/firebase";
+import { useRouter } from "next/router";
 
 const MENU_LIST = [
   { text: "Home", href: "/", icon: <AiOutlineHome /> },
@@ -63,47 +64,49 @@ const items: MenuProps["items"] = [
   },
 ];
 
-const userMenu: MenuProps["items"] = [
-  {
-    key: "/account-setting",
-    icon: (
-      <Link href={"/account-setting"}>
-        <GrUserSettings size={"1.25em"} />
-      </Link>
-    ),
-    label: <Link href={"/account-setting"}>Account Setting</Link>,
-  },
-  {
-    key: "/dashboard",
-    icon: (
-      <Link href={"/dashboard"}>
-        <RiDashboardLine size={"1.25em"} />
-      </Link>
-    ),
-    label: <Link href={"/dashboard"}>Dashboard</Link>,
-  },
-  {
-    key: "logout",
-    icon: <BiLogOut />,
-    label: "Logout",
-    onClick: () => {
-      auth.signOut();
-    },
-  },
-];
-
 const NavBar = () => {
   const [open, setOpen] = useState(false);
   const { y } = useWindowScroll();
   const [active, setActive] = useState("/");
   const { pathname } = useLocation();
   const userCtx = useUserContext().state;
+  const router = useRouter();
 
   useEffect(() => {
     if (pathname) {
       setActive(pathname);
     }
   }, [pathname]);
+
+  const userMenu: MenuProps["items"] = [
+    {
+      key: "/account-setting",
+      icon: (
+        <Link href={"/account-setting"}>
+          <GrUserSettings size={"1.25em"} />
+        </Link>
+      ),
+      label: <Link href={"/account-setting"}>Account Setting</Link>,
+    },
+    {
+      key: "/dashboard",
+      icon: (
+        <Link href={"/dashboard"}>
+          <RiDashboardLine size={"1.25em"} />
+        </Link>
+      ),
+      label: <Link href={"/dashboard"}>Dashboard</Link>,
+    },
+    {
+      key: "logout",
+      icon: <BiLogOut />,
+      label: "Logout",
+      onClick: () => {
+        auth.signOut();
+        router.push("/");
+      },
+    },
+  ];
 
   return (
     <div

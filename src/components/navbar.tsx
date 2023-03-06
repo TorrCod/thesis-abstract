@@ -147,7 +147,7 @@ const NavBar = () => {
             trigger={["click"]}
             dropdownRender={() => (
               <div className="bg-white rounded-md pt-5">
-                <div className="flex gap-2 justify-center items-center mx-5 pb-3 border-b-2">
+                <div className="flex gap-2 justify-center items-center mx-5 pb-3 border-b-[1px]">
                   <Login />
                   <div>
                     <p>{`${userCtxState.userDetails?.firstName} ${userCtxState.userDetails?.lastName}`}</p>
@@ -183,19 +183,25 @@ const NavBar = () => {
         bodyStyle={{ padding: 0 }}
       >
         <Menu
-          className="text-lg text-black/70"
+          className="md:text-lg text-black/70"
           onClick={() => setOpen(!open)}
           selectedKeys={[active]}
           items={items}
         />
         <Divider />
-        <div className="m-auto text-center">
+        <div className="flex gap-2 items-center mx-5 pb-3 border-b-[1px]">
           <Login />
+          <div>
+            <p>{`${userCtxState.userDetails?.firstName} ${userCtxState.userDetails?.lastName}`}</p>
+            <p className="text-[0.8em] opacity-80">
+              {userCtxState.userDetails?.course}
+            </p>
+          </div>
         </div>
         {userCtxState.userDetails ? (
           <Menu
             selectedKeys={[active]}
-            className="opacity-70 text-lg"
+            className="opacity-80 md:text-lg"
             items={userMenu}
             onClick={() => setOpen(!open)}
           />

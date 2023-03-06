@@ -57,3 +57,14 @@ export type AdminProps = {
   userDetails: UserDetails;
   src?: string;
 };
+
+export type BottomMenuProps = {
+  onchange: (selected: SelectedKey) => void;
+};
+
+export type SelectedKey =
+  | "Overview"
+  | "Users"
+  | "Admins"
+  | "Activity Log"
+  | "Thesis";

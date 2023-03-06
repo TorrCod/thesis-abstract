@@ -14,15 +14,8 @@ import { AiFillHome } from "react-icons/ai";
 import { FaSwatchbook } from "react-icons/fa";
 import { MdAdminPanelSettings, MdWorkHistory } from "react-icons/md";
 import { ImUserCheck } from "react-icons/im";
-
-type SelectedKey =
-  | "Overview"
-  | "User"
-  | "Deleted Thesis"
-  | "Users"
-  | "Admins"
-  | "Activity Log"
-  | "Thesis";
+import { BotomMenu } from "@/components/botomMenu";
+import { SelectedKey } from "@/components/types.d";
 
 function Dashboard() {
   const [selectedMenu, setselectedMenu] = useState("/dashboard");
@@ -62,6 +55,10 @@ function Dashboard() {
     { key: "Activity Log", label: "Activity Log", icon: <MdWorkHistory /> },
   ];
 
+  const handleBottomMenuChange = (selectedKey: SelectedKey) => {
+    setSelectedSider(selectedKey);
+  };
+
   return (
     <div className="bg-[#D9D9D9] relative">
       <Header className="header">
@@ -100,9 +97,6 @@ function Dashboard() {
                   <DashboardThesis />
                 </Content>
               )}
-              {selectedSider === "Deleted Thesis" && (
-                <Content className="min-h-screen">Test1</Content>
-              )}
               {selectedSider === "Users" && (
                 <Content className="min-h-screen">
                   <UsersTable />
@@ -127,13 +121,7 @@ function Dashboard() {
           </Content>
         )}
       </div>
-      <div className="md:hidden fixed bottom-0 w-full h-[4.5em] bg-[#001529] text-white grid grid-flow-col place-items-center">
-        <FaSwatchbook />
-        <MdAdminPanelSettings />
-        <AiFillHome />
-        <ImUserCheck />
-        <MdWorkHistory />
-      </div>
+      <BotomMenu onchange={handleBottomMenuChange} />
     </div>
   );
 }

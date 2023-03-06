@@ -122,8 +122,6 @@ function DashboardLayout({
             <BotomMenu
               defaultSelected={selectedSider}
               onchange={(info) => {
-                console.log(info);
-
                 router.push(info);
               }}
             />

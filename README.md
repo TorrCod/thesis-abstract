@@ -2,7 +2,7 @@
 ## install docker
 install docker in https://docs.docker.com/get-docker/ 
 
-## Start devoloping
+## Start developing
 run the command `npm run thesis`
 
 # Documentation

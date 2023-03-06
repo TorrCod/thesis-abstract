@@ -10,7 +10,8 @@ export const BotomMenu = ({ onchange, defaultSelected }: BottomMenuProps) => {
     useState<SelectedDashboardSider>(defaultSelected);
   useEffect(() => {
     onchange(selectedKeys);
-  }, [selectedKeys, onchange]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedKeys]);
   return (
     <div className="md:hidden fixed bottom-0 w-full h-[4.5em] bg-[#001529] text-white grid grid-flow-col place-items-center grid-col-4">
       <div

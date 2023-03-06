@@ -92,7 +92,7 @@ function DashboardLayout({
   ];
 
   return (
-    <div className="bg-[#D9D9D9] relative">
+    <div className="bg-[#D9D9D9] relative md:h-screen">
       <Header className="header fixed top-0 w-full md:relative z-10">
         <div className="logo" />
         <Menu
@@ -102,9 +102,9 @@ function DashboardLayout({
           items={menuItem}
         />
       </Header>
-      <div>
+      <div className="h-full">
         {userSelectedMenu === "/dashboard" && selectedSider && (
-          <div className="flex">
+          <div className="flex md:h-full">
             <Sider
               className="md:bg-white z-10 hidden md:block opacity-80"
               width={"15vw"}
@@ -116,9 +116,9 @@ function DashboardLayout({
                 onSelect={(info) => setSelectedSider(info.key as any)}
               />
             </Sider>
-            <Content className="md:min-h-screen w-full mt-20 m-1 md:m-5 round-md">
+            <div className="md:overflow-auto md:max-h-full w-full pt-20 p-1 md:p-5 round-md relative">
               {children}
-            </Content>
+            </div>
             <BotomMenu
               defaultSelected={selectedSider}
               onchange={(info) => {

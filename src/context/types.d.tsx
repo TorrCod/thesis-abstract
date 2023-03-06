@@ -20,6 +20,7 @@ export type ThesisItems = {
   course: Course;
   abstract: string;
   date: string;
+  dateAdded: string;
 };
 
 export type GlobalAction =

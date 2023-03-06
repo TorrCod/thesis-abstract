@@ -22,6 +22,7 @@ import React, { useEffect, useState } from "react";
 import { BsImage } from "react-icons/bs";
 import { useRouter } from "next/router";
 
+
 const courseOpt: { value: Course; label: Course }[] = [
   { value: "Civil Engineer", label: "Civil Engineer" },
   { value: "Computer Engineer", label: "Computer Engineer" },

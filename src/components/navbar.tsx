@@ -99,6 +99,7 @@ const NavBar = () => {
         </Link>
       ),
       label: <Link href={"/dashboard/overview"}>Dashboard</Link>,
+
     },
     {
       key: "logout",

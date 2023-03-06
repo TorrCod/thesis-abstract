@@ -18,7 +18,7 @@ type SelectedMenu = "/dashboard" | "/account-setting";
 type DashboardProps = {
   children?: React.ReactNode;
   userSelectedMenu: SelectedMenu;
-  userSelectedSider: SelectedDashboardSider;
+  userSelectedSider?: SelectedDashboardSider;
 };
 
 function DashboardLayout({
@@ -93,7 +93,7 @@ function DashboardLayout({
 
   return (
     <div className="bg-[#D9D9D9] relative">
-      <Header className="header fixed top-0 w-full md:relative">
+      <Header className="header fixed top-0 w-full md:relative z-10">
         <div className="logo" />
         <Menu
           theme="dark"
@@ -103,7 +103,7 @@ function DashboardLayout({
         />
       </Header>
       <div>
-        {userSelectedMenu === "/dashboard" && (
+        {userSelectedMenu === "/dashboard" && selectedSider && (
           <div className="flex">
             <Sider
               className="md:bg-white z-10 hidden md:block opacity-80"

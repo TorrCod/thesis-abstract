@@ -18,8 +18,18 @@ import { BotomMenu } from "@/components/botomMenu";
 import { SelectedKey } from "@/components/types.d";
 import { RiDashboardFill, RiUserSettingsFill } from "react-icons/ri";
 
-function Dashboard() {
-  const [selectedMenu, setselectedMenu] = useState("/dashboard");
+type SelectedMenu = "/dashboard" | "/account-setting";
+
+type DashboardProps = {
+  children: React.ReactNode;
+  onChange?: (selected: "/dashboard" | "/account-setting") => void;
+  userSelectedMenu: SelectedMenu;
+};
+
+function Dashboard({ children, userSelectedMenu }: DashboardProps) {
+  const [selectedMenu, setselectedMenu] = useState(
+    userSelectedMenu ?? "/dashboard"
+  );
   const [selectedSider, setSelectedSider] = useState<SelectedKey>("Overview");
 
   useEffect(() => {
@@ -33,13 +43,19 @@ function Dashboard() {
     };
   }, []);
 
+  // useEffect(() => {}, [selectedMenu]);
+
   const menuItem: MenuProps["items"] = [
     {
       key: "/dashboard",
       label: <Link href="/dashboard">Dashboard</Link>,
       icon: <RiDashboardFill />,
     },
-    { key: "/setting", label: "Account Setting", icon: <RiUserSettingsFill /> },
+    {
+      key: "/account-setting",
+      label: <Link href={"/account-setting"}>Account Setting</Link>,
+      icon: <RiUserSettingsFill />,
+    },
     {
       key: "/back",
       label: (
@@ -53,11 +69,19 @@ function Dashboard() {
   ];
 
   const siderMenu: MenuProps["items"] = [
-    { key: "Overview", label: "Overview", icon: <AiFillHome /> },
-    { key: "Thesis", label: "Thesis", icon: <FaSwatchbook /> },
-    { key: "Users", label: "Users", icon: <MdAdminPanelSettings /> },
-    { key: "Admins", label: "Admins", icon: <ImUserCheck /> },
-    { key: "Activity Log", label: "Activity Log", icon: <MdWorkHistory /> },
+    { key: "Overview", label: "Overview", icon: <AiFillHome size={"1.1em"} /> },
+    { key: "Thesis", label: "Thesis", icon: <FaSwatchbook size={"1.1em"} /> },
+    {
+      key: "Users",
+      label: "Users",
+      icon: <MdAdminPanelSettings size={"1.1em"} />,
+    },
+    { key: "Admins", label: "Admins", icon: <ImUserCheck size={"1.1em"} /> },
+    {
+      key: "Activity Log",
+      label: "Activity Log",
+      icon: <MdWorkHistory size={"1.1em"} />,
+    },
   ];
 
   const handleBottomMenuChange = (selectedKey: SelectedKey) => {
@@ -72,7 +96,7 @@ function Dashboard() {
           theme="dark"
           mode="horizontal"
           selectedKeys={[selectedMenu]}
-          onSelect={(info) => setselectedMenu(info.key)}
+          onSelect={(info) => setselectedMenu(info.key as SelectedMenu)}
           items={menuItem}
           defaultSelectedKeys={["/dashboard"]}
         />
@@ -82,10 +106,10 @@ function Dashboard() {
           <div className="flex">
             <Sider
               className="md:bg-white z-10 hidden md:block opacity-80"
-              width={200}
+              width={"15vw"}
             >
               <Menu
-                className="min-h-full"
+                className="min-h-full text-[0.9vw]"
                 selectedKeys={[selectedSider]}
                 onSelect={(info) => setSelectedSider(info.key as SelectedKey)}
                 items={siderMenu}
@@ -118,15 +142,13 @@ function Dashboard() {
                 </Content>
               )}
             </Content>
+            <BotomMenu onchange={handleBottomMenuChange} />
           </div>
         )}
-        {selectedMenu === "/setting" && (
-          <Content className="min-h-screen">
-            <DashboardSetting />
-          </Content>
+        {selectedMenu === "/account-setting" && (
+          <Content className="min-h-screen">{children}</Content>
         )}
       </div>
-      <BotomMenu onchange={handleBottomMenuChange} />
     </div>
   );
 }

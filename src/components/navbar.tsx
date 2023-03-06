@@ -85,28 +85,20 @@ const NavBar = () => {
     {
       key: "/account-setting",
       icon: (
-        <Link href={"/account-setting/" + userCtxState.userDetails?._id}>
+        <Link href={"/account-setting"}>
           <GrUserSettings size={"1.25em"} />
         </Link>
       ),
-      label: (
-        <Link href={"/account-setting/" + userCtxState.userDetails?._id}>
-          Account Setting
-        </Link>
-      ),
+      label: <Link href={"/account-setting"}>Account Setting</Link>,
     },
     {
-      key: "/dashboard",
+      key: "/dashboard/overview",
       icon: (
-        <Link href={"/dashboard/" + userCtxState.userDetails?._id}>
+        <Link href={"/dashboard/overview"}>
           <RiDashboardLine size={"1.25em"} />
         </Link>
       ),
-      label: (
-        <Link href={"/dashboard/" + userCtxState.userDetails?._id}>
-          Dashboard
-        </Link>
-      ),
+      label: <Link href={"/dashboard/overview"}>Dashboard</Link>,
     },
     {
       key: "logout",

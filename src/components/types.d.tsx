@@ -59,12 +59,13 @@ export type AdminProps = {
 };
 
 export type BottomMenuProps = {
-  onchange: (selected: SelectedKey) => void;
+  onchange: (selected: SelectedDashboardSider) => void;
+  defaultSelected: SelectedDashboardSider;
 };
 
-export type SelectedKey =
-  | "Overview"
-  | "Users"
-  | "Admins"
-  | "Activity Log"
-  | "Thesis";
+export type SelectedDashboardSider =
+  | "/dashboard/overview"
+  | "/dashboard/users"
+  | "/dashboard/admins"
+  | "/dashboard/activitylog"
+  | "/dashboard/thesis";

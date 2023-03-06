@@ -1,8 +1,4 @@
-import { GetStaticPaths, GetStaticProps } from "next";
-import { useRouter } from "next/router";
-import { generateId, getData } from "@/lib/mongo";
-import Dashboard from "@/components/dashboard";
-import DashboardOverview from "@/components/dashboardOverview";
+import DashboardLayout from "@/components/dashboardLayout";
 import AdminProfile from "@/components/admin";
 import { PriButton, SecButton } from "@/components/button";
 import { Course, UserDetails } from "@/context/types.d";
@@ -24,52 +20,7 @@ import { useForm } from "antd/lib/form/Form";
 import { RcFile } from "antd/lib/upload";
 import React, { useEffect, useState } from "react";
 import { BsImage } from "react-icons/bs";
-
-export const getStaticProps: GetStaticProps = async (context) => {
-  const res = await getData("accounts", "user");
-  const userList = generateId(res);
-  const itemId = context.params?.id;
-  const foundItem = userList.find((item) => itemId === item["id"]);
-  if (!foundItem) {
-    return {
-      props: { hasError: true },
-    };
-  }
-  return {
-    props: { data: foundItem },
-  };
-};
-
-export const getStaticPaths: GetStaticPaths = async () => {
-  const res = await getData("accounts", "user");
-  const users = generateId(res);
-  const pathWithParams = users.map((item) => ({
-    params: { id: item.id },
-  }));
-
-  return {
-    paths: pathWithParams,
-    fallback: true,
-  };
-};
-
-// const UserSetting = (props: { data: any; hasError: boolean }) => {
-//   const router = useRouter();
-//   if (props.hasError) {
-//     return <h1>Error - please try another parameter</h1>;
-//   }
-//   if (router.isFallback) {
-//     return <h1>Loading...</h1>;
-//   }
-
-//   return (
-//     <Dashboard userSelectedMenu="/dashboard">
-//       <DashboardOverview />
-//     </Dashboard>
-//   );
-// };
-
-// export default UserSetting;
+import { useRouter } from "next/router";
 
 const courseOpt: { value: Course; label: Course }[] = [
   { value: "Civil Engineer", label: "Civil Engineer" },
@@ -91,13 +42,6 @@ const AccountSetting = (props: { data: any; hasError: boolean }) => {
   const [cfrmDltAcc, setCfrmDltAcc] = useState("");
   const [onConfirm, setOnConfirm] = useState(false);
   const router = useRouter();
-
-  if (props.hasError) {
-    return <h1>Error - please try another parameter</h1>;
-  }
-  if (router.isFallback) {
-    return <h1>Loading...</h1>;
-  }
 
   useEffect(() => {
     form.resetFields();
@@ -220,7 +164,7 @@ const AccountSetting = (props: { data: any; hasError: boolean }) => {
   }, [onConfirm]);
 
   return (
-    <Dashboard userSelectedMenu="/account-setting">
+    <DashboardLayout userSelectedMenu="/account-setting">
       <div className="pb-10 w-full p-3 md:mt-5">
         <div className="grid gap-2 relative max-w-6xl m-auto ">
           <h3 className="text-black/90">Account Setting</h3>
@@ -400,7 +344,7 @@ const AccountSetting = (props: { data: any; hasError: boolean }) => {
           </div>
         </div>
       </div>
-    </Dashboard>
+    </DashboardLayout>
   );
 };
 

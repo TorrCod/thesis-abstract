@@ -15,6 +15,8 @@ import { RiDashboardLine } from "react-icons/ri";
 import { GrUserSettings } from "react-icons/gr";
 import { auth } from "@/lib/firebase";
 import { useRouter } from "next/router";
+import { UserDetails } from "@/context/types.d";
+import DevSignUp from "./devsignuptest";
 
 const MENU_LIST = [
   { text: "Home", href: "/", icon: <AiOutlineHome /> },
@@ -69,7 +71,8 @@ const NavBar = () => {
   const { y } = useWindowScroll();
   const [active, setActive] = useState("/");
   const { pathname } = useLocation();
-  const userCtx = useUserContext().state;
+  const userCtx = useUserContext();
+  const userCtxState = userCtx.state;
   const router = useRouter();
 
   useEffect(() => {
@@ -89,13 +92,14 @@ const NavBar = () => {
       label: <Link href={"/account-setting"}>Account Setting</Link>,
     },
     {
-      key: "/dashboard",
+      key: "/dashboard/overview",
       icon: (
-        <Link href={"/dashboard"}>
+        <Link href={"/dashboard/overview"}>
           <RiDashboardLine size={"1.25em"} />
         </Link>
       ),
-      label: <Link href={"/dashboard"}>Dashboard</Link>,
+      label: <Link href={"/dashboard/overview"}>Dashboard</Link>,
+
     },
     {
       key: "logout",
@@ -111,7 +115,7 @@ const NavBar = () => {
   return (
     <div
       className={
-        "px-2 py-2 fixed md:flex top-0 z-50 w-full md:justify-center md:items-center " +
+        "navbar px-2 py-5 fixed md:flex top-0 z-50 w-full md:justify-center md:items-center " +
         (y > 0 ? "shadow-md flex bg-[#38649C] " : "md:bg-transparent ")
       }
     >
@@ -138,18 +142,18 @@ const NavBar = () => {
           </div>
         ))}
 
-        {userCtx.userDetails ? (
+        {userCtxState.userDetails ? (
           <Dropdown
             placement="bottom"
             trigger={["click"]}
             dropdownRender={() => (
               <div className="bg-white rounded-md pt-5">
-                <div className="flex gap-2 justify-center items-center mx-5 pb-3 border-b-2">
+                <div className="flex gap-2 justify-center items-center mx-5 pb-3 border-b-[1px]">
                   <Login />
                   <div>
-                    <p>{`${userCtx.userDetails?.firstName} ${userCtx.userDetails?.lastName}`}</p>
+                    <p>{`${userCtxState.userDetails?.firstName} ${userCtxState.userDetails?.lastName}`}</p>
                     <p className="text-[0.8em] opacity-80">
-                      {userCtx.userDetails?.course}
+                      {userCtxState.userDetails?.course}
                     </p>
                   </div>
                 </div>
@@ -166,7 +170,10 @@ const NavBar = () => {
             </div>
           </Dropdown>
         ) : (
-          <Login />
+          <>
+            <Login />
+            {/* <DevSignUp /> */}
+          </>
         )}
       </div>
       <Drawer
@@ -177,19 +184,25 @@ const NavBar = () => {
         bodyStyle={{ padding: 0 }}
       >
         <Menu
-          className="text-lg text-black/70"
+          className="md:text-lg text-black/70"
           onClick={() => setOpen(!open)}
           selectedKeys={[active]}
           items={items}
         />
         <Divider />
-        <div className="m-auto text-center">
+        <div className="flex gap-2 items-center mx-5 pb-3 border-b-[1px]">
           <Login />
+          <div>
+            <p>{`${userCtxState.userDetails?.firstName} ${userCtxState.userDetails?.lastName}`}</p>
+            <p className="text-[0.8em] opacity-80">
+              {userCtxState.userDetails?.course}
+            </p>
+          </div>
         </div>
-        {userCtx.userDetails ? (
+        {userCtxState.userDetails ? (
           <Menu
             selectedKeys={[active]}
-            className="opacity-70 text-lg"
+            className="opacity-80 md:text-lg"
             items={userMenu}
             onClick={() => setOpen(!open)}
           />

@@ -1,6 +1,6 @@
 import { UserDetails } from "@/context/types.d";
 import { MongoClient, ObjectId } from "mongodb";
-import { CollectionName, DatabaseName } from "./types";
+import { CollectionName, DatabaseName, QueryPost } from "./types";
 
 export async function connectToDatabase() {
   try {
@@ -27,6 +27,21 @@ export const getData = async (
     const database = client!.db(dbName);
     const collection = database.collection(colName);
     const res = await collection.find(option?.option).toArray();
+    return res;
+  } catch (e) {
+    console.error(e);
+    throw new Error(e as string).message;
+  }
+};
+
+export const deleteData = async (queryPost: QueryPost) => {
+  try {
+    const client = await connectToDatabase();
+    const database = client!.db(queryPost.mongoDetails.databaseName);
+    const collection = database.collection(
+      queryPost.mongoDetails.collectionName
+    );
+    const res = await collection.deleteOne(queryPost.query);
     return res;
   } catch (e) {
     console.error(e);

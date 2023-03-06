@@ -1,4 +1,5 @@
 import { UserDetails } from "@/context/types.d";
+import { MongoDetails, QueryPost } from "@/lib/types";
 import axios from "axios";
 
 export const addUserAccount = async (userDetails: UserDetails) => {
@@ -26,3 +27,12 @@ export const updateUser = async (payload: UserDetails) => {
 
 export const findUser = (_id: string, arr: UserDetails[]) =>
   arr.filter((item) => item.uid === _id);
+
+export const utils_Delete_Account = async (userDetails: UserDetails) => {
+  const mongoQuery: QueryPost = {
+    data: userDetails,
+    mongoDetails: { collectionName: "user", databaseName: "accounts" },
+    query: { uid: userDetails.uid },
+  };
+  await axios.post("/api/remove-item-db", mongoQuery);
+};

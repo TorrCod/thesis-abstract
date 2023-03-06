@@ -57,3 +57,15 @@ export type AdminProps = {
   userDetails: UserDetails;
   src?: string;
 };
+
+export type BottomMenuProps = {
+  onchange: (selected: SelectedDashboardSider) => void;
+  defaultSelected: SelectedDashboardSider;
+};
+
+export type SelectedDashboardSider =
+  | "/dashboard/overview"
+  | "/dashboard/users"
+  | "/dashboard/admins"
+  | "/dashboard/activitylog"
+  | "/dashboard/thesis";

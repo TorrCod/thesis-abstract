@@ -4,6 +4,8 @@ services:
     image: mongo
     container_name: mongodb
     volumes:
-      - ./mongodb/database:/data/db
+      - ./cache:/data/db
     ports:
       - "27017:27017"
+    tty: true
+

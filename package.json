@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "thesis": "cd docker-mongo && docker-compose up -d && docker exec -it mongodb mkdir /database/ && docker cp ./default-data mongodb:/database/default-data && docker-compose exec mongodb mongorestore --drop /database/default-data && cd .. && npm run dev"
   },
   "dependencies": {
     "@next/font": "13.1.6",

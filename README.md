@@ -1,11 +1,11 @@
 # How to run local Mongodb in Docker
-## install docker
+### install docker
 install docker in https://docs.docker.com/get-docker/ 
 
-## Start developing
+### Start developing
 run the command `npm run thesis`
 
-# Documentation
+## Documentation
 ### Run mongodb
 go to directory `cd docker-mongo`
 

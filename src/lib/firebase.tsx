@@ -30,6 +30,8 @@ export const auth = getAuth(app);
 export const firebaseStorage = getStorage(app);
 
 export const signIn = async (email: string, password: string) => {
+  console.log(email, password);
+
   await signInWithEmailAndPassword(auth, email, password);
 };
 

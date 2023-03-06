@@ -17,8 +17,6 @@ const SignInSignUp = () => {
       await formSignIn.validateFields();
       const email = formSignIn.getFieldValue("sign-in-email");
       const password = formSignIn.getFieldValue("sign-in-password");
-      console.log(email, password);
-
       await signIn(email, password);
       setOpen(false);
       formSignIn.resetFields();
@@ -36,24 +34,26 @@ const SignInSignUp = () => {
       await formSignUp.validateFields();
       // TODO: handle sign in/signup logic
       const payload = formSignUp.getFieldsValue();
+      console.log(payload);
+
       const userDetails: UserDetails = {
         email: payload["sign-up-email"],
         userName: payload["username"],
         course: payload["course"],
         firstName: payload["firstname"],
         lastName: payload["lastname"],
-        password: payload["sign-up-password"],
+        password: payload["confirm-password"],
         profilePic: undefined,
         approove: undefined,
       };
       await userCtx.userSignUp?.(userDetails);
       setOpen(false); // close the modal after successful sign in/signup
-      formSignUp.resetFields();
       message.success({
         type: "success",
         content:
           "Registered Successfully! Please wait for the admins approval.",
       });
+      formSignUp.resetFields();
     } catch (error) {
       const errmessage = (error as any).message;
       if (errmessage) {

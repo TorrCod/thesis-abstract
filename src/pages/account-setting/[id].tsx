@@ -1,3 +1,8 @@
+import { GetStaticPaths, GetStaticProps } from "next";
+import { useRouter } from "next/router";
+import { generateId, getData } from "@/lib/mongo";
+import Dashboard from "@/components/dashboard";
+import DashboardOverview from "@/components/dashboardOverview";
 import AdminProfile from "@/components/admin";
 import { PriButton, SecButton } from "@/components/button";
 import { Course, UserDetails } from "@/context/types.d";
@@ -17,10 +22,54 @@ import {
 } from "antd";
 import { useForm } from "antd/lib/form/Form";
 import { RcFile } from "antd/lib/upload";
-import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { BsImage } from "react-icons/bs";
-import Dashboard from "./dashboard";
+
+export const getStaticProps: GetStaticProps = async (context) => {
+  const res = await getData("accounts", "user");
+  const userList = generateId(res);
+  const itemId = context.params?.id;
+  const foundItem = userList.find((item) => itemId === item["id"]);
+  if (!foundItem) {
+    return {
+      props: { hasError: true },
+    };
+  }
+  return {
+    props: { data: foundItem },
+  };
+};
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const res = await getData("accounts", "user");
+  const users = generateId(res);
+  const pathWithParams = users.map((item) => ({
+    params: { id: item.id },
+  }));
+
+  return {
+    paths: pathWithParams,
+    fallback: true,
+  };
+};
+
+// const UserSetting = (props: { data: any; hasError: boolean }) => {
+//   const router = useRouter();
+//   if (props.hasError) {
+//     return <h1>Error - please try another parameter</h1>;
+//   }
+//   if (router.isFallback) {
+//     return <h1>Loading...</h1>;
+//   }
+
+//   return (
+//     <Dashboard userSelectedMenu="/dashboard">
+//       <DashboardOverview />
+//     </Dashboard>
+//   );
+// };
+
+// export default UserSetting;
 
 const courseOpt: { value: Course; label: Course }[] = [
   { value: "Civil Engineer", label: "Civil Engineer" },
@@ -29,7 +78,7 @@ const courseOpt: { value: Course; label: Course }[] = [
   { value: "Mechanical Engineer", label: "Mechanical Engineer" },
 ];
 
-const AccountSetting = () => {
+const AccountSetting = (props: { data: any; hasError: boolean }) => {
   const userCtx = useUserContext();
   const userDetails = userCtx.state.userDetails;
   const [form] = useForm();
@@ -42,6 +91,13 @@ const AccountSetting = () => {
   const [cfrmDltAcc, setCfrmDltAcc] = useState("");
   const [onConfirm, setOnConfirm] = useState(false);
   const router = useRouter();
+
+  if (props.hasError) {
+    return <h1>Error - please try another parameter</h1>;
+  }
+  if (router.isFallback) {
+    return <h1>Loading...</h1>;
+  }
 
   useEffect(() => {
     form.resetFields();

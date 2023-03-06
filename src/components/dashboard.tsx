@@ -17,6 +17,7 @@ import { ImUserCheck } from "react-icons/im";
 import { BotomMenu } from "@/components/botomMenu";
 import { SelectedKey } from "@/components/types.d";
 import { RiDashboardFill, RiUserSettingsFill } from "react-icons/ri";
+import useUserContext from "@/context/userContext";
 
 type SelectedMenu = "/dashboard" | "/account-setting";
 
@@ -31,6 +32,8 @@ function Dashboard({ children, userSelectedMenu }: DashboardProps) {
     userSelectedMenu ?? "/dashboard"
   );
   const [selectedSider, setSelectedSider] = useState<SelectedKey>("Overview");
+  const userCtx = useUserContext();
+  const user_id = userCtx.state.userDetails?._id;
 
   useEffect(() => {
     (
@@ -43,17 +46,15 @@ function Dashboard({ children, userSelectedMenu }: DashboardProps) {
     };
   }, []);
 
-  // useEffect(() => {}, [selectedMenu]);
-
   const menuItem: MenuProps["items"] = [
     {
       key: "/dashboard",
-      label: <Link href="/dashboard">Dashboard</Link>,
+      label: <Link href={"/dashboard/" + user_id}>Dashboard</Link>,
       icon: <RiDashboardFill />,
     },
     {
       key: "/account-setting",
-      label: <Link href={"/account-setting"}>Account Setting</Link>,
+      label: <Link href={"/account-setting/" + user_id}>Account Setting</Link>,
       icon: <RiUserSettingsFill />,
     },
     {
@@ -116,7 +117,7 @@ function Dashboard({ children, userSelectedMenu }: DashboardProps) {
               />
             </Sider>
             <Content className="min-h-screen w-full  m-1 md:m-5 round-md">
-              {selectedSider === "Overview" && (
+              {/* {selectedSider === "Overview" && (
                 <Content className="min-h-screen">
                   <DashboardOverview />
                 </Content>
@@ -140,7 +141,8 @@ function Dashboard({ children, userSelectedMenu }: DashboardProps) {
                 <Content className="min-h-screen" style={{ margin: "30px" }}>
                   <ActivityLog />
                 </Content>
-              )}
+              )} */}
+              {children}
             </Content>
             <BotomMenu onchange={handleBottomMenuChange} />
           </div>

@@ -15,6 +15,8 @@ import { RiDashboardLine } from "react-icons/ri";
 import { GrUserSettings } from "react-icons/gr";
 import { auth } from "@/lib/firebase";
 import { useRouter } from "next/router";
+import { UserDetails } from "@/context/types.d";
+import DevSignUp from "./devsignuptest";
 
 const MENU_LIST = [
   { text: "Home", href: "/", icon: <AiOutlineHome /> },
@@ -69,7 +71,8 @@ const NavBar = () => {
   const { y } = useWindowScroll();
   const [active, setActive] = useState("/");
   const { pathname } = useLocation();
-  const userCtx = useUserContext().state;
+  const userCtx = useUserContext();
+  const userCtxState = userCtx.state;
   const router = useRouter();
 
   useEffect(() => {
@@ -82,20 +85,28 @@ const NavBar = () => {
     {
       key: "/account-setting",
       icon: (
-        <Link href={"/account-setting"}>
+        <Link href={"/account-setting/" + userCtxState.userDetails?._id}>
           <GrUserSettings size={"1.25em"} />
         </Link>
       ),
-      label: <Link href={"/account-setting"}>Account Setting</Link>,
+      label: (
+        <Link href={"/account-setting/" + userCtxState.userDetails?._id}>
+          Account Setting
+        </Link>
+      ),
     },
     {
       key: "/dashboard",
       icon: (
-        <Link href={"/dashboard"}>
+        <Link href={"/dashboard/" + userCtxState.userDetails?._id}>
           <RiDashboardLine size={"1.25em"} />
         </Link>
       ),
-      label: <Link href={"/dashboard"}>Dashboard</Link>,
+      label: (
+        <Link href={"/dashboard/" + userCtxState.userDetails?._id}>
+          Dashboard
+        </Link>
+      ),
     },
     {
       key: "logout",
@@ -138,7 +149,7 @@ const NavBar = () => {
           </div>
         ))}
 
-        {userCtx.userDetails ? (
+        {userCtxState.userDetails ? (
           <Dropdown
             placement="bottom"
             trigger={["click"]}
@@ -147,9 +158,9 @@ const NavBar = () => {
                 <div className="flex gap-2 justify-center items-center mx-5 pb-3 border-b-2">
                   <Login />
                   <div>
-                    <p>{`${userCtx.userDetails?.firstName} ${userCtx.userDetails?.lastName}`}</p>
+                    <p>{`${userCtxState.userDetails?.firstName} ${userCtxState.userDetails?.lastName}`}</p>
                     <p className="text-[0.8em] opacity-80">
-                      {userCtx.userDetails?.course}
+                      {userCtxState.userDetails?.course}
                     </p>
                   </div>
                 </div>
@@ -166,7 +177,10 @@ const NavBar = () => {
             </div>
           </Dropdown>
         ) : (
-          <Login />
+          <>
+            <Login />
+            {/* <DevSignUp /> */}
+          </>
         )}
       </div>
       <Drawer
@@ -186,7 +200,7 @@ const NavBar = () => {
         <div className="m-auto text-center">
           <Login />
         </div>
-        {userCtx.userDetails ? (
+        {userCtxState.userDetails ? (
           <Menu
             selectedKeys={[active]}
             className="opacity-70 text-lg"

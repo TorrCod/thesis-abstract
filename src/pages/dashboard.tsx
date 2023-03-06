@@ -16,6 +16,7 @@ import { MdAdminPanelSettings, MdWorkHistory } from "react-icons/md";
 import { ImUserCheck } from "react-icons/im";
 import { BotomMenu } from "@/components/botomMenu";
 import { SelectedKey } from "@/components/types.d";
+import { RiDashboardFill, RiUserSettingsFill } from "react-icons/ri";
 
 function Dashboard() {
   const [selectedMenu, setselectedMenu] = useState("/dashboard");
@@ -33,14 +34,18 @@ function Dashboard() {
   }, []);
 
   const menuItem: MenuProps["items"] = [
-    { key: "/dashboard", label: <Link href="/dashboard">Dashboard</Link> },
-    { key: "/setting", label: "Settings" },
+    {
+      key: "/dashboard",
+      label: <Link href="/dashboard">Dashboard</Link>,
+      icon: <RiDashboardFill />,
+    },
+    { key: "/setting", label: "Account Setting", icon: <RiUserSettingsFill /> },
     {
       key: "/back",
       label: (
         <Link href="/">
           <PriButton style={{ marginLeft: "auto", marginRight: "40px" }}>
-            Home
+            Back
           </PriButton>
         </Link>
       ),

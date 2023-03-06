@@ -74,6 +74,7 @@ const SignInSignUp = () => {
     { value: "Computer Engineer", label: "Computer Engineer" },
     { value: "Electrical Engineer", label: "Electrical Engineer" },
     { value: "Mechanical Engineer", label: "Mechanical Engineer" },
+    { value: "Electronics Engineer", label: "Electronics Engineer" },
   ];
 
   return (

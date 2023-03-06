@@ -22,7 +22,6 @@ import React, { useEffect, useState } from "react";
 import { BsImage } from "react-icons/bs";
 import { useRouter } from "next/router";
 
-
 const courseOpt: { value: Course; label: Course }[] = [
   { value: "Civil Engineer", label: "Civil Engineer" },
   { value: "Computer Engineer", label: "Computer Engineer" },
@@ -162,6 +161,7 @@ const AccountSetting = (props: { data: any; hasError: boolean }) => {
         });
       setCfrmDltAcc("");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onConfirm]);
 
   return (

@@ -10,7 +10,8 @@ export type Course =
   | "Computer Engineer"
   | "Mechanical Engineer"
   | "Electrical Engineer"
-  | "Civil Engineer";
+  | "Civil Engineer"
+  | "Electronics Engineer";
 
 export type ThesisItems = {
   id: string;

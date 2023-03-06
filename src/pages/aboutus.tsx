@@ -71,7 +71,8 @@ const AboutUs = () => {
               a response to the challenges faced by students and faculty in
               managing thesis abstract submissions. We are proud to have
               achieved several milestones along the way, including the
-              successful completion of the system's prototype and beta testing.
+              successful completion of the system&apos;s prototype and beta
+              testing.
             </p>
           </div>
         </div>
@@ -83,7 +84,7 @@ const AboutUs = () => {
             real-time feedback and support.
           </div>
           <div className="bg-slate-100 shadow-md p-10 rounded-lg m-5 text-justify">
-            Our system's key features include a userfriendly interface, an
+            Our system&apos;s key features include a userfriendly interface, an
             easy-to-use submission process, and a real-time tracking system.
             These features allow students and faculty to submit and manage their
             thesis abstracts with ease and transparency.
@@ -93,9 +94,9 @@ const AboutUs = () => {
           <div className="px-5 max-w-sm m-auto">
             <h1 className="my-4 opacity-80">GET IN TOUCH</h1>
             <p className="opacity-80 text-justify">
-              If you have any questions or need technical support, please don't
-              hesitate to contact our team. You can find our contact information
-              on our website.
+              If you have any questions or need technical support, please
+              don&apos;t hesitate to contact our team. You can find our contact
+              information on our website.
             </p>
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-3 mt-5">

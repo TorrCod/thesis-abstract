@@ -22,7 +22,7 @@ import useUserContext from "@/context/userContext";
 type SelectedMenu = "/dashboard" | "/account-setting";
 
 type DashboardProps = {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   onChange?: (selected: "/dashboard" | "/account-setting") => void;
   userSelectedMenu: SelectedMenu;
 };
@@ -117,7 +117,7 @@ function Dashboard({ children, userSelectedMenu }: DashboardProps) {
               />
             </Sider>
             <Content className="min-h-screen w-full  m-1 md:m-5 round-md">
-              {/* {selectedSider === "Overview" && (
+              {selectedSider === "Overview" && (
                 <Content className="min-h-screen">
                   <DashboardOverview />
                 </Content>
@@ -141,8 +141,7 @@ function Dashboard({ children, userSelectedMenu }: DashboardProps) {
                 <Content className="min-h-screen" style={{ margin: "30px" }}>
                   <ActivityLog />
                 </Content>
-              )} */}
-              {children}
+              )}
             </Content>
             <BotomMenu onchange={handleBottomMenuChange} />
           </div>

@@ -45,11 +45,7 @@ const DasboardView = (props: { data: ThesisItems; hasError: boolean }) => {
     return <h1>Loading...</h1>;
   }
 
-  return (
-    <Dashboard userSelectedMenu="/dashboard">
-      <DashboardOverview />
-    </Dashboard>
-  );
+  return <Dashboard userSelectedMenu="/dashboard" />;
 };
 
 export default DasboardView;

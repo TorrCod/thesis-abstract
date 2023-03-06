@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { PriButton } from "./button";
 import { NavItemProps } from "./types.d";
 import { AiOutlineHome } from "react-icons/ai";
 import { BiGroup, BiLogOut } from "react-icons/bi";
@@ -15,8 +14,6 @@ import { RiDashboardLine } from "react-icons/ri";
 import { GrUserSettings } from "react-icons/gr";
 import { auth } from "@/lib/firebase";
 import { useRouter } from "next/router";
-import { UserDetails } from "@/context/types.d";
-import DevSignUp from "./devsignuptest";
 
 const MENU_LIST = [
   { text: "Home", href: "/", icon: <AiOutlineHome /> },
@@ -99,7 +96,6 @@ const NavBar = () => {
         </Link>
       ),
       label: <Link href={"/dashboard/overview"}>Dashboard</Link>,
-
     },
     {
       key: "logout",
@@ -115,7 +111,7 @@ const NavBar = () => {
   return (
     <div
       className={
-        "navbar px-2 py-5 fixed md:flex top-0 z-50 w-full md:justify-center md:items-center " +
+        "navbar px-2 py-2 fixed md:flex top-0 z-50 w-full md:justify-center md:items-center " +
         (y > 0 ? "shadow-md flex bg-[#38649C] " : "md:bg-transparent ")
       }
     >

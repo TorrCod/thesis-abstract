@@ -34,8 +34,6 @@ const SignInSignUp = () => {
       await formSignUp.validateFields();
       // TODO: handle sign in/signup logic
       const payload = formSignUp.getFieldsValue();
-      console.log(payload);
-
       const userDetails: UserDetails = {
         email: payload["sign-up-email"],
         userName: payload["username"],

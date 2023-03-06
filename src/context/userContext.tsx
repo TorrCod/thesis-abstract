@@ -50,7 +50,6 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        console.log("triggered");
         const id = user.uid;
         getUserDetails(id)
           .then((res) => {
@@ -70,7 +69,6 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
   }, [triggerUpdate]);
 
   const userSignUp = async (userDetails: UserDetails) => {
-    console.log(userDetails);
     const uid = await signUp(userDetails);
     delete userDetails.password;
     await addUserAccount({ ...userDetails, uid: uid });

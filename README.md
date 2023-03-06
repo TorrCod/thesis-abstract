@@ -2,8 +2,9 @@
 ### install docker
 install docker in https://docs.docker.com/get-docker/ 
 
-### Start developing
-run the command `npm run thesis`
+### Custom Scripts
+start dev build with local database `npm run thesis`
+update the default data in database `npm run updatedb`
 
 ## Documentation
 ### Run mongodb

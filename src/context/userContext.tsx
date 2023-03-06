@@ -1,5 +1,10 @@
 import { auth, signUp } from "@/lib/firebase";
-import { addUserAccount, getUserDetails, updateUser } from "@/utils/account";
+import {
+  addUserAccount,
+  getUserDetails,
+  updateUser,
+  utils_Delete_Account,
+} from "@/utils/account";
 import {
   EmailAuthProvider,
   onAuthStateChanged,
@@ -95,8 +100,6 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
   };
 
   const deleteAccount = async (currpass: string) => {
-    console.log("hello");
-    console.log(currpass);
     const cred = EmailAuthProvider.credential(
       state.userDetails!.email,
       currpass
@@ -104,6 +107,7 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
     try {
       await reauthenticateWithCredential(auth.currentUser!, cred);
       await auth.currentUser?.delete();
+      await utils_Delete_Account(state.userDetails!);
     } catch (e) {
       throw new Error(e as string);
     }

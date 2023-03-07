@@ -173,6 +173,7 @@ const DashboardThesis = () => {
         </div>
         <Divider />
         <div className="mt-5 bg-white grid gap-1 rounded-md p-5 overflow-auto">
+          <p className="opacity-60 mb-5">Manage Thesis Abstracts</p>
           <QuerySearch onSearch={() => {}} />
           <Table
             className="min-w-[40em]"

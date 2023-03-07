@@ -115,7 +115,7 @@ const SignInSignUp = () => {
           </Form.Item>
         </Form>
         <Divider />
-        <Form form={formSignUp}>
+        {/* <Form form={formSignUp}>
           <h3 className="text-center my-5 text-[#38649C]">Sign Up</h3>
           <Form.Item
             name="firstname"
@@ -183,7 +183,7 @@ const SignInSignUp = () => {
               Sign Up
             </PriButton>
           </Form.Item>
-        </Form>
+        </Form> */}
         <Divider />
         <div className="text-center opacity-80">
           This Feature is for admin only

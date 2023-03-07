@@ -125,12 +125,10 @@ const DashboardOverview = () => {
 
       <div className="dashboard-overview md:gap-2 w-full grid relative gap-2">
         <div className="bg-white rounded-md shadow-md thesis grid relative content-start">
-          <Link
-            href="dashboard/thesis"
-            className="absolute w-full h-full hover:translate-x-2 transition duration-200 ease-in-out z-10 hover:bg-white/20"
-          />
-          <h3 className="opacity-80 mb-3 mx-5 pt-5">Thesis</h3>
-          <p className="ml-6 opacity-60">Course Count RadarChart</p>
+          <Link className="grid w-fit" href={"/dashboard/thesis"}>
+            <h3 className="opacity-80 mb-3 mx-5 pt-5">Thesis</h3>
+            <p className="ml-6 opacity-60">Course Count RadarChart</p>
+          </Link>
           <div className="overflow-auto">
             <div className="h-96 min-w-[32em]">
               <ResponsiveContainer width={"99%"} height="99%">

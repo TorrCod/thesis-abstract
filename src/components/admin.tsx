@@ -20,7 +20,11 @@ function AdminProfile({ userDetails, size, src }: AdminProps) {
   );
 }
 
-export const AdminMenu = () => {
+export const AdminMenu = ({
+  position,
+}: {
+  position?: "bottomLeft" | "bottomRight" | "bottomCenter";
+}) => {
   const userCtxState = useUserContext().state;
   const userMenu: MenuProps["items"] = [
     {
@@ -53,7 +57,7 @@ export const AdminMenu = () => {
   ];
   return (
     <Dropdown
-      placement="bottom"
+      // placement={(position as any) ?? "bottom"}
       trigger={["click"]}
       dropdownRender={() => (
         <div className="bg-white rounded-md pt-5 shadow-md">

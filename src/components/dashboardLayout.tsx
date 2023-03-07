@@ -80,11 +80,11 @@ function DashboardLayout({
       label: <Link href={"/dashboard/thesis"}>Thesis</Link>,
       icon: <FaSwatchbook size={"1.1em"} />,
     },
-    {
-      key: "/dashboard/users",
-      label: <Link href={"/dashboard/users"}>Users</Link>,
-      icon: <MdAdminPanelSettings size={"1.1em"} />,
-    },
+    // {
+    //   key: "/dashboard/users",
+    //   label: <Link href={"/dashboard/users"}>Users</Link>,
+    //   icon: <MdAdminPanelSettings size={"1.1em"} />,
+    // },
     {
       key: "/dashboard/admins",
       label: <Link href={"/dashboard/admins"}>Admins</Link>,

@@ -125,6 +125,10 @@ const DashboardOverview = () => {
 
       <div className="dashboard-overview md:gap-2 w-full grid mb-20 relative gap-2">
         <div className="bg-white rounded-md shadow-md thesis grid relative content-start">
+          <Link
+            href="dashboard/thesis"
+            className="absolute w-full h-full hover:translate-x-2 transition duration-200 ease-in-out z-10 hover:bg-white/20"
+          />
           <h3 className="opacity-80 mb-3 mx-5 pt-5">Thesis</h3>
           <p className="ml-6 opacity-60">Course Count RadarChart</p>
           <div className="overflow-auto">
@@ -148,8 +152,10 @@ const DashboardOverview = () => {
         </div>
 
         <div className=" admins bg-white rounded-md p-5 grid relative content-start gap-2">
-          <h3 className="opacity-80 mb-3">Admins</h3>
-          <p className="opacity-60 mb-5">Manage Co-Admins</p>
+          <Link className="grid w-fit" href={"/dashboard/admins"}>
+            <h3 className="opacity-80 mb-3">Admins</h3>
+            <p className="opacity-60 mb-5">Manage Co-Admins</p>
+          </Link>
           <div className="overflow-auto">
             <QuerySearch
               onSearch={(e) => {
@@ -161,9 +167,10 @@ const DashboardOverview = () => {
         </div>
 
         <div className="bg-white rounded-md p-5 user grid content-start gap-2">
-          <h3 className="opacity-80 mb-3">User</h3>
-          <p className="opacity-60 mb-5">Pending User Request</p>
-
+          <Link className="grid w-fit" href={"/dashboard/users"}>
+            <h3 className="opacity-80 mb-3">User</h3>
+            <p className="opacity-60 mb-5">Pending User Request</p>
+          </Link>
           <div className="overflow-auto">
             <QuerySearch
               onSearch={(e) => {
@@ -175,8 +182,10 @@ const DashboardOverview = () => {
         </div>
 
         <div className="bg-white rounded-md p-5 flex flex-col gap-2 activitylog w-full overflow-auto">
-          <h3 className="opacity-80 mb-3">Acitivity Log</h3>
-          <p className="opacity-60 mb-5">History</p>
+          <Link className="w-fit" href={"/dashboard/activitylog"}>
+            <h3 className="opacity-80 mb-3">Acitivity Log</h3>
+            <p className="opacity-60 mb-5">History</p>
+          </Link>
           <Timeline mode="left" items={activity} />
         </div>
       </div>

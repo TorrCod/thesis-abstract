@@ -33,10 +33,16 @@ function DashboardLayout({
     (
       document.getElementsByClassName("navbar")[0] as HTMLDivElement
     ).style.display = "none";
+    (
+      document.getElementsByClassName("bg-circle")[0] as HTMLDivElement
+    ).style.display = "none";
     return () => {
       (
         document.getElementsByClassName("navbar")[0] as HTMLDivElement
       ).style.display = "flex";
+      (
+        document.getElementsByClassName("bg-circle")[0] as HTMLDivElement
+      ).style.display = "grid";
     };
   }, []);
 
@@ -118,7 +124,7 @@ function DashboardLayout({
             </Sider>
             <div
               className="overflow-auto h-screen w-screen md:w-full
-             pt-20 md:p-5 round-md relative p-2"
+             py-20 md:p-5 round-md relative p-2"
             >
               {children}
             </div>

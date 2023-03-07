@@ -66,7 +66,7 @@ const AdminsTable = () => (
     userSelectedSider="/dashboard/admins"
   >
     <h3 className="opacity-80 mb-3">Dashboard {">"} Admin</h3>
-    <div className="bg-white rounded-md p-5 min-h-screen flex flex-col gap-2">
+    <div className="bg-white rounded-md p-5 flex flex-col gap-2">
       <p className="opacity-60 mb-5">Manage Co-Admins</p>
       <QuerySearch
         onSearch={(e) => {

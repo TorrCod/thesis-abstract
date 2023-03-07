@@ -64,7 +64,7 @@ const DashboardThesis = () => {
       userSelectedMenu="/dashboard"
       userSelectedSider="/dashboard/thesis"
     >
-      <div className="pb-20 m-auto relative">
+      <div className="m-auto relative">
         <h3 className="opacity-80 mb-3">Dashboard {">"} Thesis</h3>
         <div className="md:grid gap-2 lg:grid-cols-2 relative w-full">
           <div className="bg-white rounded-md shadow-md pt-7 mb-2 md:mb-0">
@@ -88,7 +88,7 @@ const DashboardThesis = () => {
               </div>
             </div>
           </div>
-          <div className="grid md:grid-cols-2 gap-2">
+          <div className="grid md:grid-cols-2 gap-2 grid-rows-6 md:grid-rows-3">
             {totalData.map((child, index) => (
               <Card
                 className="cursor-pointer hover:scale-105 transition duration-200 ease-out"
@@ -104,13 +104,18 @@ const DashboardThesis = () => {
             ))}
             <Link
               href="/dashboard/thesis/upload-thesis"
-              className="bg-white pt-6 pl-5 rounded-md shadow-sm cursor-pointer relative hover:scale-105 transition duration-200 ease-out"
+              className="cursor-pointer relative"
             >
-              <div className="opacity-[.50] text-sm ">Add Thesis</div>
-              <AiFillFileAdd
-                className="m-auto absolute top-0 bottom-0 left-0 right-0"
-                size={"2em"}
-              />
+              <Card
+                bordered={false}
+                className="h-full  hover:scale-105 transition duration-200 ease-out"
+              >
+                <div className="opacity-[.50] text-sm ">Add Thesis</div>
+                <AiFillFileAdd
+                  className="m-auto absolute top-0 bottom-0 left-0 right-0"
+                  size={"2em"}
+                />
+              </Card>
             </Link>
           </div>
         </div>

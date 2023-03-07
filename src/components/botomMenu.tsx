@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import React, { useEffect, useRef, useState } from "react";
 import { AiFillHome } from "react-icons/ai";
 import { FaSwatchbook } from "react-icons/fa";
@@ -5,15 +6,16 @@ import { ImUserCheck } from "react-icons/im";
 import { MdAdminPanelSettings, MdWorkHistory } from "react-icons/md";
 import { BottomMenuProps, SelectedDashboardSider } from "./types.d";
 
-export const BotomMenu = ({ onchange, defaultSelected }: BottomMenuProps) => {
+export const BotomMenu = ({ defaultSelected }: BottomMenuProps) => {
   const [selectedKeys, setSelectedKeys] =
     useState<SelectedDashboardSider>(defaultSelected);
+  const router = useRouter();
 
   return (
     <div className="md:hidden fixed bottom-0 w-full h-[4.5em] bg-[#001529] text-white grid grid-flow-col place-items-center grid-col-4">
       <div
         onClick={() => {
-          onchange(selectedKeys);
+          router.push("/dashboard/thesis");
           setSelectedKeys("/dashboard/thesis");
         }}
         className={
@@ -34,7 +36,7 @@ export const BotomMenu = ({ onchange, defaultSelected }: BottomMenuProps) => {
           (selectedKeys === "/dashboard/admins" ? "bg-[#1677ff]" : "")
         }
         onClick={() => {
-          onchange(selectedKeys);
+          router.push("/dashboard/admins");
           setSelectedKeys("/dashboard/admins");
         }}
       >
@@ -51,7 +53,7 @@ export const BotomMenu = ({ onchange, defaultSelected }: BottomMenuProps) => {
           (selectedKeys === "/dashboard/overview" ? "bg-[#1677ff]" : "")
         }
         onClick={() => {
-          onchange(selectedKeys);
+          router.push("/dashboard/overview");
           setSelectedKeys("/dashboard/overview");
         }}
       >
@@ -68,7 +70,7 @@ export const BotomMenu = ({ onchange, defaultSelected }: BottomMenuProps) => {
           (selectedKeys === "/dashboard/users" ? "bg-[#1677ff]" : "")
         }
         onClick={() => {
-          onchange(selectedKeys);
+          router.push("/dashboard/users");
           setSelectedKeys("/dashboard/users");
         }}
       >
@@ -85,7 +87,7 @@ export const BotomMenu = ({ onchange, defaultSelected }: BottomMenuProps) => {
           (selectedKeys === "/dashboard/activitylog" ? "bg-[#1677ff]" : "")
         }
         onClick={() => {
-          onchange(selectedKeys);
+          router.push("/dashboard/activitylog");
           setSelectedKeys("/dashboard/activitylog");
         }}
       >

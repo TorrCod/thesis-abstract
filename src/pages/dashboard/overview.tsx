@@ -123,7 +123,7 @@ const DashboardOverview = () => {
     >
       <h3 className="opacity-80 mb-3">Dashboard {">"} Overview</h3>
 
-      <div className="dashboard-overview md:gap-2 w-full grid mb-20 relative gap-2">
+      <div className="dashboard-overview md:gap-2 w-full grid relative gap-2">
         <div className="bg-white rounded-md shadow-md thesis grid relative content-start">
           <Link
             href="dashboard/thesis"

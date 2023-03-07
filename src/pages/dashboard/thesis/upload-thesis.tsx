@@ -8,10 +8,11 @@ const UploadThesis = () => {
       userSelectedMenu="/dashboard"
       userSelectedSider="/dashboard/thesis"
     >
-      <h3 className="opacity-80 mb-3">
+      <div className="opacity-80 mb-3">
         <Link href="/dashboard/overview">Dashboard</Link> {">"}
         <Link href="/dashboard/thesis">Thesis</Link> {">"} Upload
-      </h3>
+      </div>
+      <div></div>
     </DashboardLayout>
   );
 };

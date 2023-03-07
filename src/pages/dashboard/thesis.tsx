@@ -110,7 +110,9 @@ const DashboardThesis = () => {
                 bordered={false}
                 className="h-full  hover:scale-105 transition duration-200 ease-out"
               >
-                <div className="opacity-[.50] text-sm ">Add Thesis</div>
+                <div className="opacity-[.50] text-sm ">
+                  Add Thesis Abstracts
+                </div>
                 <AiFillFileAdd
                   className="m-auto absolute top-0 bottom-0 left-0 right-0"
                   size={"2em"}

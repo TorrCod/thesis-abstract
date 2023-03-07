@@ -20,12 +20,14 @@ type DashboardProps = {
   children?: React.ReactNode;
   userSelectedMenu: SelectedMenu;
   userSelectedSider?: SelectedDashboardSider;
+  title?: string;
 };
 
 function DashboardLayout({
   children,
   userSelectedMenu,
   userSelectedSider,
+  title,
 }: DashboardProps) {
   const [selectedSider, setSelectedSider] = useState(userSelectedSider);
   const router = useRouter();
@@ -100,16 +102,11 @@ function DashboardLayout({
 
   return (
     <div className="bg-[#D9D9D9] relative md:h-screen">
-      <Header className="header fixed top-0 w-full md:relative z-20">
-        <div className="logo" />
-        <Menu
-          className="hidden md:flex"
-          theme="dark"
-          mode="horizontal"
-          selectedKeys={[userSelectedMenu]}
-          items={menuItem}
-        />
-        <AdminMenu />
+      <Header className="header fixed top-0 w-full md:relative z-20 grid grid-cols-2">
+        <h3 className="text-white">{title ?? "Dashboard"}</h3>
+        <div className="w-fit grid place-self-end">
+          <AdminMenu position="bottomRight" />
+        </div>
       </Header>
       <div className="h-full">
         {userSelectedMenu === "/dashboard" && selectedSider && (
@@ -140,7 +137,7 @@ function DashboardLayout({
           </div>
         )}
         {userSelectedMenu === "/account-setting" && (
-          <Content className="min-h-screen">{children}</Content>
+          <div className="overflow-auto h-full relative">{children}</div>
         )}
       </div>
     </div>

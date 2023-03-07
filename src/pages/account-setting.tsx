@@ -165,8 +165,11 @@ const AccountSetting = (props: { data: any; hasError: boolean }) => {
   }, [onConfirm]);
 
   return (
-    <DashboardLayout userSelectedMenu="/account-setting">
-      <div className="pb-10 w-full p-3 md:mt-5 mt-16">
+    <DashboardLayout
+      title="Account Setting"
+      userSelectedMenu="/account-setting"
+    >
+      <div className="pb-10 w-full p-3 md:mt-5 mt-16 md:mb-20">
         <div className="grid gap-2 relative max-w-6xl m-auto ">
           <h3 className="text-black/90">Account Setting</h3>
           <div className="bg-white p-5 rounded-md shadow-md">

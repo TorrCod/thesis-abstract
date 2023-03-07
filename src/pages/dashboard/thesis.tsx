@@ -7,7 +7,7 @@ import { Button, Card, Divider, Statistic, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
 import Link from "next/link";
 import React from "react";
-import { AiFillDelete } from "react-icons/ai";
+import { AiFillDelete, AiFillFileAdd } from "react-icons/ai";
 import { BsBookFill } from "react-icons/bs";
 import { Legend, PolarAngleAxis, PolarGrid, Radar, RadarChart } from "recharts";
 import { ResponsiveContainer } from "recharts";
@@ -90,7 +90,11 @@ const DashboardThesis = () => {
           </div>
           <div className="grid md:grid-cols-2 gap-2">
             {totalData.map((child, index) => (
-              <Card key={index} bordered={false}>
+              <Card
+                className="cursor-pointer hover:scale-105 transition duration-200 ease-out"
+                key={index}
+                bordered={false}
+              >
                 <Statistic
                   title={child.course}
                   prefix={<BsBookFill size={"0.9em"} />}
@@ -98,12 +102,13 @@ const DashboardThesis = () => {
                 />
               </Card>
             ))}
-            <Card bordered={false}>
-              <Statistic
-                title={"Add Thesis"}
-                formatter={() => <PriButton>Upload</PriButton>}
+            <div className="bg-white pt-6 pl-5 rounded-md shadow-sm cursor-pointer relative hover:scale-105 transition duration-200 ease-out">
+              <div className="opacity-[.50] text-sm ">Add Thesis</div>
+              <AiFillFileAdd
+                className="m-auto absolute top-0 bottom-0 left-0 right-0"
+                size={"2em"}
               />
-            </Card>
+            </div>
           </div>
         </div>
         <Divider />

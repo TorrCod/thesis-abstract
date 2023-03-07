@@ -16,6 +16,7 @@ import { auth } from "@/lib/firebase";
 import { useRouter } from "next/router";
 import DevSignUp from "./devsignuptest";
 import Notification from "./notification";
+import { AdminMenu } from "./admin";
 
 const MENU_LIST = [
   { text: "Home", href: "/", icon: <AiOutlineHome /> },
@@ -142,59 +143,7 @@ const NavBar = () => {
 
         {userCtxState.userDetails ? (
           <div className="flex gap-1 items-center justify-center">
-            <Dropdown
-              placement="bottom"
-              trigger={["click"]}
-              dropdownRender={() => (
-                <div className="bg-white rounded-md pt-5">
-                  <div className="flex gap-2 justify-center items-center mx-5 pb-3 border-b-[1px]">
-                    <Login />
-                    <div>
-                      <p>{`${userCtxState.userDetails?.firstName} ${userCtxState.userDetails?.lastName}`}</p>
-                      <p className="text-[0.8em] opacity-80">
-                        {userCtxState.userDetails?.course}
-                      </p>
-                    </div>
-                  </div>
-                  <Menu
-                    className="opacity-80"
-                    style={{ boxShadow: "none" }}
-                    items={userMenu}
-                  />
-                </div>
-              )}
-            >
-              <div className="cursor-pointer">
-                <Login />
-              </div>
-            </Dropdown>
-
-            {/* <Dropdown
-              placement="bottomLeft"
-              trigger={["click"]}
-              dropdownRender={() => (
-                <div className="bg-white rounded-md">
-                  <div className="flex gap-2 justify-center items-center mx-5 pb-3 border-b-[1px]">
-                    <Login />
-                    <div>
-                      <p>{`${userCtxState.userDetails?.firstName} ${userCtxState.userDetails?.lastName}`}</p>
-                      <p className="text-[0.8em] opacity-80">
-                        {userCtxState.userDetails?.course}
-                      </p>
-                    </div>
-                  </div>
-                  <Menu
-                    className="opacity-80"
-                    style={{ boxShadow: "none" }}
-                    items={userMenu}
-                  />
-                </div>
-              )}
-            >
-              <div className="cursor-pointer">
-                <Notification />
-              </div>
-            </Dropdown> */}
+            <AdminMenu />
           </div>
         ) : (
           <>

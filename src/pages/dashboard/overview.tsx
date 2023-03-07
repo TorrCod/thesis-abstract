@@ -166,7 +166,7 @@ const DashboardOverview = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-md p-5 user grid content-start gap-2">
+        {/* <div className="bg-white rounded-md p-5 user grid content-start gap-2">
           <Link className="grid w-fit" href={"/dashboard/users"}>
             <h3 className="opacity-80 mb-3">User</h3>
             <p className="opacity-60 mb-5">Pending User Request</p>
@@ -179,7 +179,7 @@ const DashboardOverview = () => {
             />
             <Table columns={userColumn} dataSource={data} scroll={{ x: 50 }} />
           </div>
-        </div>
+        </div> */}
 
         <div className="bg-white rounded-md p-5 flex flex-col gap-2 activitylog w-full overflow-auto">
           <Link className="w-fit" href={"/dashboard/activitylog"}>

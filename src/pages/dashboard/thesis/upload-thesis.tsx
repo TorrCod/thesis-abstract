@@ -1,8 +1,47 @@
+import { PriButton } from "@/components/button";
 import DashboardLayout from "@/components/dashboardLayout";
+import { Button, DatePicker, Form, Input, Select } from "antd";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
+import { BiPlus } from "react-icons/bi";
+import { FaAddressCard } from "react-icons/fa";
+import { GrAdd } from "react-icons/gr";
+
+const { Option } = Select;
+
+interface FormValues {
+  title: string;
+  date: string;
+  course: string[];
+  researchers: string[];
+}
+
+const courseOptions = [
+  { label: "Computer Engineer", value: "computer-engineer" },
+  { label: "Mechanical Engineer", value: "mechanical-engineer" },
+  { label: "Civil Engineer", value: "civil-engineer" },
+  { label: "Electronics Engineer", value: "electronics-engineer" },
+  { label: "Electrical Engineer", value: "electrical-engineer" },
+];
 
 const UploadThesis = () => {
+  const [researchers, setResearchers] = useState<string[]>(["", ""]);
+
+  const onFinish = (values: FormValues) => {
+    console.log(values);
+    console.log(researchers);
+  };
+
+  const handleAddResearcher = () => {
+    setResearchers([...researchers, ""]);
+  };
+
+  const handleResearcherChange = (index: number, value: string) => {
+    const newResearchers = [...researchers];
+    newResearchers[index] = value;
+    setResearchers(newResearchers);
+  };
+
   return (
     <DashboardLayout
       userSelectedMenu="/dashboard"
@@ -12,7 +51,51 @@ const UploadThesis = () => {
         <Link href="/dashboard/overview">Dashboard</Link> {">"}
         <Link href="/dashboard/thesis">Thesis</Link> {">"} Upload
       </div>
-      <div></div>
+      <Form<FormValues>
+        className="bg-white rounded-md shadow-md p-5 mb-10 md:grid md:grid-cols-2 content-start relative gap-5 pb-20"
+        onFinish={onFinish}
+        layout="vertical"
+      >
+        <Form.Item name="title" label="Title" rules={[{ required: true }]}>
+          <Input />
+        </Form.Item>
+        <Form.Item name="date" label="Date" rules={[{ required: true }]}>
+          <DatePicker />
+        </Form.Item>
+        <Form.Item name="course" label="Course" rules={[{ required: true }]}>
+          <Select mode="multiple" options={courseOptions} />
+        </Form.Item>
+        <Form.Item label="Researchers">
+          {researchers.map((researcher, index) => (
+            <Input
+              key={index}
+              value={researcher}
+              onChange={(e) => handleResearcherChange(index, e.target.value)}
+              style={{ marginBottom: 8 }}
+            />
+          ))}
+          <PriButton
+            className="grid place-items-center text-white bg-[#F8B49C]"
+            onClick={handleAddResearcher}
+            shape="circle"
+          >
+            <BiPlus />
+          </PriButton>
+        </Form.Item>
+        <Form.Item
+          className="col-span-2"
+          name="abstract"
+          label="Abstract"
+          rules={[{ required: true }]}
+        >
+          <Input.TextArea autoSize={{ minRows: 10 }} />
+        </Form.Item>
+        <Form.Item className="absolute bottom-0 right-5">
+          <PriButton type="primary" htmlType="submit">
+            Upload
+          </PriButton>
+        </Form.Item>
+      </Form>
     </DashboardLayout>
   );
 };

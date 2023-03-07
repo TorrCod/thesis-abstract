@@ -65,6 +65,7 @@ const AdminsTable = () => (
     userSelectedMenu="/dashboard"
     userSelectedSider="/dashboard/admins"
   >
+    <h3 className="opacity-80 mb-3">Dashboard {">"} Thesis</h3>
     <div className="bg-white rounded-md p-2 min-h-screen flex flex-col gap-2">
       <QuerySearch
         onSearch={(e) => {

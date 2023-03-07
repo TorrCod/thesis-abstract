@@ -8,11 +8,9 @@ const ActivityLog = () => {
       userSelectedMenu="/dashboard"
       userSelectedSider="/dashboard/activitylog"
     >
-      <Timeline>
-        <Timeline.Item color="green">Approved User</Timeline.Item>
-        <Timeline.Item color="blue">Added Thesis</Timeline.Item>
-        <Timeline.Item color="red">Removed Thesis</Timeline.Item>
-      </Timeline>
+      <div className="bg-white rounded-md p-2 min-h-screen flex flex-col gap-2">
+        <Timeline />
+      </div>
     </DashboardLayout>
   );
 };

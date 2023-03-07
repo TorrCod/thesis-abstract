@@ -135,7 +135,7 @@ const DashboardThesis = () => {
       userSelectedMenu="/dashboard"
       userSelectedSider="/dashboard/thesis"
     >
-      <div className="pb-20 m-auto relative p-1">
+      <div className="pb-20 m-auto relative">
         <h3 className="opacity-80 mb-3">Dashboard {">"} Thesis</h3>
         <div className="md:grid gap-2 lg:grid-cols-2 relative w-full">
           <div className="bg-white rounded-md shadow-md pt-7 mb-2 md:mb-0">

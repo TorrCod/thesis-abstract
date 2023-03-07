@@ -3,7 +3,7 @@ import DashboardLayout from "@/components/dashboardLayout";
 import { Button, DatePicker, Form, Input, Select } from "antd";
 import Link from "next/link";
 import React, { useState } from "react";
-import { BiPlus } from "react-icons/bi";
+import { BiMinus, BiPlus } from "react-icons/bi";
 import { FaAddressCard } from "react-icons/fa";
 import { GrAdd } from "react-icons/gr";
 
@@ -52,20 +52,37 @@ const UploadThesis = () => {
         <Link href="/dashboard/thesis">Thesis</Link> {">"} Upload
       </div>
       <Form<FormValues>
-        className="bg-white rounded-md shadow-md p-5 mb-10 md:grid md:grid-cols-2 content-start relative gap-5 pb-20"
+        className="bg-white rounded-md shadow-md p-5 mb-10 relative pb-20 md:grid md:grid-cols-2 gap-x-5 max-w-5xl m-auto"
         onFinish={onFinish}
         layout="vertical"
       >
-        <Form.Item name="title" label="Title" rules={[{ required: true }]}>
-          <Input />
-        </Form.Item>
-        <Form.Item name="date" label="Date" rules={[{ required: true }]}>
-          <DatePicker />
-        </Form.Item>
-        <Form.Item name="course" label="Course" rules={[{ required: true }]}>
-          <Select mode="multiple" options={courseOptions} />
-        </Form.Item>
-        <Form.Item label="Researchers">
+        <div>
+          <Form.Item
+            className=""
+            name="title"
+            label="Title"
+            rules={[{ required: true }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            className=""
+            name="date"
+            label="Date"
+            rules={[{ required: true }]}
+          >
+            <DatePicker />
+          </Form.Item>
+          <Form.Item
+            className=""
+            name="course"
+            label="Course"
+            rules={[{ required: true }]}
+          >
+            <Select mode="multiple" options={courseOptions} />
+          </Form.Item>
+        </div>
+        <Form.Item className="" label="Researchers">
           {researchers.map((researcher, index) => (
             <Input
               key={index}

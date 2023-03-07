@@ -1,6 +1,9 @@
 import React from "react";
-import { Table } from "antd";
+import { Form, Input, Space, Table } from "antd";
 import DashboardLayout from "@/components/dashboardLayout";
+import { PriButton } from "@/components/button";
+import { BiSearch } from "react-icons/bi";
+import QuerySearch from "@/components/QuerySearch";
 
 const columns = [
   {
@@ -26,7 +29,12 @@ const columns = [
   {
     title: "Action",
     key: "action",
-    render: () => <a>Edit</a>,
+    render: () => (
+      <Space>
+        <PriButton className="bg-[red] hover:bg-[red]/80">Reject</PriButton>
+        <PriButton>Approove</PriButton>
+      </Space>
+    ),
   },
 ];
 
@@ -59,7 +67,14 @@ const UsersTable = () => (
     userSelectedMenu="/dashboard"
     userSelectedSider="/dashboard/users"
   >
-    <Table columns={columns} dataSource={data} />
+    <div className="bg-white rounded-md p-2 min-h-screen flex flex-col gap-2">
+      <QuerySearch
+        onSearch={(e) => {
+          console.log(e);
+        }}
+      />
+      <Table columns={columns} dataSource={data} scroll={{ x: 50 }} />
+    </div>
   </DashboardLayout>
 );
 

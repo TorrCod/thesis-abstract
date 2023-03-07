@@ -116,7 +116,7 @@ function DashboardLayout({
                 onSelect={(info) => setSelectedSider(info.key as any)}
               />
             </Sider>
-            <div className="md:overflow-auto md:max-h-full w-full pt-20 p-1 md:p-5 round-md relative">
+            <div className="md:overflow-auto md:max-h-full w-screen md:w-full pt-20 md:p-5 round-md relative">
               {children}
             </div>
             <BotomMenu

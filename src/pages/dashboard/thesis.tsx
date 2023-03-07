@@ -1,12 +1,14 @@
 import { PriButton } from "@/components/button";
 import DashboardLayout from "@/components/dashboardLayout";
+import QuerySearch from "@/components/QuerySearch";
 import { Course, ThesisItems } from "@/context/types.d";
 import { thesisToDataType } from "@/utils/helper";
-import { Card, Divider, Input, Statistic, Table } from "antd";
+import { Button, Card, Divider, Form, Input, Statistic, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
 import Link from "next/link";
 import React from "react";
 import { AiFillDelete } from "react-icons/ai";
+import { BiSearch } from "react-icons/bi";
 import { BsBookFill } from "react-icons/bs";
 import {
   Legend,
@@ -105,7 +107,6 @@ const DashboardThesis = () => {
       title: "Date Added",
       dataIndex: "dateAdded",
       key: "dateAdded",
-      width: 120,
     },
     {
       title: "Course",
@@ -116,9 +117,13 @@ const DashboardThesis = () => {
       title: "Action",
       key: "action",
       render: () => (
-        <PriButton>
-          <AiFillDelete size={"1.5em"} color="red" />
-        </PriButton>
+        <Button
+          className="flex justify-center gap-1"
+          icon={<AiFillDelete size={"1.5em"} color="red" />}
+          type="ghost"
+        >
+          Remove
+        </Button>
       ),
     },
   ];
@@ -130,47 +135,45 @@ const DashboardThesis = () => {
       userSelectedMenu="/dashboard"
       userSelectedSider="/dashboard/thesis"
     >
-      <div className="pb-20 max-w-5xl m-auto">
+      <div className="pb-20 m-auto relative p-1">
         <h3 className="opacity-80 mb-3">Dashboard {">"} Thesis</h3>
-        <div className="grid gap-2 md:grid-cols-2">
-          {totalData.map((child, index) => (
-            <Card key={index} bordered={false}>
-              <Statistic
-                title={child.course}
-                prefix={<BsBookFill size={"0.9em"} />}
-                value={child.count}
-              />
-            </Card>
-          ))}
-        </div>
-
-        <Divider />
-
-        <div className="bg-white rounded-md shadow-md pt-7">
-          <p className="ml-6 opacity-60">Course Count RadarChart</p>
-          <div className="relative h-96 grid place-items-center overflow-y-auto">
-            <div className="h-full w-full min-w-[32em]">
-              <ResponsiveContainer width={"99%"} height="99%">
-                <RadarChart outerRadius={90} data={totalData}>
-                  <PolarGrid />
-                  <PolarAngleAxis dataKey="course" />
-                  <PolarRadiusAxis angle={30} domain={[0, 150]} />
-                  <Radar
-                    name="Count"
-                    dataKey="count"
-                    stroke="#82ca9d"
-                    fill="#82ca9d"
-                    fillOpacity={0.6}
-                  />
-                  <Legend />
-                </RadarChart>
-              </ResponsiveContainer>
+        <div className="md:grid gap-2 lg:grid-cols-2 relative w-full">
+          <div className="bg-white rounded-md shadow-md pt-7 mb-2 md:mb-0">
+            <p className="ml-6 opacity-60">Course Count RadarChart</p>
+            <div className="h-96 w-full relative overflow-auto">
+              <div className="h-full w-full min-w-[32em]">
+                <ResponsiveContainer width={"99%"} height="99%">
+                  <RadarChart outerRadius={90} data={totalData}>
+                    <PolarGrid />
+                    <PolarAngleAxis dataKey="course" />
+                    <Radar
+                      name="Count"
+                      dataKey="count"
+                      stroke="#82ca9d"
+                      fill="#82ca9d"
+                      fillOpacity={0.6}
+                    />
+                    <Legend />
+                  </RadarChart>
+                </ResponsiveContainer>
+              </div>
             </div>
           </div>
+          <div className="grid md:grid-cols-2 gap-2">
+            {totalData.map((child, index) => (
+              <Card key={index} bordered={false}>
+                <Statistic
+                  title={child.course}
+                  prefix={<BsBookFill size={"0.9em"} />}
+                  value={child.count}
+                />
+              </Card>
+            ))}
+          </div>
         </div>
-
+        <Divider />
         <div className="mt-5 bg-white grid gap-1 rounded-md p-5 overflow-auto">
-          <Input className="max-w-lg" placeholder="search title" />
+          <QuerySearch onSearch={() => {}} />
           <Table
             className="min-w-[40em]"
             columns={tableColumn}

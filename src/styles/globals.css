@@ -64,3 +64,22 @@ h1 {
 h3 {
   font-size: 20px;
 }
+
+.debug {
+  border: 2px solid red;
+}
+
+.search-container {
+  display: flex;
+  gap: 0.5em;
+}
+
+.search-input {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  padding-inline: 1em;
+  padding-block: 0.5em;
+  width: 30em;
+  outline: none;
+}

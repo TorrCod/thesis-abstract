@@ -12,7 +12,7 @@ import { BotomMenu } from "@/components/botomMenu";
 import { SelectedDashboardSider } from "@/components/types.d";
 import { RiDashboardFill, RiUserSettingsFill } from "react-icons/ri";
 import { useRouter } from "next/router";
-import AdminProfile from "./admin";
+import AdminProfile, { AdminMenu } from "./admin";
 
 type SelectedMenu = "/dashboard" | "/account-setting";
 
@@ -109,7 +109,7 @@ function DashboardLayout({
           selectedKeys={[userSelectedMenu]}
           items={menuItem}
         />
-        <h1 className="text-white">Dashboard</h1>
+        <AdminMenu />
       </Header>
       <div className="h-full">
         {userSelectedMenu === "/dashboard" && selectedSider && (

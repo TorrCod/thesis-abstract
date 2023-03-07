@@ -56,7 +56,7 @@ export const AdminMenu = () => {
       placement="bottom"
       trigger={["click"]}
       dropdownRender={() => (
-        <div className="bg-white rounded-md pt-5">
+        <div className="bg-white rounded-md pt-5 shadow-md">
           <div className="flex gap-2 justify-center items-center mx-5 pb-3 border-b-[1px]">
             <SignInSignUp />
             <div>

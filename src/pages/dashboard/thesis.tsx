@@ -102,13 +102,16 @@ const DashboardThesis = () => {
                 />
               </Card>
             ))}
-            <div className="bg-white pt-6 pl-5 rounded-md shadow-sm cursor-pointer relative hover:scale-105 transition duration-200 ease-out">
+            <Link
+              href="/dashboard/thesis/upload-thesis"
+              className="bg-white pt-6 pl-5 rounded-md shadow-sm cursor-pointer relative hover:scale-105 transition duration-200 ease-out"
+            >
               <div className="opacity-[.50] text-sm ">Add Thesis</div>
               <AiFillFileAdd
                 className="m-auto absolute top-0 bottom-0 left-0 right-0"
                 size={"2em"}
               />
-            </div>
+            </Link>
           </div>
         </div>
         <Divider />

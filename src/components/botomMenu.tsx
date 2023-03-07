@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { AiFillHome } from "react-icons/ai";
 import { FaSwatchbook } from "react-icons/fa";
 import { ImUserCheck } from "react-icons/im";
@@ -8,14 +8,14 @@ import { BottomMenuProps, SelectedDashboardSider } from "./types.d";
 export const BotomMenu = ({ onchange, defaultSelected }: BottomMenuProps) => {
   const [selectedKeys, setSelectedKeys] =
     useState<SelectedDashboardSider>(defaultSelected);
-  useEffect(() => {
-    onchange(selectedKeys);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedKeys]);
+
   return (
     <div className="md:hidden fixed bottom-0 w-full h-[4.5em] bg-[#001529] text-white grid grid-flow-col place-items-center grid-col-4">
       <div
-        onClick={() => setSelectedKeys("/dashboard/thesis")}
+        onClick={() => {
+          onchange(selectedKeys);
+          setSelectedKeys("/dashboard/thesis");
+        }}
         className={
           "relative w-full h-full grid place-items-center transition ease-out duration-200 " +
           (selectedKeys === "/dashboard/thesis" ? "bg-[#1677ff]" : "")
@@ -33,7 +33,10 @@ export const BotomMenu = ({ onchange, defaultSelected }: BottomMenuProps) => {
           "relative w-full h-full grid place-items-center transition ease-out duration-200 " +
           (selectedKeys === "/dashboard/admins" ? "bg-[#1677ff]" : "")
         }
-        onClick={() => setSelectedKeys("/dashboard/admins")}
+        onClick={() => {
+          onchange(selectedKeys);
+          setSelectedKeys("/dashboard/admins");
+        }}
       >
         <MdAdminPanelSettings
           className={
@@ -47,7 +50,10 @@ export const BotomMenu = ({ onchange, defaultSelected }: BottomMenuProps) => {
           "relative w-full h-full grid place-items-center transition ease-out duration-200 " +
           (selectedKeys === "/dashboard/overview" ? "bg-[#1677ff]" : "")
         }
-        onClick={() => setSelectedKeys("/dashboard/overview")}
+        onClick={() => {
+          onchange(selectedKeys);
+          setSelectedKeys("/dashboard/overview");
+        }}
       >
         <AiFillHome
           className={
@@ -61,7 +67,10 @@ export const BotomMenu = ({ onchange, defaultSelected }: BottomMenuProps) => {
           "relative w-full h-full grid place-items-center transition ease-out duration-200 " +
           (selectedKeys === "/dashboard/users" ? "bg-[#1677ff]" : "")
         }
-        onClick={() => setSelectedKeys("/dashboard/users")}
+        onClick={() => {
+          onchange(selectedKeys);
+          setSelectedKeys("/dashboard/users");
+        }}
       >
         <ImUserCheck
           className={
@@ -75,7 +84,10 @@ export const BotomMenu = ({ onchange, defaultSelected }: BottomMenuProps) => {
           "relative w-full h-full grid place-items-center transition ease-out duration-200 " +
           (selectedKeys === "/dashboard/activitylog" ? "bg-[#1677ff]" : "")
         }
-        onClick={() => setSelectedKeys("/dashboard/activitylog")}
+        onClick={() => {
+          onchange(selectedKeys);
+          setSelectedKeys("/dashboard/activitylog");
+        }}
       >
         <MdWorkHistory
           className={

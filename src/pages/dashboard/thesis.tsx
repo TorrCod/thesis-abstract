@@ -98,6 +98,12 @@ const DashboardThesis = () => {
                 />
               </Card>
             ))}
+            <Card bordered={false}>
+              <Statistic
+                title={"Add Thesis"}
+                formatter={() => <PriButton>Upload</PriButton>}
+              />
+            </Card>
           </div>
         </div>
         <Divider />

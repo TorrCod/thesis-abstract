@@ -43,6 +43,16 @@ const UploadThesis = () => {
     setResearchers(newResearchers);
   };
 
+  // const handleUpload = async (file) => {
+  //   const formData = new FormData();
+  //   formData.append('pdf', file);
+
+  //   await fetch('/api/upload-pdf', {
+  //     method: 'POST',
+  //     body: formData,
+  //   });
+  // };
+
   return (
     <DashboardLayout
       userSelectedMenu="/dashboard"
@@ -100,6 +110,9 @@ const UploadThesis = () => {
             <BiPlus />
           </PriButton>
         </Form.Item>
+        <div>
+          <PriButton>Upload Abstract</PriButton>
+        </div>
         <Form.Item
           className="col-span-2"
           name="abstract"

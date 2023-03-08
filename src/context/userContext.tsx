@@ -9,6 +9,7 @@ import {
   EmailAuthProvider,
   onAuthStateChanged,
   reauthenticateWithCredential,
+  sendPasswordResetEmail,
   updatePassword,
   updateProfile,
 } from "firebase/auth";

@@ -1,13 +1,10 @@
-version: '3.8'
+version: "3.8"
 services:
-  web:
-    build:
-      context: ./
-      target: runner
+  mongodb:
+    image: mongo
+    container_name: mongodb
     volumes:
-      - .:/app
-    command: npm run dev
+      - ./docker-mongo/cache:/data/db
     ports:
-      - "3000:3000"
-    environment:
-      NODE_ENV: development
+      - "27017:27017"
+    tty: true

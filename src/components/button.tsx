@@ -4,7 +4,11 @@ import { IoMdArrowRoundBack } from "react-icons/io";
 
 export const PriButton = (props: ButtonProps) => {
   return (
-    <Button className="bg-[#F8B49C] shadow-lg" type="primary" {...props} />
+    <Button
+      className="bg-[#F8B49C] shadow-lg flex items-center gap-1"
+      type="primary"
+      {...props}
+    />
   );
 };
 

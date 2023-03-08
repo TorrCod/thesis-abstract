@@ -3,6 +3,7 @@ import DashboardLayout from "@/components/dashboardLayout";
 import { Button, DatePicker, Form, Input, Select } from "antd";
 import Link from "next/link";
 import React, { useState } from "react";
+import { AiOutlineUpload } from "react-icons/ai";
 import { BiMinus, BiPlus } from "react-icons/bi";
 import { FaAddressCard } from "react-icons/fa";
 import { GrAdd } from "react-icons/gr";
@@ -108,7 +109,11 @@ const UploadThesis = () => {
           <Input.TextArea autoSize={{ minRows: 10 }} />
         </Form.Item>
         <Form.Item className="absolute bottom-0 right-5">
-          <PriButton type="primary" htmlType="submit">
+          <PriButton
+            type="primary"
+            htmlType="submit"
+            icon={<AiOutlineUpload />}
+          >
             Upload
           </PriButton>
         </Form.Item>

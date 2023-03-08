@@ -77,9 +77,10 @@ const UploadThesis = () => {
       formData.append("file", file);
       formData.append("uid", uid!);
       axios
-        .post("/api/addThesisItems", formData, { params: { uid } })
+        .post("/api/pdf-text", formData, { params: { uid } })
         .then((response) => {
           onSuccess!(response.data, file as any);
+          console.log(response.data);
         })
         .catch((error) => {
           console.error(error);

@@ -28,10 +28,12 @@ export const getData = async (
     const database = client!.db(dbName);
     const collection = database.collection(colName);
     const res = await collection.find(option?.option).toArray();
+    client.close();
     return res;
   } catch (e) {
     console.error(e);
     throw new Error(e as string).message;
+  } finally {
   }
 };
 
@@ -43,6 +45,7 @@ export const deleteData = async (queryPost: QueryPost) => {
       queryPost.mongoDetails.collectionName
     );
     const res = await collection.deleteOne(queryPost.query);
+    client.close();
     return res;
   } catch (e) {
     console.error(e);
@@ -60,6 +63,7 @@ export const addData = async (
     const database = client!.db(dbName);
     const collection = database.collection(colName);
     const res = await collection.insertOne(payload);
+    client.close();
     return res;
   } catch (e) {
     console.error(e);
@@ -86,6 +90,7 @@ export const updateUser = async (userDetails: UserDetails) => {
       { uid: userDetails.uid },
       userDetails
     );
+    client.close();
     return res;
   } catch (e) {
     console.error(e);

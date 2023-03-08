@@ -11,8 +11,7 @@
     "updatedb": "cd docker-mongo && docker-compose exec mongodb mongodump --out=/database/default-data && docker cp mongodb:/database/default-data ./default-data"
   },
   "dependencies": {
-    "@next/font": "13.1.6",
-    "@react-pdf/renderer": "^3.1.7",
+    "@next/font": "^13.2.3",
     "@types/multer": "^1.4.7",
     "@types/react": "18.0.28",
     "@types/react-dom": "18.0.11",
@@ -25,7 +24,9 @@
     "install": "^0.13.0",
     "mongodb": "^5.1.0",
     "next": "13.1.6",
+    "node-tesseract-ocr": "^2.2.1",
     "npm": "^9.5.1",
+    "pdf-to-img": "^2.1.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-icons": "^4.7.1",
@@ -38,7 +39,6 @@
     "@types/formidable": "^2.0.5",
     "@types/mongodb": "^4.0.7",
     "@types/node": "^18.14.2",
-    "@types/react-pdf": "^6.2.0",
     "autoprefixer": "^10.4.13",
     "postcss": "^8.4.21",
     "tailwindcss": "^3.2.7"

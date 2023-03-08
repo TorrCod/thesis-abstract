@@ -1,6 +1,6 @@
 import { UserDetails } from "@/context/types.d"
 
-export type CollectionName = "thesis-items"|"user"|"admin"|"profiles"
+export type CollectionName = "thesis-items"|"user"|"admin"|"profiles"|"pdf-files"
 
 export type DatabaseName = "thesis-abstract"|"accounts"
 

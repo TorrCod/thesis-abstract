@@ -1,12 +1,24 @@
 import { PriButton } from "@/components/button";
 import DashboardLayout from "@/components/dashboardLayout";
-import { Button, DatePicker, Form, Input, Select } from "antd";
+import {
+  Button,
+  DatePicker,
+  Form,
+  Input,
+  message,
+  Select,
+  Upload,
+  UploadProps,
+} from "antd";
 import Link from "next/link";
 import React, { useState } from "react";
-import { AiOutlineUpload } from "react-icons/ai";
+import { AiFillFileImage, AiOutlineUpload } from "react-icons/ai";
 import { BiMinus, BiPlus } from "react-icons/bi";
 import { FaAddressCard } from "react-icons/fa";
 import { GrAdd } from "react-icons/gr";
+import { FiHelpCircle } from "react-icons/fi";
+import useUserContext from "@/context/userContext";
+import axios from "axios";
 
 const { Option } = Select;
 
@@ -27,6 +39,7 @@ const courseOptions = [
 
 const UploadThesis = () => {
   const [researchers, setResearchers] = useState<string[]>(["", ""]);
+  const uid = useUserContext().state.userDetails?.uid;
 
   const onFinish = (values: FormValues) => {
     console.log(values);
@@ -43,15 +56,36 @@ const UploadThesis = () => {
     setResearchers(newResearchers);
   };
 
-  // const handleUpload = async (file) => {
-  //   const formData = new FormData();
-  //   formData.append('pdf', file);
-
-  //   await fetch('/api/upload-pdf', {
-  //     method: 'POST',
-  //     body: formData,
-  //   });
-  // };
+  const uploadProps: UploadProps = {
+    name: "file",
+    accept: ".pdf,.jpg,.jpeg,.png",
+    onChange(info: any) {
+      if (info.file.status !== "uploading") {
+        console.log(info.file, info.fileList);
+      }
+      if (info.file.status === "done") {
+        message.success(`${info.file.name} file uploaded successfully`);
+      } else if (info.file.status === "error") {
+        message.error(`${info.file.name} file upload failed.`);
+      }
+    },
+    className:
+      "border-[1px] h-96 w-full border-black/20 col-span-2 grid place-items-center",
+    showUploadList: false,
+    customRequest: ({ file, onSuccess }) => {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("uid", uid!);
+      axios
+        .post("/api/addThesisItems", formData, { params: { uid } })
+        .then((response) => {
+          onSuccess!(response.data, file as any);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
+  };
 
   return (
     <DashboardLayout
@@ -68,20 +102,10 @@ const UploadThesis = () => {
         layout="vertical"
       >
         <div>
-          <Form.Item
-            className=""
-            name="title"
-            label="Title"
-            rules={[{ required: true }]}
-          >
+          <Form.Item name="title" label="Title" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
-          <Form.Item
-            className=""
-            name="date"
-            label="Date"
-            rules={[{ required: true }]}
-          >
+          <Form.Item name="date" label="Date" rules={[{ required: true }]}>
             <DatePicker />
           </Form.Item>
           <Form.Item
@@ -110,17 +134,26 @@ const UploadThesis = () => {
             <BiPlus />
           </PriButton>
         </Form.Item>
-        <div>
-          <PriButton>Upload Abstract</PriButton>
-        </div>
-        <Form.Item
+        {/* <Form.Item
           className="col-span-2"
           name="abstract"
           label="Abstract"
           rules={[{ required: true }]}
         >
           <Input.TextArea autoSize={{ minRows: 10 }} />
-        </Form.Item>
+        </Form.Item> */}
+        <Upload {...uploadProps}>
+          <div className="grid place-items-center">
+            <AiFillFileImage size={"3em"} />
+            <p className="text-center">
+              Upload a thesis abstract in a pdf or image format
+            </p>
+          </div>
+        </Upload>
+        <p className="flex items-center gap-1">
+          Help
+          <FiHelpCircle />
+        </p>
         <Form.Item className="absolute bottom-0 right-5">
           <PriButton
             type="primary"

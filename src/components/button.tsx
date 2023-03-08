@@ -1,4 +1,5 @@
 import { Button, ButtonProps } from "antd";
+import { AiFillHome } from "react-icons/ai";
 import { IoMdArrowRoundBack } from "react-icons/io";
 
 export const PriButton = (props: ButtonProps) => {
@@ -11,14 +12,14 @@ export const SecButton = (props: ButtonProps) => {
   return <Button className="shadow-lg" type="default" {...props} />;
 };
 
-export const BackButton = (props: ButtonProps) => {
+export const HomeButton = (props: ButtonProps) => {
   return (
     <Button
-      className="shadow-lg text-white flex justify-center items-center"
+      className="shadow-lg text-white flex justify-center items-center gap-1"
       type="default"
       {...props}
     >
-      <IoMdArrowRoundBack />
+      <AiFillHome />
       {props.children ?? "Back"}
     </Button>
   );

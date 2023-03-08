@@ -9,6 +9,7 @@ import Link from "next/link";
 import React, { Component } from "react";
 import { AiFillDelete } from "react-icons/ai";
 import { BsBookFill } from "react-icons/bs";
+import { GoLinkExternal } from "react-icons/go";
 import {
   ResponsiveContainer,
   RadarChart,
@@ -127,7 +128,11 @@ const DashboardOverview = () => {
         <div className="bg-white rounded-md shadow-md thesis grid relative content-start">
           <Link className="grid w-fit" href={"/dashboard/thesis"}>
             <h3 className="opacity-80 mb-3 mx-5 pt-5">Thesis</h3>
-            <p className="ml-6 opacity-60">Course Count RadarChart</p>
+          </Link>
+          <Link href="/dashboard/thesis/upload-thesis">
+            <div className="ml-6 opacity-60 flex items-center gap-2">
+              Add thesis <GoLinkExternal />
+            </div>
           </Link>
           <div className="overflow-auto">
             <div className="h-96 min-w-[32em]">

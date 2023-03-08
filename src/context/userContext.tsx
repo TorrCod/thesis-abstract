@@ -54,9 +54,7 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
         const id = user.uid;
         getUserDetails(id)
           .then((res) => {
-            console.log(res);
             if (typeof res === "object" && res !== null) {
-              console.log("triggered");
               res.profilePic = auth.currentUser?.photoURL ?? undefined;
               dispatch({ type: "on-signin", payload: res });
             }

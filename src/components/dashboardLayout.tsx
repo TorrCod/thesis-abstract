@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Dropdown, Layout, Menu } from "antd";
 const { Header, Content, Sider } = Layout;
 import Link from "next/link";
-import { BackButton, PriButton } from "@/components/button";
+import { HomeButton } from "@/components/button";
 import { MenuProps } from "antd";
 import { AiFillHome } from "react-icons/ai";
 import { FaSwatchbook } from "react-icons/fa";
@@ -102,9 +102,6 @@ function DashboardLayout({
   return (
     <div className="bg-[#D9D9D9] relative md:h-screen">
       <Header className="header fixed top-0 w-full md:relative z-20 flex gap-10 items-center">
-        <Link className="self-center" href="/">
-          <BackButton>Home</BackButton>
-        </Link>
         {width >= 768 ? (
           <Menu
             selectedKeys={[selectedMenu]}
@@ -125,6 +122,9 @@ function DashboardLayout({
             </button>
           </Dropdown>
         )}
+        <Link className="self-center" href="/">
+          <HomeButton>Home</HomeButton>
+        </Link>
       </Header>
       <div className="h-full">
         {userSelectedMenu === "/dashboard" && selectedSider && (

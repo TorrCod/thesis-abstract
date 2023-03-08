@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "thesis": "cd docker-mongo && docker-compose up -d && docker exec -it mongodb mkdir -p /database/ && docker cp ./default-data mongodb:/database/default-data && docker-compose exec mongodb mongorestore --drop /database/default-data && cd .. && npm run dev",
-    "updatedb": "cd docker-mongo && docker-compose exec mongodb mongodump --out=/database/default-data && docker cp mongodb:/database/default-data ./default-data"
+    "updatedb": "docker-compose exec mongodb mongodump --out=/database/default-data && docker cp mongodb:/database/default-data ./default-data"
   },
   "dependencies": {
     "@next/font": "^13.2.3",

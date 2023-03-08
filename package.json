@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@next/font": "13.1.6",
+    "@react-pdf/renderer": "^3.1.7",
     "@types/react": "18.0.28",
     "@types/react-dom": "18.0.11",
     "antd": "^5.2.2",

@@ -52,7 +52,7 @@ const UploadThesis = () => {
         <Link href="/dashboard/thesis">Thesis</Link> {">"} Upload
       </div>
       <Form<FormValues>
-        className="bg-white rounded-md shadow-md p-5 mb-10 relative pb-20 md:grid md:grid-cols-2 gap-x-5 max-w-5xl m-auto"
+        className="bg-white rounded-md shadow-md p-5 mb-20 relative pb-20 md:grid md:grid-cols-2 gap-x-5 max-w-5xl m-auto"
         onFinish={onFinish}
         layout="vertical"
       >

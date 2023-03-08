@@ -21,7 +21,8 @@ import { RcFile } from "antd/lib/upload";
 import React, { useEffect, useState } from "react";
 import { BsImage } from "react-icons/bs";
 import { useRouter } from "next/router";
-
+import { GrUserSettings } from "react-icons/gr";
+import { IoSettings } from "react-icons/io5";
 
 const courseOpt: { value: Course; label: Course }[] = [
   { value: "Civil Engineer", label: "Civil Engineer" },
@@ -162,11 +163,19 @@ const AccountSetting = (props: { data: any; hasError: boolean }) => {
         });
       setCfrmDltAcc("");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onConfirm]);
 
   return (
-    <DashboardLayout userSelectedMenu="/account-setting">
-      <div className="pb-10 w-full p-3 md:mt-5 mt-16">
+    <DashboardLayout
+      title={
+        <div className="flex items-center gap-1 text-white">
+          <IoSettings /> <h3 className="whitespace-nowrap">Account Setting</h3>
+        </div>
+      }
+      userSelectedMenu="/account-setting"
+    >
+      <div className="pb-10 w-full p-3 md:mt-5 mt-16 md:mb-20">
         <div className="grid gap-2 relative max-w-6xl m-auto ">
           <h3 className="text-black/90">Account Setting</h3>
           <div className="bg-white p-5 rounded-md shadow-md">

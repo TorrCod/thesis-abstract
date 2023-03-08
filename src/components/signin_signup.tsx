@@ -74,6 +74,7 @@ const SignInSignUp = () => {
     { value: "Computer Engineer", label: "Computer Engineer" },
     { value: "Electrical Engineer", label: "Electrical Engineer" },
     { value: "Mechanical Engineer", label: "Mechanical Engineer" },
+    { value: "Electronics Engineer", label: "Electronics Engineer" },
   ];
 
   return (
@@ -114,7 +115,7 @@ const SignInSignUp = () => {
           </Form.Item>
         </Form>
         <Divider />
-        <Form form={formSignUp}>
+        {/* <Form form={formSignUp}>
           <h3 className="text-center my-5 text-[#38649C]">Sign Up</h3>
           <Form.Item
             name="firstname"
@@ -182,7 +183,7 @@ const SignInSignUp = () => {
               Sign Up
             </PriButton>
           </Form.Item>
-        </Form>
+        </Form> */}
         <Divider />
         <div className="text-center opacity-80">
           This Feature is for admin only

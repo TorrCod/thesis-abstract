@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { PriButton } from "./button";
 import { NavItemProps } from "./types.d";
 import { AiOutlineHome } from "react-icons/ai";
 import { BiGroup, BiLogOut } from "react-icons/bi";
@@ -15,8 +14,9 @@ import { RiDashboardLine } from "react-icons/ri";
 import { GrUserSettings } from "react-icons/gr";
 import { auth } from "@/lib/firebase";
 import { useRouter } from "next/router";
-import { UserDetails } from "@/context/types.d";
 import DevSignUp from "./devsignuptest";
+import Notification from "./notification";
+import { AdminMenu } from "./admin";
 
 const MENU_LIST = [
   { text: "Home", href: "/", icon: <AiOutlineHome /> },
@@ -99,7 +99,6 @@ const NavBar = () => {
         </Link>
       ),
       label: <Link href={"/dashboard/overview"}>Dashboard</Link>,
-
     },
     {
       key: "logout",
@@ -115,7 +114,7 @@ const NavBar = () => {
   return (
     <div
       className={
-        "navbar px-2 py-5 fixed md:flex top-0 z-50 w-full md:justify-center md:items-center " +
+        "navbar px-2 py-2 fixed md:flex top-0 z-50 w-full md:justify-center md:items-center " +
         (y > 0 ? "shadow-md flex bg-[#38649C] " : "md:bg-transparent ")
       }
     >
@@ -143,32 +142,9 @@ const NavBar = () => {
         ))}
 
         {userCtxState.userDetails ? (
-          <Dropdown
-            placement="bottom"
-            trigger={["click"]}
-            dropdownRender={() => (
-              <div className="bg-white rounded-md pt-5">
-                <div className="flex gap-2 justify-center items-center mx-5 pb-3 border-b-[1px]">
-                  <Login />
-                  <div>
-                    <p>{`${userCtxState.userDetails?.firstName} ${userCtxState.userDetails?.lastName}`}</p>
-                    <p className="text-[0.8em] opacity-80">
-                      {userCtxState.userDetails?.course}
-                    </p>
-                  </div>
-                </div>
-                <Menu
-                  className="opacity-80"
-                  style={{ boxShadow: "none" }}
-                  items={userMenu}
-                />
-              </div>
-            )}
-          >
-            <div className="cursor-pointer">
-              <Login />
-            </div>
-          </Dropdown>
+          <div className="flex gap-1 items-center justify-center">
+            <AdminMenu />
+          </div>
         ) : (
           <>
             <Login />

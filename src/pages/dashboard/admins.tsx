@@ -1,6 +1,8 @@
 import React from "react";
 import { Table } from "antd";
 import DashboardLayout from "@/components/dashboardLayout";
+import QuerySearch from "@/components/QuerySearch";
+import { PriButton } from "@/components/button";
 
 const columns = [
   {
@@ -26,7 +28,11 @@ const columns = [
   {
     title: "Action",
     key: "action",
-    render: () => <a>Edit</a>,
+    render: () => (
+      <PriButton className="bg-[red] hover:bg-[red]/80">
+        Remove Access
+      </PriButton>
+    ),
   },
 ];
 
@@ -59,7 +65,16 @@ const AdminsTable = () => (
     userSelectedMenu="/dashboard"
     userSelectedSider="/dashboard/admins"
   >
-    <Table columns={columns} dataSource={data} />
+    <h3 className="opacity-80 mb-3">Dashboard {">"} Admin</h3>
+    <div className="bg-white rounded-md p-5 flex flex-col gap-2">
+      <p className="opacity-60 mb-5">Manage Co-Admins</p>
+      <QuerySearch
+        onSearch={(e) => {
+          console.log(e);
+        }}
+      />
+      <Table columns={columns} dataSource={data} scroll={{ x: 50 }} />
+    </div>
   </DashboardLayout>
 );
 

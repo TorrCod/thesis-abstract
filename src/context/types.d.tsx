@@ -10,7 +10,8 @@ export type Course =
   | "Computer Engineer"
   | "Mechanical Engineer"
   | "Electrical Engineer"
-  | "Civil Engineer";
+  | "Civil Engineer"
+  | "Electronics Engineer";
 
 export type ThesisItems = {
   id: string;
@@ -19,6 +20,7 @@ export type ThesisItems = {
   course: Course;
   abstract: string;
   date: string;
+  dateAdded: string;
 };
 
 export type GlobalAction =

@@ -1,3 +1,4 @@
+import { ThesisItems } from "@/context/types.d";
 import { RcFile } from "antd/es/upload";
 
 export function isObjectIncluded(obj1: any, obj2: any) {
@@ -18,3 +19,11 @@ export function base64toBinaryData(base64String: string, fileName: string) {
   const file = Buffer.from(base64String, "base64");
   return file;
 }
+
+export const thesisToDataType = (thesisItems: ThesisItems[]) => {
+  const newData = thesisItems.map((item) => {
+    const { id, title, course, dateAdded } = item;
+    return { key: id, title, course, dateAdded };
+  });
+  return newData;
+};

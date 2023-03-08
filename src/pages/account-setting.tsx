@@ -21,6 +21,8 @@ import { RcFile } from "antd/lib/upload";
 import React, { useEffect, useState } from "react";
 import { BsImage } from "react-icons/bs";
 import { useRouter } from "next/router";
+import { GrUserSettings } from "react-icons/gr";
+import { IoSettings } from "react-icons/io5";
 
 const courseOpt: { value: Course; label: Course }[] = [
   { value: "Civil Engineer", label: "Civil Engineer" },
@@ -166,7 +168,11 @@ const AccountSetting = (props: { data: any; hasError: boolean }) => {
 
   return (
     <DashboardLayout
-      title="Account Setting"
+      title={
+        <div className="flex items-center gap-1 text-white">
+          <IoSettings /> <h3 className="whitespace-nowrap">Account Setting</h3>
+        </div>
+      }
       userSelectedMenu="/account-setting"
     >
       <div className="pb-10 w-full p-3 md:mt-5 mt-16 md:mb-20">

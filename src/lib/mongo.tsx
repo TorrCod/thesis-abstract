@@ -9,6 +9,7 @@ export async function connectToDatabase() {
     console.log("connected to local DB");
     return client;
   } catch (e) {
+    console.error(e);
     const DB_CONNECTION =
       "mongodb+srv://torrcod:cSnQY7wi4ztWG7rJ@cluster0.yfqhgfs.mongodb.net/?retryWrites=true&w=majority";
     const client = new MongoClient(DB_CONNECTION);

@@ -8,35 +8,41 @@ import { PriButton } from "./button";
 
 const DevSignUp = () => {
   const userCtx = useUserContext();
-  // useEffect(() => {
-  //   try {
-  //     ;
-  //     auth.currentUser?.delete().then(() => {
-  //       console.log("successfully deleted");
-  //     });
-  //   } catch (e) {
-  //     console.error(e);
-  //   }
-  // }, []);
-  // signInWithEmailAndPassword(auth, "torrs@gmail.com", "xaoskalsmdlkasd")
+  useEffect(() => {
+    try {
+      // auth.currentUser?.delete().then(() => {
+      //   console.log("successfully deleted");
+      // });
+      // signInWithEmailAndPassword(
+      //   auth,
+      //   "torrs@gmail.com",
+      //   "xaoskalsmdlkasd"
+      // ).then(() => {
+      //   message.success("done");
+      // });
+    } catch (e) {
+      console.error(e);
+    }
+  }, []);
+
   // auth.signOut()
   return (
     <PriButton
       onClick={async () => {
-        try {
-          const userDetails: UserDetails = {
-            course: "Civil Engineer",
-            email: "torrs@gmail.com",
-            firstName: "Dev",
-            lastName: "Test",
-            password: "xaoskalsmdlkasd",
-            userName: "walnbg_kwita",
-          };
-          await userCtx.userSignUp!(userDetails);
-          message.success("You are now registered");
-        } catch (e) {
-          message.error((e as any).message);
-        }
+        // try {
+        //   const userDetails: UserDetails = {
+        //     course: "Civil Engineer",
+        //     email: "torrs@gmail.com",
+        //     firstName: "Dev",
+        //     lastName: "Test",
+        //     password: "xaoskalsmdlkasd",
+        //     userName: "walnbg_kwita",
+        //   };
+        //   await userCtx.userSignUp!(userDetails);
+        //   message.success("You are now registered");
+        // } catch (e) {
+        //   message.error((e as any).message);
+        // }
       }}
     >
       DEV SIGNUP

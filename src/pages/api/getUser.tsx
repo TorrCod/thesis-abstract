@@ -9,8 +9,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const items: UserDetails[] = (await getData("accounts", "user", {
       uid: _id,
     })) as any;
+    console.log(items);
     const postUserDtls = findUser(_id, items);
-    return res.json(postUserDtls[0]);
+
+    if (postUserDtls.length) return res.json(postUserDtls[0]);
+    else return res.json({ error: "No Data" });
   } catch (e) {
     console.error(e);
     throw new Error(e as string).message;

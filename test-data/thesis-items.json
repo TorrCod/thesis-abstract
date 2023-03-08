@@ -1,189 +1,235 @@
-[{
-  "_id": {
-    "$oid": "63fef91e4b66d3136331dc9a"
+[
+  {
+    "id": "123",
+    "title": "Development of a Smart Home System using IoT",
+    "researchers": [
+      "John Smith",
+      "Jane Doe"
+    ],
+    "course": "Electronics Engineer",
+    "abstract": "This thesis presents the development of a smart home system using IoT technologies.",
+    "date": "2022-05-15",
+    "dateAdded": "2022-05-16"
   },
-  "title": "The Impact of Artificial Intelligence on Business",
-  "researchers": [
-    "John Doe",
-    "Jane Smith"
-  ],
-  "course": "Computer Engineer",
-  "abstract": "This paper discusses the potential impacts of artificial intelligence on various aspects of business, including productivity, employment, and decision-making processes.",
-  "date": "2022-01-15"
-},{
-  "_id": {
-    "$oid": "63fef91e4b66d3136331dc9b"
+  {
+    "id": "456",
+    "title": "Design and Analysis of a Suspension Bridge",
+    "researchers": [
+      "David Lee",
+      "Amy Chen"
+    ],
+    "course": "Civil Engineer",
+    "abstract": "This thesis presents the design and analysis of a suspension bridge.",
+    "date": "2022-04-10",
+    "dateAdded": "2022-04-11"
   },
-  "title": "Efficient Energy Usage in Manufacturing Processes",
-  "researchers": [
-    "David Lee",
-    "Sarah Johnson",
-    "Mike Chen"
-  ],
-  "course": "Mechanical Engineer",
-  "abstract": "This research explores various techniques for improving energy efficiency in manufacturing processes, including the use of renewable energy sources and optimizing equipment.",
-  "date": "2021-11-03"
-},{
-  "_id": {
-    "$oid": "63fef91e4b66d3136331dc9c"
+  {
+    "id": "789",
+    "title": "Optimization of a Gas Turbine Engine for Power Generation",
+    "researchers": [
+      "Mark Johnson",
+      "Emily Wilson"
+    ],
+    "course": "Mechanical Engineer",
+    "abstract": "This thesis presents the optimization of a gas turbine engine for power generation.",
+    "date": "2022-06-20",
+    "dateAdded": "2022-06-21"
   },
-  "title": "Smart Grid Technologies for Improving Electrical Grid Resilience",
-  "researchers": [
-    "Karen Wong",
-    "Ahmed Khan"
-  ],
-  "course": "Electrical Engineer",
-  "abstract": "This study examines the use of smart grid technologies to improve the resilience of electrical grids to various disruptions, such as weather events and cyberattacks.",
-  "date": "2022-02-05"
-},{
-  "_id": {
-    "$oid": "63fef91e4b66d3136331dc9d"
+  {
+    "id": "123",
+    "title": "Development of a Smart Home System using IoT",
+    "researchers": [
+      "John Smith",
+      "Jane Doe"
+    ],
+    "course": "Electronics Engineer",
+    "abstract": "This thesis presents the development of a smart home system using IoT technologies.",
+    "date": "2022-05-15",
+    "dateAdded": "2022-05-16"
   },
-  "title": "Sustainable Building Practices for Reducing Carbon Footprint",
-  "researchers": [
-    "Anna Kim",
-    "Jack Smith"
-  ],
-  "course": "Civil Engineer",
-  "abstract": "This research evaluates the potential of sustainable building practices, such as green roofs and renewable energy systems, to reduce the carbon footprint of buildings.",
-  "date": "2022-03-20"
-},{
-  "_id": {
-    "$oid": "63fef91e4b66d3136331dc9e"
+  {
+    "id": "456",
+    "title": "Design and Analysis of a Suspension Bridge",
+    "researchers": [
+      "David Lee",
+      "Amy Chen"
+    ],
+    "course": "Civil Engineer",
+    "abstract": "This thesis presents the design and analysis of a suspension bridge.",
+    "date": "2022-04-10",
+    "dateAdded": "2022-04-11"
   },
-  "title": "The Use of Drones in Civil Engineering Projects",
-  "researchers": [
-    "Carlos Perez",
-    "Michelle Lee",
-    "Hannah Chen"
-  ],
-  "course": "Civil Engineer",
-  "abstract": "This paper examines the potential uses of drones in various civil engineering projects, such as surveying, mapping, and inspection of infrastructure.",
-  "date": "2021-12-10"
-},{
-  "_id": {
-    "$oid": "63fef91e4b66d3136331dc9f"
+  {
+    "id": "789",
+    "title": "Optimization of a Gas Turbine Engine for Power Generation",
+    "researchers": [
+      "Mark Johnson",
+      "Emily Wilson"
+    ],
+    "course": "Mechanical Engineer",
+    "abstract": "This thesis presents the optimization of a gas turbine engine for power generation.",
+    "date": "2022-06-20",
+    "dateAdded": "2022-06-21"
   },
-  "title": "The Impact of Artificial Intelligence on Society",
-  "researchers": [
-    "John Smith",
-    "Mary Johnson"
-  ],
-  "course": "Computer Engineer",
-  "abstract": "This study investigates the potential benefits and drawbacks of artificial intelligence on society.",
-  "date": "2022-01-15"
-},{
-  "_id": {
-    "$oid": "63fef91e4b66d3136331dca0"
+  {
+    "id": "234",
+    "title": "Machine Learning for Predicting Customer Churn in Telecommunication Industry",
+    "researchers": [
+      "Samantha Lee",
+      "Ryan Kim",
+      "Grace Chen"
+    ],
+    "course": "Computer Engineer",
+    "abstract": "This thesis presents the application of machine learning for predicting customer churn in the telecommunication industry.",
+    "date": "2022-03-05",
+    "dateAdded": "2022-03-06"
   },
-  "title": "Improving Wind Turbine Efficiency with Machine Learning",
-  "researchers": [
-    "David Kim",
-    "Sara Lee",
-    "Michael Chen"
-  ],
-  "course": "Mechanical Engineer",
-  "abstract": "This research explores how machine learning can be used to optimize the performance of wind turbines.",
-  "date": "2022-02-01"
-},{
-  "_id": {
-    "$oid": "63fef91e4b66d3136331dca1"
+  {
+    "id": "567",
+    "title": "Design and Implementation of a Solar-Powered Water Pumping System for Irrigation",
+    "researchers": [
+      "Michael Davis",
+      "Linda Huang"
+    ],
+    "course": "Electrical Engineer",
+    "abstract": "This thesis presents the design and implementation of a solar-powered water pumping system for irrigation purposes.",
+    "date": "2022-09-01",
+    "dateAdded": "2022-09-02"
   },
-  "title": "Designing Smart Homes for Elderly People",
-  "researchers": [
-    "Emily Davis",
-    "Ryan Johnson"
-  ],
-  "course": "Electrical Engineer",
-  "abstract": "This project aims to create a smart home system that meets the specific needs of elderly people.",
-  "date": "2022-03-10"
-},{
-  "_id": {
-    "$oid": "63fef91e4b66d3136331dca2"
+  {
+    "id": "890",
+    "title": "Design and Fabrication of an Electric Car",
+    "researchers": [
+      "Joshua Lee",
+      "Michelle Park"
+    ],
+    "course": "Mechanical Engineer",
+    "abstract": "This thesis presents the design and fabrication of an electric car.",
+    "date": "2022-12-10",
+    "dateAdded": "2022-12-11"
   },
-  "title": "Sustainable Urban Development",
-  "researchers": [
-    "Alex Nguyen",
-    "Alicia Rodriguez",
-    "Daniel Garcia"
-  ],
-  "course": "Civil Engineer",
-  "abstract": "This research analyzes the factors that contribute to sustainable urban development and proposes strategies for achieving it.",
-  "date": "2022-04-20"
-},{
-  "_id": {
-    "$oid": "63fef91e4b66d3136331dca3"
+  {
+    "id": "345",
+    "title": "Structural Analysis and Design of a High-Rise Building",
+    "researchers": [
+      "Daniel Kim",
+      "Emily Johnson",
+      "Justin Lee"
+    ],
+    "course": "Civil Engineer",
+    "abstract": "This thesis presents the structural analysis and design of a high-rise building.",
+    "date": "2022-02-20",
+    "dateAdded": "2022-02-21"
   },
-  "title": "Predicting Traffic Congestion with Data Analytics",
-  "researchers": [
-    "Jessica Kim",
-    "David Lee",
-    "Ethan Park"
-  ],
-  "course": "Computer Engineer",
-  "abstract": "This study develops a data analytics model to predict traffic congestion in urban areas.",
-  "date": "2022-05-05"
-},{
-  "_id": {
-    "$oid": "63fef91e4b66d3136331dca4"
+  {
+    "id": "678",
+    "title": "Design and Implementation of a Digital Signal Processing Algorithm for Noise Reduction in Speech Signals",
+    "researchers": [
+      "Sarah Park",
+      "Kevin Smith"
+    ],
+    "course": "Electronics Engineer",
+    "abstract": "This thesis presents the design and implementation of a digital signal processing algorithm for noise reduction in speech signals.",
+    "date": "2022-07-05",
+    "dateAdded": "2022-07-06"
   },
-  "title": "Smart Grid Technology for Energy Management",
-  "researchers": [
-    "Thomas Johnson",
-    "Karen Kim",
-    "Olivia Park"
-  ],
-  "course": "Electrical Engineer",
-  "abstract": "This project aims to develop a smart grid technology to optimize energy management and reduce costs.",
-  "date": "2022-11-15"
-},{
-  "_id": {
-    "$oid": "63fef91e4b66d3136331dca5"
+  {
+    "id": "901",
+    "title": "Development of an Autonomous Drone for Environmental Monitoring",
+    "researchers": [
+      "David Lee",
+      "Jessica Kim",
+      "Sophie Chen"
+    ],
+    "course": "Electronics Engineer",
+    "abstract": "This thesis presents the development of an autonomous drone for environmental monitoring purposes.",
+    "date": "2022-11-15",
+    "dateAdded": "2022-11-16"
   },
-  "title": "Designing Efficient Solar Cells",
-  "researchers": [
-    "David Lee",
-    "Sophia Kim"
-  ],
-  "course": "Mechanical Engineer",
-  "abstract": "This research investigates ways to design solar cells that are more efficient and cost-effective.",
-  "date": "2022-12-01"
-},{
-  "_id": {
-    "$oid": "63fef91e4b66d3136331dca6"
+  {
+    "id": "123",
+    "title": "Development of a Smart Home System using IoT",
+    "researchers": [
+      "John Smith",
+      "Jane Doe"
+    ],
+    "course": "Electronics Engineer",
+    "abstract": "This thesis presents the development of a smart home system using IoT technologies.",
+    "date": "2022-05-15",
+    "dateAdded": "2022-05-16"
   },
-  "title": "The Impact of Climate Change on Water Resources",
-  "researchers": [
-    "Sarah Johnson",
-    "John Park",
-    "Daniel Lee"
-  ],
-  "course": "Civil Engineer",
-  "abstract": "This study analyzes the impact of climate change on water resources and proposes strategies to adapt to the changing conditions.",
-  "date": "2023-01-10"
-},{
-  "_id": {
-    "$oid": "63fef91e4b66d3136331dca7"
+  {
+    "id": "456",
+    "title": "Design and Analysis of a Suspension Bridge",
+    "researchers": [
+      "David Lee",
+      "Amy Chen"
+    ],
+    "course": "Civil Engineer",
+    "abstract": "This thesis presents the design and analysis of a suspension bridge.",
+    "date": "2022-04-10",
+    "dateAdded": "2022-04-11"
   },
-  "title": "Machine Learning for Stock Price Prediction",
-  "researchers": [
-    "Ethan Lee",
-    "Ava Kim",
-    "Jacob Park"
-  ],
-  "course": "Computer Engineer",
-  "abstract": "This research develops a machine learning model to predict stock prices and analyze market trends.",
-  "date": "2023-02-20"
-},{
-  "_id": {
-    "$oid": "63fef91e4b66d3136331dca8"
+  {
+    "id": "789",
+    "title": "Optimization of a Gas Turbine Engine for Power Generation",
+    "researchers": [
+      "Mark Johnson",
+      "Emily Wilson"
+    ],
+    "course": "Mechanical Engineer",
+    "abstract": "This thesis presents the optimization of a gas turbine engine for power generation.",
+    "date": "2022-06-20",
+    "dateAdded": "2022-06-21"
   },
-  "title": "Sustainable Transportation Systems",
-  "researchers": [
-    "Emily Kim",
-    "Michael Park"
-  ],
-  "course": "Electrical Engineer",
-  "abstract": "This project aims to design sustainable transportation systems that reduce emissions and improve efficiency.",
-  "date": "2023-03-05"
-}]
+  {
+    "id": "234",
+    "title": "Machine Learning for Predicting Customer Churn in Telecommunication Industry",
+    "researchers": [
+      "Samantha Lee",
+      "Ryan Kim",
+      "Grace Chen"
+    ],
+    "course": "Computer Engineer",
+    "abstract": "This thesis presents the application of machine learning for predicting customer churn in the telecommunication industry.",
+    "date": "2022-03-05",
+    "dateAdded": "2022-03-06"
+  },
+  {
+    "id": "567",
+    "title": "Design and Implementation of a Solar-Powered Water Pumping System for Irrigation",
+    "researchers": [
+      "Michael Davis",
+      "Linda Huang"
+    ],
+    "course": "Electrical Engineer",
+    "abstract": "This thesis presents the design and implementation of a solar-powered water pumping system for irrigation purposes.",
+    "date": "2022-09-01",
+    "dateAdded": "2022-09-02"
+  },
+  {
+    "id": "890",
+    "title": "Design and Fabrication of an Electric Car",
+    "researchers": [
+      "Joshua Lee",
+      "Michelle Park"
+    ],
+    "course": "Mechanical Engineer",
+    "abstract": "This thesis presents the design and fabrication of an electric car.",
+    "date": "2022-12-10",
+    "dateAdded": "2022-12-11"
+  },
+  {
+    "id": "345",
+    "title": "Structural Analysis and Design of a High-Rise Building",
+    "researchers": [
+      "Daniel Kim",
+      "Emily Johnson",
+      "Justin Lee"
+    ],
+    "course": "Civil Engineer",
+    "abstract": "This thesis presents the structural analysis and design of a high-rise building.",
+    "date": "2022-02-20",
+    "dateAdded": "2022-02-21"
+  }
+]

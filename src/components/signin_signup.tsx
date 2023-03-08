@@ -2,9 +2,11 @@ import { useState } from "react";
 import { Modal, Form, Input, Divider, Select, message } from "antd";
 import { PriButton } from "./button";
 import { Course, UserDetails } from "@/context/types.d";
-import { signIn } from "@/lib/firebase";
+import { auth, signIn } from "@/lib/firebase";
 import useUserContext from "@/context/userContext";
 import AdminProfile from "./admin";
+import { sendPasswordResetEmail } from "firebase/auth";
+import Link from "next/link";
 
 const SignInSignUp = () => {
   const [open, setOpen] = useState(false);
@@ -83,7 +85,7 @@ const SignInSignUp = () => {
         <AdminProfile userDetails={userCtx.state.userDetails} />
       ) : (
         <PriButton type="primary" onClick={showModal}>
-          Sign In / Sign Up
+          Sign In
         </PriButton>
       )}
       <Modal
@@ -108,13 +110,15 @@ const SignInSignUp = () => {
           >
             <Input.Password placeholder="Password" />
           </Form.Item>
+          <Link onClick={() => setOpen(false)} href="/forgot-password">
+            forgot password?
+          </Link>
           <Form.Item className="grid place-items-end">
             <PriButton htmlType="submit" onClick={handleSignIn}>
               Sign In
             </PriButton>
           </Form.Item>
         </Form>
-        <Divider />
         {/* <Form form={formSignUp}>
           <h3 className="text-center my-5 text-[#38649C]">Sign Up</h3>
           <Form.Item

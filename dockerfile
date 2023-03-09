@@ -36,9 +36,11 @@ RUN apk add --no-cache libc6-compat build-base g++ cairo-dev jpeg-dev pango-dev 
 
 WORKDIR /app
 
-COPY . .
+COPY package.json .
 
 RUN npm install
+
+COPY . .
 
 RUN npm run build
 

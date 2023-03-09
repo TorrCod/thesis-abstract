@@ -7,31 +7,35 @@ import { useRouter } from "next/router";
 import { generateId, getData } from "@/lib/mongo";
 
 export const getStaticProps: GetStaticProps = async (context) => {
-  const res = await getData("thesis-abstract", "thesis-items");
-  const thesisItems: ThesisItems[] = generateId(res);
-  const itemId = context.params?.id;
-  const foundItem = thesisItems.find((item) => itemId === item["id"]);
-  if (!foundItem) {
+  try {
+    const res = await getData("thesis-abstract", "thesis-items");
+    const thesisItems: ThesisItems[] = generateId(res);
+    const itemId = context.params?.id;
+    const foundItem = thesisItems.find((item) => itemId === item["id"]);
+    return {
+      props: { data: foundItem },
+    };
+  } catch {
     return {
       props: { hasError: true },
     };
   }
-  return {
-    props: { data: foundItem },
-  };
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const res = await getData("thesis-abstract", "thesis-items");
-  const thesisItems: ThesisItems[] = generateId(res);
-  const pathWithParams = thesisItems.map((item) => ({
-    params: { id: item.id },
-  }));
-
-  return {
-    paths: pathWithParams,
-    fallback: true,
-  };
+  try {
+    const res = await getData("thesis-abstract", "thesis-items");
+    const thesisItems: ThesisItems[] = generateId(res);
+    const pathWithParams = thesisItems.map((item) => ({
+      params: { id: item.id },
+    }));
+    return {
+      paths: pathWithParams,
+      fallback: true,
+    };
+  } catch {
+    return { paths: [], fallback: true };
+  }
 };
 
 const ThesisItemsView = (props: { data: ThesisItems; hasError: boolean }) => {

@@ -5,6 +5,11 @@ import { Divider } from "antd";
 import { GetStaticPaths, GetStaticProps } from "next";
 import { useRouter } from "next/router";
 import { generateId, getData } from "@/lib/mongo";
+import dynamic from "next/dynamic";
+
+const PdfLink = dynamic(() => import("@/components/pdfDocs"), {
+  ssr: false,
+});
 
 export const getStaticProps: GetStaticProps = async (context) => {
   try {
@@ -57,7 +62,6 @@ const ThesisItemsView = (props: { data: ThesisItems; hasError: boolean }) => {
             <p className="indent-3">{props.data.abstract}</p>
           </div>
         </div>
-
         <div className="rs-details grid gap-2">
           <div>
             <span className="text-sm text-[#38649C]">Title</span>
@@ -72,7 +76,6 @@ const ThesisItemsView = (props: { data: ThesisItems; hasError: boolean }) => {
             <h2>{props.data.date}</h2>
           </div>
         </div>
-
         <div className="rs-researchers">
           <span className="text-sm text-[#38649C]">Researchers</span>
           <div className="pl-5">
@@ -83,7 +86,6 @@ const ThesisItemsView = (props: { data: ThesisItems; hasError: boolean }) => {
             </ul>
           </div>
         </div>
-
         <div className="rs-abstract justify-self-center text-justify leading-10 w-full">
           <div className="max-w-xl">
             <h3 className="text-center">Abstract</h3>
@@ -92,7 +94,9 @@ const ThesisItemsView = (props: { data: ThesisItems; hasError: boolean }) => {
         </div>
         <div className="rs-button grid place-items-end md:place-items-start">
           <Divider />
-          <PriButton>Download</PriButton>
+          <PriButton>
+            <PdfLink />
+          </PriButton>
         </div>
       </div>
     </section>

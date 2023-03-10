@@ -1,4 +1,3 @@
-import { PriButton } from "@/components/button";
 import Search from "@/components/search";
 import useGlobalContext from "@/context/globalContext";
 import { ThesisItems } from "@/context/types.d";

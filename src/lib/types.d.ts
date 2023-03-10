@@ -14,3 +14,28 @@ export type QueryPost = {
     data: any;
     query: Record<string, unknown>;
 }
+
+export interface GeneratedTextRes {
+    data: {
+      err: any;
+      fields: {
+        uid: string;
+        text: {
+          hash: string;
+          text_pages: string[];
+          single_page_pdf_file_paths: string[];
+        };
+        pdf_path: string;
+      };
+    };
+    files: {
+      file: {
+        size: number;
+        filepath: string;
+        newFilename: string;
+        mimetype: string;
+        mtime: string;
+        originalFilename: string;
+      };
+    };
+  }

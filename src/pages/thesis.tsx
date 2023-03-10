@@ -5,6 +5,8 @@ import { ThesisItems } from "@/context/types.d";
 import { Divider } from "antd";
 import Link from "next/link";
 
+// use pdf lib for creating pdf
+
 const Thesis = () => {
   const { state } = useGlobalContext();
   return (

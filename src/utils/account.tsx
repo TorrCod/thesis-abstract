@@ -1,4 +1,4 @@
-import { UserDetails } from "@/context/types.d";
+import { ThesisItems, UserDetails } from "@/context/types.d";
 import { MongoDetails, QueryPost } from "@/lib/types";
 import axios from "axios";
 
@@ -38,4 +38,8 @@ export const utils_Delete_Account = async (userDetails: UserDetails) => {
     query: { uid: userDetails.uid },
   };
   await axios.post("/api/remove-item-db", mongoQuery);
+};
+
+export const addThesis = async (data: ThesisItems) => {
+  await axios.post("/api/addThesisItems", data);
 };

@@ -95,7 +95,7 @@ const ThesisItemsView = (props: { data: ThesisItems; hasError: boolean }) => {
         <div className="rs-button grid place-items-end md:place-items-start">
           <Divider />
           <PriButton>
-            <PdfLink />
+            <PdfLink {...props.data} />
           </PriButton>
         </div>
       </div>

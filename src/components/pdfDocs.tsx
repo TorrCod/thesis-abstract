@@ -5,39 +5,103 @@ import {
   View,
   Document,
   StyleSheet,
-  PDFDownloadLink,
   BlobProvider,
+  Font,
 } from "@react-pdf/renderer";
+import { ThesisItems } from "@/context/types.d";
+
+// Register font
+Font.register({
+  family: "Roboto",
+  src: "/asset/Roboto-Regular.ttf",
+});
 
 // Create styles
 const styles = StyleSheet.create({
   page: {
-    flexDirection: "row",
+    paddingLeft: "1.5in",
+    paddingVertical: "1in",
+    paddingRight: "1in",
     backgroundColor: "#E4E4E4",
+    fontSize: "12px",
+    lineHeight: 2,
+    textAlign: "justify",
+    fontFamily: "Roboto",
   },
-  section: {
-    margin: 10,
-    padding: 10,
-    flexGrow: 1,
+  twoColumn: {
+    flexDirection: "row",
+    width: "100%",
+    position: "relative",
+  },
+  twoColumn1Item: {
+    width: "20%",
+  },
+  twoColumn2Item: {
+    flexDirection: "row",
+    position: "relative",
+    flexWrap: "wrap",
+    width: "100%",
+  },
+  body: {
+    paddingTop: "20px",
   },
 });
 
 // Create Document Component
-const MyDocument = () => (
+const MyDocument = (props: ThesisItems) => (
   <Document>
-    <Page size="A4" style={styles.page}>
-      <View style={styles.section}>
-        <Text>Section #1</Text>
+    <Page size="LETTER" style={styles.page}>
+      <View style={{ textAlign: "center", fontWeight: "extrabold" }}>
+        <Text>ABSTRACT</Text>
       </View>
-      <View style={styles.section}>
-        <Text>Section #2</Text>
+      <View style={styles.twoColumn}>
+        <View style={styles.twoColumn1Item}>
+          <Text>Title:</Text>
+        </View>
+        <View style={styles.twoColumn2Item}>
+          <Text style={{ flex: 1, flexWrap: "wrap" }}>{props.title}</Text>
+        </View>
+      </View>
+      <View style={styles.twoColumn}>
+        <View style={styles.twoColumn1Item}>
+          <Text>Authors:</Text>
+        </View>
+        <View
+          style={{
+            lineHeight: 1,
+            marginBottom: "16px",
+          }}
+        >
+          {props.researchers.map((child, index) => (
+            <Text key={index}>{`\u2022 ${child}`}</Text>
+          ))}
+        </View>
+      </View>
+      <View style={styles.twoColumn}>
+        <View style={styles.twoColumn1Item}>
+          <Text>Date:</Text>
+        </View>
+        <View style={styles.twoColumn2Item}>
+          <Text>{props.date}</Text>
+        </View>
+      </View>
+      <View style={styles.twoColumn}>
+        <View style={styles.twoColumn1Item}>
+          <Text>Course:</Text>
+        </View>
+        <View style={styles.twoColumn2Item}>
+          <Text>{props.course}</Text>
+        </View>
+      </View>
+      <View style={styles.body}>
+        <Text style={{ textIndent: "50px" }}>{props.abstract}</Text>
       </View>
     </Page>
   </Document>
 );
 
-const PdfDownloadLink = () => (
-  <BlobProvider document={<MyDocument />}>
+const PdfDownloadLink = (props: ThesisItems) => (
+  <BlobProvider document={<MyDocument {...props} />}>
     {({ blob, url, loading, error }) =>
       loading ? (
         "Loading document..."

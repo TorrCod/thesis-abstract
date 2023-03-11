@@ -3,6 +3,7 @@ import Image from "next/image";
 import { PriButton } from "@/components/button";
 import Search from "@/components/search";
 import { useEffect } from "react";
+import PdfDownloadLink from "@/components/pdfDocs";
 
 export default function Home() {
   useEffect(() => {

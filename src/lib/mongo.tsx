@@ -2,18 +2,31 @@ import { UserDetails } from "@/context/types.d";
 import { MongoClient, ObjectId } from "mongodb";
 import { CollectionName, DatabaseName, QueryPost } from "./types";
 
+let CONNECTION = undefined;
+let client = new MongoClient(CONNECTION ?? "mongodb://localhost:27017");
 export async function connectToDatabase() {
   try {
-    const client = new MongoClient("mongodb://localhost:27017");
     await client.connect();
     console.log("connected to local DB");
     return client;
   } catch (e) {
-    const DB_CONNECTION =
-      "mongodb+srv://torrcod:cSnQY7wi4ztWG7rJ@cluster0.yfqhgfs.mongodb.net/?retryWrites=true&w=majority";
-    const client = new MongoClient(DB_CONNECTION);
-    await client.connect();
-    return client;
+    try {
+      if (process.env["MONGO_URI"]) {
+        CONNECTION = process.env["MONGO_URI"];
+        await client.connect();
+        console.log("Docker Mongodb connected");
+        return client;
+      } else {
+        console.log("Connecting to cloud");
+        CONNECTION =
+          "mongodb+srv://torrcod:cSnQY7wi4ztWG7rJ@cluster0.yfqhgfs.mongodb.net/?retryWrites=true&w=majority";
+        await client.connect();
+        console.log("Cloud Mongodb connected");
+        return client;
+      }
+    } catch (e) {
+      console.error(e);
+    }
   }
 }
 
@@ -27,10 +40,12 @@ export const getData = async (
     const database = client!.db(dbName);
     const collection = database.collection(colName);
     const res = await collection.find(option?.option).toArray();
+    client?.close();
     return res;
   } catch (e) {
     console.error(e);
     throw new Error(e as string).message;
+  } finally {
   }
 };
 
@@ -42,6 +57,7 @@ export const deleteData = async (queryPost: QueryPost) => {
       queryPost.mongoDetails.collectionName
     );
     const res = await collection.deleteOne(queryPost.query);
+    client?.close();
     return res;
   } catch (e) {
     console.error(e);
@@ -59,6 +75,7 @@ export const addData = async (
     const database = client!.db(dbName);
     const collection = database.collection(colName);
     const res = await collection.insertOne(payload);
+    client?.close();
     return res;
   } catch (e) {
     console.error(e);
@@ -85,17 +102,10 @@ export const updateUser = async (userDetails: UserDetails) => {
       { uid: userDetails.uid },
       userDetails
     );
+    client?.close();
     return res;
   } catch (e) {
     console.error(e);
     throw new Error(e as string).message;
   }
 };
-
-export const db_UpdateProfile = async ({
-  uid,
-  payload,
-}: {
-  uid: string;
-  payload: any;
-}) => {};

@@ -10,7 +10,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       uid: _id,
     })) as any;
     const postUserDtls = findUser(_id, items);
-    return res.json(postUserDtls[0]);
+    if (postUserDtls.length) return res.json(postUserDtls[0]);
+    else return res.json({ error: "No Data" });
   } catch (e) {
     console.error(e);
     throw new Error(e as string).message;

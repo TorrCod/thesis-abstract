@@ -1,5 +1,6 @@
 import { auth, signUp } from "@/lib/firebase";
 import {
+  addThesis,
   addUserAccount,
   getUserDetails,
   updateUser,
@@ -20,7 +21,13 @@ import {
   useReducer,
   useState,
 } from "react";
-import { UserAction, UserDetails, UserState, UserValue } from "./types.d";
+import {
+  ThesisItems,
+  UserAction,
+  UserDetails,
+  UserState,
+  UserValue,
+} from "./types.d";
 
 const userStateInit: UserState = {
   userDetails: undefined,
@@ -29,6 +36,7 @@ const userStateInit: UserState = {
 const userValueInit: UserValue = {
   state: userStateInit,
   dispatch: () => {},
+  saveUploadThesis: async () => {},
 };
 
 const UserContext = createContext<UserValue>(userValueInit);
@@ -66,7 +74,6 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
         dispatch({ type: "on-signin", payload: undefined });
       }
     });
-    return () => {};
   }, [triggerUpdate]);
 
   const userSignUp = async (userDetails: UserDetails) => {
@@ -112,6 +119,10 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const saveUploadThesis = async (thesisItems: ThesisItems) => {
+    await addThesis(thesisItems);
+  };
+
   return (
     <UserContext.Provider
       value={{
@@ -122,6 +133,7 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
         changePass,
         updateProfileUrl,
         deleteAccount,
+        saveUploadThesis,
       }}
     >
       {children}

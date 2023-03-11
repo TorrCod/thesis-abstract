@@ -1,4 +1,4 @@
-import { UserDetails } from "@/context/types.d";
+import { ThesisItems, UserDetails } from "@/context/types.d";
 import { MongoDetails, QueryPost } from "@/lib/types";
 import axios from "axios";
 
@@ -17,7 +17,10 @@ export const getUserDetails = async (id: string): Promise<UserDetails> => {
   const userDetails = await axios.post("/api/getUser", {
     _id: id,
   });
-  return userDetails.data;
+  if (!userDetails.data.error) return userDetails.data;
+  else {
+    throw new Error("No Data");
+  }
 };
 
 export const updateUser = async (payload: UserDetails) => {
@@ -35,4 +38,8 @@ export const utils_Delete_Account = async (userDetails: UserDetails) => {
     query: { uid: userDetails.uid },
   };
   await axios.post("/api/remove-item-db", mongoQuery);
+};
+
+export const addThesis = async (data: ThesisItems) => {
+  await axios.post("/api/addThesisItems", data);
 };

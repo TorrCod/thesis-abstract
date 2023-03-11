@@ -1,24 +1,15 @@
-import { ThesisItems } from "@/context/types.d";
-import { connectToDatabase } from "@/lib/mongo";
-import { NextApiRequest, NextApiResponse } from "next";
+import { addData } from "@/lib/mongo";
+import type { NextApiRequest, NextApiResponse } from "next";
+import formidable, { Fields, Files } from "formidable";
 
-const handler = async (
-  req: NextApiRequest,
-  res: NextApiResponse<ThesisItems>
-) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
-    const client = await connectToDatabase();
-    const db = client.db("thesis-abstract");
-    const requestItems: ThesisItems = req.body;
-
-    const items: ThesisItems = (await db
-      .collection("thesis-items")
-      .insertOne(requestItems)) as unknown as ThesisItems;
-
-    return res.json(items);
-  } catch (e) {
-    console.error(e);
-    throw new Error(e as string).message;
+    const payload = req.body;
+    await addData("thesis-abstract", "thesis-items", payload);
+    return res.status(200).json({ message: "success" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Upload Failed" });
   }
 };
 

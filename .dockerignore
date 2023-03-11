@@ -1,0 +1,18 @@
+# Ignore development-only files
+**/.git
+**/.idea
+**/node_modules
+**/build
+**/out
+**/.next
+**/.vercel
+
+# Ignore testing files
+**/__tests__
+
+# Ignore other files
+Dockerfile
+docker-compose.yml
+README.md
+.gitignore
+LICENSE

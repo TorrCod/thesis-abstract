@@ -1,4 +1,5 @@
 import { ThesisItems } from "@/context/types.d";
+import { GeneratedTextRes } from "@/lib/types";
 import { RcFile } from "antd/es/upload";
 
 export function isObjectIncluded(obj1: any, obj2: any) {
@@ -26,4 +27,13 @@ export const thesisToDataType = (thesisItems: ThesisItems[]) => {
     return { key: id, title, course, dateAdded };
   });
   return newData;
+};
+
+export const getPdfText = (data: GeneratedTextRes) => {
+  const text_pages = (data as GeneratedTextRes).data.fields.text.text_pages;
+  let extractedText = "";
+  for (const content of text_pages) {
+    extractedText = extractedText + content;
+  }
+  return extractedText;
 };

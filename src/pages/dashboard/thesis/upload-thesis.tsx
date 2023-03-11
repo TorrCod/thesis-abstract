@@ -28,8 +28,9 @@ import { ThesisItems } from "@/context/types.d";
 interface FormValues {
   title: string;
   date: string;
-  course: string[];
+  course: string;
   researchers: string[];
+  abstract: string;
 }
 
 interface FieldData {
@@ -53,21 +54,16 @@ const UploadThesis = () => {
   const [form] = Form.useForm();
 
   const onFinish = async (values: FormValues) => {
-    // console.log(values);
-    // console.log(researchers);
-  };
-
-  const handleTestUpload = async () => {
     try {
       const dateNow = new Date().toLocaleString();
       const payload: ThesisItems = {
-        abstract: "tehsisio puke",
-        course: "Civil Engineer",
+        abstract: values.abstract,
+        course: values.course as any,
         dateAdded: dateNow,
-        date: "2020-06-20",
-        title: "Pukerosh",
+        date: values.date,
+        title: values.title,
         id: "",
-        researchers: ["ako", "ako", "ako"],
+        researchers: researchers,
       };
       await userCtx.saveUploadThesis(payload);
       message.success("Success");
@@ -226,7 +222,6 @@ const UploadThesis = () => {
             Upload
           </PriButton>
         </Form.Item>
-        <PriButton onClick={handleTestUpload}> TEST Upload</PriButton>
       </Form>
     </DashboardLayout>
   );

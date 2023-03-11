@@ -9,11 +9,11 @@ services:
       - "27017:27017"
     tty: true
   
-  # next:
-  #   build: .
-  #   ports:
-  #     - "3000:3000"
-  #   environment:
-  #     - MONGO_URI=mongodb://mongodb:27017
-  #   depends_on:
-  #     - mongodb
+  next:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017
+    depends_on:
+      - mongodb

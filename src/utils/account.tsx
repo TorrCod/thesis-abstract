@@ -14,12 +14,13 @@ export const addUserAccount = async (userDetails: UserDetails) => {
 };
 
 export const getUserDetails = async (id: string): Promise<UserDetails> => {
-  const userDetails = await axios.post("/api/getUser", {
-    _id: id,
-  });
-  if (!userDetails.data.error) return userDetails.data;
-  else {
-    throw new Error("No Data");
+  try {
+    const { data } = await axios.post("/api/getUser", { _id: id });
+    if (data.error) throw new Error("No Data");
+    return data;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Failed to fetch user details");
   }
 };
 

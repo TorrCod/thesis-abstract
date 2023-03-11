@@ -19,7 +19,8 @@ import {
 import { useRouter } from "next/router";
 import AdminProfile, { AdminMenu } from "./admin";
 import { BsThreeDots } from "react-icons/bs";
-import { useWindowSize } from "react-use";
+import { useLocation, useWindowSize } from "react-use";
+import Head from "next/head";
 
 type SelectedMenu = "/dashboard" | "/account-setting";
 
@@ -40,6 +41,7 @@ function DashboardLayout({
   const [selectedMenu, setSelectedMenu] = useState(userSelectedMenu);
   const router = useRouter();
   const { width } = useWindowSize();
+  const { pathname } = useLocation();
 
   useEffect(() => {
     (
@@ -100,65 +102,77 @@ function DashboardLayout({
   ];
 
   return (
-    <div className="bg-[#D9D9D9] relative md:h-screen">
-      <Header className="header fixed top-0 w-full md:relative z-20 flex gap-10 items-center">
-        {width >= 768 ? (
-          <Menu
-            selectedKeys={[selectedMenu]}
-            onSelect={(info) => setSelectedMenu(info.key as any)}
-            theme="dark"
-            mode="horizontal"
-            items={menuItem}
-          />
-        ) : (
-          <Dropdown
-            trigger={["click"]}
-            className="text-white"
-            menu={{ items: menuItem, selectedKeys: [selectedMenu] }}
-            placement="bottom"
-          >
-            <button>
-              <BsThreeDots size={"1.5rem"} />
-            </button>
-          </Dropdown>
-        )}
-        <Link className="self-center" href="/">
-          <HomeButton>Home</HomeButton>
-        </Link>
-      </Header>
-      <div className="h-full">
-        {userSelectedMenu === "/dashboard" && selectedSider && (
-          <div className="flex md:h-full">
-            <Sider
-              className="md:bg-white z-10 hidden md:block opacity-80"
-              width={"15vw"}
-            >
-              <Menu
-                className="min-h-full text-[0.9vw]"
-                selectedKeys={[selectedSider]}
-                items={siderMenu}
-                onSelect={(info) => setSelectedSider(info.key as any)}
-              />
-            </Sider>
-            <div
-              className="overflow-auto h-screen w-screen md:w-full
-             md:pb-20 pt-20 md:pt-5 md:px-5 round-md relative px-2"
-            >
-              {children}
-            </div>
-            <BotomMenu
-              defaultSelected={selectedSider}
-              onchange={(info) => {
-                router.push(info);
-              }}
+    <>
+      <Head>
+        <title>
+          {pathname === "/account-setting" ? "Account Setting" : "Dashboard"}
+        </title>
+        <meta
+          name="description"
+          content="Web based Thesis Abstract Management System for College of Engineering"
+        />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </Head>
+      <div className="bg-[#D9D9D9] relative md:h-screen">
+        <Header className="header fixed top-0 w-full md:relative z-20 flex gap-10 items-center">
+          {width >= 768 ? (
+            <Menu
+              selectedKeys={[selectedMenu]}
+              onSelect={(info) => setSelectedMenu(info.key as any)}
+              theme="dark"
+              mode="horizontal"
+              items={menuItem}
             />
-          </div>
-        )}
-        {userSelectedMenu === "/account-setting" && (
-          <div className="overflow-auto h-full relative">{children}</div>
-        )}
+          ) : (
+            <Dropdown
+              trigger={["click"]}
+              className="text-white"
+              menu={{ items: menuItem, selectedKeys: [selectedMenu] }}
+              placement="bottom"
+            >
+              <button>
+                <BsThreeDots size={"1.5rem"} />
+              </button>
+            </Dropdown>
+          )}
+          <Link className="self-center" href="/">
+            <HomeButton>Home</HomeButton>
+          </Link>
+        </Header>
+        <div className="h-full">
+          {userSelectedMenu === "/dashboard" && selectedSider && (
+            <div className="flex md:h-full">
+              <Sider
+                className="md:bg-white z-10 hidden md:block opacity-80"
+                width={"15vw"}
+              >
+                <Menu
+                  className="min-h-full text-[0.9vw]"
+                  selectedKeys={[selectedSider]}
+                  items={siderMenu}
+                  onSelect={(info) => setSelectedSider(info.key as any)}
+                />
+              </Sider>
+              <div
+                className="overflow-auto h-screen w-screen md:w-full
+             md:pb-20 pt-20 md:pt-5 md:px-5 round-md relative px-2"
+              >
+                {children}
+              </div>
+              <BotomMenu
+                defaultSelected={selectedSider}
+                onchange={(info) => {
+                  router.push(info);
+                }}
+              />
+            </div>
+          )}
+          {userSelectedMenu === "/account-setting" && (
+            <div className="overflow-auto h-full relative">{children}</div>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 

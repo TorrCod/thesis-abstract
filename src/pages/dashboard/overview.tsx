@@ -5,6 +5,7 @@ import { Course } from "@/context/types.d";
 import { activity } from "@/data/dummydata";
 import { Button, Card, Space, Statistic, Table, Timeline } from "antd";
 import { ColumnsType } from "antd/lib/table";
+import Head from "next/head";
 import Link from "next/link";
 import React, { Component } from "react";
 import { AiFillDelete } from "react-icons/ai";
@@ -118,58 +119,59 @@ const DashboardOverview = () => {
   ];
 
   return (
-    <DashboardLayout
-      userSelectedMenu="/dashboard"
-      userSelectedSider="/dashboard/overview"
-    >
-      <h3 className="opacity-80 mb-3">Dashboard {">"} Overview</h3>
+    <>
+      <DashboardLayout
+        userSelectedMenu="/dashboard"
+        userSelectedSider="/dashboard/overview"
+      >
+        <h3 className="opacity-80 mb-3">Dashboard {">"} Overview</h3>
 
-      <div className="dashboard-overview md:gap-2 w-full grid relative gap-2">
-        <div className="bg-white rounded-md shadow-md thesis grid relative content-start">
-          <Link className="grid w-fit" href={"/dashboard/thesis"}>
-            <h3 className="opacity-80 mb-3 mx-5 pt-5">Thesis</h3>
-          </Link>
-          <Link href="/dashboard/thesis/upload-thesis">
-            <div className="ml-6 opacity-60 flex items-center gap-2">
-              Add thesis <GoLinkExternal />
-            </div>
-          </Link>
-          <div className="overflow-auto">
-            <div className="h-96 min-w-[32em]">
-              <ResponsiveContainer width={"99%"} height="99%">
-                <RadarChart outerRadius={90} data={totalData}>
-                  <PolarGrid />
-                  <PolarAngleAxis dataKey="course" />
-                  <Radar
-                    name="Count"
-                    dataKey="count"
-                    stroke="#82ca9d"
-                    fill="#82ca9d"
-                    fillOpacity={0.6}
-                  />
-                  <Legend />
-                </RadarChart>
-              </ResponsiveContainer>
+        <div className="dashboard-overview md:gap-2 w-full grid relative gap-2">
+          <div className="bg-white rounded-md shadow-md thesis grid relative content-start">
+            <Link className="grid w-fit" href={"/dashboard/thesis"}>
+              <h3 className="opacity-80 mb-3 mx-5 pt-5">Thesis</h3>
+            </Link>
+            <Link href="/dashboard/thesis/upload-thesis">
+              <div className="ml-6 opacity-60 flex items-center gap-2">
+                Add thesis <GoLinkExternal />
+              </div>
+            </Link>
+            <div className="overflow-auto">
+              <div className="h-96 min-w-[32em]">
+                <ResponsiveContainer width={"99%"} height="99%">
+                  <RadarChart outerRadius={90} data={totalData}>
+                    <PolarGrid />
+                    <PolarAngleAxis dataKey="course" />
+                    <Radar
+                      name="Count"
+                      dataKey="count"
+                      stroke="#82ca9d"
+                      fill="#82ca9d"
+                      fillOpacity={0.6}
+                    />
+                    <Legend />
+                  </RadarChart>
+                </ResponsiveContainer>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className=" admins bg-white rounded-md p-5 grid relative content-start gap-2">
-          <Link className="grid w-fit" href={"/dashboard/admins"}>
-            <h3 className="opacity-80 mb-3">Admins</h3>
-            <p className="opacity-60 mb-5">Manage Co-Admins</p>
-          </Link>
-          <div className="overflow-auto">
-            <QuerySearch
-              onSearch={(e) => {
-                console.log(e);
-              }}
-            />
-            <Table columns={column} dataSource={data} scroll={{ x: 50 }} />
+          <div className=" admins bg-white rounded-md p-5 grid relative content-start gap-2">
+            <Link className="grid w-fit" href={"/dashboard/admins"}>
+              <h3 className="opacity-80 mb-3">Admins</h3>
+              <p className="opacity-60 mb-5">Manage Co-Admins</p>
+            </Link>
+            <div className="overflow-auto">
+              <QuerySearch
+                onSearch={(e) => {
+                  console.log(e);
+                }}
+              />
+              <Table columns={column} dataSource={data} scroll={{ x: 50 }} />
+            </div>
           </div>
-        </div>
 
-        {/* <div className="bg-white rounded-md p-5 user grid content-start gap-2">
+          {/* <div className="bg-white rounded-md p-5 user grid content-start gap-2">
           <Link className="grid w-fit" href={"/dashboard/users"}>
             <h3 className="opacity-80 mb-3">User</h3>
             <p className="opacity-60 mb-5">Pending User Request</p>
@@ -184,15 +186,16 @@ const DashboardOverview = () => {
           </div>
         </div> */}
 
-        <div className="bg-white rounded-md p-5 flex flex-col gap-2 activitylog w-full overflow-auto">
-          <Link className="w-fit" href={"/dashboard/activitylog"}>
-            <h3 className="opacity-80 mb-3">Acitivity Log</h3>
-            <p className="opacity-60 mb-5">History</p>
-          </Link>
-          <Timeline mode="left" items={activity} />
+          <div className="bg-white rounded-md p-5 flex flex-col gap-2 activitylog w-full overflow-auto">
+            <Link className="w-fit" href={"/dashboard/activitylog"}>
+              <h3 className="opacity-80 mb-3">Acitivity Log</h3>
+              <p className="opacity-60 mb-5">History</p>
+            </Link>
+            <Timeline mode="left" items={activity} />
+          </div>
         </div>
-      </div>
-    </DashboardLayout>
+      </DashboardLayout>
+    </>
   );
 };
 

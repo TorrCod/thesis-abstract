@@ -1,5 +1,6 @@
 import { PriButton } from "@/components/button";
 import { Avatar, Card, Divider, Form, Input } from "antd";
+import Head from "next/head";
 import Image from "next/image";
 import { AiOutlineMail, AiOutlinePhone } from "react-icons/ai";
 import { IoLocationOutline } from "react-icons/io5";
@@ -7,6 +8,14 @@ import { IoLocationOutline } from "react-icons/io5";
 const AboutUs = () => {
   return (
     <>
+      <Head>
+        <title>About Us</title>
+        <meta
+          name="description"
+          content="Web based Thesis Abstract Management System for College of Engineering"
+        />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </Head>
       <section className="md:pt-40 md:grid md:place-content-center">
         <div className="text-white md:grid md:grid-cols-2 place-items-center md:h-[30em]">
           <div className="relative w-full max-w-sm h-96 md:order-2 m-auto lg:h-[30em] lg:max-w-lg">

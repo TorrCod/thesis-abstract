@@ -2,6 +2,7 @@ import Search from "@/components/search";
 import useGlobalContext from "@/context/globalContext";
 import { ThesisItems } from "@/context/types.d";
 import { Divider } from "antd";
+import Head from "next/head";
 import Link from "next/link";
 
 // use pdf lib for creating pdf
@@ -9,19 +10,29 @@ import Link from "next/link";
 const Thesis = () => {
   const { state } = useGlobalContext();
   return (
-    <section>
-      <div className="md:pt-20 md:flex md:place-items-center md:flex-col">
-        <div className="grid w-full">
-          <Search className="place-self-center my-5" />
-          <Divider className="bg-white/30" />
+    <>
+      <Head>
+        <title>Collection of Thesis Abstract</title>
+        <meta
+          name="description"
+          content="Web based Thesis Abstract Management System for College of Engineering"
+        />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </Head>
+      <section>
+        <div className="md:pt-20 md:flex md:place-items-center md:flex-col">
+          <div className="grid w-full">
+            <Search className="place-self-center my-5" />
+            <Divider className="bg-white/30" />
+          </div>
+          <div className="grid gap-2 w-full place-items-center lg:grid-cols-2 relative">
+            {state.searchItems.map((props) => {
+              return <Items key={props.id} {...props} />;
+            })}
+          </div>
         </div>
-        <div className="grid gap-2 w-full place-items-center lg:grid-cols-2 relative">
-          {state.searchItems.map((props) => {
-            return <Items key={props.id} {...props} />;
-          })}
-        </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 };
 

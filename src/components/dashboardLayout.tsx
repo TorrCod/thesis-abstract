@@ -42,6 +42,15 @@ function DashboardLayout({
   const router = useRouter();
   const { width } = useWindowSize();
   const { pathname } = useLocation();
+  const [isScreen, setIsScreen] = useState(false);
+
+  useEffect(() => {
+    if (width >= 768) {
+      setIsScreen(true);
+    } else {
+      setIsScreen(false);
+    }
+  }, [width]);
 
   useEffect(() => {
     (
@@ -115,7 +124,7 @@ function DashboardLayout({
       </Head>
       <div className="bg-[#D9D9D9] relative md:h-screen">
         <Header className="header fixed top-0 w-full md:relative z-20 flex gap-10 items-center">
-          {width >= 768 ? (
+          {isScreen ? (
             <Menu
               selectedKeys={[selectedMenu]}
               onSelect={(info) => setSelectedMenu(info.key as any)}

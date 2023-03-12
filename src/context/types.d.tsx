@@ -4,7 +4,6 @@ export interface GlobalState {
   thesisItems: ThesisItems[];
   searchItems: ThesisItems[];
   dateOption: string[];
-  signIn?: boolean;
 }
 
 export type Course =
@@ -36,10 +35,6 @@ export type GlobalAction =
   | {
       type: "search-data";
       payload: { text: string; filter: { course: Course[]; date: string[] } };
-    }
-  | {
-      type: "sign-in";
-      payload: boolean;
     };
 
 export type GlobalValue = {

@@ -2,18 +2,31 @@ import { UserDetails } from "@/context/types.d";
 import { MongoClient, ObjectId } from "mongodb";
 import { CollectionName, DatabaseName, QueryPost } from "./types";
 
-
-let CONNECTION = process.env["MONGO_URI"] ?? "mongodb://localhost:27017";
-
+let CONNECTION = undefined;
+let client = new MongoClient(CONNECTION ?? "mongodb://localhost:27017");
 export async function connectToDatabase() {
   try {
-    let client = new MongoClient(CONNECTION);
-
     await client.connect();
+    console.log("connected to local DB");
     return client;
   } catch (e) {
-    console.error(e);
-    throw new Error((e as Error).message);
+    try {
+      if (process.env["MONGO_URI"]) {
+        CONNECTION = process.env["MONGO_URI"];
+        await client.connect();
+        console.log("Docker Mongodb connected");
+        return client;
+      } else {
+        console.log("Connecting to cloud");
+        CONNECTION =
+          "mongodb+srv://torrcod:cSnQY7wi4ztWG7rJ@cluster0.yfqhgfs.mongodb.net/?retryWrites=true&w=majority";
+        await client.connect();
+        console.log("Cloud Mongodb connected");
+        return client;
+      }
+    } catch (e) {
+      console.error(e);
+    }
   }
 }
 
@@ -24,10 +37,10 @@ export const getData = async (
 ) => {
   try {
     const client = await connectToDatabase();
-    const database = client.db(dbName);
+    const database = client!.db(dbName);
     const collection = database.collection(colName);
     const res = await collection.find(option?.option).toArray();
-    client.close();
+    client?.close();
     return res;
   } catch (e) {
     console.error(e);
@@ -39,12 +52,12 @@ export const getData = async (
 export const deleteData = async (queryPost: QueryPost) => {
   try {
     const client = await connectToDatabase();
-    const database = client.db(queryPost.mongoDetails.databaseName);
+    const database = client!.db(queryPost.mongoDetails.databaseName);
     const collection = database.collection(
       queryPost.mongoDetails.collectionName
     );
     const res = await collection.deleteOne(queryPost.query);
-    client.close();
+    client?.close();
     return res;
   } catch (e) {
     console.error(e);
@@ -59,10 +72,10 @@ export const addData = async (
 ) => {
   try {
     const client = await connectToDatabase();
-    const database = client.db(dbName);
+    const database = client!.db(dbName);
     const collection = database.collection(colName);
     const res = await collection.insertOne(payload);
-    client.close();
+    client?.close();
     return res;
   } catch (e) {
     console.error(e);
@@ -82,14 +95,14 @@ export const updateUser = async (userDetails: UserDetails) => {
     const dbName: DatabaseName = "accounts";
     const colName: CollectionName = "user";
     const client = await connectToDatabase();
-    const database = client.db(dbName);
-    const collection = database.collection(colName);
+    const database = client?.db(dbName);
+    const collection = database?.collection(colName);
     userDetails["_id"] = new ObjectId(userDetails["_id"]);
-    const res = await collection.replaceOne(
+    const res = await collection?.replaceOne(
       { uid: userDetails.uid },
       userDetails
     );
-    client.close();
+    client?.close();
     return res;
   } catch (e) {
     console.error(e);

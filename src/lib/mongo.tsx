@@ -2,7 +2,6 @@ import { UserDetails } from "@/context/types.d";
 import { MongoClient, ObjectId } from "mongodb";
 import { CollectionName, DatabaseName, QueryPost } from "./types";
 
-
 let CONNECTION = process.env["MONGO_URI"] ?? "mongodb://localhost:27017";
 
 export async function connectToDatabase() {
@@ -89,6 +88,28 @@ export const updateUser = async (userDetails: UserDetails) => {
       { uid: userDetails.uid },
       userDetails
     );
+    client.close();
+    return res;
+  } catch (e) {
+    console.error(e);
+    throw new Error(e as string).message;
+  }
+};
+
+export const addDataWithExpiration = async (
+  dbName: DatabaseName,
+  colName: CollectionName,
+  payload: any
+) => {
+  try {
+    const client = await connectToDatabase();
+    const database = client.db(dbName);
+    const collection = database.collection(colName);
+    await collection.createIndex({ createAt: 1 }, { expireAfterSeconds: 3600 });
+    const res = await collection.insertOne({
+      payload,
+      expireAt: new Date(Date.now() + 3600000),
+    });
     client.close();
     return res;
   } catch (e) {

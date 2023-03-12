@@ -1,12 +1,18 @@
 import { UserDetails } from "@/context/types.d"
 
-export type CollectionName = "thesis-items"|"user"|"admin"|"profiles"|"pdf-files"
+export type CollectionName = "thesis-items"|"user"|"admin"|"profiles"|"pdf-files"|"pending"
 
 export type DatabaseName = "thesis-abstract"|"accounts"
 
 export type MongoDetails = {
     databaseName:DatabaseName,
     collectionName:CollectionName
+}
+
+export type AddPost = {
+  dbName:DatabaseName;
+  colName:CollectionName;
+  payload:any;
 }
 
 export type QueryPost = {

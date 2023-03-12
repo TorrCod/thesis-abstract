@@ -1,5 +1,5 @@
 import { ThesisItems, UserDetails } from "@/context/types.d";
-import { MongoDetails, QueryPost } from "@/lib/types";
+import { AddPost, MongoDetails, QueryPost } from "@/lib/types";
 import axios from "axios";
 
 export const addUserAccount = async (userDetails: UserDetails) => {
@@ -43,4 +43,18 @@ export const utils_Delete_Account = async (userDetails: UserDetails) => {
 
 export const addThesis = async (data: ThesisItems) => {
   await axios.post("/api/addThesisItems", data);
+};
+
+export const addPendingInvite = async (email: string) => {
+  try {
+    const data = await axios.post("/api/invite-admin", {
+      dbName: "accounts",
+      colName: "pending",
+      payload: { email: email },
+    } as AddPost);
+    return data.data.response.insertedId;
+  } catch (e) {
+    console.error(e);
+    throw new Error(e as any);
+  }
 };

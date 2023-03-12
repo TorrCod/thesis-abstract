@@ -1,9 +1,10 @@
 import useUserContext from "@/context/userContext";
 import { auth } from "@/lib/firebase";
-import { addUserAccount } from "@/utils/account";
+import { addPendingInvite, addUserAccount } from "@/utils/account";
 import { Avatar, Dropdown, Form, Input, Menu, MenuProps, message } from "antd";
 import axios from "axios";
 import { sendSignInLinkToEmail } from "firebase/auth";
+import { ObjectId } from "mongodb";
 import Link from "next/link";
 import router from "next/router";
 import React, { useState } from "react";
@@ -91,18 +92,19 @@ export const AdminMenu = ({
 };
 
 export const AddAdmin = () => {
-  const onFinish = ({ email }: any) => {
-    const actionCodeSettings = {
-      url: "http://localhost:3000/account-setting",
-      handleCodeInApp: true,
-    };
-    sendSignInLinkToEmail(auth, email, actionCodeSettings)
-      .then(() => {
-        message.success("Link has been sent to email");
-      })
-      .catch((e) => {
-        message.error("Failed to send a link");
-      });
+  const onFinish = async ({ email }: any) => {
+    try {
+      const id: string = (await addPendingInvite(email)) as any;
+      const actionCodeSettings = {
+        url: `http://localhost:3000/sign-up/${id}`,
+        handleCodeInApp: true,
+      };
+      sendSignInLinkToEmail(auth, email, actionCodeSettings);
+      message.success("Invite Sent");
+    } catch (e) {
+      message.error("Invite failed");
+      console.log(e);
+    }
   };
   return (
     <div className="max-w-[20em]">

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Modal, Form, Input, Divider, Select, message } from "antd";
 import { PriButton } from "./button";
 import { Course, UserDetails } from "@/context/types.d";
@@ -7,12 +7,21 @@ import useUserContext from "@/context/userContext";
 import AdminProfile from "./admin";
 import { sendPasswordResetEmail } from "firebase/auth";
 import Link from "next/link";
+import useGlobalContext from "@/context/globalContext";
 
 const SignInSignUp = () => {
   const [open, setOpen] = useState(false);
   const [formSignIn] = Form.useForm();
   const [formSignUp] = Form.useForm();
   const userCtx = useUserContext();
+  const { state, dispatch: globalDispatch } = useGlobalContext();
+  const promtToSignIn = state.signIn;
+
+  useEffect(() => {
+    if (promtToSignIn) {
+      setOpen(promtToSignIn);
+    }
+  }, [promtToSignIn]);
 
   const handleSignIn = async () => {
     try {
@@ -65,6 +74,7 @@ const SignInSignUp = () => {
 
   const handleCancel = () => {
     setOpen(false);
+    globalDispatch({ type: "sign-in", payload: false });
   };
 
   const showModal = () => {

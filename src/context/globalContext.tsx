@@ -49,6 +49,8 @@ const globalReducer = (
       newState["searchItems"] = searchedItems;
       return newState;
     }
+    case "sign-in":
+      return { ...state, signIn: action.payload };
   }
 };
 

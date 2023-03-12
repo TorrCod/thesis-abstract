@@ -21,7 +21,6 @@ import { RcFile } from "antd/lib/upload";
 import React, { useEffect, useState } from "react";
 import { BsImage } from "react-icons/bs";
 import { useRouter } from "next/router";
-import { GrUserSettings } from "react-icons/gr";
 import { IoSettings } from "react-icons/io5";
 import Head from "next/head";
 
@@ -32,7 +31,7 @@ const courseOpt: { value: Course; label: Course }[] = [
   { value: "Mechanical Engineer", label: "Mechanical Engineer" },
 ];
 
-const AccountSetting = (props: { data: any; hasError: boolean }) => {
+const AccountSetting = () => {
   const userCtx = useUserContext();
   const userDetails = userCtx.state.userDetails;
   const [form] = useForm();
@@ -303,7 +302,39 @@ const AccountSetting = (props: { data: any; hasError: boolean }) => {
                       }),
                     ]}
                   >
-                    <Input.Password />
+                    <Input />
+                  </Form.Item>
+                  <Form.Item
+                    name="course"
+                    label={<div className="opacity-80">Course</div>}
+                  >
+                    <Select
+                      style={{ width: "auto", textAlign: "center" }}
+                      options={courseOpt}
+                    />
+                  </Form.Item>
+                </div>
+                <div className="relative w-full px-10">
+                  <Form.Item
+                    name="email"
+                    label={<div className="opacity-80">Email</div>}
+                    rules={[
+                      { required: true, message: "Please enter your email" },
+                    ]}
+                  >
+                    <Input disabled />
+                  </Form.Item>
+                  <Form.Item
+                    name="userName"
+                    label={<div className="opacity-80">Username</div>}
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please enter your username",
+                      },
+                    ]}
+                  >
+                    <Input disabled />
                   </Form.Item>
                   <Form.Item
                     name="currPass"
@@ -317,12 +348,49 @@ const AccountSetting = (props: { data: any; hasError: boolean }) => {
                   Save
                 </PriButton>
               </div>
-              <div className="bg-white p-5 rounded-md shadow-md w-full">
-                <p>Profile Picture</p>
-                <Divider />
-                <Upload
-                  {...uploadProps}
-                  className="grid place-items-center relative"
+              <Divider />
+              <PriButton onClick={onInfoSave} disabled={infoSave}>
+                Save
+              </PriButton>
+            </Form>
+          </div>
+          <div className="grid md:grid-cols-2 gap-2">
+            <div className="bg-white p-5 rounded-md shadow-md">
+              <p>Change Password</p>
+              <Divider />
+              <Form
+                onValuesChange={handlePassChange}
+                form={passForm}
+                className="px-10"
+                layout="vertical"
+                name="change-password"
+              >
+                <Form.Item
+                  name="newPass"
+                  label={<div className="opacity-80">New Password</div>}
+                >
+                  <Input.Password />
+                </Form.Item>
+                <Form.Item
+                  dependencies={["newPass"]}
+                  name="confirm-new-password"
+                  label={<div className="opacity-80">Confirm New Password</div>}
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please confirm your password",
+                    },
+                    ({ getFieldValue }) => ({
+                      validator(_, value) {
+                        if (!value || getFieldValue("newPass") === value) {
+                          return Promise.resolve();
+                        }
+                        return Promise.reject(
+                          new Error("The two passwords do not match")
+                        );
+                      },
+                    }),
+                  ]}
                 >
                   <div className="absolute w-[16.8em] rounded-full h-full bg-black/30 z-10 grid place-items-center cursor-pointer">
                     <BsImage size={"2em"} color="white" />

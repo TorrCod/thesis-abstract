@@ -3,6 +3,7 @@ import { Table } from "antd";
 import DashboardLayout from "@/components/dashboardLayout";
 import QuerySearch from "@/components/QuerySearch";
 import { PriButton } from "@/components/button";
+import { AddAdmin } from "@/components/admin";
 
 const columns = [
   {
@@ -68,6 +69,7 @@ const AdminsTable = () => (
     <h3 className="opacity-80 mb-3">Dashboard {">"} Admin</h3>
     <div className="bg-white rounded-md p-5 flex flex-col gap-2">
       <p className="opacity-60 mb-5">Manage Co-Admins</p>
+      <AddAdmin />
       <QuerySearch
         onSearch={(e) => {
           console.log(e);

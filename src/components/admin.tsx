@@ -1,12 +1,17 @@
 import useUserContext from "@/context/userContext";
 import { auth } from "@/lib/firebase";
-import { Avatar, Dropdown, Menu, MenuProps } from "antd";
+import { addUserAccount } from "@/utils/account";
+import { Avatar, Dropdown, Form, Input, Menu, MenuProps, message } from "antd";
+import axios from "axios";
+import { sendSignInLinkToEmail } from "firebase/auth";
 import Link from "next/link";
 import router from "next/router";
-import React from "react";
+import React, { useState } from "react";
 import { BiLogOut } from "react-icons/bi";
+import { BsPersonFillAdd } from "react-icons/bs";
 import { GrUserSettings } from "react-icons/gr";
 import { RiDashboardLine } from "react-icons/ri";
+import { PriButton } from "./button";
 import SignInSignUp from "./signin_signup";
 import { AdminProps } from "./types.d";
 
@@ -82,6 +87,49 @@ export const AdminMenu = ({
         <SignInSignUp />
       </div>
     </Dropdown>
+  );
+};
+
+export const AddAdmin = () => {
+  const onFinish = ({ email }: any) => {
+    const actionCodeSettings = {
+      url: "http://localhost:3000/account-setting",
+      handleCodeInApp: true,
+    };
+    sendSignInLinkToEmail(auth, email, actionCodeSettings)
+      .then(() => {
+        message.success("Link has been sent to email");
+      })
+      .catch((e) => {
+        message.error("Failed to send a link");
+      });
+  };
+  return (
+    <div className="max-w-[20em]">
+      <Form onFinish={onFinish} className="flex gap-2">
+        <Form.Item
+          name={"email"}
+          rules={[
+            {
+              type: "email",
+              message: "Not valid E-mail!",
+            },
+            {
+              required: true,
+              message: "Please input a E-mail!",
+            },
+          ]}
+        >
+          <Input placeholder="Email" />
+        </Form.Item>
+        <Form.Item>
+          <PriButton htmlType="submit">
+            <BsPersonFillAdd />
+            Invite
+          </PriButton>
+        </Form.Item>
+      </Form>
+    </div>
   );
 };
 

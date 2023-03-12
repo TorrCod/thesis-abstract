@@ -75,13 +75,18 @@ h3 {
 }
 
 .search-input {
-  border: 1px solid #ccc;
+  border: 1px solid #e0e0e0;
   border-radius: 4px;
   font-size: 0.8rem;
   padding-inline: 1em;
   padding-block: 0.5em;
   width: 30em;
   outline: none;
+}
+
+.search-input::placeholder {
+  color: black;
+  opacity: 0.3;
 }
 
 .lds-ellipsis {

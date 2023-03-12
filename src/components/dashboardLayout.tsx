@@ -21,6 +21,7 @@ import AdminProfile, { AdminMenu } from "./admin";
 import { BsThreeDots } from "react-icons/bs";
 import { useLocation, useWindowSize } from "react-use";
 import Head from "next/head";
+import useAuth from "@/hook/useAuth";
 
 type SelectedMenu = "/dashboard" | "/account-setting";
 
@@ -37,11 +38,21 @@ function DashboardLayout({
   userSelectedSider,
   title,
 }: DashboardProps) {
+  const isLogin = useAuth();
   const [selectedSider, setSelectedSider] = useState(userSelectedSider);
   const [selectedMenu, setSelectedMenu] = useState(userSelectedMenu);
   const router = useRouter();
   const { width } = useWindowSize();
   const { pathname } = useLocation();
+  const [isScreen, setIsScreen] = useState(false);
+
+  useEffect(() => {
+    if (width >= 768) {
+      setIsScreen(true);
+    } else {
+      setIsScreen(false);
+    }
+  }, [width]);
 
   useEffect(() => {
     (
@@ -101,7 +112,9 @@ function DashboardLayout({
     },
   ];
 
-  return (
+  return !isLogin ? (
+    <></>
+  ) : (
     <>
       <Head>
         <title>
@@ -115,7 +128,7 @@ function DashboardLayout({
       </Head>
       <div className="bg-[#D9D9D9] relative md:h-screen">
         <Header className="header fixed top-0 w-full md:relative z-20 flex gap-10 items-center">
-          {width >= 768 ? (
+          {isScreen ? (
             <Menu
               selectedKeys={[selectedMenu]}
               onSelect={(info) => setSelectedMenu(info.key as any)}

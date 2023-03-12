@@ -24,6 +24,7 @@
     "firebase": "^9.17.1",
     "formidable": "^2.1.1",
     "install": "^0.13.0",
+    "js-cookies": "^1.0.4",
     "mongodb": "^5.1.0",
     "next": "13.1.6",
     "node-tesseract-ocr": "^2.2.1",

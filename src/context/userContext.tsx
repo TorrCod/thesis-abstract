@@ -57,7 +57,7 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
   const [triggerUpdate, setTriggerUpdate] = useState(false);
 
   useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         const id = user.uid;
         getUserDetails(id)
@@ -74,6 +74,7 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
         dispatch({ type: "on-signin", payload: undefined });
       }
     });
+    return unsubscribe;
   }, [triggerUpdate]);
 
   const userSignUp = async (userDetails: UserDetails) => {

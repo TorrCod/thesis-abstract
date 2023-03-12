@@ -68,7 +68,6 @@ const UploadThesis = () => {
         title: values.title,
         id: "",
         researchers: researchers,
-
       };
       await userCtx.saveUploadThesis(payload);
       message.success("Success");
@@ -226,7 +225,6 @@ const UploadThesis = () => {
             Upload
           </PriButton>
         </Form.Item>
-        <PriButton onClick={handleTestUpload}> TEST Upload</PriButton>
       </Form>
     </DashboardLayout>
   );

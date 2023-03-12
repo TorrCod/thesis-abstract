@@ -168,7 +168,7 @@ const NavBar = () => {
         <Divider />
         <div className="flex gap-2 items-center mx-5 pb-3 border-b-[1px]">
           <Login />
-          <div className={` ${!userCtxState.userDetails && "hidden"}`}>
+          <div>
             <p>{`${userCtxState.userDetails?.firstName} ${userCtxState.userDetails?.lastName}`}</p>
             <p className="text-[0.8em] opacity-80">
               {userCtxState.userDetails?.course}

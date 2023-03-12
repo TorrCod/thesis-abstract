@@ -24,6 +24,7 @@ import { useRouter } from "next/router";
 import { GrUserSettings } from "react-icons/gr";
 import { IoSettings } from "react-icons/io5";
 import Head from "next/head";
+import useAuth from "@/hook/useAuth";
 
 const courseOpt: { value: Course; label: Course }[] = [
   { value: "Civil Engineer", label: "Civil Engineer" },
@@ -32,7 +33,7 @@ const courseOpt: { value: Course; label: Course }[] = [
   { value: "Mechanical Engineer", label: "Mechanical Engineer" },
 ];
 
-const AccountSetting = (props: { data: any; hasError: boolean }) => {
+const AccountSetting = () => {
   const userCtx = useUserContext();
   const userDetails = userCtx.state.userDetails;
   const [form] = useForm();

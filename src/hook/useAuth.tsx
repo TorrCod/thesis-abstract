@@ -1,5 +1,5 @@
 import useUserContext from "@/context/userContext";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import useGlobalContext from "@/context/globalContext";
 import { useRouter } from "next/router";
 
@@ -8,10 +8,15 @@ const useAuth = () => {
   const globalDispatch = useGlobalContext().dispatch;
   const router = useRouter();
   useEffect(() => {
-    if (!isLogin) {
-      globalDispatch({ type: "sign-in", payload: true });
-      router.push("/");
-    }
+    const timeout = setTimeout(() => {
+      if (!isLogin) {
+        globalDispatch({ type: "sign-in", payload: true });
+        router.push("/");
+      }
+    }, 2000);
+    return () => {
+      clearTimeout(timeout);
+    };
   }, [isLogin]);
 
   return isLogin;

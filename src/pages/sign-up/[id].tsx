@@ -9,10 +9,14 @@ export const getStaticProps: GetStaticProps = async (context) => {
     const emailId = generateId(res);
     const itemId = context.params?.id;
     const foundItem = emailId.find((item) => itemId === item["id"]);
+    foundItem.expireAt = null;
+    console.log(foundItem);
     return {
       props: { data: foundItem },
     };
-  } catch {
+  } catch (e) {
+    console.error(e);
+
     return {
       props: { hasError: true },
     };

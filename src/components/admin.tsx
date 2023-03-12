@@ -99,7 +99,7 @@ export const AddAdmin = () => {
         url: `http://localhost:3000/sign-up/${id}`,
         handleCodeInApp: true,
       };
-      sendSignInLinkToEmail(auth, email, actionCodeSettings);
+      await sendSignInLinkToEmail(auth, email, actionCodeSettings);
       message.success("Invite Sent");
     } catch (e) {
       message.error("Invite failed");

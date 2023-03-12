@@ -22,6 +22,7 @@ import React, { useEffect, useState } from "react";
 import { BsImage } from "react-icons/bs";
 import { useRouter } from "next/router";
 import { IoSettings } from "react-icons/io5";
+import Head from "next/head";
 
 const courseOpt: { value: Course; label: Course }[] = [
   { value: "Civil Engineer", label: "Civil Engineer" },
@@ -166,49 +167,139 @@ const AccountSetting = () => {
   }, [onConfirm]);
 
   return (
-    <DashboardLayout
-      title={
-        <div className="flex items-center gap-1 text-white">
-          <IoSettings /> <h3 className="whitespace-nowrap">Account Setting</h3>
-        </div>
-      }
-      userSelectedMenu="/account-setting"
-    >
-      <div className="pb-10 w-full p-3 md:mt-5 mt-16 md:mb-20">
-        <div className="grid gap-2 relative max-w-6xl m-auto ">
-          <h3 className="text-black/90">Account Setting</h3>
-          <div className="bg-white p-5 rounded-md shadow-md">
-            <p>Information</p>
-            <Divider />
-            <Form
-              onValuesChange={handleInfoChange}
-              initialValues={{ ...userDetails }}
-              form={form}
-              layout="vertical"
-              name="info"
-            >
-              <div className="md:grid md:grid-cols-2 md:place-items-center">
-                <div className="relative w-full px-10">
+    <>
+      <DashboardLayout
+        title={
+          <div className="flex items-center gap-1 text-white">
+            <IoSettings />{" "}
+            <h3 className="whitespace-nowrap">Account Setting</h3>
+          </div>
+        }
+        userSelectedMenu="/account-setting"
+      >
+        <div className="pb-10 w-full p-3 md:mt-5 mt-16 md:mb-20">
+          <div className="grid gap-2 relative max-w-6xl m-auto ">
+            <h3 className="text-black/90">Account Setting</h3>
+            <div className="bg-white p-5 rounded-md shadow-md">
+              <p>Information</p>
+              <Divider />
+              <Form
+                onValuesChange={handleInfoChange}
+                initialValues={{ ...userDetails }}
+                form={form}
+                layout="vertical"
+                name="info"
+              >
+                <div className="md:grid md:grid-cols-2 md:place-items-center">
+                  <div className="relative w-full px-10">
+                    <Form.Item
+                      name="firstName"
+                      label={<div className="opacity-80">First Name</div>}
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please enter your first name",
+                        },
+                      ]}
+                    >
+                      <Input />
+                    </Form.Item>
+                    <Form.Item
+                      name="lastName"
+                      label={<div className="opacity-80">Last Name</div>}
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please enter your last name",
+                        },
+                      ]}
+                    >
+                      <Input />
+                    </Form.Item>
+                    <Form.Item
+                      name="course"
+                      label={<div className="opacity-80">Course</div>}
+                    >
+                      <Select
+                        style={{ width: "auto", textAlign: "center" }}
+                        options={courseOpt}
+                      />
+                    </Form.Item>
+                  </div>
+                  <div className="relative w-full px-10">
+                    <Form.Item
+                      name="email"
+                      label={<div className="opacity-80">Email</div>}
+                      rules={[
+                        { required: true, message: "Please enter your email" },
+                      ]}
+                    >
+                      <Input disabled />
+                    </Form.Item>
+                    <Form.Item
+                      name="userName"
+                      label={<div className="opacity-80">Username</div>}
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please enter your username",
+                        },
+                      ]}
+                    >
+                      <Input disabled />
+                    </Form.Item>
+                    <Form.Item
+                      name="approove"
+                      label={<div className="opacity-80">Added by</div>}
+                    >
+                      <Input disabled />
+                    </Form.Item>
+                  </div>
+                </div>
+                <Divider />
+                <PriButton onClick={onInfoSave} disabled={infoSave}>
+                  Save
+                </PriButton>
+              </Form>
+            </div>
+            <div className="grid md:grid-cols-2 gap-2">
+              <div className="bg-white p-5 rounded-md shadow-md">
+                <p>Change Password</p>
+                <Divider />
+                <Form
+                  onValuesChange={handlePassChange}
+                  form={passForm}
+                  className="px-10"
+                  layout="vertical"
+                  name="change-password"
+                >
                   <Form.Item
-                    name="firstName"
-                    label={<div className="opacity-80">First Name</div>}
-                    rules={[
-                      {
-                        required: true,
-                        message: "Please enter your first name",
-                      },
-                    ]}
+                    name="newPass"
+                    label={<div className="opacity-80">New Password</div>}
                   >
-                    <Input />
+                    <Input.Password />
                   </Form.Item>
                   <Form.Item
-                    name="lastName"
-                    label={<div className="opacity-80">Last Name</div>}
+                    dependencies={["newPass"]}
+                    name="confirm-new-password"
+                    label={
+                      <div className="opacity-80">Confirm New Password</div>
+                    }
                     rules={[
                       {
                         required: true,
-                        message: "Please enter your last name",
+                        message: "Please confirm your password",
                       },
+                      ({ getFieldValue }) => ({
+                        validator(_, value) {
+                          if (!value || getFieldValue("newPass") === value) {
+                            return Promise.resolve();
+                          }
+                          return Promise.reject(
+                            new Error("The two passwords do not match")
+                          );
+                        },
+                      }),
                     ]}
                   >
                     <Input />
@@ -246,12 +337,16 @@ const AccountSetting = () => {
                     <Input disabled />
                   </Form.Item>
                   <Form.Item
-                    name="approove"
-                    label={<div className="opacity-80">Added by</div>}
+                    name="currPass"
+                    label={<div className="opacity-80">Current Password</div>}
                   >
-                    <Input disabled />
+                    <Input.Password />
                   </Form.Item>
-                </div>
+                </Form>
+                <Divider />
+                <PriButton onClick={handlePassSave} disabled={chngPassSave}>
+                  Save
+                </PriButton>
               </div>
               <Divider />
               <PriButton onClick={onInfoSave} disabled={infoSave}>
@@ -297,69 +392,49 @@ const AccountSetting = () => {
                     }),
                   ]}
                 >
-                  <Input.Password />
-                </Form.Item>
-                <Form.Item
-                  name="currPass"
-                  label={<div className="opacity-80">Current Password</div>}
+                  <div className="absolute w-[16.8em] rounded-full h-full bg-black/30 z-10 grid place-items-center cursor-pointer">
+                    <BsImage size={"2em"} color="white" />
+                  </div>
+                  <AdminProfile
+                    src={newProfile ?? undefined}
+                    size={{ height: "16.8em", width: "16.8em" }}
+                    userDetails={userDetails!}
+                  />
+                </Upload>
+                <Divider />
+                <Space>
+                  <SecButton onClick={handleProfCancel} disabled={chngProfSave}>
+                    cancel
+                  </SecButton>
+                  <PriButton onClick={handleProfSave} disabled={chngProfSave}>
+                    Save
+                  </PriButton>
+                </Space>
+              </div>
+            </div>
+            <div className="bg-white p-5 rounded-md shadow-md">
+              <p>Delete Account</p>
+              <Divider />
+              <div className="px-10">
+                <p className="mb-5 opacity-80">
+                  Would you like to delete your account?
+                </p>
+                <p className="mb-5 opacity-80">
+                  This will wipe all your data including your saved thesis but
+                  not approoved thesis abstract.
+                </p>
+                <p
+                  onClick={() => warning()}
+                  className="text-red-600 decoration-red-600 decoration-1 underline cursor-pointer"
                 >
-                  <Input.Password />
-                </Form.Item>
-              </Form>
-              <Divider />
-              <PriButton onClick={handlePassSave} disabled={chngPassSave}>
-                Save
-              </PriButton>
-            </div>
-            <div className="bg-white p-5 rounded-md shadow-md w-full">
-              <p>Profile Picture</p>
-              <Divider />
-              <Upload
-                {...uploadProps}
-                className="grid place-items-center relative"
-              >
-                <div className="absolute w-[16.8em] rounded-full h-full bg-black/30 z-10 grid place-items-center cursor-pointer">
-                  <BsImage size={"2em"} color="white" />
-                </div>
-                <AdminProfile
-                  src={newProfile ?? undefined}
-                  size={{ height: "16.8em", width: "16.8em" }}
-                  userDetails={userDetails!}
-                />
-              </Upload>
-              <Divider />
-              <Space>
-                <SecButton onClick={handleProfCancel} disabled={chngProfSave}>
-                  cancel
-                </SecButton>
-                <PriButton onClick={handleProfSave} disabled={chngProfSave}>
-                  Save
-                </PriButton>
-              </Space>
-            </div>
-          </div>
-          <div className="bg-white p-5 rounded-md shadow-md">
-            <p>Delete Account</p>
-            <Divider />
-            <div className="px-10">
-              <p className="mb-5 opacity-80">
-                Would you like to delete your account?
-              </p>
-              <p className="mb-5 opacity-80">
-                This will wipe all your data including your saved thesis but not
-                approoved thesis abstract.
-              </p>
-              <p
-                onClick={() => warning()}
-                className="text-red-600 decoration-red-600 decoration-1 underline cursor-pointer"
-              >
-                I want to delete my account
-              </p>
+                  I want to delete my account
+                </p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </DashboardLayout>
+      </DashboardLayout>
+    </>
   );
 };
 

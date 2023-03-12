@@ -2,11 +2,13 @@ import { UserDetails } from "@/context/types.d";
 import { MongoClient, ObjectId } from "mongodb";
 import { CollectionName, DatabaseName, QueryPost } from "./types";
 
+
 let CONNECTION = process.env["MONGO_URI"] ?? "mongodb://localhost:27017";
 
 export async function connectToDatabase() {
   try {
     let client = new MongoClient(CONNECTION);
+
     await client.connect();
     return client;
   } catch (e) {
@@ -30,6 +32,7 @@ export const getData = async (
   } catch (e) {
     console.error(e);
     throw new Error(e as string).message;
+  } finally {
   }
 };
 

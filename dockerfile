@@ -1,3 +1,4 @@
+
 # FROM node:18-alpine
 
 # RUN apk add --no-cache libc6-compat build-base g++ cairo-dev jpeg-dev pango-dev musl-dev giflib-dev tesseract-ocr poppler-utils ghostscript
@@ -24,6 +25,7 @@
 
 # CMD [ "npm","run","start" ]
 
+
 FROM node:18-alpine
 
 RUN apk add --no-cache libc6-compat build-base g++ cairo-dev jpeg-dev pango-dev musl-dev giflib-dev tesseract-ocr poppler-utils ghostscript
@@ -42,6 +44,7 @@ RUN mkdir -p /usr/share/tesseract-ocr/tessdata/configs && \
     cp ./share/eng.traineddata /usr/share/tesseract-ocr/tessdata/ && \
     cp ./share/configs/alphanumeric /usr/share/tesseract-ocr/tessdata/configs/
 
+
 WORKDIR /app
 
 RUN npm run build
@@ -49,3 +52,4 @@ RUN npm run build
 EXPOSE 3000
 
 CMD [ "npm", "run", "start" ]
+

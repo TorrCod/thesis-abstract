@@ -38,6 +38,11 @@ interface FieldData {
   value?: any;
 }
 
+interface FieldData {
+  name: string[];
+  value?: any;
+}
+
 const courseOptions = [
   { label: "Computer Engineer", value: "computer-engineer" },
   { label: "Mechanical Engineer", value: "mechanical-engineer" },
@@ -52,7 +57,6 @@ const UploadThesis = () => {
   const userCtx = useUserContext();
   const uid = userCtx.state.userDetails?.uid;
   const [form] = Form.useForm();
-
   const onFinish = async (values: FormValues) => {
     try {
       const dateNow = new Date().toLocaleString();
@@ -64,6 +68,7 @@ const UploadThesis = () => {
         title: values.title,
         id: "",
         researchers: researchers,
+
       };
       await userCtx.saveUploadThesis(payload);
       message.success("Success");
@@ -72,7 +77,6 @@ const UploadThesis = () => {
       message.error("Upload Failed");
     }
   };
-
   const handleAddResearcher = () => {
     setResearchers([...researchers, ""]);
   };
@@ -222,6 +226,7 @@ const UploadThesis = () => {
             Upload
           </PriButton>
         </Form.Item>
+        <PriButton onClick={handleTestUpload}> TEST Upload</PriButton>
       </Form>
     </DashboardLayout>
   );

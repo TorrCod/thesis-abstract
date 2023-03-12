@@ -23,6 +23,7 @@ import { useLocation, useWindowSize } from "react-use";
 import Head from "next/head";
 import useAuth from "@/hook/useAuth";
 
+
 type SelectedMenu = "/dashboard" | "/account-setting";
 
 type DashboardProps = {

@@ -61,7 +61,7 @@ const data = [
   },
 ];
 
-const AdminsTable = () => (
+const DashboardAdmin = () => (
   <DashboardLayout
     userSelectedMenu="/dashboard"
     userSelectedSider="/dashboard/admins"
@@ -75,9 +75,13 @@ const AdminsTable = () => (
           console.log(e);
         }}
       />
-      <Table columns={columns} dataSource={data} scroll={{ x: 50 }} />
+      <AdminTable />
     </div>
   </DashboardLayout>
 );
 
-export default AdminsTable;
+export const AdminTable = () => {
+  return <Table columns={columns} dataSource={data} scroll={{ x: 50 }} />;
+};
+
+export default DashboardAdmin;

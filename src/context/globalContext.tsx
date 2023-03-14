@@ -87,19 +87,19 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-const LoadingGlobal = ({
+export const LoadingGlobal = ({
   children,
   loading,
 }: {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   loading: boolean;
 }) => {
   const [noLoading, setNoLoading] = useState(true);
-  const [slide, setSlide] = useState(true);
+  const [slide, setSlide] = useState(false);
 
   useEffect(() => {
     setSlide(!loading);
-    const timeOut = setTimeout(() => setNoLoading(loading), 2000);
+    const timeOut = setTimeout(() => setNoLoading(loading), 300);
     return () => clearTimeout(timeOut);
   }, [loading]);
 
@@ -107,14 +107,18 @@ const LoadingGlobal = ({
     <div
       className={noLoading ? "w-full h-screen overflow-hidden relative" : ""}
     >
-      <div
-        className={`absolute w-full h-screen bg-[#38649C] z-[1000] flex flex-col justify-center items-center text-white transition-transform duration-200 ease-out ${
-          slide ? `-translate-x-full` : `translate-x-0`
-        } `}
-      >
-        <h1>Loading</h1>
-        <LoadingIcon />
-      </div>
+      {noLoading ? (
+        <div
+          className={`absolute w-full h-screen bg-[#38649C] z-50 flex flex-col justify-center items-center text-white transition-transform duration-200 ease-out ${
+            slide ? `-translate-x-full` : `translate-x-0`
+          } `}
+        >
+          <h1>Loading</h1>
+          <LoadingIcon />
+        </div>
+      ) : (
+        <></>
+      )}
       {children}
     </div>
   );

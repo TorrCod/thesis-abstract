@@ -41,7 +41,7 @@ const AccountSetting = () => {
   const [newProfile, setNewProfile] = useState<string | undefined>();
   const [cfrmDltAcc, setCfrmDltAcc] = useState("");
   const [onConfirm, setOnConfirm] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState({ status: false, name: "" });
   const router = useRouter();
 
   useEffect(() => {
@@ -64,14 +64,14 @@ const AccountSetting = () => {
 
   const onInfoSave = async () => {
     try {
-      setLoading(true);
+      setLoading({ status: true, name: "info" });
       const updatedUsdDtls: UserDetails = { ...userDetails!, ...newData };
       await userCtx.userUpdateInfo!(updatedUsdDtls);
       message.success("Your info is saved");
     } catch {
       message.error("Something Went Wrong! Please try in another time");
     } finally {
-      setLoading(false);
+      setLoading({ status: false, name: "info" });
     }
   };
 
@@ -86,7 +86,7 @@ const AccountSetting = () => {
 
   const handlePassSave = async () => {
     try {
-      setLoading(true);
+      setLoading({ status: true, name: "pass" });
       const data = passForm.getFieldsValue();
       const currPass = data["currPass"];
       const newPass = data["newPass"];
@@ -101,7 +101,7 @@ const AccountSetting = () => {
         message.error("Something Went Wrong! Please try in another time");
       }
     } finally {
-      () => setLoading(false);
+      () => setLoading({ status: false, name: "pass" });
     }
   };
 
@@ -123,15 +123,16 @@ const AccountSetting = () => {
   };
 
   const handleProfSave = () => {
-    setLoading(true);
+    setLoading({ status: true, name: "prof" });
     uploadProfile(newProfile!, userDetails?.uid!)
       .then((url) => {
         const newProf: UserDetails = { ...userDetails!, profilePic: url };
         setNewProfile(url!);
         userCtx.updateProfileUrl!(newProf);
         setChngProfSave(true);
+        message.success("profile saved");
       })
-      .finally(() => setLoading(false));
+      .finally(() => setLoading({ status: false, name: "prof" }));
   };
 
   const warning = () => {
@@ -148,7 +149,7 @@ const AccountSetting = () => {
       ),
       maskClosable: true,
       okButtonProps: {
-        loading: loading,
+        loading: loading.status && loading.name === "delete",
         htmlType: "submit",
         type: "primary",
         style: { backgroundColor: "#F8B49C" },
@@ -161,7 +162,7 @@ const AccountSetting = () => {
 
   useEffect(() => {
     if (cfrmDltAcc) {
-      setLoading(true);
+      setLoading({ status: true, name: "delete" });
       userCtx.deleteAccount!(cfrmDltAcc)
         .then(() => {
           router.push("/");
@@ -171,7 +172,7 @@ const AccountSetting = () => {
           console.error(e);
           message.error("Wrong Password");
         })
-        .finally(() => setLoading(false));
+        .finally(() => setLoading({ status: false, name: "delete" }));
       setCfrmDltAcc("");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -269,7 +270,7 @@ const AccountSetting = () => {
                 </div>
                 <Divider />
                 <PriButton
-                  loading={loading}
+                  loading={loading.status && loading.name === "info"}
                   onClick={onInfoSave}
                   disabled={infoSave}
                 >
@@ -328,7 +329,7 @@ const AccountSetting = () => {
                 </Form>
                 <Divider />
                 <PriButton
-                  loading={loading}
+                  loading={loading.status && loading.name === "pass"}
                   onClick={handlePassSave}
                   disabled={chngPassSave}
                 >
@@ -357,7 +358,7 @@ const AccountSetting = () => {
                     cancel
                   </SecButton>
                   <PriButton
-                    loading={loading}
+                    loading={loading.status && loading.name === "prof"}
                     onClick={handleProfSave}
                     disabled={chngProfSave}
                   >

@@ -8,6 +8,7 @@ import AdminProfile from "./admin";
 import { sendPasswordResetEmail } from "firebase/auth";
 import Link from "next/link";
 import useGlobalContext from "@/context/globalContext";
+import { useRouter } from "next/router";
 
 const SignInSignUp = () => {
   const [open, setOpen] = useState(false);
@@ -16,6 +17,7 @@ const SignInSignUp = () => {
   const userCtx = useUserContext();
   const { state, dispatch: globalDispatch } = useGlobalContext();
   const promtToSignIn = state.signIn;
+  const router = useRouter();
 
   useEffect(() => {
     if (promtToSignIn) {
@@ -31,6 +33,7 @@ const SignInSignUp = () => {
       await signIn(email, password);
       setOpen(false);
       formSignIn.resetFields();
+      router.push("/dashboard/overview");
     } catch (error) {
       const errorMessage: string = (error as any).message;
       if (errorMessage) {

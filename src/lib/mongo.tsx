@@ -107,7 +107,10 @@ export const addDataWithExpiration = async (
     const client = await connectToDatabase();
     const database = client.db(dbName);
     const collection = database.collection(colName);
-    await collection.createIndex({ createdAt: 1 }, { expireAfterSeconds: 60 });
+    await collection.createIndex(
+      { createdAt: 1 },
+      { expireAfterSeconds: 3600 }
+    );
     const res = await collection.insertOne({
       payload,
       createdAt: new Date(),

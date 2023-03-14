@@ -16,7 +16,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
     const emailId = generateId(res);
     const itemId = context.params?.id;
     const foundItem = emailId.find((item) => itemId === item["id"]);
-    foundItem.expireAt = null;
+    foundItem.createdAt = null;
     return {
       props: { data: foundItem },
     };

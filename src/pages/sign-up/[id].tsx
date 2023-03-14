@@ -2,14 +2,12 @@ import { PriButton } from "@/components/button";
 import { LoadingGlobal } from "@/context/globalContext";
 import { Course, UserDetails } from "@/context/types.d";
 import useUserContext from "@/context/userContext";
-import useAuth from "@/hook/useAuth";
 import { getData, generateId } from "@/lib/mongo";
 import { removePending } from "@/utils/account";
 import { Form, Input, message, Select } from "antd";
 import { ObjectId } from "mongodb";
 import { GetStaticProps, GetStaticPaths } from "next";
 import { useRouter } from "next/router";
-import { TbLinkOff } from "react-icons/tb";
 
 export const getStaticProps: GetStaticProps = async (context) => {
   try {
@@ -31,8 +29,6 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
 export const getStaticPaths: GetStaticPaths = async () => {
   try {
-    // const res = await getData("accounts", "pending");
-    // const thesisItems = generateId(res);
     const thesisItems: any[] = await getData("accounts", "pending");
     const pathWithParams = thesisItems.map((item) => ({
       params: { id: new ObjectId(item._id).toString() },
@@ -71,7 +67,6 @@ const HandleInviteLink = (props: {
   const handleSignUp = async () => {
     try {
       await formSignUp.validateFields();
-      // TODO: handle sign in/signup logic
       const payload = formSignUp.getFieldsValue();
       const userDetails: UserDetails = {
         email: payload["sign-up-email"],

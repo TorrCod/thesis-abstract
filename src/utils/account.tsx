@@ -59,11 +59,11 @@ export const addPendingInvite = async (email: string) => {
   }
 };
 
-export const removePending = async (email: string) => {
+export const removePending = async (id: string) => {
   const mongoQuery: QueryPost = {
-    data: email,
+    data: "",
     mongoDetails: { collectionName: "pending", databaseName: "accounts" },
-    query: { payload: email },
+    query: { _id: id },
   };
   await axios.post("/api/remove-item-db", mongoQuery);
 };

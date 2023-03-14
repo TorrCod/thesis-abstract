@@ -53,7 +53,7 @@ const courseOpt: { value: Course; label: Course }[] = [
 ];
 
 const HandleInviteLink = (props: {
-  data: { payload: string; id: string };
+  data: { payload: string; id: string; _id: any };
   hasError: boolean;
 }) => {
   const router = useRouter();
@@ -82,7 +82,7 @@ const HandleInviteLink = (props: {
         approove: undefined,
       };
       await userCtx.userSignUp?.(userDetails);
-      await removePending(payload["sign-up-email"]);
+      await removePending(props.data["_id"]);
       message.success({
         type: "success",
         content: "Initialized Successfully",

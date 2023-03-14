@@ -2,6 +2,7 @@ import useUserContext from "@/context/userContext";
 import { auth } from "@/lib/firebase";
 import { addPendingInvite, addUserAccount } from "@/utils/account";
 import { Avatar, Dropdown, Form, Input, Menu, MenuProps, message } from "antd";
+import { useForm } from "antd/lib/form/Form";
 import axios from "axios";
 import { sendSignInLinkToEmail } from "firebase/auth";
 import { ObjectId } from "mongodb";
@@ -92,6 +93,7 @@ export const AdminMenu = ({
 };
 
 export const AddAdmin = () => {
+  const [form] = useForm();
   const onFinish = async ({ email }: any) => {
     try {
       const id: string = (await addPendingInvite(email)) as any;
@@ -101,6 +103,7 @@ export const AddAdmin = () => {
       };
       await sendSignInLinkToEmail(auth, email, actionCodeSettings);
       message.success("Invite Sent");
+      form.resetFields();
     } catch (e) {
       message.error("Invite failed");
       console.log(e);
@@ -108,7 +111,7 @@ export const AddAdmin = () => {
   };
   return (
     <div className="max-w-[20em]">
-      <Form onFinish={onFinish} className="flex gap-2">
+      <Form form={form} onFinish={onFinish} className="flex gap-2">
         <Form.Item
           name={"email"}
           rules={[

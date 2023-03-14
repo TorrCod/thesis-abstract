@@ -71,7 +71,7 @@ const DashboardOverview = () => {
           <div className=" admins bg-white rounded-md p-5 grid relative content-start gap-2">
             <Link className="grid w-fit" href={"/dashboard/admins"}>
               <h3 className="opacity-80 mb-3">Admins</h3>
-              <Link href="/dashboard/thesis/upload-thesis">
+              <Link href="/dashboard/admins">
                 <div className="opacity-60 flex items-center gap-2">
                   Manage Co-Admins <GoLinkExternal />
                 </div>

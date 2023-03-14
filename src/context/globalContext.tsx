@@ -90,9 +90,11 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
 export const LoadingGlobal = ({
   children,
   loading,
+  backgroundColor,
 }: {
   children?: React.ReactNode;
   loading: boolean;
+  backgroundColor?: string;
 }) => {
   const [noLoading, setNoLoading] = useState(true);
   const [slide, setSlide] = useState(false);
@@ -109,7 +111,9 @@ export const LoadingGlobal = ({
     >
       {noLoading ? (
         <div
-          className={`absolute w-full h-screen bg-[#38649C] z-50 flex flex-col justify-center items-center text-white transition-transform duration-200 ease-out ${
+          className={`absolute w-full h-screen bg-[${
+            backgroundColor ?? "#38649C"
+          }] z-[60] flex flex-col justify-center items-center text-white transition-transform duration-200 ease-out ${
             slide ? `-translate-x-full` : `translate-x-0`
           } `}
         >

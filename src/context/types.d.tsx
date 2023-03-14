@@ -63,6 +63,7 @@ export type UserDetails = {
   uid?: string;
   _id?: any;
   password?: string;
+  dateAdded?: string;
 };
 
 export type UserValue = {

@@ -89,15 +89,13 @@ const SignInSignUp = () => {
   //   { value: "Electronics Engineer", label: "Electronics Engineer" },
   // ];
 
-  return (
+  return userCtx.state.userDetails ? (
+    <AdminProfile userDetails={userCtx.state.userDetails} />
+  ) : (
     <>
-      {userCtx.state.userDetails ? (
-        <AdminProfile userDetails={userCtx.state.userDetails} />
-      ) : (
-        <PriButton type="primary" onClick={showModal}>
-          Sign In
-        </PriButton>
-      )}
+      <PriButton type="primary" onClick={showModal}>
+        Sign In
+      </PriButton>
       <Modal
         centered
         bodyStyle={{ padding: "2em" }}

@@ -130,6 +130,7 @@ function DashboardLayout({
         <Header className="header fixed top-0 w-full md:relative z-20 flex gap-10 items-center">
           {isScreen ? (
             <Menu
+              className="w-80"
               selectedKeys={[selectedMenu]}
               onSelect={(info) => setSelectedMenu(info.key as any)}
               theme="dark"

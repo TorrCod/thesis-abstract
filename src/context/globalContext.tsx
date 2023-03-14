@@ -1,11 +1,19 @@
+import LoadingIcon from "@/components/loadingIcon";
 import { getData } from "@/lib/mongo";
-import { createContext, useContext, useEffect, useReducer } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useReducer,
+  useState,
+} from "react";
 import { GlobalAction, GlobalState, GlobalValue, ThesisItems } from "./types.d";
 
 const globalStateInit: GlobalState = {
   thesisItems: [],
   searchItems: [],
   dateOption: [],
+  loading: true,
 };
 
 const globalCtxInit: GlobalValue = {
@@ -30,6 +38,7 @@ const globalReducer = (
       newState["thesisItems"] = action.payload.thesisItems;
       newState["searchItems"] = action.payload.thesisItems;
       newState["dateOption"] = action.payload.dateOpt;
+      newState["loading"] = false;
       return newState;
     }
     case "search-data": {
@@ -71,11 +80,43 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
         });
       });
   }, []);
-
   return (
     <GlobalContext.Provider value={{ state, dispatch }}>
-      {children}
+      <LoadingGlobal loading={state.loading}>{children}</LoadingGlobal>
     </GlobalContext.Provider>
+  );
+};
+
+const LoadingGlobal = ({
+  children,
+  loading,
+}: {
+  children: React.ReactNode;
+  loading: boolean;
+}) => {
+  const [noLoading, setNoLoading] = useState(true);
+  const [slide, setSlide] = useState(true);
+
+  useEffect(() => {
+    setSlide(!loading);
+    const timeOut = setTimeout(() => setNoLoading(loading), 2000);
+    return () => clearTimeout(timeOut);
+  }, [loading]);
+
+  return (
+    <div
+      className={noLoading ? "w-full h-screen overflow-hidden relative" : ""}
+    >
+      <div
+        className={`absolute w-full h-screen bg-[#38649C] z-[1000] flex flex-col justify-center items-center text-white transition-transform duration-200 ease-out ${
+          slide ? `-translate-x-full` : `translate-x-0`
+        } `}
+      >
+        <h1>Loading</h1>
+        <LoadingIcon />
+      </div>
+      {children}
+    </div>
   );
 };
 

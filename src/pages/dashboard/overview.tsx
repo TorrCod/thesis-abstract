@@ -78,7 +78,7 @@ const DashboardOverview = () => {
               </Link>
             </Link>
             <div className="overflow-auto">
-              <AdminTable />
+              <AdminTable noAction />
             </div>
           </div>
 

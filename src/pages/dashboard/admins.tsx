@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Table } from "antd";
 import DashboardLayout from "@/components/dashboardLayout";
 import QuerySearch from "@/components/QuerySearch";
@@ -48,7 +48,7 @@ const DashboardAdmin = () => (
   </DashboardLayout>
 );
 
-export const AdminTable = () => {
+export const AdminTable = ({ noAction }: { noAction?: boolean }) => {
   const columns = [
     {
       title: "Name",
@@ -80,7 +80,16 @@ export const AdminTable = () => {
       ),
     },
   ];
-  return <Table columns={columns} dataSource={data} scroll={{ x: 50 }} />;
+  const [dataCol, setDataCol] = useState(columns);
+  useEffect(() => {
+    if (noAction) {
+      const oldDataCol = [...dataCol];
+      oldDataCol.pop();
+      setDataCol(oldDataCol);
+    }
+  }, [noAction]);
+
+  return <Table columns={dataCol} dataSource={data} scroll={{ x: 50 }} />;
 };
 
 export default DashboardAdmin;

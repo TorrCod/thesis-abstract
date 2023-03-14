@@ -7,6 +7,7 @@ import { removePending } from "@/utils/account";
 import { Form, Input, message, Select } from "antd";
 import { GetStaticProps, GetStaticPaths } from "next";
 import { useRouter } from "next/router";
+import { TbLinkOff } from "react-icons/tb";
 
 export const getStaticProps: GetStaticProps = async (context) => {
   try {
@@ -56,11 +57,12 @@ const HandleInviteLink = (props: {
   hasError: boolean;
 }) => {
   const router = useRouter();
-  if (props.hasError) {
-    return <h1>Error - please try another parameter</h1>;
+  if (typeof window !== "undefined" && props.hasError) {
+    router.push("/link-expired");
+    return <></>;
   }
   if (router.isFallback) {
-    return <h1>Loading...</h1>;
+    return <section>Loading...</section>;
   }
   const [formSignUp] = Form.useForm();
   const userCtx = useUserContext();

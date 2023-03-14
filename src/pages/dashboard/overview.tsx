@@ -19,6 +19,7 @@ import {
   Radar,
   Legend,
 } from "recharts";
+import { AdminTable } from "./admins";
 
 const DashboardOverview = () => {
   const totalData: { course: Course; count: number }[] = [
@@ -27,95 +28,6 @@ const DashboardOverview = () => {
     { course: "Mechanical Engineer", count: 300 },
     { course: "Electronics Engineer", count: 257 },
     { course: "Electrical Engineer", count: 314 },
-  ];
-
-  const column = [
-    {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-    },
-    {
-      title: "Date",
-      dataIndex: "date",
-      key: "date",
-    },
-    {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
-    },
-    {
-      title: "Course",
-      dataIndex: "course",
-      key: "course",
-    },
-    {
-      title: "Action",
-      key: "action",
-      render: () => (
-        <PriButton className="bg-[red] hover:bg-[red]/80">
-          Remove Access
-        </PriButton>
-      ),
-    },
-  ];
-
-  const userColumn = [
-    {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-    },
-    {
-      title: "Date",
-      dataIndex: "date",
-      key: "date",
-    },
-    {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
-    },
-    {
-      title: "Course",
-      dataIndex: "course",
-      key: "course",
-    },
-    {
-      title: "Action",
-      key: "action",
-      render: () => (
-        <Space>
-          <PriButton className="bg-[red] hover:bg-[red]/80">Reject</PriButton>
-          <PriButton>Approove</PriButton>
-        </Space>
-      ),
-    },
-  ];
-
-  const data = [
-    {
-      key: "1",
-      name: "John Doe",
-      date: "2022-02-01",
-      email: "johndoe@example.com",
-      course: "Computer Engineering",
-    },
-    {
-      key: "2",
-      name: "Jane Doe",
-      date: "2022-02-02",
-      email: "janedoe@example.com",
-      course: "Civil Engineering",
-    },
-    {
-      key: "3",
-      name: "Bob Smith",
-      date: "2022-02-03",
-      email: "bobsmith@example.com",
-      course: "Electrical Engineering",
-    },
   ];
 
   return (
@@ -159,15 +71,14 @@ const DashboardOverview = () => {
           <div className=" admins bg-white rounded-md p-5 grid relative content-start gap-2">
             <Link className="grid w-fit" href={"/dashboard/admins"}>
               <h3 className="opacity-80 mb-3">Admins</h3>
-              <p className="opacity-60 mb-5">Manage Co-Admins</p>
+              <Link href="/dashboard/thesis/upload-thesis">
+                <div className="opacity-60 flex items-center gap-2">
+                  Manage Co-Admins <GoLinkExternal />
+                </div>
+              </Link>
             </Link>
             <div className="overflow-auto">
-              <QuerySearch
-                onSearch={(e) => {
-                  console.log(e);
-                }}
-              />
-              <Table columns={column} dataSource={data} scroll={{ x: 50 }} />
+              <AdminTable />
             </div>
           </div>
 

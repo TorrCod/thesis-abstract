@@ -5,38 +5,6 @@ import QuerySearch from "@/components/QuerySearch";
 import { PriButton } from "@/components/button";
 import { AddAdmin } from "@/components/admin";
 
-const columns = [
-  {
-    title: "Name",
-    dataIndex: "name",
-    key: "name",
-  },
-  {
-    title: "Date",
-    dataIndex: "date",
-    key: "date",
-  },
-  {
-    title: "Email",
-    dataIndex: "email",
-    key: "email",
-  },
-  {
-    title: "Course",
-    dataIndex: "course",
-    key: "course",
-  },
-  {
-    title: "Action",
-    key: "action",
-    render: () => (
-      <PriButton className="bg-[red] hover:bg-[red]/80">
-        Remove Access
-      </PriButton>
-    ),
-  },
-];
-
 const data = [
   {
     key: "1",
@@ -81,6 +49,37 @@ const DashboardAdmin = () => (
 );
 
 export const AdminTable = () => {
+  const columns = [
+    {
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "Date",
+      dataIndex: "date",
+      key: "date",
+    },
+    {
+      title: "Email",
+      dataIndex: "email",
+      key: "email",
+    },
+    {
+      title: "Course",
+      dataIndex: "course",
+      key: "course",
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: () => (
+        <PriButton className="bg-[red] hover:bg-[red]/80">
+          Remove Access
+        </PriButton>
+      ),
+    },
+  ];
   return <Table columns={columns} dataSource={data} scroll={{ x: 50 }} />;
 };
 

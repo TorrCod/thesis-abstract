@@ -46,7 +46,6 @@ export const deleteData = async (queryPost: QueryPost) => {
       queryPost.query["_id"] = new ObjectId(queryPost.query["_id"] as string);
     }
     const res = await collection.deleteOne(queryPost.query);
-    console.log(res);
     client.close();
     return res;
   } catch (e) {

@@ -31,7 +31,6 @@ export const getData = async (
   } catch (e) {
     console.error(e);
     throw new Error(e as string).message;
-  } finally {
   }
 };
 

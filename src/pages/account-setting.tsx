@@ -21,11 +21,7 @@ import { RcFile } from "antd/lib/upload";
 import React, { useEffect, useState } from "react";
 import { BsImage } from "react-icons/bs";
 import { useRouter } from "next/router";
-import { GrUserSettings } from "react-icons/gr";
 import { IoSettings } from "react-icons/io5";
-import Head from "next/head";
-import useAuth from "@/hook/useAuth";
-
 const courseOpt: { value: Course; label: Course }[] = [
   { value: "Civil Engineer", label: "Civil Engineer" },
   { value: "Computer Engineer", label: "Computer Engineer" },
@@ -45,6 +41,7 @@ const AccountSetting = () => {
   const [newProfile, setNewProfile] = useState<string | undefined>();
   const [cfrmDltAcc, setCfrmDltAcc] = useState("");
   const [onConfirm, setOnConfirm] = useState(false);
+  const [loading, setLoading] = useState({ status: false, name: "" });
   const router = useRouter();
 
   useEffect(() => {
@@ -67,11 +64,14 @@ const AccountSetting = () => {
 
   const onInfoSave = async () => {
     try {
+      setLoading({ status: true, name: "info" });
       const updatedUsdDtls: UserDetails = { ...userDetails!, ...newData };
       await userCtx.userUpdateInfo!(updatedUsdDtls);
       message.success("Your info is saved");
     } catch {
       message.error("Something Went Wrong! Please try in another time");
+    } finally {
+      setLoading({ status: false, name: "info" });
     }
   };
 
@@ -86,6 +86,7 @@ const AccountSetting = () => {
 
   const handlePassSave = async () => {
     try {
+      setLoading({ status: true, name: "pass" });
       const data = passForm.getFieldsValue();
       const currPass = data["currPass"];
       const newPass = data["newPass"];
@@ -99,6 +100,8 @@ const AccountSetting = () => {
       } else {
         message.error("Something Went Wrong! Please try in another time");
       }
+    } finally {
+      () => setLoading({ status: false, name: "pass" });
     }
   };
 
@@ -120,12 +123,16 @@ const AccountSetting = () => {
   };
 
   const handleProfSave = () => {
-    uploadProfile(newProfile!, userDetails?.uid!).then((url) => {
-      const newProf: UserDetails = { ...userDetails!, profilePic: url };
-      setNewProfile(url!);
-      userCtx.updateProfileUrl!(newProf);
-      setChngProfSave(true);
-    });
+    setLoading({ status: true, name: "prof" });
+    uploadProfile(newProfile!, userDetails?.uid!)
+      .then((url) => {
+        const newProf: UserDetails = { ...userDetails!, profilePic: url };
+        setNewProfile(url!);
+        userCtx.updateProfileUrl!(newProf);
+        setChngProfSave(true);
+        message.success("profile saved");
+      })
+      .finally(() => setLoading({ status: false, name: "prof" }));
   };
 
   const warning = () => {
@@ -142,6 +149,7 @@ const AccountSetting = () => {
       ),
       maskClosable: true,
       okButtonProps: {
+        loading: loading.status && loading.name === "delete",
         htmlType: "submit",
         type: "primary",
         style: { backgroundColor: "#F8B49C" },
@@ -154,6 +162,7 @@ const AccountSetting = () => {
 
   useEffect(() => {
     if (cfrmDltAcc) {
+      setLoading({ status: true, name: "delete" });
       userCtx.deleteAccount!(cfrmDltAcc)
         .then(() => {
           router.push("/");
@@ -162,7 +171,8 @@ const AccountSetting = () => {
         .catch((e) => {
           console.error(e);
           message.error("Wrong Password");
-        });
+        })
+        .finally(() => setLoading({ status: false, name: "delete" }));
       setCfrmDltAcc("");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -259,7 +269,11 @@ const AccountSetting = () => {
                   </div>
                 </div>
                 <Divider />
-                <PriButton onClick={onInfoSave} disabled={infoSave}>
+                <PriButton
+                  loading={loading.status && loading.name === "info"}
+                  onClick={onInfoSave}
+                  disabled={infoSave}
+                >
                   Save
                 </PriButton>
               </Form>
@@ -314,7 +328,11 @@ const AccountSetting = () => {
                   </Form.Item>
                 </Form>
                 <Divider />
-                <PriButton onClick={handlePassSave} disabled={chngPassSave}>
+                <PriButton
+                  loading={loading.status && loading.name === "pass"}
+                  onClick={handlePassSave}
+                  disabled={chngPassSave}
+                >
                   Save
                 </PriButton>
               </div>
@@ -339,7 +357,11 @@ const AccountSetting = () => {
                   <SecButton onClick={handleProfCancel} disabled={chngProfSave}>
                     cancel
                   </SecButton>
-                  <PriButton onClick={handleProfSave} disabled={chngProfSave}>
+                  <PriButton
+                    loading={loading.status && loading.name === "prof"}
+                    onClick={handleProfSave}
+                    disabled={chngProfSave}
+                  >
                     Save
                   </PriButton>
                 </Space>

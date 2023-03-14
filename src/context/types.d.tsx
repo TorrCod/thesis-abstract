@@ -5,6 +5,7 @@ export interface GlobalState {
   searchItems: ThesisItems[];
   dateOption: string[];
   signIn?: boolean;
+  loading: boolean;
 }
 
 export type Course =

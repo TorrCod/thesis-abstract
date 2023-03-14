@@ -22,6 +22,7 @@ import { BsThreeDots } from "react-icons/bs";
 import { useLocation, useWindowSize } from "react-use";
 import Head from "next/head";
 import useAuth from "@/hook/useAuth";
+import { LoadingGlobal } from "@/context/globalContext";
 
 type SelectedMenu = "/dashboard" | "/account-setting";
 
@@ -113,7 +114,7 @@ function DashboardLayout({
   ];
 
   return !isLogin ? (
-    <></>
+    <LoadingGlobal loading={!isLogin} />
   ) : (
     <>
       <Head>

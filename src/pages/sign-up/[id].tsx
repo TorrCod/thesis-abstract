@@ -1,4 +1,5 @@
 import { PriButton } from "@/components/button";
+import { LoadingGlobal } from "@/context/globalContext";
 import { Course, UserDetails } from "@/context/types.d";
 import useUserContext from "@/context/userContext";
 import useAuth from "@/hook/useAuth";
@@ -63,7 +64,7 @@ const HandleInviteLink = (props: {
     return <></>;
   }
   if (router.isFallback) {
-    return <section>Loading...</section>;
+    return <LoadingGlobal loading />;
   }
   const [formSignUp] = Form.useForm();
   const userCtx = useUserContext();

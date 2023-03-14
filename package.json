@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "thesis": "docker-compose up -d && docker exec -it mongodb mkdir -p /database/ && docker cp ./docker-mongo/default-data mongodb:/database/default-data && docker-compose exec mongodb mongorestore --drop /database/default-data && npm run dev",
-    "updatedb": "docker-compose exec mongodb mongodump --out=/database/default-data && docker cp mongodb:/database/default-data ./docker-mongo/default-data",
+    "updatedb": "if [ -d './docker-mongo/default-data' ]; then rm -r /database/default-data; fi; docker-compose exec mongodb bash -c 'if [ -d '/database/default-data' ]; then rm -r /database/default-data; fi; mongodump --out=/database/default-data ' && docker cp mongodb:/database/default-data ./docker-mongo/default-data",
     "emulators": "firebase emulators:start --import=./test-data --export-on-exit"
   },
   "dependencies": {

@@ -1,4 +1,5 @@
 import { UserDetails } from "@/context/types.d";
+import axios from "axios";
 import { initializeApp } from "firebase/app";
 import {
   connectAuthEmulator,
@@ -30,7 +31,15 @@ const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const firebaseStorage = getStorage(app);
 
-connectAuthEmulator(auth, "http://localhost:9099");
+axios
+  .get("http://127.0.0.1:4000")
+  .then(() => {
+    console.log("emulator connected");
+    connectAuthEmulator(auth, "http://127.0.0.1:4000");
+  })
+  .catch(() => {
+    console.log("emulator not connected");
+  });
 
 export const signIn = async (email: string, password: string) => {
   await signInWithEmailAndPassword(auth, email, password);

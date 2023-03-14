@@ -1,23 +1,23 @@
-[debug] [2023-03-14T02:48:19.229Z] ----------------------------------------------------------------------
-[debug] [2023-03-14T02:48:19.231Z] Command:       /home/torrcod/.nvm/versions/node/v18.14.2/bin/node /home/torrcod/.nvm/versions/node/v18.14.2/bin/firebase emulators:start --import=./test-data --export-on-exit
-[debug] [2023-03-14T02:48:19.231Z] CLI Version:   11.24.1
-[debug] [2023-03-14T02:48:19.231Z] Platform:      linux
-[debug] [2023-03-14T02:48:19.231Z] Node Version:  v18.14.2
-[debug] [2023-03-14T02:48:19.232Z] Time:          Tue Mar 14 2023 10:48:19 GMT+0800 (China Standard Time)
-[debug] [2023-03-14T02:48:19.232Z] ----------------------------------------------------------------------
+[debug] [2023-03-14T06:24:59.517Z] ----------------------------------------------------------------------
+[debug] [2023-03-14T06:24:59.519Z] Command:       /home/torrcod/.nvm/versions/node/v18.14.2/bin/node /home/torrcod/.nvm/versions/node/v18.14.2/bin/firebase emulators:start --import=./test-data --export-on-exit
+[debug] [2023-03-14T06:24:59.520Z] CLI Version:   11.24.1
+[debug] [2023-03-14T06:24:59.520Z] Platform:      linux
+[debug] [2023-03-14T06:24:59.520Z] Node Version:  v18.14.2
+[debug] [2023-03-14T06:24:59.520Z] Time:          Tue Mar 14 2023 14:24:59 GMT+0800 (China Standard Time)
+[debug] [2023-03-14T06:24:59.520Z] ----------------------------------------------------------------------
 [debug] 
-[debug] [2023-03-14T02:48:19.325Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
-[debug] [2023-03-14T02:48:19.326Z] > authorizing via signed-in user (torreschristian811@gmail.com)
+[debug] [2023-03-14T06:24:59.616Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2023-03-14T06:24:59.617Z] > authorizing via signed-in user (torreschristian811@gmail.com)
 [info] i  emulators: Starting emulators: auth {"metadata":{"emulator":{"name":"hub"},"message":"Starting emulators: auth"}}
-[debug] [2023-03-14T02:48:19.332Z] assigned listening specs for emulators {"user":{"hub":[{"address":"127.0.0.1","family":"IPv4","port":4400}],"ui":[{"address":"127.0.0.1","family":"IPv4","port":4000}],"logging":[{"address":"127.0.0.1","family":"IPv4","port":4500}],"auth":[{"address":"127.0.0.1","family":"IPv4","port":9099}]},"metadata":{"message":"assigned listening specs for emulators"}}
-[debug] [2023-03-14T02:48:19.342Z] [hub] writing locator at /tmp/hub-thesis-abstract-account.json
+[debug] [2023-03-14T06:24:59.624Z] assigned listening specs for emulators {"user":{"hub":[{"address":"127.0.0.1","family":"IPv4","port":4400}],"ui":[{"address":"127.0.0.1","family":"IPv4","port":4000}],"logging":[{"address":"127.0.0.1","family":"IPv4","port":4500}],"auth":[{"address":"127.0.0.1","family":"IPv4","port":9099}]},"metadata":{"message":"assigned listening specs for emulators"}}
+[debug] [2023-03-14T06:24:59.635Z] [hub] writing locator at /tmp/hub-thesis-abstract-account.json
 [info] i  auth: Importing config from /home/torrcod/projects/thesis-abstract/test-data/auth_export/config.json {"metadata":{"emulator":{"name":"auth"},"message":"Importing config from /home/torrcod/projects/thesis-abstract/test-data/auth_export/config.json"}}
 [info] i  auth: Importing accounts from /home/torrcod/projects/thesis-abstract/test-data/auth_export/accounts.json {"metadata":{"emulator":{"name":"auth"},"message":"Importing accounts from /home/torrcod/projects/thesis-abstract/test-data/auth_export/accounts.json"}}
-[debug] [2023-03-14T02:48:25.982Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"ui"},"message":"Ignoring unsupported arg: auto_download"}}
-[debug] [2023-03-14T02:48:25.982Z] Ignoring unsupported arg: port {"metadata":{"emulator":{"name":"ui"},"message":"Ignoring unsupported arg: port"}}
-[debug] [2023-03-14T02:48:25.982Z] Starting Emulator UI with command {"binary":"node","args":["/home/torrcod/.cache/firebase/emulators/ui-v1.11.4/server/server.js"],"optionalArgs":[],"joinArgs":false} {"metadata":{"emulator":{"name":"ui"},"message":"Starting Emulator UI with command {\"binary\":\"node\",\"args\":[\"/home/torrcod/.cache/firebase/emulators/ui-v1.11.4/server/server.js\"],\"optionalArgs\":[],\"joinArgs\":false}"}}
+[debug] [2023-03-14T06:25:05.982Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"ui"},"message":"Ignoring unsupported arg: auto_download"}}
+[debug] [2023-03-14T06:25:05.982Z] Ignoring unsupported arg: port {"metadata":{"emulator":{"name":"ui"},"message":"Ignoring unsupported arg: port"}}
+[debug] [2023-03-14T06:25:05.982Z] Starting Emulator UI with command {"binary":"node","args":["/home/torrcod/.cache/firebase/emulators/ui-v1.11.4/server/server.js"],"optionalArgs":[],"joinArgs":false} {"metadata":{"emulator":{"name":"ui"},"message":"Starting Emulator UI with command {\"binary\":\"node\",\"args\":[\"/home/torrcod/.cache/firebase/emulators/ui-v1.11.4/server/server.js\"],\"optionalArgs\":[],\"joinArgs\":false}"}}
 [info] i  ui: Emulator UI logging to ui-debug.log {"metadata":{"emulator":{"name":"ui"},"message":"Emulator UI logging to \u001b[1mui-debug.log\u001b[22m"}}
-[debug] [2023-03-14T02:48:26.077Z] Web / API server started at 127.0.0.1:4000
+[debug] [2023-03-14T06:25:06.079Z] Web / API server started at 127.0.0.1:4000
  {"metadata":{"emulator":{"name":"ui"},"message":"Web / API server started at 127.0.0.1:4000\n"}}
 [info] 
 ┌─────────────────────────────────────────────────────────────┐
@@ -35,9 +35,3 @@
 
 Issues? Report them at https://github.com/firebase/firebase-tools/issues and attach the *-debug.log files.
  
-[warn] ⚠  canHandleCodeInApp is unsupported in Auth Emulator. All OOB operations will complete via web. {"metadata":{"emulator":{"name":"auth"},"message":"canHandleCodeInApp is unsupported in Auth Emulator. All OOB operations will complete via web."}}
-[info] i  To sign in as torresbert811@gmail.com, follow this link: http://127.0.0.1:9099/emulator/action?mode=signIn&lang=en&oobCode=mScivVz_SFAmUh3TQNEALNTGlSzpuqprtV1qqJ3VfL3m2t2CJlZR_e&apiKey=fake-api-key&continueUrl=http%3A%2F%2Flocalhost%3A3000%2Fsign-up%2F640fe57b718963fa41d2477f {"metadata":{"emulator":{"name":"auth"},"message":"To sign in as torresbert811@gmail.com, follow this link: http://127.0.0.1:9099/emulator/action?mode=signIn&lang=en&oobCode=mScivVz_SFAmUh3TQNEALNTGlSzpuqprtV1qqJ3VfL3m2t2CJlZR_e&apiKey=fake-api-key&continueUrl=http%3A%2F%2Flocalhost%3A3000%2Fsign-up%2F640fe57b718963fa41d2477f"}}
-[warn] ⚠  canHandleCodeInApp is unsupported in Auth Emulator. All OOB operations will complete via web. {"metadata":{"emulator":{"name":"auth"},"message":"canHandleCodeInApp is unsupported in Auth Emulator. All OOB operations will complete via web."}}
-[info] i  To sign in as torresbert811@gmail.com, follow this link: http://127.0.0.1:9099/emulator/action?mode=signIn&lang=en&oobCode=enC5IvvVO2-bWTAITXP24fzV6ZU-dL-UPuyBKWnrKf3-_x-O4fOBM-&apiKey=fake-api-key&continueUrl=http%3A%2F%2Flocalhost%3A3000%2Fsign-up%2F640fe95f718963fa41d24780 {"metadata":{"emulator":{"name":"auth"},"message":"To sign in as torresbert811@gmail.com, follow this link: http://127.0.0.1:9099/emulator/action?mode=signIn&lang=en&oobCode=enC5IvvVO2-bWTAITXP24fzV6ZU-dL-UPuyBKWnrKf3-_x-O4fOBM-&apiKey=fake-api-key&continueUrl=http%3A%2F%2Flocalhost%3A3000%2Fsign-up%2F640fe95f718963fa41d24780"}}
-[warn] ⚠  canHandleCodeInApp is unsupported in Auth Emulator. All OOB operations will complete via web. {"metadata":{"emulator":{"name":"auth"},"message":"canHandleCodeInApp is unsupported in Auth Emulator. All OOB operations will complete via web."}}
-[info] i  To sign in as torresbert811@gmail.com, follow this link: http://127.0.0.1:9099/emulator/action?mode=signIn&lang=en&oobCode=kOYze2czzv3QTPVV73mR7vFJ1waQzONOelMvuLZ2UZlPtz6ndy922J&apiKey=fake-api-key&continueUrl=http%3A%2F%2Flocalhost%3A3000%2Fsign-up%2F640ff3b4718963fa41d24782 {"metadata":{"emulator":{"name":"auth"},"message":"To sign in as torresbert811@gmail.com, follow this link: http://127.0.0.1:9099/emulator/action?mode=signIn&lang=en&oobCode=kOYze2czzv3QTPVV73mR7vFJ1waQzONOelMvuLZ2UZlPtz6ndy922J&apiKey=fake-api-key&continueUrl=http%3A%2F%2Flocalhost%3A3000%2Fsign-up%2F640ff3b4718963fa41d24782"}}

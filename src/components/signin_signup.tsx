@@ -8,14 +8,16 @@ import AdminProfile from "./admin";
 import { sendPasswordResetEmail } from "firebase/auth";
 import Link from "next/link";
 import useGlobalContext from "@/context/globalContext";
+import { useRouter } from "next/router";
 
 const SignInSignUp = () => {
   const [open, setOpen] = useState(false);
   const [formSignIn] = Form.useForm();
-  const [formSignUp] = Form.useForm();
+  // const [formSignUp] = Form.useForm();
   const userCtx = useUserContext();
   const { state, dispatch: globalDispatch } = useGlobalContext();
   const promtToSignIn = state.signIn;
+  const router = useRouter();
 
   useEffect(() => {
     if (promtToSignIn) {
@@ -31,6 +33,7 @@ const SignInSignUp = () => {
       await signIn(email, password);
       setOpen(false);
       formSignIn.resetFields();
+      router.push("/dashboard/overview");
     } catch (error) {
       const errorMessage: string = (error as any).message;
       if (errorMessage) {
@@ -40,37 +43,37 @@ const SignInSignUp = () => {
     }
   };
 
-  const handleSignUp = async () => {
-    try {
-      await formSignUp.validateFields();
-      // TODO: handle sign in/signup logic
-      const payload = formSignUp.getFieldsValue();
-      const userDetails: UserDetails = {
-        email: payload["sign-up-email"],
-        userName: payload["username"],
-        course: payload["course"],
-        firstName: payload["firstname"],
-        lastName: payload["lastname"],
-        password: payload["confirm-password"],
-        profilePic: undefined,
-        approove: undefined,
-      };
-      await userCtx.userSignUp?.(userDetails);
-      setOpen(false); // close the modal after successful sign in/signup
-      message.success({
-        type: "success",
-        content:
-          "Registered Successfully! Please wait for the admins approval.",
-      });
-      formSignUp.resetFields();
-    } catch (error) {
-      const errmessage = (error as any).message;
-      if (errmessage) {
-        message.error(errmessage);
-      }
-      console.error(error);
-    }
-  };
+  // const handleSignUp = async () => {
+  //   try {
+  //     await formSignUp.validateFields();
+  //     // TODO: handle sign in/signup logic
+  //     const payload = formSignUp.getFieldsValue();
+  //     const userDetails: UserDetails = {
+  //       email: payload["sign-up-email"],
+  //       userName: payload["username"],
+  //       course: payload["course"],
+  //       firstName: payload["firstname"],
+  //       lastName: payload["lastname"],
+  //       password: payload["confirm-password"],
+  //       profilePic: undefined,
+  //       approove: undefined,
+  //     };
+  //     await userCtx.userSignUp?.(userDetails);
+  //     setOpen(false); // close the modal after successful sign in/signup
+  //     message.success({
+  //       type: "success",
+  //       content:
+  //         "Registered Successfully! Please wait for the admins approval.",
+  //     });
+  //     formSignUp.resetFields();
+  //   } catch (error) {
+  //     const errmessage = (error as any).message;
+  //     if (errmessage) {
+  //       message.error(errmessage);
+  //     }
+  //     console.error(error);
+  //   }
+  // };
 
   const handleCancel = () => {
     setOpen(false);
@@ -81,23 +84,21 @@ const SignInSignUp = () => {
     setOpen(true);
   };
 
-  const courseOpt: { value: Course; label: Course }[] = [
-    { value: "Civil Engineer", label: "Civil Engineer" },
-    { value: "Computer Engineer", label: "Computer Engineer" },
-    { value: "Electrical Engineer", label: "Electrical Engineer" },
-    { value: "Mechanical Engineer", label: "Mechanical Engineer" },
-    { value: "Electronics Engineer", label: "Electronics Engineer" },
-  ];
+  // const courseOpt: { value: Course; label: Course }[] = [
+  //   { value: "Civil Engineer", label: "Civil Engineer" },
+  //   { value: "Computer Engineer", label: "Computer Engineer" },
+  //   { value: "Electrical Engineer", label: "Electrical Engineer" },
+  //   { value: "Mechanical Engineer", label: "Mechanical Engineer" },
+  //   { value: "Electronics Engineer", label: "Electronics Engineer" },
+  // ];
 
-  return (
+  return userCtx.state.userDetails ? (
+    <AdminProfile userDetails={userCtx.state.userDetails} />
+  ) : (
     <>
-      {userCtx.state.userDetails ? (
-        <AdminProfile userDetails={userCtx.state.userDetails} />
-      ) : (
-        <PriButton type="primary" onClick={showModal}>
-          Sign In
-        </PriButton>
-      )}
+      <PriButton type="primary" onClick={showModal}>
+        Sign In
+      </PriButton>
       <Modal
         centered
         bodyStyle={{ padding: "2em" }}

@@ -1,6 +1,8 @@
 import { UserDetails } from "@/context/types.d";
+import axios from "axios";
 import { initializeApp } from "firebase/app";
 import {
+  connectAuthEmulator,
   createUserWithEmailAndPassword,
   getAuth,
   signInWithEmailAndPassword,
@@ -28,6 +30,9 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const firebaseStorage = getStorage(app);
+
+// console.log("emulator connected");
+// connectAuthEmulator(auth, "http://localhost:9099");
 
 export const signIn = async (email: string, password: string) => {
   await signInWithEmailAndPassword(auth, email, password);

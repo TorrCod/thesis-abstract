@@ -27,7 +27,7 @@ const QuerySearch: React.FC<Props> = ({ onSearch }) => {
         onChange={handleInputChange}
         placeholder="Search"
       />
-      <PriButton className="shadow-none bg-[#F8B49C]" htmlType="submit">
+      <PriButton className="shadow-md bg-[#F8B49C]" htmlType="submit">
         <FaSearch />
       </PriButton>
     </form>

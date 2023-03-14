@@ -1,12 +1,19 @@
 import useUserContext from "@/context/userContext";
 import { auth } from "@/lib/firebase";
-import { Avatar, Dropdown, Menu, MenuProps } from "antd";
+import { addPendingInvite, addUserAccount } from "@/utils/account";
+import { Avatar, Dropdown, Form, Input, Menu, MenuProps, message } from "antd";
+import { useForm } from "antd/lib/form/Form";
+import axios from "axios";
+import { sendSignInLinkToEmail } from "firebase/auth";
+import { ObjectId } from "mongodb";
 import Link from "next/link";
 import router from "next/router";
-import React from "react";
+import React, { useState } from "react";
 import { BiLogOut } from "react-icons/bi";
+import { BsPersonFillAdd } from "react-icons/bs";
 import { GrUserSettings } from "react-icons/gr";
 import { RiDashboardLine } from "react-icons/ri";
+import { PriButton } from "./button";
 import SignInSignUp from "./signin_signup";
 import { AdminProps } from "./types.d";
 
@@ -82,6 +89,52 @@ export const AdminMenu = ({
         <SignInSignUp />
       </div>
     </Dropdown>
+  );
+};
+
+export const AddAdmin = () => {
+  const [form] = useForm();
+  const onFinish = async ({ email }: any) => {
+    try {
+      const id: string = (await addPendingInvite(email)) as any;
+      const actionCodeSettings = {
+        url: `http://localhost:3000/sign-up/${id}`,
+        handleCodeInApp: true,
+      };
+      await sendSignInLinkToEmail(auth, email, actionCodeSettings);
+      message.success("Invite Sent");
+      form.resetFields();
+    } catch (e) {
+      message.error("Invite failed");
+      console.log(e);
+    }
+  };
+  return (
+    <div className="max-w-[20em]">
+      <Form form={form} onFinish={onFinish} className="flex gap-2">
+        <Form.Item
+          name={"email"}
+          rules={[
+            {
+              type: "email",
+              message: "Not valid E-mail!",
+            },
+            {
+              required: true,
+              message: "Please input a E-mail!",
+            },
+          ]}
+        >
+          <Input placeholder="Email" />
+        </Form.Item>
+        <Form.Item>
+          <PriButton htmlType="submit">
+            <BsPersonFillAdd />
+            Invite
+          </PriButton>
+        </Form.Item>
+      </Form>
+    </div>
   );
 };
 

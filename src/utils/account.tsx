@@ -50,7 +50,7 @@ export const addPendingInvite = async (email: string) => {
     const data = await axios.post("/api/invite-admin", {
       dbName: "accounts",
       colName: "pending",
-      payload: { email: email },
+      payload: email,
     } as AddPost);
     return data.data.response.insertedId;
   } catch (e) {
@@ -63,7 +63,7 @@ export const removePending = async (email: string) => {
   const mongoQuery: QueryPost = {
     data: email,
     mongoDetails: { collectionName: "pending", databaseName: "accounts" },
-    query: { email: email },
+    query: { payload: email },
   };
   await axios.post("/api/remove-item-db", mongoQuery);
 };

@@ -21,7 +21,6 @@ export const getStaticProps: GetStaticProps = async (context) => {
     };
   } catch (e) {
     console.error(e);
-
     return {
       props: { hasError: true },
     };
@@ -53,7 +52,7 @@ const courseOpt: { value: Course; label: Course }[] = [
 ];
 
 const HandleInviteLink = (props: {
-  data: { email: string; id: string };
+  data: { payload: string; id: string };
   hasError: boolean;
 }) => {
   const router = useRouter();
@@ -126,7 +125,21 @@ const HandleInviteLink = (props: {
         </Form.Item>
         <Form.Item
           name="sign-up-email"
-          rules={[{ required: true, message: "Please enter your email" }]}
+          rules={[
+            { required: true, message: "Please enter your email" },
+            ({ getFieldValue }) => ({
+              validator(_, value) {
+                if (!value || props.data.payload === value) {
+                  return Promise.resolve();
+                }
+                return Promise.reject(
+                  new Error(
+                    "Please use the email address that we sent the link to"
+                  )
+                );
+              },
+            }),
+          ]}
         >
           <Input type="email" placeholder="Email" />
         </Form.Item>

@@ -124,7 +124,7 @@ export const AdminTable = ({ noAction }: { noAction?: boolean }) => {
             ...item,
             email: item.payload,
             key: item._id,
-            dateAdded: new Date(item.createdAt).toLocaleString(),
+            dateAdded: item.createdAt,
             status: (
               <div className="grid bg-amber-400 place-items-center rounded-xl max-w-[6em] py-1 text-white">
                 pending

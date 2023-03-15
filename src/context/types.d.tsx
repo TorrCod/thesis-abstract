@@ -22,7 +22,7 @@ export type ThesisItems = {
   course: Course;
   abstract: string;
   date: string;
-  dateAdded: string;
+  dateAdded: Date;
 };
 
 export type GlobalAction =
@@ -48,8 +48,18 @@ export type GlobalValue = {
   dispatch: Dispatch<GlobalAction>;
 };
 
+export type AdminData = {
+  key: string;
+  name?: string;
+  dateAdded: string;
+  email: string;
+  course?: string;
+  status: React.ReactNode;
+};
+
 export type UserState = {
   userDetails: UserDetails | undefined;
+  listOfAdmins: AdminData[];
 };
 
 export type UserDetails = {
@@ -63,6 +73,7 @@ export type UserDetails = {
   uid?: string;
   _id?: any;
   password?: string;
+  dateAdded?: string;
 };
 
 export type UserValue = {
@@ -74,8 +85,18 @@ export type UserValue = {
   updateProfileUrl?: (userDetails: UserDetails) => Promise<void>;
   deleteAccount?: (currpass: string) => Promise<void>;
   saveUploadThesis: (data: ThesisItems) => Promise<void>;
+  setTrigger: () => void;
 };
 
 export type UserAction =
-  | { type: "on-signin"; payload: UserDetails | undefined }
-  | { type: "on-signup"; payload: UserDetails };
+  | {
+      type: "on-signin";
+      payload: {
+        userDetails?: UserDetails | null;
+        allUsers?: AdminData[] | null;
+      };
+    }
+  | { type: "on-signup"; payload: UserDetails }
+  | {
+      type: "on-logout";
+    };

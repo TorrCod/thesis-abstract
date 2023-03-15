@@ -1,5 +1,6 @@
 import { UserDetails } from "@/context/types.d";
 import { MongoClient, ObjectId } from "mongodb";
+import { useEffect } from "react";
 import { CollectionName, DatabaseName, QueryPost } from "./types";
 
 let CONNECTION = process.env["MONGO_URI"] ?? "mongodb://localhost:27017";
@@ -25,7 +26,7 @@ export const getData = async (
     const client = await connectToDatabase();
     const database = client.db(dbName);
     const collection = database.collection(colName);
-    const res = await collection.find(option?.option).toArray();
+    const res = await collection.find(option ?? {}).toArray();
     client.close();
     return res;
   } catch (e) {
@@ -114,6 +115,7 @@ export const addDataWithExpiration = async (
     const res = await collection.insertOne({
       payload,
       createdAt: new Date(),
+      expireAfterSeconds: 3600,
     });
     client.close();
     return res;

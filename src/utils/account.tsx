@@ -32,11 +32,11 @@ export const updateUser = async (payload: UserDetails) => {
 export const findUser = (_id: string, arr: UserDetails[]) =>
   arr.filter((item) => item.uid === _id);
 
-export const utils_Delete_Account = async (userDetails: UserDetails) => {
+export const utils_Delete_Account = async (_id: string) => {
   const mongoQuery: QueryPost = {
-    data: userDetails,
+    data: _id,
     mongoDetails: { collectionName: "user", databaseName: "accounts" },
-    query: { uid: userDetails.uid },
+    query: { _id: _id },
   };
   await axios.post("/api/remove-item-db", mongoQuery);
 };
@@ -66,4 +66,16 @@ export const removePending = async (id: string) => {
     query: { _id: id },
   };
   await axios.post("/api/remove-item-db", mongoQuery);
+};
+
+export const getAllUsers = async (uid: string) => {
+  try {
+    const allUsers = await (
+      await axios.get("/api/get-all-user", { headers: { uid: uid } })
+    ).data;
+    return allUsers;
+  } catch (e) {
+    console.error(e);
+    throw new Error("failed to load data");
+  }
 };

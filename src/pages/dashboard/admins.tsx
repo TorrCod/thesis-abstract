@@ -1,64 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { message, Table } from "antd";
+import { Form, Input, message, Modal, Popconfirm, Table } from "antd";
 import DashboardLayout from "@/components/dashboardLayout";
 import QuerySearch from "@/components/QuerySearch";
 import { PriButton } from "@/components/button";
 import { AddAdmin } from "@/components/admin";
-import { getAllUsers } from "@/utils/account";
 import useUserContext from "@/context/userContext";
-import { UserDetails } from "@/context/types.d";
-
-const data = [
-  {
-    key: "1",
-    name: "John Doe",
-    date: "2022-02-01",
-    email: "johndoe@example.com",
-    course: "Computer Engineering",
-  },
-  {
-    key: "2",
-    name: "Jane Doe",
-    date: "2022-02-02",
-    email: "janedoe@example.com",
-    course: "Civil Engineering",
-  },
-  {
-    key: "3",
-    name: "Bob Smith",
-    date: "2022-02-03",
-    email: "bobsmith@example.com",
-    course: "Electrical Engineering",
-  },
-];
-
-type AdminData = {
-  key: string;
-  name?: string;
-  dateAdded: string;
-  email: string;
-  course?: string;
-  status: React.ReactNode;
-}[];
-
-const DashboardAdmin = () => (
-  <DashboardLayout
-    userSelectedMenu="/dashboard"
-    userSelectedSider="/dashboard/admins"
-  >
-    <h3 className="opacity-80 mb-3">Dashboard {">"} Admin</h3>
-    <div className="bg-white rounded-md p-5 flex flex-col gap-2">
-      <p className="opacity-60 mb-5">Manage Co-Admins</p>
-      <AddAdmin />
-      <QuerySearch
-        onSearch={(e) => {
-          console.log(e);
-        }}
-      />
-      <AdminTable />
-    </div>
-  </DashboardLayout>
-);
+import { AdminData, UserDetails } from "@/context/types.d";
+import { ColumnsType } from "antd/lib/table";
+import Password from "antd/lib/input/Password";
+import { useForm } from "antd/lib/form/Form";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import { removePending, utils_Delete_Account } from "@/utils/account";
 
 const columns = [
   {
@@ -97,49 +50,70 @@ const columns = [
   },
 ];
 
+const DashboardAdmin = () => {
+  return (
+    <DashboardLayout
+      userSelectedMenu="/dashboard"
+      userSelectedSider="/dashboard/admins"
+    >
+      <h3 className="opacity-80 mb-3">Dashboard {">"} Admin</h3>
+      <div className="bg-white rounded-md p-5 flex flex-col gap-2">
+        <p className="opacity-60 mb-5">Manage Co-Admins</p>
+        <AddAdmin />
+        <QuerySearch
+          onSearch={(e) => {
+            console.log(e);
+          }}
+        />
+        <AdminTable />
+      </div>
+    </DashboardLayout>
+  );
+};
+
 export const AdminTable = ({ noAction }: { noAction?: boolean }) => {
-  const [dataCol, setDataCol] = useState(columns);
-  const [data, setData] = useState<AdminData>([]);
-  const userId = useUserContext().state.userDetails?.uid;
-  useEffect(() => {
-    getAllUsers(userId ?? "")
-      .then(
-        (res: {
-          users: UserDetails[];
-          pendingUsers: { payload: string; _id: string; createdAt: string }[];
-        }) => {
-          const admins: AdminData = res.users.map((item) => ({
-            ...item,
-            name: `${item.firstName} ${item.lastName}`,
-            key: item._id ?? "",
-            status: (
-              <div className="grid bg-lime-500 place-items-center rounded-xl w-[6em] py-1 text-white">
-                admin
-              </div>
-            ),
-            dateAdded: item.dateAdded ?? "",
-          }));
-
-          const pendingAdmins: AdminData = res.pendingUsers.map((item) => ({
-            ...item,
-            email: item.payload,
-            key: item._id,
-            dateAdded: item.createdAt,
-            status: (
-              <div className="grid bg-amber-400 place-items-center rounded-xl w-[6em] py-1 text-white">
-                pending
-              </div>
-            ),
-          }));
-
-          setData([...admins, ...pendingAdmins]);
-        }
-      )
-      .catch((res) => {
-        message.error((res as Error).message);
-      });
-  }, []);
-
+  const [dataCol, setDataCol] = useState<ColumnsType<AdminData>>([
+    {
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "Date Added",
+      dataIndex: "dateAdded",
+      key: "dateAdded",
+    },
+    {
+      title: "Email",
+      dataIndex: "email",
+      key: "email",
+    },
+    {
+      title: "Course",
+      dataIndex: "course",
+      key: "course",
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      render: (value) => (
+        <div
+          className={`grid ${
+            value === `pending` ? `bg-yellow-500` : `bg-lime-500`
+          } place-items-center rounded-xl w-[6em] py-1 text-white`}
+        >
+          {value}
+        </div>
+      ),
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (_, record) => <RemoveAdmin record={record} />,
+    },
+  ]);
+  const data = useUserContext().state.listOfAdmins;
   useEffect(() => {
     if (noAction) {
       const oldDataCol = [...dataCol];
@@ -149,6 +123,83 @@ export const AdminTable = ({ noAction }: { noAction?: boolean }) => {
   }, [noAction, columns]);
 
   return <Table columns={dataCol} dataSource={data} scroll={{ x: 50 }} />;
+};
+
+const RemoveAdmin = ({ record }: { record: AdminData }) => {
+  const [form] = useForm();
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const userCtxState = useUserContext();
+  const userEmail = userCtxState.state.userDetails?.email;
+  const updateContext = userCtxState.setTrigger;
+
+  const handleFinish = async () => {
+    try {
+      setLoading(true);
+      await form.validateFields().catch(() => {
+        throw new Error("Please fillup password");
+      });
+      const password = form.getFieldValue("password");
+      const email = userEmail;
+      await signInWithEmailAndPassword(auth, email ?? "", password);
+      if (record.status === "admin") {
+        await utils_Delete_Account(record.key);
+      } else if (record.status === "pending") {
+        await removePending(record.key);
+      }
+      updateContext();
+      setOpen(false);
+    } catch (e) {
+      console.error(e);
+      message.error((e as Error).message);
+    } finally {
+      form.resetFields();
+      setLoading(false);
+    }
+  };
+
+  const handleClick = () => {
+    setOpen(true);
+  };
+  return (
+    <>
+      <PriButton onClick={handleClick} className="bg-[red] hover:bg-[red]/80">
+        Remove Access
+      </PriButton>
+      <Modal
+        okButtonProps={{
+          className: "bg-red-600",
+          onClick: handleFinish,
+          loading: loading,
+        }}
+        onCancel={() => setOpen(false)}
+        okText={"Confirm"}
+        title="Warning"
+        open={open}
+        destroyOnClose
+      >
+        <Form form={form}>
+          <div className="opacity-80">
+            You are about to remove someone's admin access
+          </div>
+          <ul className="list-disc list-inside">
+            <li>{record.email}</li>
+          </ul>
+          <Form.Item
+            rules={[{ required: true, message: "Please input your Username!" }]}
+            required
+            name={"password"}
+          >
+            <Password
+              className="mt-5"
+              onChange={(e) => {}}
+              placeholder="type your password"
+            />
+          </Form.Item>
+        </Form>
+      </Modal>
+    </>
+  );
 };
 
 export default DashboardAdmin;

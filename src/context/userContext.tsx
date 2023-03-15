@@ -2,10 +2,12 @@ import { auth, signUp } from "@/lib/firebase";
 import {
   addThesis,
   addUserAccount,
+  getAllUsers,
   getUserDetails,
   updateUser,
   utils_Delete_Account,
 } from "@/utils/account";
+import { message } from "antd";
 import {
   EmailAuthProvider,
   onAuthStateChanged,
@@ -22,6 +24,7 @@ import {
   useState,
 } from "react";
 import {
+  AdminData,
   ThesisItems,
   UserAction,
   UserDetails,
@@ -31,12 +34,14 @@ import {
 
 const userStateInit: UserState = {
   userDetails: undefined,
+  listOfAdmins: [],
 };
 
 const userValueInit: UserValue = {
   state: userStateInit,
   dispatch: () => {},
   saveUploadThesis: async () => {},
+  setTrigger: () => {},
 };
 
 const UserContext = createContext<UserValue>(userValueInit);
@@ -44,7 +49,12 @@ const UserContext = createContext<UserValue>(userValueInit);
 const userReducer = (state: UserState, action: UserAction): UserState => {
   switch (action.type) {
     case "on-signin": {
-      return { ...state, userDetails: action.payload };
+      const newState = { ...state };
+      newState["userDetails"] =
+        action.payload.userDetails ?? newState["userDetails"];
+      newState["listOfAdmins"] =
+        action.payload.allUsers ?? newState["listOfAdmins"];
+      return newState;
     }
     case "on-signup": {
       return { ...state, userDetails: action.payload };
@@ -64,18 +74,54 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
           .then((res) => {
             if (typeof res === "object" && res !== null) {
               res.profilePic = auth.currentUser?.photoURL ?? undefined;
-              dispatch({ type: "on-signin", payload: res });
+              dispatch({ type: "on-signin", payload: { userDetails: res } });
+              fetchAllAdmins(res.uid ?? "");
             }
           })
           .catch((e) => {
             console.error(e);
           });
       } else {
-        dispatch({ type: "on-signin", payload: undefined });
+        dispatch({
+          type: "on-signin",
+          payload: { userDetails: null, allUsers: null },
+        });
       }
     });
     return unsubscribe;
   }, [triggerUpdate]);
+
+  const fetchAllAdmins = (uid: string) => {
+    getAllUsers(uid)
+      .then(
+        (res: {
+          users: UserDetails[];
+          pendingUsers: { payload: string; _id: string; createdAt: string }[];
+        }) => {
+          const admins: AdminData[] = res.users.map((item) => ({
+            ...item,
+            name: `${item.firstName} ${item.lastName}`,
+            key: item._id ?? "",
+            status: "admin",
+            dateAdded: item.dateAdded ?? "",
+          }));
+
+          const pendingAdmins: AdminData[] = res.pendingUsers.map((item) => ({
+            ...item,
+            email: item.payload,
+            key: item._id,
+            dateAdded: item.createdAt,
+            status: "pending",
+          }));
+
+          const allAdmins: AdminData[] = [...admins, ...pendingAdmins];
+          dispatch({ type: "on-signin", payload: { allUsers: allAdmins } });
+        }
+      )
+      .catch((res) => {
+        message.error((res as Error).message);
+      });
+  };
 
   const userSignUp = async (userDetails: UserDetails) => {
     const uid = await signUp(userDetails);
@@ -86,7 +132,7 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
 
   const userUpdateInfo = async (userDetails: UserDetails) => {
     await updateUser(userDetails);
-    dispatch({ type: "on-signin", payload: userDetails });
+    dispatch({ type: "on-signin", payload: { userDetails: userDetails } });
   };
 
   const changePass = async (currpass: string, newpass: string) => {
@@ -103,7 +149,7 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
       photoURL: userDetails.profilePic,
     });
     await auth.updateCurrentUser(auth.currentUser);
-    dispatch({ type: "on-signin", payload: userDetails });
+    dispatch({ type: "on-signin", payload: { userDetails: userDetails } });
   };
 
   const deleteAccount = async (currpass: string) => {
@@ -114,7 +160,7 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
     try {
       await reauthenticateWithCredential(auth.currentUser!, cred);
       await auth.currentUser?.delete();
-      await utils_Delete_Account(state.userDetails!);
+      await utils_Delete_Account(state.userDetails?._id);
     } catch (e) {
       throw new Error(e as string);
     }
@@ -135,6 +181,9 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
         updateProfileUrl,
         deleteAccount,
         saveUploadThesis,
+        setTrigger() {
+          setTriggerUpdate(!triggerUpdate);
+        },
       }}
     >
       {children}

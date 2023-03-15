@@ -94,6 +94,7 @@ export const AdminMenu = ({
 
 export const AddAdmin = () => {
   const [form] = useForm();
+  const updateData = useUserContext().setTrigger;
   const onFinish = async ({ email }: any) => {
     try {
       const id: string = (await addPendingInvite(email)) as any;
@@ -102,6 +103,7 @@ export const AddAdmin = () => {
         handleCodeInApp: true,
       };
       await sendSignInLinkToEmail(auth, email, actionCodeSettings);
+      updateData();
       message.success("Invite Sent");
       form.resetFields();
     } catch (e) {

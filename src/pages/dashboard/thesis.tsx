@@ -127,7 +127,7 @@ const DashboardThesis = () => {
           <QuerySearch onSearch={() => {}} />
           <Table
             className="min-w-[40em]"
-            columns={tableColumn}
+            // columns={tableColumn}
             dataSource={tableData}
           />
         </div>

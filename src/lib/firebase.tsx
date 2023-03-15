@@ -31,8 +31,8 @@ const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const firebaseStorage = getStorage(app);
 
-// console.log("emulator connected");
-// connectAuthEmulator(auth, "http://localhost:9099");
+console.log("emulator connected");
+connectAuthEmulator(auth, "http://localhost:9099");
 
 export const signIn = async (email: string, password: string) => {
   await signInWithEmailAndPassword(auth, email, password);

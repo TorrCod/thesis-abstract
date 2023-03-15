@@ -32,11 +32,11 @@ export const updateUser = async (payload: UserDetails) => {
 export const findUser = (_id: string, arr: UserDetails[]) =>
   arr.filter((item) => item.uid === _id);
 
-export const utils_Delete_Account = async (userDetails: UserDetails) => {
+export const utils_Delete_Account = async (_id: string) => {
   const mongoQuery: QueryPost = {
-    data: userDetails,
+    data: _id,
     mongoDetails: { collectionName: "user", databaseName: "accounts" },
-    query: { uid: userDetails.uid },
+    query: { _id: _id },
   };
   await axios.post("/api/remove-item-db", mongoQuery);
 };

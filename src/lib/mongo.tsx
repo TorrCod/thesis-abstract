@@ -123,24 +123,3 @@ export const addDataWithExpiration = async (
     throw new Error(e as string).message;
   }
 };
-
-export const watchDatabase = (
-  dbName: DatabaseName,
-  colName: CollectionName
-) => {
-  let client: MongoClient;
-  return {
-    subscribe: (callback: (data: any) => void) => {
-      connectToDatabase().then((dbClient) => {
-        client = dbClient;
-        const database = client.db(dbName);
-        const collection = database.collection(colName);
-        const changeStream = collection.watch();
-        changeStream.on("change", (change) => {
-          callback(change);
-        });
-      });
-      return client.close;
-    },
-  };
-};

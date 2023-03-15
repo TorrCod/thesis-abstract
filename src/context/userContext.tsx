@@ -103,7 +103,7 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
             name: `${item.firstName} ${item.lastName}`,
             key: item._id ?? "",
             status: "admin",
-            dateAdded: item.dateAdded ?? "",
+            dateAdded: new Date(item.dateAdded ?? "").toLocaleString(),
           }));
 
           const pendingAdmins: AdminData[] = res.pendingUsers.map((item) => ({

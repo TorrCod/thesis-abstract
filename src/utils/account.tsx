@@ -67,3 +67,15 @@ export const removePending = async (id: string) => {
   };
   await axios.post("/api/remove-item-db", mongoQuery);
 };
+
+export const getAllUsers = async (uid: string) => {
+  try {
+    const allUsers = await (
+      await axios.get("/api/get-all-user", { headers: { uid: uid } })
+    ).data;
+    return allUsers;
+  } catch (e) {
+    console.error(e);
+    throw new Error("failed to load data");
+  }
+};

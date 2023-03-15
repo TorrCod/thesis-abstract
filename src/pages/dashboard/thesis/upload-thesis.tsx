@@ -59,7 +59,7 @@ const UploadThesis = () => {
   const [form] = Form.useForm();
   const onFinish = async (values: FormValues) => {
     try {
-      const dateNow = new Date().toLocaleString();
+      const dateNow = new Date();
       const payload: ThesisItems = {
         abstract: values.abstract,
         course: values.course as any,

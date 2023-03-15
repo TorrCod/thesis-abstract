@@ -25,7 +25,7 @@ export const getData = async (
     const client = await connectToDatabase();
     const database = client.db(dbName);
     const collection = database.collection(colName);
-    const res = await collection.find(option?.option).toArray();
+    const res = await collection.find(option ?? {}).toArray();
     client.close();
     return res;
   } catch (e) {

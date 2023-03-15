@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Table } from "antd";
+import { message, Table } from "antd";
 import DashboardLayout from "@/components/dashboardLayout";
 import QuerySearch from "@/components/QuerySearch";
 import { PriButton } from "@/components/button";
 import { AddAdmin } from "@/components/admin";
+import { getAllUsers } from "@/utils/account";
+import useUserContext from "@/context/userContext";
+import { UserDetails } from "@/context/types.d";
 
 const data = [
   {
@@ -29,6 +32,15 @@ const data = [
   },
 ];
 
+type AdminData = {
+  key: string;
+  name?: string;
+  dateAdded: string;
+  email: string;
+  course?: string;
+  status: React.ReactNode;
+}[];
+
 const DashboardAdmin = () => (
   <DashboardLayout
     userSelectedMenu="/dashboard"
@@ -48,46 +60,93 @@ const DashboardAdmin = () => (
   </DashboardLayout>
 );
 
+const columns = [
+  {
+    title: "Name",
+    dataIndex: "name",
+    key: "name",
+  },
+  {
+    title: "Date Added",
+    dataIndex: "dateAdded",
+    key: "dateAdded",
+  },
+  {
+    title: "Email",
+    dataIndex: "email",
+    key: "email",
+  },
+  {
+    title: "Course",
+    dataIndex: "course",
+    key: "course",
+  },
+  {
+    title: "Status",
+    dataIndex: "status",
+    key: "status",
+  },
+  {
+    title: "Action",
+    key: "action",
+    render: () => (
+      <PriButton className="bg-[red] hover:bg-[red]/80">
+        Remove Access
+      </PriButton>
+    ),
+  },
+];
+
 export const AdminTable = ({ noAction }: { noAction?: boolean }) => {
-  const columns = [
-    {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-    },
-    {
-      title: "Date",
-      dataIndex: "date",
-      key: "date",
-    },
-    {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
-    },
-    {
-      title: "Course",
-      dataIndex: "course",
-      key: "course",
-    },
-    {
-      title: "Action",
-      key: "action",
-      render: () => (
-        <PriButton className="bg-[red] hover:bg-[red]/80">
-          Remove Access
-        </PriButton>
-      ),
-    },
-  ];
   const [dataCol, setDataCol] = useState(columns);
+  const [data, setData] = useState<AdminData>([]);
+  const userId = useUserContext().state.userDetails?.uid;
+  useEffect(() => {
+    getAllUsers(userId ?? "")
+      .then(
+        (res: {
+          users: UserDetails[];
+          pendingUsers: { payload: string; _id: string; createdAt: string }[];
+        }) => {
+          const admins: AdminData = res.users.map((item) => ({
+            ...item,
+            name: `${item.firstName} ${item.lastName}`,
+            key: item._id ?? "",
+            status: (
+              <div className="grid bg-lime-500 place-items-center rounded-xl max-w-[6em] py-1 text-white">
+                admin
+              </div>
+            ),
+            dateAdded: item.dateAdded ?? "",
+          }));
+
+          const pendingAdmins: AdminData = res.pendingUsers.map((item) => ({
+            ...item,
+            email: item.payload,
+            key: item._id,
+            dateAdded: new Date(item.createdAt).toLocaleString(),
+            status: (
+              <div className="grid bg-amber-400 place-items-center rounded-xl max-w-[6em] py-1 text-white">
+                pending
+              </div>
+            ),
+          }));
+
+          setData([...admins, ...pendingAdmins]);
+        }
+      )
+      .catch((res) => {
+        message.error((res as Error).message);
+      });
+  }, []);
+
   useEffect(() => {
     if (noAction) {
       const oldDataCol = [...dataCol];
-      oldDataCol.pop();
-      setDataCol(oldDataCol);
+      const newDataCol = oldDataCol.filter((item) => item.key !== "action");
+      setDataCol(newDataCol);
     }
-  }, [noAction]);
+  }, [noAction, columns]);
 
   return <Table columns={dataCol} dataSource={data} scroll={{ x: 50 }} />;
 };

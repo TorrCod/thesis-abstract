@@ -54,6 +54,8 @@ const HandleInviteLink = (props: {
   data: { payload: string; id: string; _id: any };
   hasError: boolean;
 }) => {
+  const [formSignUp] = Form.useForm();
+  const userCtx = useUserContext();
   const router = useRouter();
   if (typeof window !== "undefined" && props.hasError) {
     router.push("/link-expired");
@@ -62,8 +64,6 @@ const HandleInviteLink = (props: {
   if (router.isFallback) {
     return <LoadingGlobal loading />;
   }
-  const [formSignUp] = Form.useForm();
-  const userCtx = useUserContext();
   const handleSignUp = async () => {
     try {
       await formSignUp.validateFields();

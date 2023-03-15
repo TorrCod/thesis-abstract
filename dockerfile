@@ -41,9 +41,8 @@ COPY . .
 WORKDIR /app/node_modules/pdf-extract
 
 RUN mkdir -p /usr/share/tesseract-ocr/tessdata/configs && \
-    cp ./share/eng.traineddata /usr/share/tesseract-ocr/tessdata/ && \
-    cp ./share/configs/alphanumeric /usr/share/tesseract-ocr/tessdata/configs/
-
+    cp ./share/eng.traineddata /usr/share/tesseract-ocr/tessdata/eng.traineddata && \
+    cp ./share/configs/alphanumeric /usr/share/tesseract-ocr/tessdata/configs/alphanumeric
 
 WORKDIR /app
 

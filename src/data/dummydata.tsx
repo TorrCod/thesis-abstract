@@ -10,7 +10,7 @@ const dummyData: ThesisItems[] = [
     abstract:
       "This thesis proposes a novel resource allocation strategy in cloud computing...",
     date: "2022-05-20",
-    dateAdded: "2022-05-22",
+    dateAdded: new Date("2022-05-22"),
   },
   {
     id: "2",
@@ -20,7 +20,7 @@ const dummyData: ThesisItems[] = [
     abstract:
       "This thesis presents the design and fabrication process of a miniature wind turbine...",
     date: "2021-12-15",
-    dateAdded: "2021-12-18",
+    dateAdded: new Date("2021-12-18"),
   },
   {
     id: "3",
@@ -30,7 +30,7 @@ const dummyData: ThesisItems[] = [
     abstract:
       "This thesis proposes an efficient power management system for smart grids...",
     date: "2023-02-28",
-    dateAdded: "2023-03-02",
+    dateAdded: new Date("2023-03-02"),
   },
   {
     id: "4",
@@ -40,7 +40,7 @@ const dummyData: ThesisItems[] = [
     abstract:
       "This thesis evaluates the performance of different concrete mixtures in various conditions...",
     date: "2022-08-10",
-    dateAdded: "2022-08-12",
+    dateAdded: new Date("2022-08-12"),
   },
   {
     id: "5",
@@ -50,7 +50,7 @@ const dummyData: ThesisItems[] = [
     abstract:
       "This thesis presents the design and implementation process of a home automation system...",
     date: "2021-06-05",
-    dateAdded: "2021-06-07",
+    dateAdded: new Date("2021-06-07"),
   },
 ];
 

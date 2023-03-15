@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Form, Input, message, Modal, Popconfirm, Table } from "antd";
 import DashboardLayout from "@/components/dashboardLayout";
 import QuerySearch from "@/components/QuerySearch";
@@ -114,13 +114,14 @@ export const AdminTable = ({ noAction }: { noAction?: boolean }) => {
     },
   ]);
   const data = useUserContext().state.listOfAdmins;
+  const dataColRef = useRef(dataCol);
   useEffect(() => {
     if (noAction) {
-      const oldDataCol = [...dataCol];
+      const oldDataCol = [...dataColRef.current];
       const newDataCol = oldDataCol.filter((item) => item.key !== "action");
       setDataCol(newDataCol);
     }
-  }, [noAction, columns]);
+  }, [noAction]);
 
   return <Table columns={dataCol} dataSource={data} scroll={{ x: 50 }} />;
 };
@@ -180,7 +181,7 @@ const RemoveAdmin = ({ record }: { record: AdminData }) => {
       >
         <Form form={form}>
           <div className="opacity-80">
-            You are about to remove someone's admin access
+            You are about to remove someone&apos;s admin access
           </div>
           <ul className="list-disc list-inside">
             <li>{record.email}</li>

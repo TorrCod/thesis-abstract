@@ -114,7 +114,8 @@ export const addDataWithExpiration = async (
     );
     const res = await collection.insertOne({
       payload,
-      createdAt: new Date().toLocaleString(),
+      createdAt: new Date(),
+      expireAfterSeconds: 3600,
     });
     client.close();
     return res;

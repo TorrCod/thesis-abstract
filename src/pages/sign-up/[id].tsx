@@ -75,7 +75,7 @@ const HandleInviteLink = (props: {
         firstName: payload["firstname"],
         lastName: payload["lastname"],
         password: payload["confirm-password"],
-        dateAdded: new Date().toLocaleDateString(),
+        dateAdded: new Date().toLocaleString(),
         profilePic: undefined,
         approove: undefined,
       };

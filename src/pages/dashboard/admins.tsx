@@ -113,7 +113,7 @@ export const AdminTable = ({ noAction }: { noAction?: boolean }) => {
             name: `${item.firstName} ${item.lastName}`,
             key: item._id ?? "",
             status: (
-              <div className="grid bg-lime-500 place-items-center rounded-xl max-w-[6em] py-1 text-white">
+              <div className="grid bg-lime-500 place-items-center rounded-xl w-[6em] py-1 text-white">
                 admin
               </div>
             ),
@@ -126,7 +126,7 @@ export const AdminTable = ({ noAction }: { noAction?: boolean }) => {
             key: item._id,
             dateAdded: item.createdAt,
             status: (
-              <div className="grid bg-amber-400 place-items-center rounded-xl max-w-[6em] py-1 text-white">
+              <div className="grid bg-amber-400 place-items-center rounded-xl w-[6em] py-1 text-white">
                 pending
               </div>
             ),

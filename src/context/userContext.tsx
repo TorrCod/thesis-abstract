@@ -59,6 +59,9 @@ const userReducer = (state: UserState, action: UserAction): UserState => {
     case "on-signup": {
       return { ...state, userDetails: action.payload };
     }
+    case "on-logout": {
+      return { ...state, userDetails: undefined, listOfAdmins: [] };
+    }
   }
 };
 
@@ -83,12 +86,11 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
           });
       } else {
         dispatch({
-          type: "on-signin",
-          payload: { userDetails: null, allUsers: null },
+          type: "on-logout",
         });
       }
     });
-    return unsubscribe;
+    return () => unsubscribe();
   }, [triggerUpdate]);
 
   const fetchAllAdmins = (uid: string) => {

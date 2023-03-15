@@ -31,8 +31,8 @@ const SignInSignUp = () => {
       await formSignIn.validateFields();
       const email = formSignIn.getFieldValue("sign-in-email");
       const password = formSignIn.getFieldValue("sign-in-password");
-      await signIn(email, password);
       await router.push("/dashboard/overview");
+      await signIn(email, password);
     } catch (error) {
       const errorMessage: string = (error as any).message;
       if (errorMessage) {
@@ -40,9 +40,9 @@ const SignInSignUp = () => {
       }
       console.error(error);
     } finally {
-      () => setLoading(false);
-      setOpen(false);
+      setLoading(false);
       formSignIn.resetFields();
+      setOpen(false);
     }
   };
 
@@ -63,6 +63,7 @@ const SignInSignUp = () => {
         Sign In
       </PriButton>
       <Modal
+        destroyOnClose
         className="z-40"
         centered
         bodyStyle={{ padding: "2em" }}

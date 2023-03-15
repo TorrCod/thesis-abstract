@@ -96,4 +96,7 @@ export type UserAction =
         allUsers?: AdminData[] | null;
       };
     }
-  | { type: "on-signup"; payload: UserDetails };
+  | { type: "on-signup"; payload: UserDetails }
+  | {
+      type: "on-logout";
+    };

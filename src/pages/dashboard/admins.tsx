@@ -13,43 +13,6 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { removePending, utils_Delete_Account } from "@/utils/account";
 
-const columns = [
-  {
-    title: "Name",
-    dataIndex: "name",
-    key: "name",
-  },
-  {
-    title: "Date Added",
-    dataIndex: "dateAdded",
-    key: "dateAdded",
-  },
-  {
-    title: "Email",
-    dataIndex: "email",
-    key: "email",
-  },
-  {
-    title: "Course",
-    dataIndex: "course",
-    key: "course",
-  },
-  {
-    title: "Status",
-    dataIndex: "status",
-    key: "status",
-  },
-  {
-    title: "Action",
-    key: "action",
-    render: () => (
-      <PriButton className="bg-[red] hover:bg-[red]/80">
-        Remove Access
-      </PriButton>
-    ),
-  },
-];
-
 const DashboardAdmin = () => {
   return (
     <DashboardLayout

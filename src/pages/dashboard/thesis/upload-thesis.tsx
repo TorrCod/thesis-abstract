@@ -24,6 +24,7 @@ import LoadingIcon from "@/components/loadingIcon";
 import { GeneratedTextRes } from "@/lib/types";
 import { useForm } from "antd/lib/form/Form";
 import { ThesisItems } from "@/context/types.d";
+import moment from "moment";
 
 interface FormValues {
   title: string;
@@ -64,11 +65,12 @@ const UploadThesis = () => {
         abstract: values.abstract,
         course: values.course as any,
         dateAdded: dateNow,
-        date: values.date,
+        date: moment(values.date).format("YYYY-MM-DD"),
         title: values.title,
         id: "",
         researchers: researchers,
       };
+      console.log(payload);
       await userCtx.saveUploadThesis(payload);
       message.success("Success");
     } catch (e) {
@@ -97,7 +99,8 @@ const UploadThesis = () => {
           .json()
           .then((data: any) => {
             let extractedText = getPdfText(data);
-            extractedText = extractedText.replace(/\n/g, " ");
+            extractedText = extractedText.replace(/\n\f|\n/g, " ");
+            console.log(JSON.stringify(extractedText));
             form.setFieldsValue({ abstract: extractedText });
           })
           .finally(() => setLoadingText(false));

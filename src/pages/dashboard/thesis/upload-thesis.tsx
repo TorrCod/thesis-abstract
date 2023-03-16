@@ -42,16 +42,6 @@ interface FormValues {
   abstract: string;
 }
 
-interface FieldData {
-  name: string[];
-  value?: any;
-}
-
-interface FieldData {
-  name: string[];
-  value?: any;
-}
-
 const courseOptions = [
   { label: "Computer Engineer", value: "computer-engineer" },
   { label: "Mechanical Engineer", value: "mechanical-engineer" },

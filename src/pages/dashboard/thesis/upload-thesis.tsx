@@ -7,12 +7,18 @@ import {
   Input,
   message,
   Select,
+  Tooltip,
   Upload,
   UploadProps,
 } from "antd";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import { AiFillFileImage, AiOutlineUpload } from "react-icons/ai";
+import {
+  AiFillFileImage,
+  AiOutlineUpload,
+  AiOutlineUser,
+  AiOutlineUserAdd,
+} from "react-icons/ai";
 import { BiMinus, BiPlus } from "react-icons/bi";
 import { FaAddressCard } from "react-icons/fa";
 import { GrAdd } from "react-icons/gr";
@@ -25,6 +31,7 @@ import { GeneratedTextRes } from "@/lib/types";
 import { useForm } from "antd/lib/form/Form";
 import { ThesisItems } from "@/context/types.d";
 import moment from "moment";
+import { MdSubtitles } from "react-icons/md";
 
 interface FormValues {
   title: string;
@@ -70,7 +77,6 @@ const UploadThesis = () => {
         id: "",
         researchers: researchers,
       };
-      console.log(payload);
       await userCtx.saveUploadThesis(payload);
       message.success("Success");
     } catch (e) {
@@ -100,14 +106,14 @@ const UploadThesis = () => {
           .then((data: any) => {
             let extractedText = getPdfText(data);
             extractedText = extractedText.replace(/\n\f|\n/g, " ");
-            console.log(JSON.stringify(extractedText));
-            form.setFieldsValue({ abstract: extractedText });
+            form.setFieldsValue({
+              abstract: form.getFieldValue("abstract") + extractedText,
+            });
           })
           .finally(() => setLoadingText(false));
       }
     },
     beforeUpload() {
-      // set the state to loading
       setLoadingText(true);
     },
     customRequest(options) {
@@ -145,7 +151,7 @@ const UploadThesis = () => {
         <Link href="/dashboard/thesis">Thesis</Link> {">"} Upload
       </div>
       <Form
-        className="bg-white rounded-md shadow-md p-5 mb-20 relative pb-20 md:grid md:grid-cols-2 gap-x-5 max-w-5xl m-auto"
+        className="bg-white rounded-md shadow-md p-5 md:p-10 mb-20 relative pb-20 md:grid md:grid-cols-2 gap-x-20 max-w-5xl m-auto"
         onFinish={onFinish}
         layout="vertical"
         form={form}
@@ -153,7 +159,7 @@ const UploadThesis = () => {
       >
         <div>
           <Form.Item name="title" label="Title" rules={[{ required: true }]}>
-            <Input />
+            <Input suffix={<MdSubtitles />} />
           </Form.Item>
           <Form.Item name="date" label="Date" rules={[{ required: true }]}>
             <DatePicker />
@@ -174,6 +180,7 @@ const UploadThesis = () => {
               value={researcher}
               onChange={(e) => handleResearcherChange(index, e.target.value)}
               style={{ marginBottom: 8 }}
+              suffix={<AiOutlineUser />}
             />
           ))}
           <PriButton
@@ -181,44 +188,43 @@ const UploadThesis = () => {
             onClick={handleAddResearcher}
             shape="circle"
           >
-            <BiPlus />
+            <AiOutlineUserAdd />
           </PriButton>
         </Form.Item>
-        <Form.Item
-          className={`col-span-2 ${
-            form.getFieldValue("abstract") ? "" : "hidden"
-          }`}
-          name="abstract"
-          label="Abstract"
-          rules={[{ required: true }]}
-        >
-          <Input.TextArea className="text-justify" autoSize={{ minRows: 10 }} />
-        </Form.Item>
-        <div
-          className={`border-[1px] h-96 w-full border-black/20 col-span-2 grid place-items-center ${
-            loadingText && "bg-black/10"
-          } ${form.getFieldValue("abstract") && "hidden"}`}
-        >
-          <LoadingIcon className={loadingText ? "" : "hidden"} />
-          <Upload {...uploadProps}>
-            <div
-              className={`grid place-items-center ${loadingText && "hidden"}`}
-            >
-              {!loadingText && (
-                <>
-                  <AiFillFileImage size={"3em"} />
-                  <p className="text-center">
-                    Upload a thesis abstract in a pdf or image format
-                  </p>
-                </>
-              )}
+        <div className={`col-span-2 relative`}>
+          <Upload
+            disabled={loadingText}
+            className="border-[1px] border-slate-300 shadow-sm rounded-md grid max-w-[15em] m-auto p-5 opacity-80 relative hover:border-[#4096ff] transition ease-in-out duration-200"
+            {...uploadProps}
+          >
+            <div className="absolute w-fit m-auto right-0 left-0">
+              <LoadingIcon className={loadingText ? "" : "hidden"} />
             </div>
+            <AiFillFileImage className="m-auto" size={"3em"} />
+            <p className="text-center">
+              Upload a thesis abstract in a pdf or image format
+            </p>
           </Upload>
+          <Tooltip
+            placement="bottom"
+            title="Upload a file that contains abstract's body only"
+          >
+            <p className="flex items-center gap-1 mx-auto mt-1 w-fit">
+              Help
+              <FiHelpCircle />
+            </p>
+          </Tooltip>
+          <Form.Item
+            name="abstract"
+            label="Abstract"
+            rules={[{ required: true }]}
+          >
+            <Input.TextArea
+              className="text-justify"
+              autoSize={{ minRows: 10 }}
+            />
+          </Form.Item>
         </div>
-        <p className="flex items-center gap-1">
-          Help
-          <FiHelpCircle />
-        </p>
         <Form.Item className="absolute bottom-0 right-5">
           <PriButton
             type="primary"

@@ -99,7 +99,7 @@ export const AddAdmin = () => {
     try {
       const id: string = (await addPendingInvite(email)) as any;
       const actionCodeSettings = {
-        url: `http://localhost:3000/sign-up/${id}`,
+        url: `${process.env.PUBLIC_DOMAIN}/sign-up/${id}`,
         handleCodeInApp: true,
       };
       await sendSignInLinkToEmail(auth, email, actionCodeSettings);

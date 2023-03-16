@@ -32,6 +32,7 @@ import { useForm } from "antd/lib/form/Form";
 import { ThesisItems } from "@/context/types.d";
 import moment from "moment";
 import { MdSubtitles } from "react-icons/md";
+import { useRouter } from "next/router";
 
 interface FormValues {
   title: string;
@@ -65,6 +66,8 @@ const UploadThesis = () => {
   const userCtx = useUserContext();
   const uid = userCtx.state.userDetails?.uid;
   const [form] = Form.useForm();
+  const router = useRouter();
+
   const onFinish = async (values: FormValues) => {
     try {
       const dateNow = new Date();
@@ -79,6 +82,7 @@ const UploadThesis = () => {
       };
       await userCtx.saveUploadThesis(payload);
       message.success("Success");
+      router.push("/dashboard/thesis/success");
     } catch (e) {
       console.error(e);
       message.error("Upload Failed");
@@ -107,7 +111,7 @@ const UploadThesis = () => {
             let extractedText = getPdfText(data);
             extractedText = extractedText.replace(/\n\f|\n/g, " ");
             form.setFieldsValue({
-              abstract: form.getFieldValue("abstract") + extractedText,
+              abstract: form.getFieldValue("abstract") ?? "" + extractedText,
             });
           })
           .finally(() => setLoadingText(false));

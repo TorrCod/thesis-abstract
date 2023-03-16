@@ -7,8 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "db": "docker-compose up -d && docker exec -it mongodb mkdir -p /database/ && docker cp ./docker-mongo/default-data mongodb:/database/default-data && docker-compose exec mongodb mongorestore --drop /database/default-data",
-    "updatedb": "if [ -d './docker-mongo/default-data' ]; then rm -r ./docker-mongo/default-data; fi; docker-compose exec mongodb bash -c 'if [ -d '/database/default-data' ]; then rm -r /database/default-data; fi; mongodump --out=/database/default-data ' && docker cp mongodb:/database/default-data ./docker-mongo/default-data",
+    "docker-build": "if [ -d './docker-mongo/cache' ]; then sudo rm -r ./docker-mongo/cache; fi; docker-compose build && npm run docker-startdb",
+    "docker-importdb": "docker exec -it mongodb mkdir -p /database/ && docker cp ./docker-mongo/default-data mongodb:/database/default-data && docker-compose exec mongodb mongorestore --drop /database/default-data",
+    "docker-startdb": "docker-compose up -d && docker exec -it mongodb mkdir -p /database/ && docker cp ./docker-mongo/default-data mongodb:/database/default-data && docker-compose exec mongodb mongorestore --drop /database/default-data",
+    "docker-updatedb": "if [ -d './docker-mongo/default-data' ]; then rm -r ./docker-mongo/default-data; fi; docker-compose exec mongodb bash -c 'if [ -d '/database/default-data' ]; then rm -r /database/default-data; fi; mongodump --out=/database/default-data ' && docker cp mongodb:/database/default-data ./docker-mongo/default-data",
     "emulators": "firebase emulators:start --import=./test-data --export-on-exit"
   },
   "dependencies": {
@@ -25,6 +27,7 @@
     "firebase": "^9.17.1",
     "formidable": "^2.1.1",
     "install": "^0.13.0",
+    "moment": "^2.29.4",
     "mongodb": "^5.1.0",
     "next": "13.1.6",
     "node-tesseract-ocr": "^2.2.1",

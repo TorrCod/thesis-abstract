@@ -26,9 +26,10 @@
 # CMD [ "npm","run","start" ]
 
 
-FROM node:18-alpine
+FROM node:18.15-buster-slim
 
-RUN apk add --no-cache libc6-compat build-base g++ cairo-dev jpeg-dev pango-dev musl-dev giflib-dev tesseract-ocr poppler-utils ghostscript
+RUN apt-get update && \
+    apt-get install -y build-essential g++ libcairo2-dev libjpeg-dev libpango1.0-dev libgif-dev tesseract-ocr ghostscript pdftk
 
 WORKDIR /app
 

@@ -17,7 +17,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       form.parse(req, (err, fields, files) => {
         if (err) reject(reject);
         const absoluteFilePath = (files.file as File).filepath; // Get the file object
-        console.log(absoluteFilePath);
         extractFromScannedImage(absoluteFilePath, (err, data) => {
           if (err) reject(reject);
           fields["text"] = data;

@@ -45,3 +45,8 @@ export interface GeneratedTextRes {
       };
     };
   }
+
+  export type OnchangeProps = {
+    onChange: any;
+    close: MongoClient;
+  }

@@ -1,14 +1,18 @@
 import { UserDetails } from "@/context/types.d";
 import { MongoClient, ObjectId } from "mongodb";
 import { useEffect } from "react";
-import { CollectionName, DatabaseName, QueryPost } from "./types";
+import {
+  CollectionName,
+  DatabaseName,
+  OnchangeProps,
+  QueryPost,
+} from "./types";
 
 let CONNECTION = process.env["MONGO_URI"] ?? "mongodb://localhost:27017";
 
 export async function connectToDatabase() {
   try {
     let client = new MongoClient(CONNECTION);
-
     await client.connect();
     return client;
   } catch (e) {
@@ -123,4 +127,20 @@ export const addDataWithExpiration = async (
     console.error(e);
     throw new Error(e as string).message;
   }
+};
+
+export const watchUser = async (
+  onChange: ({ onChange, close }: OnchangeProps) => void
+) => {
+  try {
+    const dbName: DatabaseName = "accounts";
+    const colName: CollectionName = "user";
+    const client = await connectToDatabase();
+    const database = client.db(dbName);
+    const collection = database.collection(colName);
+    const changeStream = collection.watch();
+    changeStream.on("change", (change) => {
+      onChange({ onChange: change, close: client.close });
+    });
+  } catch (e) {}
 };

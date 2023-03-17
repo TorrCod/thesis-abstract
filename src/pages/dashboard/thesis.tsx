@@ -20,45 +20,6 @@ const DashboardThesis = () => {
     { course: "Electronics Engineer", count: 257 },
     { course: "Electrical Engineer", count: 314 },
   ];
-  type DataType = {
-    key: string;
-    title: string;
-    dateAdded: string;
-    course: Course;
-  };
-  const tableColumn: ColumnsType<DataType> = [
-    {
-      title: "Title",
-      dataIndex: "title",
-      key: "title",
-      render: (text, record) => (
-        <Link href={"/thesis/" + record.key}>{text}</Link>
-      ),
-    },
-    {
-      title: "Date Added",
-      dataIndex: "dateAdded",
-      key: "dateAdded",
-    },
-    {
-      title: "Course",
-      dataIndex: "course",
-      key: "course",
-    },
-    {
-      title: "Action",
-      key: "action",
-      render: () => (
-        <Button
-          className="flex justify-center gap-1"
-          icon={<AiFillDelete size={"1.5em"} color="red" />}
-          type="ghost"
-        >
-          Remove
-        </Button>
-      ),
-    },
-  ];
   return (
     <DashboardLayout
       userSelectedMenu="/dashboard"
@@ -125,14 +86,55 @@ const DashboardThesis = () => {
         <div className="mt-5 bg-white grid gap-1 rounded-md p-5 overflow-auto">
           <p className="opacity-60 mb-5">Manage Thesis Abstracts</p>
           <QuerySearch onSearch={() => {}} />
-          <Table
-            className="min-w-[40em]"
-            // columns={tableColumn}
-            dataSource={tableData}
-          />
+          <ThesisTable />
         </div>
       </div>
     </DashboardLayout>
+  );
+};
+
+export const ThesisTable = () => {
+  type DataType = {
+    key: string;
+    title: string;
+    dateAdded: string;
+    course: Course;
+  };
+  const tableColumn: ColumnsType<DataType> = [
+    {
+      title: "Title",
+      dataIndex: "title",
+      key: "title",
+      render: (text, record) => (
+        <Link href={"/thesis/" + record.key}>{text}</Link>
+      ),
+    },
+    {
+      title: "Date Added",
+      dataIndex: "dateAdded",
+      key: "dateAdded",
+    },
+    {
+      title: "Course",
+      dataIndex: "course",
+      key: "course",
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: () => (
+        <Button
+          className="flex justify-center gap-1"
+          icon={<AiFillDelete size={"1.5em"} color="red" />}
+          type="ghost"
+        >
+          Remove
+        </Button>
+      ),
+    },
+  ];
+  return (
+    <Table className="min-w-[40em]" columns={tableColumn} dataSource={[]} />
   );
 };
 

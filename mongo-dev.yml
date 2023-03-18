@@ -1,0 +1,39 @@
+version: "3.9"
+services:
+  mongodb1:
+    image: mongo
+    container_name: mongodb1-dev
+    command: mongod --replSet rs0
+    # volumes:
+    #   - ./docker-mongo/cache:/data/db
+    ports:
+      - "27017:27017"
+    tty: true
+    networks:
+      - mongo-cluster
+
+  mongodb2:
+    image: mongo
+    container_name: mongodb2-dev
+    command: mongod --replSet rs0
+    # volumes:
+    #   - ./docker-mongo/cache:/data/db
+    ports:
+      - "27018:27017"
+    tty: true
+    networks:
+      - mongo-cluster
+
+  mongodb3:
+    image: mongo
+    container_name: mongodb3-dev
+    command: mongod --replSet rs0
+    # volumes:
+    #   - ./docker-mongo/cache:/data/db
+    ports:
+      - "27019:27017"
+    tty: true
+    networks:
+      - mongo-cluster
+networks:
+  mongo-cluster:

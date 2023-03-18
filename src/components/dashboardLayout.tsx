@@ -23,6 +23,9 @@ import { useLocation, useWindowSize } from "react-use";
 import Head from "next/head";
 import useAuth from "@/hook/useAuth";
 import { LoadingGlobal } from "@/context/globalContext";
+import io, { Socket } from "socket.io-client";
+import axios from "axios";
+import { DefaultEventsMap } from "socket.io/dist/typed-events";
 
 type SelectedMenu = "/dashboard" | "/account-setting";
 
@@ -62,14 +65,31 @@ function DashboardLayout({
     (
       document.getElementsByClassName("bg-circle")[0] as HTMLDivElement
     ).style.display = "none";
-    return () => {
-      (
-        document.getElementsByClassName("navbar")[0] as HTMLDivElement
-      ).style.display = "flex";
-      (
-        document.getElementsByClassName("bg-circle")[0] as HTMLDivElement
-      ).style.display = "grid";
+
+    const socketInit = async () => {
+      await axios.get("/api/socket");
+      const socket = io();
+      socket.on("connect", () => {
+        console.log("Connected");
+      });
+
+      socket.on("update-input", (msg) => {
+        console.log(msg);
+      });
+
+      return () => {
+        (
+          document.getElementsByClassName("navbar")[0] as HTMLDivElement
+        ).style.display = "flex";
+        (
+          document.getElementsByClassName("bg-circle")[0] as HTMLDivElement
+        ).style.display = "grid";
+
+        socket.disconnect();
+      };
     };
+
+    socketInit();
   }, []);
 
   const menuItem: MenuProps["items"] = [

@@ -35,8 +35,6 @@ export const getData = async (
 };
 
 export const deleteData = async (queryPost: QueryPost) => {
-  console.log(queryPost);
-
   try {
     const client = await connectToDatabase();
     const database = client.db(queryPost.mongoDetails.databaseName);
@@ -103,7 +101,7 @@ export const updateUser = async (userDetails: UserDetails) => {
 export const addDataWithExpiration = async (
   dbName: DatabaseName,
   colName: CollectionName,
-  payload: any,
+  payload: Record<string, unknown>,
   timer?: number
 ) => {
   try {
@@ -115,9 +113,9 @@ export const addDataWithExpiration = async (
       { expireAfterSeconds: timer ?? 3600 }
     );
     const res = await collection.insertOne({
-      payload,
+      ...payload,
       createdAt: new Date(),
-      expireAfterSeconds: 3600,
+      expireAfterSeconds: timer ?? 3600,
     });
     client.close();
     return res;

@@ -46,25 +46,27 @@ export const getAllThesis = async () => {
   return thesisItems;
 };
 
-export const removeThesisITems = async (_id: string) => {
-  const payload: QueryPost = {
-    data: "",
-    query: { _id: _id },
-    mongoDetails: {
-      collectionName: "thesis-items",
-      databaseName: "thesis-abstract",
-    },
-  };
-  const data = (await axios.delete("/api/remove-item-db", { data: payload }))
-    .data;
+export const removeThesisITems = async (
+  uid: string,
+  thesisItem: ThesisItems
+) => {
+  const data = await (
+    await axios.post("/api/recycled-thesis", thesisItem, {
+      headers: { Authorization: `Bearer ${uid}` },
+    })
+  ).data;
   return data;
 };
 
 export const getDeletedThesis = async (uid: string) => {
-  const thesisItems: ThesisItems[] | null = await (
-    await axios.get("/api/recycled-thesis", {
-      headers: { Authorization: `Bearer ${uid}` },
-    })
-  ).data;
-  return thesisItems;
+  try {
+    const thesisItems: ThesisItems[] = await (
+      await axios.get("/api/recycled-thesis", {
+        headers: { Authorization: `Bearer ${uid}` },
+      })
+    ).data;
+    return thesisItems;
+  } catch (e) {
+    console.error((e as Error).message);
+  }
 };

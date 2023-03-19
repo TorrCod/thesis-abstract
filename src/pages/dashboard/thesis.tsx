@@ -2,7 +2,8 @@ import { PriButton } from "@/components/button";
 import DashboardLayout from "@/components/dashboardLayout";
 import QuerySearch from "@/components/QuerySearch";
 import useGlobalContext from "@/context/globalContext";
-import { Course } from "@/context/types.d";
+import { Course, ThesisItems } from "@/context/types.d";
+import useUserContext from "@/context/userContext";
 import { tableData } from "@/data/dummydata";
 import { removeThesisITems, thesisToDataType } from "@/utils/helper";
 import { Button, Card, Divider, Menu, message, Statistic, Table } from "antd";
@@ -186,9 +187,14 @@ export const ThesisTable = () => {
 };
 
 const RemoveThesis = (props: DataType & { id: string }) => {
+  const thesisItems = useGlobalContext().state.thesisItems;
+  const uid = useUserContext().state.userDetails?.uid;
   const handleClick = async () => {
     try {
-      const itemRemoved = await removeThesisITems(props.id);
+      const thesisItem: ThesisItems = thesisItems.filter(
+        (item) => item.id === props.id
+      )[0];
+      const itemRemoved = await removeThesisITems(uid ?? "", thesisItem);
       console.log(itemRemoved);
       message.success("Removed Success");
     } catch (e) {

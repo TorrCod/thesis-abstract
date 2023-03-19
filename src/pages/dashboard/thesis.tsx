@@ -13,6 +13,7 @@ import { MenuProps } from "rc-menu";
 import React, { useEffect, useState } from "react";
 import { AiFillDelete, AiFillFileAdd } from "react-icons/ai";
 import { BsBookFill } from "react-icons/bs";
+import { MdRestoreFromTrash } from "react-icons/md";
 import { Legend, PolarAngleAxis, PolarGrid, Radar, RadarChart } from "recharts";
 import { ResponsiveContainer } from "recharts";
 
@@ -112,10 +113,10 @@ export const ThesisTable = () => {
   useEffect(() => {
     const thesisItems = state.thesisItems;
     const toTableThesisItems = thesisToDataType(thesisItems);
-    console.log(toTableThesisItems);
     setThesisTableData(toTableThesisItems);
     const recycleItems = state.recyclebin;
     const toTableRecycle = thesisToDataType(recycleItems);
+    console.log(toTableRecycle);
     setRemovedTableData(toTableRecycle);
   }, [state.thesisItems, state.recyclebin]);
 
@@ -160,7 +161,7 @@ export const ThesisTable = () => {
     {
       title: "Expire At",
       key: "expireAt",
-      dataIndex: "expirteAt",
+      dataIndex: "expireAt",
     },
     {
       title: "Action",
@@ -243,10 +244,10 @@ const RestoreThesis = (props: DataType & { id: string }) => {
     <Button
       onClick={handleClick}
       className="flex justify-center gap-1"
-      icon={<AiFillDelete size={"1.5em"} color="red" />}
+      icon={<MdRestoreFromTrash size={"1.5em"} color="green" />}
       type="ghost"
     >
-      Remove
+      Restore
     </Button>
   );
 };

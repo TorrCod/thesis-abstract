@@ -56,7 +56,6 @@ const globalReducer = (
         const itemDate = item.date;
         const searchTitle = action.payload.text.toLowerCase();
         const searchFilterDate = action.payload.filter.date;
-
         return (
           itemTitle.includes(searchTitle) &&
           searchFilterDate.includes(itemDate.slice(0, 4)) &&
@@ -100,7 +99,6 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
   const recycledThesis = (uid: string) => ({
     load: async () => {
       const recycledThesis = await getDeletedThesis(uid);
-      console.log(recycledThesis);
       dispatch({
         type: "load-data",
         payload: {

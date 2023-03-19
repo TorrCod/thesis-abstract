@@ -22,10 +22,24 @@ export function base64toBinaryData(base64String: string, fileName: string) {
   return file;
 }
 
-export const thesisToDataType = (thesisItems: ThesisItems[]) => {
+export const thesisToDataType = (
+  thesisItems: (ThesisItems & {
+    createdAt?: string;
+    expireAfterSeconds?: number;
+  })[]
+) => {
   const newData = thesisItems.map((item) => {
-    const { id } = item;
-    return { ...item, key: id };
+    const { id, expireAfterSeconds, createdAt } = item;
+    const date = new Date(createdAt ?? "0");
+    const secondsToAdd = expireAfterSeconds ?? 0;
+    const millisecondsToAdd = secondsToAdd * 1000;
+    date.setTime(date.getTime() + millisecondsToAdd);
+    const localizedDateString = date.toLocaleString();
+    return {
+      ...item,
+      key: id,
+      expireAt: expireAfterSeconds ? localizedDateString : undefined,
+    };
   });
   return newData;
 };

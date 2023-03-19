@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Dropdown, Layout, Menu } from "antd";
 const { Header, Content, Sider } = Layout;
 import Link from "next/link";
@@ -27,6 +27,7 @@ import io, { Socket } from "socket.io-client";
 import axios from "axios";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
 import useUserContext from "@/context/userContext";
+import useSocket from "@/hook/useSocket";
 
 type SelectedMenu = "/dashboard" | "/account-setting";
 
@@ -41,7 +42,6 @@ function DashboardLayout({
   children,
   userSelectedMenu,
   userSelectedSider,
-  title,
 }: DashboardProps) {
   const isLogin = useAuth();
   const [selectedSider, setSelectedSider] = useState(userSelectedSider);
@@ -50,8 +50,7 @@ function DashboardLayout({
   const { width } = useWindowSize();
   const { pathname } = useLocation();
   const [isScreen, setIsScreen] = useState(false);
-  const { loadUser, state: userState } = useUserContext();
-  const { loadThesisItems, recycledThesis } = useGlobalContext();
+  const {} = useSocket();
 
   useEffect(() => {
     if (width >= 768) {
@@ -68,26 +67,6 @@ function DashboardLayout({
     (
       document.getElementsByClassName("bg-circle")[0] as HTMLDivElement
     ).style.display = "none";
-    // }
-    const socketInit = async () => {
-      await axios.get("/api/socket");
-      const socket = io();
-      socket.on("account-update", (msg) => {
-        loadUser(userState.userDetails?.uid ?? "");
-      });
-      socket.on("thesis-abstract-update", () => {
-        console.log("thesis abstract update");
-        loadThesisItems();
-      });
-      return socket;
-    };
-    let socket: Socket<DefaultEventsMap, DefaultEventsMap> | undefined;
-    if (userState.userDetails) {
-      socketInit().then((my_socket) => {
-        socket = my_socket;
-      });
-    }
-
     return () => {
       (
         document.getElementsByClassName("navbar")[0] as HTMLDivElement
@@ -95,21 +74,8 @@ function DashboardLayout({
       (
         document.getElementsByClassName("bg-circle")[0] as HTMLDivElement
       ).style.display = "grid";
-
-      if (socket?.disconnect) {
-        socket.disconnect();
-      }
     };
-  }, [userState.userDetails, loadUser, loadThesisItems]);
-
-  useEffect(() => {
-    let recycled: any | null = null;
-    if (userState.userDetails?.uid) {
-      recycled = recycledThesis(userState.userDetails?.uid);
-      recycled.load();
-    }
-    return () => recycled?.clear;
-  }, [userState.userDetails]);
+  }, []);
 
   const menuItem: MenuProps["items"] = [
     {

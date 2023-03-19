@@ -64,8 +64,14 @@ export const removeThesisITems = async (
   uid: string,
   thesisItem: ThesisItems
 ) => {
+  // const data = await (
+  //   await axios.post("/api/recycled-thesis", thesisItem, {
+  //     headers: { Authorization: `Bearer ${uid}` },
+  //   })
+  // ).data;
   const data = await (
-    await axios.post("/api/recycled-thesis", thesisItem, {
+    await axios.delete("/api/recycled-thesis", {
+      data: thesisItem,
       headers: { Authorization: `Bearer ${uid}` },
     })
   ).data;
@@ -83,4 +89,18 @@ export const getDeletedThesis = async (uid: string) => {
   } catch (e) {
     console.error((e as Error).message);
   }
+};
+
+export const restoreThesisAbstract = async (uid: string, id: string) => {
+  const res = await axios.post(
+    "/api/recycled-thesis",
+    {
+      _id: id,
+    },
+    {
+      headers: { Authorization: `Bearer ${uid}` },
+    }
+  );
+  console.log(res);
+  return res.data;
 };

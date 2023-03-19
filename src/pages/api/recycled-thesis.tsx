@@ -27,7 +27,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         const itemsList: ThesisItems[] = generateId(items);
         return res.status(200).json(itemsList);
       }
-      case "POST": {
+      case "DELETE": {
         const recycleStatus = await addDataWithExpiration(
           "thesis-abstract",
           "deleted-thesis",
@@ -45,6 +45,20 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         return res
           .status(200)
           .json({ recyleStatus: recycleStatus, deleteStatus: deleteStatus });
+      }
+      case "POST": {
+        const data = (
+          await getData(
+            "thesis-abstract",
+            "deleted-thesis",
+            {
+              _id: new ObjectId(req.body._id),
+            },
+            { deleteAfterGet: true }
+          )
+        )[0];
+        await addData("thesis-abstract", "thesis-items", data);
+        return res.status(200).json({ restoredItems: data });
       }
     }
   } catch (e) {

@@ -19,13 +19,17 @@ export async function connectToDatabase() {
 export const getData = async (
   dbName: DatabaseName,
   colName: CollectionName,
-  option?: Record<string, any>
+  query?: Record<string, any>,
+  option?: { deleteAfterGet: boolean }
 ) => {
   try {
     const client = await connectToDatabase();
     const database = client.db(dbName);
     const collection = database.collection(colName);
-    const res = await collection.find(option ?? {}).toArray();
+    const res = await collection.find(query ?? {}).toArray();
+    if (option?.deleteAfterGet && res.length) {
+      await collection.deleteOne({ _id: res[0]._id });
+    }
     client.close();
     return res;
   } catch (e) {

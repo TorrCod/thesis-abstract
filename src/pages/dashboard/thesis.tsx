@@ -5,7 +5,11 @@ import useGlobalContext from "@/context/globalContext";
 import { Course, ThesisItems } from "@/context/types.d";
 import useUserContext from "@/context/userContext";
 import { tableData } from "@/data/dummydata";
-import { removeThesisITems, thesisToDataType } from "@/utils/helper";
+import {
+  removeThesisITems,
+  restoreThesisAbstract,
+  thesisToDataType,
+} from "@/utils/helper";
 import { Button, Card, Divider, Menu, message, Statistic, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
 import Link from "next/link";
@@ -228,10 +232,11 @@ const RemoveThesis = (props: DataType & { id: string }) => {
 };
 
 const RestoreThesis = (props: DataType & { id: string }) => {
+  const uid = useUserContext().state.userDetails?.uid;
   const handleClick = async () => {
     try {
       // const itemRemoved = await removeThesisITems(props.id);
-      console.log(props.id);
+      await restoreThesisAbstract(uid ?? "", props.id);
       message.success("Restore Success");
     } catch (e) {
       message.error("Restore failed");

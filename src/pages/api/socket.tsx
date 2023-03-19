@@ -5,6 +5,8 @@ import { Server, Socket } from "socket.io";
 const SocketHandler = async (req: NextApiRequest, res: NextApiResponse) => {
   if ((res.socket as any).server.io) {
   } else {
+    console.log("Socket Registered");
+
     const io = new Server((res.socket as any).server);
     (res.socket as any).server.io = io;
 

@@ -101,6 +101,5 @@ export const restoreThesisAbstract = async (uid: string, id: string) => {
       headers: { Authorization: `Bearer ${uid}` },
     }
   );
-  console.log(res);
   return res.data;
 };

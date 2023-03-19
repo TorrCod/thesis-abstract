@@ -6,6 +6,7 @@ import React, {
   useContext,
   useEffect,
   useReducer,
+  useRef,
   useState,
 } from "react";
 import { GlobalAction, GlobalState, GlobalValue, ThesisItems } from "./types.d";
@@ -21,7 +22,7 @@ const globalStateInit: GlobalState = {
 const globalCtxInit: GlobalValue = {
   state: globalStateInit,
   dispatch: () => {},
-  loadThesisItems() {},
+  async loadThesisItems() {},
   recycledThesis: () => ({
     load: async () => {},
     clear: () => {},
@@ -45,7 +46,6 @@ const globalReducer = (
       newState["thesisItems"] = action.payload.thesisItems;
       newState["searchItems"] = action.payload.thesisItems;
       newState["dateOption"] = action.payload.dateOpt;
-      newState["recyclebin"] = action.payload.recycledThesis;
       newState["loading"] = false;
       return newState;
     }
@@ -67,11 +67,15 @@ const globalReducer = (
     }
     case "sign-in":
       return { ...state, signIn: action.payload };
+
+    case "load-recycle":
+      return { ...state, recyclebin: action.payload };
   }
 };
 
 export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(globalReducer, globalStateInit);
+  const firstRender = useRef(false);
 
   useEffect(() => {
     loadThesisItems().catch((e) => {
@@ -91,7 +95,6 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
       payload: {
         dateOpt: dateOpt,
         thesisItems: thesisItems,
-        recycledThesis: [],
       },
     });
   };
@@ -99,24 +102,9 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
   const recycledThesis = (uid: string) => ({
     load: async () => {
       const recycledThesis = await getDeletedThesis(uid);
-      dispatch({
-        type: "load-data",
-        payload: {
-          dateOpt: state.dateOption,
-          thesisItems: state.thesisItems,
-          recycledThesis: recycledThesis ?? [],
-        },
-      });
+      dispatch({ type: "load-recycle", payload: recycledThesis ?? [] });
     },
-    clear: () =>
-      dispatch({
-        type: "load-data",
-        payload: {
-          dateOpt: state.dateOption,
-          thesisItems: state.thesisItems,
-          recycledThesis: [],
-        },
-      }),
+    clear: () => dispatch({ type: "load-recycle", payload: [] }),
   });
 
   return (

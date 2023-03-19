@@ -36,7 +36,6 @@ export type GlobalAction =
       payload: {
         thesisItems: ThesisItems[];
         dateOpt: string[];
-        recycledThesis: ThesisItems[];
       };
     }
   | {
@@ -46,12 +45,16 @@ export type GlobalAction =
   | {
       type: "sign-in";
       payload: boolean;
+    }
+  | {
+      type: "load-recycle";
+      payload: ThesisItems[];
     };
 
 export type GlobalValue = {
   state: GlobalState;
   dispatch: Dispatch<GlobalAction>;
-  loadThesisItems: () => void;
+  loadThesisItems: () => Promise<void>;
   recycledThesis: (uid: string) => {
     load: () => Promise<void>;
     clear: () => void;

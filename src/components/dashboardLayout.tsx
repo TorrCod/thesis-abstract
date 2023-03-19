@@ -50,7 +50,7 @@ function DashboardLayout({
   const { width } = useWindowSize();
   const { pathname } = useLocation();
   const [isScreen, setIsScreen] = useState(false);
-  const {} = useSocket();
+  const { clearSocket } = useSocket();
 
   useEffect(() => {
     if (width >= 768) {
@@ -74,6 +74,8 @@ function DashboardLayout({
       (
         document.getElementsByClassName("bg-circle")[0] as HTMLDivElement
       ).style.display = "grid";
+
+      clearSocket();
     };
   }, []);
 

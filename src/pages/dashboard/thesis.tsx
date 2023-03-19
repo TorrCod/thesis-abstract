@@ -210,8 +210,7 @@ const RemoveThesis = (props: DataType & { id: string }) => {
       const thesisItem: ThesisItems = thesisItems.filter(
         (item) => item.id === props.id
       )[0];
-      const itemRemoved = await removeThesisITems(uid ?? "", thesisItem);
-      console.log(itemRemoved);
+      await removeThesisITems(uid ?? "", thesisItem);
       message.success("Removed Success");
     } catch (e) {
       message.error("remove failed");
@@ -235,7 +234,6 @@ const RestoreThesis = (props: DataType & { id: string }) => {
   const uid = useUserContext().state.userDetails?.uid;
   const handleClick = async () => {
     try {
-      // const itemRemoved = await removeThesisITems(props.id);
       await restoreThesisAbstract(uid ?? "", props.id);
       message.success("Restore Success");
     } catch (e) {

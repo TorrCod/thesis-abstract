@@ -160,3 +160,13 @@ export const watchThesisITems = async (
     console.error(e);
   }
 };
+
+export const isAuthenticated = async (uid: string) => {
+  try {
+    const user = await getData("accounts", "user", { uid: uid });
+    return user;
+  } catch (e) {
+    console.error(e);
+    throw new Error((e as Error).message);
+  }
+};

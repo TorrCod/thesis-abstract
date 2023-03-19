@@ -60,9 +60,11 @@ export const removeThesisITems = async (_id: string) => {
   return data;
 };
 
-export const getDeletedThesis = async () => {
+export const getDeletedThesis = async (uid: string) => {
   const thesisItems: ThesisItems[] | null = await (
-    await axios.get("/api/getRecycleBin")
+    await axios.get("/api/recycled-thesis", {
+      headers: { Authorization: `Bearer ${uid}` },
+    })
   ).data;
   return thesisItems;
 };

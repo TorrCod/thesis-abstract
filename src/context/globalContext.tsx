@@ -22,10 +22,10 @@ const globalCtxInit: GlobalValue = {
   state: globalStateInit,
   dispatch: () => {},
   loadThesisItems() {},
-  recycledThesis: {
+  recycledThesis: () => ({
     load: async () => {},
     clear: () => {},
-  },
+  }),
 };
 
 const GlobalContext = createContext<GlobalValue>(globalCtxInit);
@@ -96,9 +96,9 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
     });
   };
 
-  const recycledThesis = {
+  const recycledThesis = (uid: string) => ({
     load: async () => {
-      const recycledThesis = await getDeletedThesis();
+      const recycledThesis = await getDeletedThesis(uid);
       dispatch({
         type: "load-data",
         payload: {
@@ -117,7 +117,7 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
           recycledThesis: [],
         },
       }),
-  };
+  });
 
   return (
     <GlobalContext.Provider

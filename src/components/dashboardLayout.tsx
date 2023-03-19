@@ -50,7 +50,7 @@ function DashboardLayout({
   const { width } = useWindowSize();
   const { pathname } = useLocation();
   const [isScreen, setIsScreen] = useState(false);
-  const { loadUser, state } = useUserContext();
+  const { loadUser, state: userState } = useUserContext();
   const { loadThesisItems, recycledThesis } = useGlobalContext();
 
   useEffect(() => {
@@ -68,14 +68,12 @@ function DashboardLayout({
     (
       document.getElementsByClassName("bg-circle")[0] as HTMLDivElement
     ).style.display = "none";
-
-    recycledThesis.load();
-
+    // }
     const socketInit = async () => {
       await axios.get("/api/socket");
       const socket = io();
       socket.on("account-update", (msg) => {
-        loadUser(state.userDetails?.uid ?? "");
+        loadUser(userState.userDetails?.uid ?? "");
       });
       socket.on("thesis-items-update", () => {
         loadThesisItems();
@@ -83,7 +81,7 @@ function DashboardLayout({
       return socket;
     };
     let socket: Socket<DefaultEventsMap, DefaultEventsMap> | undefined;
-    if (state.userDetails) {
+    if (userState.userDetails) {
       socketInit().then((my_socket) => {
         socket = my_socket;
       });
@@ -101,7 +99,16 @@ function DashboardLayout({
         socket.disconnect();
       }
     };
-  }, [state.userDetails, loadUser, loadThesisItems]);
+  }, [userState.userDetails, loadUser, loadThesisItems]);
+
+  useEffect(() => {
+    let recycled: any | null = null;
+    if (userState.userDetails?.uid) {
+      recycled = recycledThesis(userState.userDetails?.uid);
+      recycled.load();
+    }
+    return () => recycled?.clear;
+  }, [userState.userDetails]);
 
   const menuItem: MenuProps["items"] = [
     {

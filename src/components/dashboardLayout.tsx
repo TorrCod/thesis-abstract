@@ -74,18 +74,28 @@ function DashboardLayout({
       socket.on("account-update", (msg) => {
         loadUser(state.userDetails?.uid ?? "");
       });
-      return () => {
-        (
-          document.getElementsByClassName("navbar")[0] as HTMLDivElement
-        ).style.display = "flex";
-        (
-          document.getElementsByClassName("bg-circle")[0] as HTMLDivElement
-        ).style.display = "grid";
-
-        socket.disconnect();
-      };
+      return socket;
     };
-    if (state.userDetails) socketInit();
+
+    let socket: Socket<DefaultEventsMap, DefaultEventsMap> | undefined;
+
+    if (state.userDetails) {
+      socketInit().then((my_socket) => {
+        socket = my_socket;
+      });
+    }
+    return () => {
+      (
+        document.getElementsByClassName("navbar")[0] as HTMLDivElement
+      ).style.display = "flex";
+      (
+        document.getElementsByClassName("bg-circle")[0] as HTMLDivElement
+      ).style.display = "grid";
+
+      if (socket?.disconnect) {
+        socket.disconnect();
+      }
+    };
   }, [state.userDetails, loadUser]);
 
   const menuItem: MenuProps["items"] = [

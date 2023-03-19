@@ -1,12 +1,14 @@
 import { PriButton } from "@/components/button";
 import DashboardLayout from "@/components/dashboardLayout";
 import QuerySearch from "@/components/QuerySearch";
+import useGlobalContext from "@/context/globalContext";
 import { Course } from "@/context/types.d";
 import { tableData } from "@/data/dummydata";
+import { thesisToDataType } from "@/utils/helper";
 import { Button, Card, Divider, Statistic, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { AiFillDelete, AiFillFileAdd } from "react-icons/ai";
 import { BsBookFill } from "react-icons/bs";
 import { Legend, PolarAngleAxis, PolarGrid, Radar, RadarChart } from "recharts";
@@ -97,9 +99,18 @@ export const ThesisTable = () => {
   type DataType = {
     key: string;
     title: string;
-    dateAdded: string;
+    dateAdded: Date;
     course: Course;
   };
+  const { state } = useGlobalContext();
+  const [tableData, setTableData] = useState<DataType[]>([]);
+
+  useEffect(() => {
+    const thesisItems = state.thesisItems;
+    const toTable = thesisToDataType(thesisItems);
+    setTableData(toTable);
+  }, []);
+
   const tableColumn: ColumnsType<DataType> = [
     {
       title: "Title",
@@ -134,7 +145,11 @@ export const ThesisTable = () => {
     },
   ];
   return (
-    <Table className="min-w-[40em]" columns={tableColumn} dataSource={[]} />
+    <Table
+      className="min-w-[40em]"
+      columns={tableColumn}
+      dataSource={tableData}
+    />
   );
 };
 

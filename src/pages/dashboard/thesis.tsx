@@ -116,7 +116,6 @@ export const ThesisTable = () => {
     setThesisTableData(toTableThesisItems);
     const recycleItems = state.recyclebin;
     const toTableRecycle = thesisToDataType(recycleItems);
-    console.log(toTableRecycle);
     setRemovedTableData(toTableRecycle);
   }, [state.thesisItems, state.recyclebin]);
 

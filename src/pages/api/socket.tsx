@@ -23,6 +23,10 @@ const SocketHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         changeStream: onChange,
       });
     });
+
+    io.on("disconnect", (reason) => {
+      console.log(reason);
+    });
   }
   res.end();
 };

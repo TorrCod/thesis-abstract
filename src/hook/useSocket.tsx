@@ -15,10 +15,7 @@ const useSocket = () => {
     state: globalState,
   } = useGlobalContext();
 
-  const socketRef = useRef<
-    | (() => Promise<Socket<DefaultEventsMap, DefaultEventsMap>> | null)
-    | undefined
-  >(undefined);
+  const socketRef = useRef<(() => Promise<void> | null) | undefined>(undefined);
 
   const [socket, setSocket] = useState<Socket<
     DefaultEventsMap,
@@ -35,6 +32,7 @@ const useSocket = () => {
         console.log("socket registered");
         await axios.get("/api/socket");
         const socket = io();
+        setSocket(socket);
         socket.on("account-update", (msg) => {
           loadUser(userState.userDetails?.uid ?? "");
         });
@@ -43,19 +41,18 @@ const useSocket = () => {
           loadThesisItems();
           recycled.load();
         });
-        return socket;
       };
-      socketRef.current()?.then((mySocket) => {
-        setSocket(mySocket);
-      });
+      socketRef.current?.();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userState.userDetails?.uid]);
 
   const clearSocket = () => {
     socket?.disconnect();
+    console.log(socket?.disconnected);
     (socketRef.current as any) = null;
     recycled?.clear();
+    setSocket(null);
   };
 
   return { socket, clearSocket };

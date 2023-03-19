@@ -99,9 +99,10 @@ const DashboardThesis = () => {
 type DataType = {
   key: string;
   title: string;
-  dateAdded: Date;
   course: Course;
+  [key: string]: any;
 };
+
 export const ThesisTable = () => {
   const { state } = useGlobalContext();
   const [thesisTableData, setThesisTableData] = useState<DataType[]>([]);
@@ -110,9 +111,13 @@ export const ThesisTable = () => {
 
   useEffect(() => {
     const thesisItems = state.thesisItems;
-    const toTable = thesisToDataType(thesisItems);
-    setThesisTableData(toTable);
-  }, [state.thesisItems]);
+    const toTableThesisItems = thesisToDataType(thesisItems);
+    console.log(toTableThesisItems);
+    setThesisTableData(toTableThesisItems);
+    const recycleItems = state.recyclebin;
+    const toTableRecycle = thesisToDataType(recycleItems);
+    setRemovedTableData(toTableRecycle);
+  }, [state.thesisItems, state.recyclebin]);
 
   const menuItems: MenuProps["items"] = [
     { key: "thesis-items", label: "Thesis Items" },
@@ -129,11 +134,6 @@ export const ThesisTable = () => {
       ),
     },
     {
-      title: "Date Added",
-      dataIndex: "dateAdded",
-      key: "dateAdded",
-    },
-    {
       title: "Course",
       dataIndex: "course",
       key: "course",
@@ -143,8 +143,14 @@ export const ThesisTable = () => {
   const thesisTableColumn: ColumnsType<DataType> = [
     ...tableColumn,
     {
+      title: "Date Added",
+      dataIndex: "dateAdded",
+      key: "dateAdded",
+    },
+    {
       title: "Action",
       key: "action",
+      dataIndex: "action",
       render: (_, record) => <RemoveThesis {...record} id={record.key} />,
     },
   ];
@@ -152,8 +158,14 @@ export const ThesisTable = () => {
   const removeTableColumn: ColumnsType<DataType> = [
     ...tableColumn,
     {
+      title: "Expire At",
+      key: "expireAt",
+      dataIndex: "expirteAt",
+    },
+    {
       title: "Action",
       key: "action",
+      dataIndex: "action",
       render: (_, record) => <RestoreThesis {...record} id={record.key} />,
     },
   ];

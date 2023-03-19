@@ -45,6 +45,7 @@ const globalReducer = (
       newState["thesisItems"] = action.payload.thesisItems;
       newState["searchItems"] = action.payload.thesisItems;
       newState["dateOption"] = action.payload.dateOpt;
+      newState["recyclebin"] = action.payload.recycledThesis;
       newState["loading"] = false;
       return newState;
     }
@@ -99,6 +100,7 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
   const recycledThesis = (uid: string) => ({
     load: async () => {
       const recycledThesis = await getDeletedThesis(uid);
+      console.log(recycledThesis);
       dispatch({
         type: "load-data",
         payload: {

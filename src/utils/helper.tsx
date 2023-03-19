@@ -24,8 +24,8 @@ export function base64toBinaryData(base64String: string, fileName: string) {
 
 export const thesisToDataType = (thesisItems: ThesisItems[]) => {
   const newData = thesisItems.map((item) => {
-    const { id, title, course, dateAdded } = item;
-    return { key: id, title, course, dateAdded };
+    const { id } = item;
+    return { ...item, key: id };
   });
   return newData;
 };

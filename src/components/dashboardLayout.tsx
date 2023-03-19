@@ -75,7 +75,8 @@ function DashboardLayout({
       socket.on("account-update", (msg) => {
         loadUser(userState.userDetails?.uid ?? "");
       });
-      socket.on("thesis-items-update", () => {
+      socket.on("thesis-abstract-update", () => {
+        console.log("thesis abstract update");
         loadThesisItems();
       });
       return socket;

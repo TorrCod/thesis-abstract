@@ -1,4 +1,4 @@
-import { watchUser } from "@/lib/mongo";
+import { watchThesisAbstract, watchUser } from "@/lib/mongo";
 import { NextApiRequest, NextApiResponse } from "next";
 import { Server, Socket } from "socket.io";
 
@@ -10,6 +10,13 @@ const SocketHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     watchUser((onChange) => {
       io.emit("account-update", {
+        message: "account changed",
+        changeStream: onChange,
+      });
+    });
+
+    watchThesisAbstract((onChange) => {
+      io.emit("thesis-abstract-update", {
         message: "account changed",
         changeStream: onChange,
       });

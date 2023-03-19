@@ -142,7 +142,7 @@ export const watchUser = async (
   }
 };
 
-export const watchThesisITems = async (
+export const watchThesisAbstract = async (
   onChange: (changeStream: ChangeStreamDocument) => void
 ) => {
   try {

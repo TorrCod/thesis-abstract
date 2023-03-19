@@ -26,6 +26,7 @@ import { LoadingGlobal } from "@/context/globalContext";
 import io, { Socket } from "socket.io-client";
 import axios from "axios";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
+import useUserContext from "@/context/userContext";
 
 type SelectedMenu = "/dashboard" | "/account-setting";
 
@@ -49,6 +50,7 @@ function DashboardLayout({
   const { width } = useWindowSize();
   const { pathname } = useLocation();
   const [isScreen, setIsScreen] = useState(false);
+  const { loadUser, state } = useUserContext();
 
   useEffect(() => {
     if (width >= 768) {
@@ -69,14 +71,9 @@ function DashboardLayout({
     const socketInit = async () => {
       await axios.get("/api/socket");
       const socket = io();
-      socket.on("connect", () => {
-        console.log("Connected");
+      socket.on("account-update", (msg) => {
+        loadUser(state.userDetails?.uid ?? "");
       });
-
-      socket.on("update-input", (msg) => {
-        console.log(msg);
-      });
-
       return () => {
         (
           document.getElementsByClassName("navbar")[0] as HTMLDivElement
@@ -88,9 +85,8 @@ function DashboardLayout({
         socket.disconnect();
       };
     };
-
-    socketInit();
-  }, []);
+    if (state.userDetails) socketInit();
+  }, [state.userDetails, loadUser]);
 
   const menuItem: MenuProps["items"] = [
     {

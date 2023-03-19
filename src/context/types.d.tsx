@@ -86,6 +86,7 @@ export type UserValue = {
   deleteAccount?: (currpass: string) => Promise<void>;
   saveUploadThesis: (data: ThesisItems) => Promise<void>;
   setTrigger: () => void;
+  loadUser: (uid: string) => void;
 };
 
 export type UserAction =

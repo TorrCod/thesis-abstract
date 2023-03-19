@@ -129,11 +129,9 @@ export const watchUser = async (
 ) => {
   try {
     const dbName: DatabaseName = "accounts";
-    const colName: CollectionName = "user";
     const client = await connectToDatabase();
     const database = client.db(dbName);
-    const collection = database.collection(colName);
-    const changeStream = collection.watch();
+    const changeStream = database.watch();
     changeStream.on("change", (change) => {
       onChange(change);
     });

@@ -95,7 +95,6 @@ const RemoveAdmin = ({ record }: { record: AdminData }) => {
   const [loading, setLoading] = useState(false);
   const userCtxState = useUserContext();
   const userEmail = userCtxState.state.userDetails?.email;
-  const updateContext = userCtxState.setTrigger;
 
   const handleFinish = async () => {
     try {
@@ -111,7 +110,6 @@ const RemoveAdmin = ({ record }: { record: AdminData }) => {
       } else if (record.status === "pending") {
         await removePending(record.key);
       }
-      updateContext();
       setOpen(false);
     } catch (e) {
       console.error(e);

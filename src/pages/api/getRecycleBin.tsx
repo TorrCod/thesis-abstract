@@ -4,7 +4,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
-    const items = (await getData("thesis-abstract", "thesis-items")) as any[];
+    const items = (await getData("thesis-abstract", "deleted-thesis")) as any[];
     const itemsList: ThesisItems[] = generateId(items);
     return res.status(200).json(itemsList);
   } catch (e) {

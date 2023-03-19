@@ -35,6 +35,8 @@ export const getData = async (
 };
 
 export const deleteData = async (queryPost: QueryPost) => {
+  console.log(queryPost);
+
   try {
     const client = await connectToDatabase();
     const database = client.db(queryPost.mongoDetails.databaseName);
@@ -101,7 +103,8 @@ export const updateUser = async (userDetails: UserDetails) => {
 export const addDataWithExpiration = async (
   dbName: DatabaseName,
   colName: CollectionName,
-  payload: any
+  payload: any,
+  timer?: number
 ) => {
   try {
     const client = await connectToDatabase();
@@ -109,7 +112,7 @@ export const addDataWithExpiration = async (
     const collection = database.collection(colName);
     await collection.createIndex(
       { createdAt: 1 },
-      { expireAfterSeconds: 3600 }
+      { expireAfterSeconds: timer ?? 3600 }
     );
     const res = await collection.insertOne({
       payload,
@@ -135,5 +138,25 @@ export const watchUser = async (
     changeStream.on("change", (change) => {
       onChange(change);
     });
-  } catch (e) {}
+  } catch (e) {
+    console.log("watch user failed");
+    console.error(e);
+  }
+};
+
+export const watchThesisITems = async (
+  onChange: (changeStream: ChangeStreamDocument) => void
+) => {
+  try {
+    const dbName: DatabaseName = "thesis-abstract";
+    const client = await connectToDatabase();
+    const database = client.db(dbName);
+    const changeStream = database.watch();
+    changeStream.on("change", (change) => {
+      onChange(change);
+    });
+  } catch (e) {
+    console.log("watch thesis items failed");
+    console.error(e);
+  }
 };

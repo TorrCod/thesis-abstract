@@ -1,6 +1,7 @@
 import { ThesisItems } from "@/context/types.d";
-import { GeneratedTextRes } from "@/lib/types";
+import { GeneratedTextRes, QueryPost } from "@/lib/types";
 import { RcFile } from "antd/es/upload";
+import axios from "axios";
 
 export function isObjectIncluded(obj1: any, obj2: any) {
   return Object.entries(obj1).every(([key, value]) => obj2[key] === value);
@@ -36,4 +37,32 @@ export const getPdfText = (data: GeneratedTextRes) => {
     extractedText = extractedText + content;
   }
   return extractedText;
+};
+
+export const getAllThesis = async () => {
+  const thesisItems: ThesisItems[] = await (
+    await axios.get("/api/getThesisItems")
+  ).data;
+  return thesisItems;
+};
+
+export const removeThesisITems = async (_id: string) => {
+  const payload: QueryPost = {
+    data: "",
+    query: { _id: _id },
+    mongoDetails: {
+      collectionName: "thesis-items",
+      databaseName: "thesis-abstract",
+    },
+  };
+  const data = (await axios.delete("/api/remove-item-db", { data: payload }))
+    .data;
+  return data;
+};
+
+export const getDeletedThesis = async () => {
+  const thesisItems: ThesisItems[] | null = await (
+    await axios.get("/api/getRecycleBin")
+  ).data;
+  return thesisItems;
 };

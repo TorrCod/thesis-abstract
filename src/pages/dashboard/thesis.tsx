@@ -4,10 +4,11 @@ import QuerySearch from "@/components/QuerySearch";
 import useGlobalContext from "@/context/globalContext";
 import { Course } from "@/context/types.d";
 import { tableData } from "@/data/dummydata";
-import { thesisToDataType } from "@/utils/helper";
-import { Button, Card, Divider, Statistic, Table } from "antd";
+import { removeThesisITems, thesisToDataType } from "@/utils/helper";
+import { Button, Card, Divider, Menu, message, Statistic, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
 import Link from "next/link";
+import { MenuProps } from "rc-menu";
 import React, { useEffect, useState } from "react";
 import { AiFillDelete, AiFillFileAdd } from "react-icons/ai";
 import { BsBookFill } from "react-icons/bs";
@@ -94,22 +95,28 @@ const DashboardThesis = () => {
     </DashboardLayout>
   );
 };
-
+type DataType = {
+  key: string;
+  title: string;
+  dateAdded: Date;
+  course: Course;
+};
 export const ThesisTable = () => {
-  type DataType = {
-    key: string;
-    title: string;
-    dateAdded: Date;
-    course: Course;
-  };
   const { state } = useGlobalContext();
-  const [tableData, setTableData] = useState<DataType[]>([]);
+  const [thesisTableData, setThesisTableData] = useState<DataType[]>([]);
+  const [removedTableData, setRemovedTableData] = useState<DataType[]>([]);
+  const [selectedKeys, setSelectedKeys] = useState("thesis-items");
 
   useEffect(() => {
     const thesisItems = state.thesisItems;
     const toTable = thesisToDataType(thesisItems);
-    setTableData(toTable);
-  }, []);
+    setThesisTableData(toTable);
+  }, [state.thesisItems]);
+
+  const menuItems: MenuProps["items"] = [
+    { key: "thesis-items", label: "Thesis Items" },
+    { key: "recyclebin", label: "Recycle Bin" },
+  ];
 
   const tableColumn: ColumnsType<DataType> = [
     {
@@ -130,26 +137,99 @@ export const ThesisTable = () => {
       dataIndex: "course",
       key: "course",
     },
+  ];
+
+  const thesisTableColumn: ColumnsType<DataType> = [
+    ...tableColumn,
     {
       title: "Action",
       key: "action",
-      render: () => (
-        <Button
-          className="flex justify-center gap-1"
-          icon={<AiFillDelete size={"1.5em"} color="red" />}
-          type="ghost"
-        >
-          Remove
-        </Button>
-      ),
+      render: (_, record) => <RemoveThesis {...record} id={record.key} />,
     },
   ];
+
+  const removeTableColumn: ColumnsType<DataType> = [
+    ...tableColumn,
+    {
+      title: "Action",
+      key: "action",
+      render: (_, record) => <RestoreThesis {...record} id={record.key} />,
+    },
+  ];
+
   return (
-    <Table
-      className="min-w-[40em]"
-      columns={tableColumn}
-      dataSource={tableData}
-    />
+    <div className="min-h-[20em]">
+      <Menu
+        onSelect={(item) => {
+          setSelectedKeys(item.key);
+        }}
+        mode="horizontal"
+        items={menuItems}
+        defaultSelectedKeys={["thesis-items"]}
+      />
+      {selectedKeys === "thesis-items" && (
+        <Table
+          className="min-w-[40em]"
+          columns={thesisTableColumn}
+          dataSource={thesisTableData}
+        />
+      )}
+      {selectedKeys === "recyclebin" && (
+        <Table
+          className="min-w-[40em]"
+          columns={removeTableColumn}
+          dataSource={removedTableData}
+        />
+      )}
+    </div>
+  );
+};
+
+const RemoveThesis = (props: DataType & { id: string }) => {
+  const handleClick = async () => {
+    try {
+      const itemRemoved = await removeThesisITems(props.id);
+      console.log(itemRemoved);
+      message.success("Removed Success");
+    } catch (e) {
+      message.error("remove failed");
+      console.error(e);
+    }
+  };
+
+  return (
+    <Button
+      onClick={handleClick}
+      className="flex justify-center gap-1"
+      icon={<AiFillDelete size={"1.5em"} color="red" />}
+      type="ghost"
+    >
+      Remove
+    </Button>
+  );
+};
+
+const RestoreThesis = (props: DataType & { id: string }) => {
+  const handleClick = async () => {
+    try {
+      // const itemRemoved = await removeThesisITems(props.id);
+      console.log(props.id);
+      message.success("Restore Success");
+    } catch (e) {
+      message.error("Restore failed");
+      console.error(e);
+    }
+  };
+
+  return (
+    <Button
+      onClick={handleClick}
+      className="flex justify-center gap-1"
+      icon={<AiFillDelete size={"1.5em"} color="red" />}
+      type="ghost"
+    >
+      Remove
+    </Button>
   );
 };
 

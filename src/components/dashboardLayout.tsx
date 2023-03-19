@@ -22,7 +22,7 @@ import { BsThreeDots } from "react-icons/bs";
 import { useLocation, useWindowSize } from "react-use";
 import Head from "next/head";
 import useAuth from "@/hook/useAuth";
-import { LoadingGlobal } from "@/context/globalContext";
+import useGlobalContext, { LoadingGlobal } from "@/context/globalContext";
 import io, { Socket } from "socket.io-client";
 import axios from "axios";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
@@ -51,6 +51,7 @@ function DashboardLayout({
   const { pathname } = useLocation();
   const [isScreen, setIsScreen] = useState(false);
   const { loadUser, state } = useUserContext();
+  const { loadThesisItems, recycledThesis } = useGlobalContext();
 
   useEffect(() => {
     if (width >= 768) {
@@ -68,22 +69,26 @@ function DashboardLayout({
       document.getElementsByClassName("bg-circle")[0] as HTMLDivElement
     ).style.display = "none";
 
+    recycledThesis.load();
+
     const socketInit = async () => {
       await axios.get("/api/socket");
       const socket = io();
       socket.on("account-update", (msg) => {
         loadUser(state.userDetails?.uid ?? "");
       });
+      socket.on("thesis-items-update", () => {
+        loadThesisItems();
+      });
       return socket;
     };
-
     let socket: Socket<DefaultEventsMap, DefaultEventsMap> | undefined;
-
     if (state.userDetails) {
       socketInit().then((my_socket) => {
         socket = my_socket;
       });
     }
+
     return () => {
       (
         document.getElementsByClassName("navbar")[0] as HTMLDivElement
@@ -96,7 +101,7 @@ function DashboardLayout({
         socket.disconnect();
       }
     };
-  }, [state.userDetails, loadUser]);
+  }, [state.userDetails, loadUser, loadThesisItems]);
 
   const menuItem: MenuProps["items"] = [
     {

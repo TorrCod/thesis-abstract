@@ -1,5 +1,6 @@
 import LoadingIcon from "@/components/loadingIcon";
 import { getData } from "@/lib/mongo";
+import { getAllThesis, getDeletedThesis } from "@/utils/helper";
 import React, {
   createContext,
   useContext,
@@ -14,11 +15,17 @@ const globalStateInit: GlobalState = {
   searchItems: [],
   dateOption: [],
   loading: true,
+  recyclebin: [],
 };
 
 const globalCtxInit: GlobalValue = {
   state: globalStateInit,
   dispatch: () => {},
+  loadThesisItems() {},
+  recycledThesis: {
+    load: async () => {},
+    clear: () => {},
+  },
 };
 
 const GlobalContext = createContext<GlobalValue>(globalCtxInit);
@@ -67,21 +74,55 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(globalReducer, globalStateInit);
 
   useEffect(() => {
-    fetch("/api/getThesisItems")
-      .then((res) => res.json())
-      .then((data) => {
-        const listOfDate = [
-          ...(data as ThesisItems[]).map((child) => child.date.slice(0, 4)),
-        ];
-        const dateOpt = Array.from(new Set(listOfDate)).sort();
-        dispatch({
-          type: "load-data",
-          payload: { dateOpt: dateOpt, thesisItems: data },
-        });
-      });
+    loadThesisItems().catch((e) => {
+      console.log("Cannot Load Data");
+      console.error(e);
+    });
   }, []);
+
+  const loadThesisItems = async () => {
+    const thesisItems = await getAllThesis();
+    const listOfDate = [
+      ...(thesisItems as ThesisItems[]).map((child) => child.date.slice(0, 4)),
+    ];
+    const dateOpt = Array.from(new Set(listOfDate)).sort();
+    dispatch({
+      type: "load-data",
+      payload: {
+        dateOpt: dateOpt,
+        thesisItems: thesisItems,
+        recycledThesis: [],
+      },
+    });
+  };
+
+  const recycledThesis = {
+    load: async () => {
+      const recycledThesis = await getDeletedThesis();
+      dispatch({
+        type: "load-data",
+        payload: {
+          dateOpt: state.dateOption,
+          thesisItems: state.thesisItems,
+          recycledThesis: recycledThesis ?? [],
+        },
+      });
+    },
+    clear: () =>
+      dispatch({
+        type: "load-data",
+        payload: {
+          dateOpt: state.dateOption,
+          thesisItems: state.thesisItems,
+          recycledThesis: [],
+        },
+      }),
+  };
+
   return (
-    <GlobalContext.Provider value={{ state, dispatch }}>
+    <GlobalContext.Provider
+      value={{ state, dispatch, loadThesisItems, recycledThesis }}
+    >
       <LoadingGlobal loading={state.loading}>{children}</LoadingGlobal>
     </GlobalContext.Provider>
   );

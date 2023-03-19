@@ -4,6 +4,7 @@ export interface GlobalState {
   thesisItems: ThesisItems[];
   searchItems: ThesisItems[];
   dateOption: string[];
+  recyclebin: ThesisItems[];
   signIn?: boolean;
   loading: boolean;
 }
@@ -32,7 +33,11 @@ export type GlobalAction =
     }
   | {
       type: "load-data";
-      payload: { thesisItems: ThesisItems[]; dateOpt: string[] };
+      payload: {
+        thesisItems: ThesisItems[];
+        dateOpt: string[];
+        recycledThesis: ThesisItems[];
+      };
     }
   | {
       type: "search-data";
@@ -46,6 +51,11 @@ export type GlobalAction =
 export type GlobalValue = {
   state: GlobalState;
   dispatch: Dispatch<GlobalAction>;
+  loadThesisItems: () => void;
+  recycledThesis: {
+    load: () => Promise<void>;
+    clear: () => void;
+  };
 };
 
 export type AdminData = {

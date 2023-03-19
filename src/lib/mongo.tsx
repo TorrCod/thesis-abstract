@@ -1,5 +1,5 @@
 import { UserDetails } from "@/context/types.d";
-import { MongoClient, ObjectId } from "mongodb";
+import { ChangeStreamDocument, MongoClient, ObjectId } from "mongodb";
 import { useEffect } from "react";
 import { CollectionName, DatabaseName, QueryPost } from "./types";
 
@@ -124,7 +124,9 @@ export const addDataWithExpiration = async (
   }
 };
 
-export const watchUser = async (onChange: ({ onChange }: any) => void) => {
+export const watchUser = async (
+  onChange: (changeStream: ChangeStreamDocument) => void
+) => {
   try {
     const dbName: DatabaseName = "accounts";
     const colName: CollectionName = "user";
@@ -133,7 +135,6 @@ export const watchUser = async (onChange: ({ onChange }: any) => void) => {
     const collection = database.collection(colName);
     const changeStream = collection.watch();
     changeStream.on("change", (change) => {
-      console.log(change);
       onChange(change);
     });
   } catch (e) {}

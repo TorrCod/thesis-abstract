@@ -4,6 +4,7 @@ export interface GlobalState {
   thesisItems: ThesisItems[];
   searchItems: ThesisItems[];
   dateOption: string[];
+  recyclebin: ThesisItems[];
   signIn?: boolean;
   loading: boolean;
 }
@@ -32,7 +33,10 @@ export type GlobalAction =
     }
   | {
       type: "load-data";
-      payload: { thesisItems: ThesisItems[]; dateOpt: string[] };
+      payload: {
+        thesisItems: ThesisItems[];
+        dateOpt: string[];
+      };
     }
   | {
       type: "search-data";
@@ -41,11 +45,20 @@ export type GlobalAction =
   | {
       type: "sign-in";
       payload: boolean;
+    }
+  | {
+      type: "load-recycle";
+      payload: ThesisItems[];
     };
 
 export type GlobalValue = {
   state: GlobalState;
   dispatch: Dispatch<GlobalAction>;
+  loadThesisItems: () => Promise<void>;
+  recycledThesis: (uid: string) => {
+    load: () => Promise<void>;
+    clear: () => void;
+  };
 };
 
 export type AdminData = {
@@ -86,6 +99,7 @@ export type UserValue = {
   deleteAccount?: (currpass: string) => Promise<void>;
   saveUploadThesis: (data: ThesisItems) => Promise<void>;
   setTrigger: () => void;
+  loadUser: (uid: string) => void;
 };
 
 export type UserAction =

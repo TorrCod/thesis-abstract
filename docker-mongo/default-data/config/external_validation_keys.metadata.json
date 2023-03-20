@@ -1,0 +1,1 @@
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"ttlExpiresAt":{"$numberInt":"1"}},"name":"ExternalKeysTTLIndex","expireAfterSeconds":{"$numberInt":"0"}},{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"}],"uuid":"f68ca814d6a649ecbab48fe3cb94c21d","collectionName":"external_validation_keys","type":"collection"}

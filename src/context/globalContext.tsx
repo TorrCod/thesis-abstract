@@ -1,10 +1,12 @@
 import LoadingIcon from "@/components/loadingIcon";
 import { getData } from "@/lib/mongo";
+import { getAllThesis, getDeletedThesis } from "@/utils/helper";
 import React, {
   createContext,
   useContext,
   useEffect,
   useReducer,
+  useRef,
   useState,
 } from "react";
 import { GlobalAction, GlobalState, GlobalValue, ThesisItems } from "./types.d";
@@ -14,11 +16,17 @@ const globalStateInit: GlobalState = {
   searchItems: [],
   dateOption: [],
   loading: true,
+  recyclebin: [],
 };
 
 const globalCtxInit: GlobalValue = {
   state: globalStateInit,
   dispatch: () => {},
+  async loadThesisItems() {},
+  recycledThesis: () => ({
+    load: async () => {},
+    clear: () => {},
+  }),
 };
 
 const GlobalContext = createContext<GlobalValue>(globalCtxInit);
@@ -48,7 +56,6 @@ const globalReducer = (
         const itemDate = item.date;
         const searchTitle = action.payload.text.toLowerCase();
         const searchFilterDate = action.payload.filter.date;
-
         return (
           itemTitle.includes(searchTitle) &&
           searchFilterDate.includes(itemDate.slice(0, 4)) &&
@@ -60,28 +67,50 @@ const globalReducer = (
     }
     case "sign-in":
       return { ...state, signIn: action.payload };
+
+    case "load-recycle":
+      return { ...state, recyclebin: action.payload };
   }
 };
 
 export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(globalReducer, globalStateInit);
+  const firstRender = useRef(false);
 
   useEffect(() => {
-    fetch("/api/getThesisItems")
-      .then((res) => res.json())
-      .then((data) => {
-        const listOfDate = [
-          ...(data as ThesisItems[]).map((child) => child.date.slice(0, 4)),
-        ];
-        const dateOpt = Array.from(new Set(listOfDate)).sort();
-        dispatch({
-          type: "load-data",
-          payload: { dateOpt: dateOpt, thesisItems: data },
-        });
-      });
+    loadThesisItems().catch((e) => {
+      console.log("Cannot Load Data");
+      console.error(e);
+    });
   }, []);
+
+  const loadThesisItems = async () => {
+    const thesisItems = await getAllThesis();
+    const listOfDate = [
+      ...(thesisItems as ThesisItems[]).map((child) => child.date.slice(0, 4)),
+    ];
+    const dateOpt = Array.from(new Set(listOfDate)).sort();
+    dispatch({
+      type: "load-data",
+      payload: {
+        dateOpt: dateOpt,
+        thesisItems: thesisItems,
+      },
+    });
+  };
+
+  const recycledThesis = (uid: string) => ({
+    load: async () => {
+      const recycledThesis = await getDeletedThesis(uid);
+      dispatch({ type: "load-recycle", payload: recycledThesis ?? [] });
+    },
+    clear: () => dispatch({ type: "load-recycle", payload: [] }),
+  });
+
   return (
-    <GlobalContext.Provider value={{ state, dispatch }}>
+    <GlobalContext.Provider
+      value={{ state, dispatch, loadThesisItems, recycledThesis }}
+    >
       <LoadingGlobal loading={state.loading}>{children}</LoadingGlobal>
     </GlobalContext.Provider>
   );

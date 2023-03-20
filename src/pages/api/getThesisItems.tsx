@@ -2,17 +2,14 @@ import { ThesisItems } from "@/context/types.d";
 import { generateId, getData } from "@/lib/mongo";
 import { NextApiRequest, NextApiResponse } from "next";
 
-const handler = async (
-  req: NextApiRequest,
-  res: NextApiResponse<ThesisItems[]>
-) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const items = (await getData("thesis-abstract", "thesis-items")) as any[];
     const itemsList: ThesisItems[] = generateId(items);
-    return res.json(itemsList);
+    return res.status(200).json(itemsList);
   } catch (e) {
     console.error(e);
-    throw new Error(e as string).message;
+    return res.status(500).json({ message: "server error" });
   }
 };
 

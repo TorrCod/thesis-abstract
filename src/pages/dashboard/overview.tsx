@@ -20,6 +20,7 @@ import {
   Legend,
 } from "recharts";
 import { AdminTable } from "./admins";
+import { ThesisCharts } from "./thesis";
 
 const DashboardOverview = () => {
   const totalData: { course: Course; count: number }[] = [
@@ -42,28 +43,13 @@ const DashboardOverview = () => {
           <div className="bg-white rounded-md shadow-md thesis grid relative content-start">
             <Link className="grid w-fit" href={"/dashboard/thesis"}>
               <h3 className="opacity-80 mb-3 mx-5 pt-5">Thesis</h3>
-            </Link>
-            <Link href="/dashboard/thesis/upload-thesis">
               <div className="ml-6 opacity-60 flex items-center gap-2">
-                Add thesis <GoLinkExternal />
+                Manage Thesis Abstracts <GoLinkExternal />
               </div>
             </Link>
             <div className="overflow-auto">
               <div className="h-96 min-w-[32em]">
-                <ResponsiveContainer width={"99%"} height="99%">
-                  <RadarChart outerRadius={90} data={totalData}>
-                    <PolarGrid />
-                    <PolarAngleAxis dataKey="course" />
-                    <Radar
-                      name="Count"
-                      dataKey="count"
-                      stroke="#82ca9d"
-                      fill="#82ca9d"
-                      fillOpacity={0.6}
-                    />
-                    <Legend />
-                  </RadarChart>
-                </ResponsiveContainer>
+                <ThesisCharts />
               </div>
             </div>
           </div>

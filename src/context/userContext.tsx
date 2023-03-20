@@ -42,6 +42,7 @@ const userValueInit: UserValue = {
   dispatch: () => {},
   saveUploadThesis: async () => {},
   setTrigger: () => {},
+  loadUser: (arg) => {},
 };
 
 const UserContext = createContext<UserValue>(userValueInit);
@@ -78,7 +79,6 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
             if (typeof res === "object" && res !== null) {
               res.profilePic = auth.currentUser?.photoURL ?? undefined;
               dispatch({ type: "on-signin", payload: { userDetails: res } });
-              fetchAllAdmins(res.uid ?? "");
             }
           })
           .catch((e) => {
@@ -93,7 +93,14 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
     return () => unsubscribe();
   }, [triggerUpdate]);
 
-  const fetchAllAdmins = (uid: string) => {
+  useEffect(() => {
+    if (!state.userDetails) {
+    } else {
+      loadUser(state.userDetails.uid ?? "");
+    }
+  }, [state.userDetails]);
+
+  const loadUser = (uid: string) => {
     getAllUsers(uid)
       .then(
         (res: {
@@ -172,10 +179,15 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
     await addThesis(thesisItems);
   };
 
+  const setTrigger = () => {
+    setTriggerUpdate(!triggerUpdate);
+  };
+
   return (
     <UserContext.Provider
       value={{
         state,
+        loadUser,
         dispatch,
         userSignUp,
         userUpdateInfo,
@@ -183,9 +195,7 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
         updateProfileUrl,
         deleteAccount,
         saveUploadThesis,
-        setTrigger() {
-          setTriggerUpdate(!triggerUpdate);
-        },
+        setTrigger,
       }}
     >
       {children}

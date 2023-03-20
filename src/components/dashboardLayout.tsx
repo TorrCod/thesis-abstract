@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Dropdown, Layout, Menu } from "antd";
 const { Header, Content, Sider } = Layout;
 import Link from "next/link";
@@ -22,7 +22,12 @@ import { BsThreeDots } from "react-icons/bs";
 import { useLocation, useWindowSize } from "react-use";
 import Head from "next/head";
 import useAuth from "@/hook/useAuth";
-import { LoadingGlobal } from "@/context/globalContext";
+import useGlobalContext, { LoadingGlobal } from "@/context/globalContext";
+import io, { Socket } from "socket.io-client";
+import axios from "axios";
+import { DefaultEventsMap } from "socket.io/dist/typed-events";
+import useUserContext from "@/context/userContext";
+import useSocket from "@/hook/useSocket";
 
 type SelectedMenu = "/dashboard" | "/account-setting";
 
@@ -37,7 +42,6 @@ function DashboardLayout({
   children,
   userSelectedMenu,
   userSelectedSider,
-  title,
 }: DashboardProps) {
   const isLogin = useAuth();
   const [selectedSider, setSelectedSider] = useState(userSelectedSider);
@@ -46,6 +50,7 @@ function DashboardLayout({
   const { width } = useWindowSize();
   const { pathname } = useLocation();
   const [isScreen, setIsScreen] = useState(false);
+  const { clearSocket } = useSocket();
 
   useEffect(() => {
     if (width >= 768) {
@@ -69,7 +74,9 @@ function DashboardLayout({
       (
         document.getElementsByClassName("bg-circle")[0] as HTMLDivElement
       ).style.display = "grid";
+      clearSocket();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const menuItem: MenuProps["items"] = [
@@ -170,7 +177,7 @@ function DashboardLayout({
               </Sider>
               <div
                 className="overflow-auto h-screen w-screen md:w-full
-             md:pb-20 pt-20 md:pt-5 md:px-5 round-md relative px-2"
+             md:pb-20 py-20 md:py-5 md:px-5 round-md relative px-2"
               >
                 {children}
               </div>

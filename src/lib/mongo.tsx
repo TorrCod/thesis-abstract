@@ -1,5 +1,5 @@
 import { UserDetails } from "@/context/types.d";
-import { MongoClient, ObjectId } from "mongodb";
+import { ChangeStreamDocument, MongoClient, ObjectId } from "mongodb";
 import { useEffect } from "react";
 import { CollectionName, DatabaseName, QueryPost } from "./types";
 
@@ -8,7 +8,6 @@ let CONNECTION = process.env["MONGO_URI"] ?? "mongodb://localhost:27017";
 export async function connectToDatabase() {
   try {
     let client = new MongoClient(CONNECTION);
-
     await client.connect();
     return client;
   } catch (e) {
@@ -20,13 +19,17 @@ export async function connectToDatabase() {
 export const getData = async (
   dbName: DatabaseName,
   colName: CollectionName,
-  option?: Record<string, any>
+  query?: Record<string, any>,
+  option?: { deleteAfterGet: boolean }
 ) => {
   try {
     const client = await connectToDatabase();
     const database = client.db(dbName);
     const collection = database.collection(colName);
-    const res = await collection.find(option ?? {}).toArray();
+    const res = await collection.find(query ?? {}).toArray();
+    if (option?.deleteAfterGet && res.length) {
+      await collection.deleteOne({ _id: res[0]._id });
+    }
     client.close();
     return res;
   } catch (e) {
@@ -102,7 +105,8 @@ export const updateUser = async (userDetails: UserDetails) => {
 export const addDataWithExpiration = async (
   dbName: DatabaseName,
   colName: CollectionName,
-  payload: any
+  payload: Record<string, unknown>,
+  timer?: number
 ) => {
   try {
     const client = await connectToDatabase();
@@ -110,17 +114,61 @@ export const addDataWithExpiration = async (
     const collection = database.collection(colName);
     await collection.createIndex(
       { createdAt: 1 },
-      { expireAfterSeconds: 3600 }
+      { expireAfterSeconds: timer ?? 3600 }
     );
     const res = await collection.insertOne({
-      payload,
+      ...payload,
       createdAt: new Date(),
-      expireAfterSeconds: 3600,
+      expireAfterSeconds: timer ?? 3600,
     });
     client.close();
     return res;
   } catch (e) {
     console.error(e);
     throw new Error(e as string).message;
+  }
+};
+
+export const watchUser = async (
+  onChange: (changeStream: ChangeStreamDocument) => void
+) => {
+  try {
+    const dbName: DatabaseName = "accounts";
+    const client = await connectToDatabase();
+    const database = client.db(dbName);
+    const changeStream = database.watch();
+    changeStream.on("change", (change) => {
+      onChange(change);
+    });
+  } catch (e) {
+    console.log("watch user failed");
+    console.error(e);
+  }
+};
+
+export const watchThesisAbstract = async (
+  onChange: (changeStream: ChangeStreamDocument) => void
+) => {
+  try {
+    const dbName: DatabaseName = "thesis-abstract";
+    const client = await connectToDatabase();
+    const database = client.db(dbName);
+    const changeStream = database.watch();
+    changeStream.on("change", (change) => {
+      onChange(change);
+    });
+  } catch (e) {
+    console.log("watch thesis items failed");
+    console.error(e);
+  }
+};
+
+export const isAuthenticated = async (uid: string) => {
+  try {
+    const user = await getData("accounts", "user", { uid: uid });
+    return user;
+  } catch (e) {
+    console.error(e);
+    throw new Error((e as Error).message);
   }
 };

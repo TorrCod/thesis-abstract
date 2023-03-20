@@ -5,11 +5,12 @@ import { NextApiRequest, NextApiResponse } from "next";
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const bodyData = req.body as QueryPost;
+    console.log(bodyData);
     const response = await deleteData(bodyData);
-    return res.json({ message: "Item Deleted", response });
+    return res.status(200).json({ message: "Item Deleted", response });
   } catch (e) {
     console.error(e);
-    return res.json({ message: "Something went wrong", error: e });
+    return res.status(500).json({ message: "Something went wrong", error: e });
   }
 };
 

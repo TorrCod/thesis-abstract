@@ -1,6 +1,10 @@
 import useUserContext from "@/context/userContext";
 import { auth } from "@/lib/firebase";
-import { addPendingInvite, addUserAccount } from "@/utils/account";
+import {
+  addPendingInvite,
+  addUserAccount,
+  removePending,
+} from "@/utils/account";
 import { Avatar, Dropdown, Form, Input, Menu, MenuProps, message } from "antd";
 import { useForm } from "antd/lib/form/Form";
 import axios from "axios";
@@ -94,21 +98,21 @@ export const AdminMenu = ({
 
 export const AddAdmin = () => {
   const [form] = useForm();
-  const updateData = useUserContext().setTrigger;
   const onFinish = async ({ email }: any) => {
+    let id: string = "";
     try {
-      const id: string = (await addPendingInvite(email)) as any;
+      id = await addPendingInvite(email);
       const actionCodeSettings = {
-        url: `${process.env.PUBLIC_DOMAIN}/sign-up/${id}`,
+        url: `${process.env.NEXT_PUBLIC_DOMAIN}/sign-up/${id}`,
         handleCodeInApp: true,
       };
       await sendSignInLinkToEmail(auth, email, actionCodeSettings);
-      updateData();
       message.success("Invite Sent");
       form.resetFields();
     } catch (e) {
       message.error("Invite failed");
       console.log(e);
+      await removePending(id);
     }
   };
   return (

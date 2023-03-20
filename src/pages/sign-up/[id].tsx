@@ -3,7 +3,7 @@ import { LoadingGlobal } from "@/context/globalContext";
 import { Course, UserDetails } from "@/context/types.d";
 import useUserContext from "@/context/userContext";
 import { getData, generateId } from "@/lib/mongo";
-import { removePending } from "@/utils/account";
+import { getUserDetails, removePending } from "@/utils/account";
 import { Form, Input, message, Select } from "antd";
 import { ObjectId } from "mongodb";
 import { GetStaticProps, GetStaticPaths } from "next";
@@ -51,7 +51,7 @@ const courseOpt: { value: Course; label: Course }[] = [
 ];
 
 const HandleInviteLink = (props: {
-  data: { payload: string; id: string; _id: any };
+  data: { email: string; id: string; _id: any; addedByUid: string };
   hasError: boolean;
 }) => {
   const [formSignUp] = Form.useForm();
@@ -67,6 +67,7 @@ const HandleInviteLink = (props: {
   const handleSignUp = async () => {
     try {
       await formSignUp.validateFields();
+      const adminName = await await getUserDetails(props.data.addedByUid);
       const payload = formSignUp.getFieldsValue();
       const userDetails: UserDetails = {
         email: payload["sign-up-email"],
@@ -77,7 +78,7 @@ const HandleInviteLink = (props: {
         password: payload["confirm-password"],
         dateAdded: new Date().toLocaleString(),
         profilePic: undefined,
-        approove: undefined,
+        approove: `${adminName.firstName} ${adminName.lastName}`,
       };
       await userCtx.userSignUp?.(userDetails);
       await removePending(props.data["_id"]);
@@ -129,7 +130,7 @@ const HandleInviteLink = (props: {
             { required: true, message: "Please enter your email" },
             ({ getFieldValue }) => ({
               validator(_, value) {
-                if (!value || props.data.payload === value) {
+                if (!value || props.data.email === value) {
                   return Promise.resolve();
                 }
                 return Promise.reject(

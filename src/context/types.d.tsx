@@ -98,7 +98,6 @@ export type UserValue = {
   updateProfileUrl?: (userDetails: UserDetails) => Promise<void>;
   deleteAccount?: (currpass: string) => Promise<void>;
   saveUploadThesis: (data: ThesisItems) => Promise<void>;
-  setTrigger: () => void;
   loadUser: (uid: string) => void;
 };
 

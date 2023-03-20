@@ -41,7 +41,6 @@ const userValueInit: UserValue = {
   state: userStateInit,
   dispatch: () => {},
   saveUploadThesis: async () => {},
-  setTrigger: () => {},
   loadUser: (arg) => {},
 };
 
@@ -135,8 +134,8 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
   const userSignUp = async (userDetails: UserDetails) => {
     const uid = await signUp(userDetails);
     delete userDetails.password;
-    await addUserAccount({ ...userDetails, uid: uid });
-    setTriggerUpdate(!triggerUpdate);
+    const res = await addUserAccount({ ...userDetails, uid: uid });
+    dispatch({ type: "on-signin", payload: { userDetails: res } });
   };
 
   const userUpdateInfo = async (userDetails: UserDetails) => {
@@ -179,10 +178,6 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
     await addThesis(thesisItems);
   };
 
-  const setTrigger = () => {
-    setTriggerUpdate(!triggerUpdate);
-  };
-
   return (
     <UserContext.Provider
       value={{
@@ -195,7 +190,6 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
         updateProfileUrl,
         deleteAccount,
         saveUploadThesis,
-        setTrigger,
       }}
     >
       {children}

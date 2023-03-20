@@ -3,14 +3,16 @@ import { AddPost, MongoDetails, QueryPost } from "@/lib/types";
 import axios from "axios";
 
 export const addUserAccount = async (userDetails: UserDetails) => {
-  fetch("/api/addUser", {
-    method: "POST",
-    body: JSON.stringify(userDetails),
-    headers: {
-      Accept: "application/json, text/plain, */*",
-      "Content-Type": "application/json",
-    },
-  });
+  // fetch("/api/addUser", {
+  //   method: "POST",
+  //   body: JSON.stringify(userDetails),
+  //   headers: {
+  //     Accept: "application/json, text/plain, */*",
+  //     "Content-Type": "application/json",
+  //   },
+  // });
+  const res = await axios.post("/api/addUser", userDetails);
+  return res.data;
 };
 
 export const getUserDetails = async (id: string): Promise<UserDetails> => {

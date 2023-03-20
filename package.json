@@ -10,7 +10,7 @@
     "docker-build": "if [ -d './docker-mongo/cache' ]; then sudo rm -r ./docker-mongo/cache; fi; docker-compose build && npm run startdb",
     "mongo-dev": "if [ -d './docker-mongo/cache' ]; then sudo rm -r ./docker-mongo/cache; fi; docker-compose -f mongo-dev.yml up -d",
     "importdb-dev": "docker exec -it mongodb1-dev mkdir -p /database/ && docker cp ./docker-mongo/default-data mongodb1-dev:/database/default-data && docker exec -it mongodb1-dev mongorestore --drop /database/default-data",
-    "updatedb-dev": "if [ -d './docker-mongo/default-data' ]; then rm -r ./docker-mongo/default-data; fi; docker-compose exec mongodb1-dev bash -c 'if [ -d '/database/default-data' ]; then rm -r /database/default-data; fi; mongodump --out=/database/default-data ' && docker cp mongodb1-dev:/database/default-data ./docker-mongo/default-data",
+    "updatedb-dev": "if [ -d './docker-mongo/default-data' ]; then rm -r ./docker-mongo/default-data; fi; docker exec mongodb1-dev bash -c 'if [ -d '/database/default-data' ]; then rm -r /database/default-data; fi; mongodump --out=/database/default-data ' && docker cp mongodb1-dev:/database/default-data ./docker-mongo/default-data",
     "emulators": "firebase emulators:start --import=./test-data --export-on-exit"
   },
   "dependencies": {

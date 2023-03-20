@@ -6,7 +6,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const isValidate = await validateAuth(req, res);
     if (isValidate.error) {
-      return res.status(400).send(isValidate);
+      return res.status(400).json(isValidate);
     }
     switch (req.method) {
       case "DELETE": {

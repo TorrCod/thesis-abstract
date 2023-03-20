@@ -76,6 +76,7 @@ function DashboardLayout({
       ).style.display = "grid";
       clearSocket();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const menuItem: MenuProps["items"] = [

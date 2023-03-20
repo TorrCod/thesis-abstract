@@ -22,13 +22,28 @@ import { Legend, PolarAngleAxis, PolarGrid, Radar, RadarChart } from "recharts";
 import { ResponsiveContainer } from "recharts";
 
 const DashboardThesis = () => {
-  const totalData: { course: Course; count: number }[] = [
-    { course: "Civil Engineer", count: 320 },
-    { course: "Computer Engineer", count: 230 },
-    { course: "Mechanical Engineer", count: 300 },
-    { course: "Electronics Engineer", count: 257 },
-    { course: "Electrical Engineer", count: 314 },
-  ];
+  const [totalData, settotalData] = useState<
+    { course: Course; count: number }[]
+  >([
+    { course: "Civil Engineer", count: 0 },
+    { course: "Computer Engineer", count: 0 },
+    { course: "Mechanical Engineer", count: 0 },
+    { course: "Electronics Engineer", count: 0 },
+    { course: "Electrical Engineer", count: 0 },
+  ]);
+  const { state: globalStatate } = useGlobalContext();
+  useEffect(() => {
+    settotalData((oldTotalData) => {
+      const newTotalData = oldTotalData.map((item) => {
+        item.count = globalStatate.thesisItems.filter(
+          (_item) => _item.course === item.course
+        ).length;
+        return item;
+      });
+      return newTotalData;
+    });
+  }, [globalStatate.thesisItems]);
+
   return (
     <DashboardLayout
       userSelectedMenu="/dashboard"

@@ -97,11 +97,12 @@ export const AdminMenu = ({
 };
 
 export const AddAdmin = () => {
+  const userUid = useUserContext().state.userDetails?.uid;
   const [form] = useForm();
   const onFinish = async ({ email }: any) => {
     let id: string = "";
     try {
-      id = await addPendingInvite(email);
+      id = await addPendingInvite(email, userUid ?? "");
       const actionCodeSettings = {
         url: `${process.env.NEXT_PUBLIC_DOMAIN}/sign-up/${id}`,
         handleCodeInApp: true,

@@ -45,12 +45,12 @@ export const addThesis = async (data: ThesisItems) => {
   await axios.post("/api/addThesisItems", data);
 };
 
-export const addPendingInvite = async (email: string) => {
+export const addPendingInvite = async (email: string, uid: string) => {
   try {
     const data = await axios.post("/api/invite-admin", {
       dbName: "accounts",
       colName: "pending",
-      payload: { email: email },
+      payload: { email: email, addedByUid: uid },
     } as AddPost);
     return data.data.response.insertedId;
   } catch (e) {

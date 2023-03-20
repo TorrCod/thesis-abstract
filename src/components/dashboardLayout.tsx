@@ -177,7 +177,7 @@ function DashboardLayout({
               </Sider>
               <div
                 className="overflow-auto h-screen w-screen md:w-full
-             md:pb-20 pt-20 md:pt-5 md:px-5 round-md relative px-2"
+             md:pb-20 py-20 md:py-5 md:px-5 round-md relative px-2"
               >
                 {children}
               </div>

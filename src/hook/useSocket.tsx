@@ -14,25 +14,23 @@ const useSocket = () => {
     recycledThesis,
     state: globalState,
   } = useGlobalContext();
+  const [connect, setConnect] = useState(false);
 
   const socketRef = useRef<(() => Promise<void> | null) | undefined>(undefined);
-
-  const [socket, setSocket] = useState<Socket<
-    DefaultEventsMap,
-    DefaultEventsMap
-  > | null>(null);
+  const socketInstRef = useRef<
+    Socket<DefaultEventsMap, DefaultEventsMap> | undefined
+  >(undefined);
 
   useEffect(() => {
     if (userState.userDetails?.uid) {
       recycled = recycledThesis(userState.userDetails?.uid);
       recycled.load();
     }
-    if (typeof socketRef.current !== "object" && socket === null) {
+    if (socketRef.current !== null && socketInstRef.current === undefined) {
       socketRef.current = async () => {
-        console.log("socket registered");
+        console.log("socket listening");
         await axios.get("/api/socket");
         const socket = io();
-        setSocket(socket);
         socket.on("account-update", (msg) => {
           loadUser(userState.userDetails?.uid ?? "");
         });
@@ -41,21 +39,26 @@ const useSocket = () => {
           loadThesisItems();
           recycled.load();
         });
+        (socketInstRef as any).current = socket;
       };
-      socketRef.current?.();
+      if (connect) {
+        socketRef.current?.()?.then(() => setConnect(true));
+      } else {
+        setConnect(true);
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userState.userDetails?.uid]);
+  }, [userState.userDetails?.uid, connect]);
 
   const clearSocket = () => {
-    socket?.disconnect();
-    console.log(socket?.disconnected);
-    (socketRef.current as any) = null;
-    recycled?.clear();
-    setSocket(null);
+    if (socketInstRef.current?.connected) {
+      socketInstRef.current?.disconnect();
+      recycled?.clear();
+      console.log("socket disconnected");
+    }
   };
 
-  return { socket, clearSocket };
+  return { clearSocket };
 };
 
 export default useSocket;

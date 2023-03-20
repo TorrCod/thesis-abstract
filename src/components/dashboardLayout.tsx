@@ -74,7 +74,6 @@ function DashboardLayout({
       (
         document.getElementsByClassName("bg-circle")[0] as HTMLDivElement
       ).style.display = "grid";
-
       clearSocket();
     };
   }, []);

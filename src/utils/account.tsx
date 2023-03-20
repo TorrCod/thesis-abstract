@@ -50,7 +50,7 @@ export const addPendingInvite = async (email: string) => {
     const data = await axios.post("/api/invite-admin", {
       dbName: "accounts",
       colName: "pending",
-      payload: email,
+      payload: { email: email },
     } as AddPost);
     return data.data.response.insertedId;
   } catch (e) {

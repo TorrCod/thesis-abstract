@@ -119,7 +119,7 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
             ...item,
             email: item.payload,
             key: item._id,
-            dateAdded: item.createdAt,
+            dateAdded: new Date(item.createdAt).toLocaleString(),
             status: "pending",
           }));
 

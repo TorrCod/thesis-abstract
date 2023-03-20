@@ -28,7 +28,6 @@ const useSocket = () => {
     }
     if (socketRef.current !== null && socketInstRef.current === undefined) {
       socketRef.current = async () => {
-        console.log("socket listening");
         await axios.get("/api/socket");
         const socket = io();
         socket.on("account-update", (msg) => {
@@ -54,7 +53,6 @@ const useSocket = () => {
     if (socketInstRef.current?.connected) {
       socketInstRef.current?.disconnect();
       recycled?.clear();
-      console.log("socket disconnected");
     }
   };
 

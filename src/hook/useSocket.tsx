@@ -23,7 +23,7 @@ const useSocket = () => {
 
   useEffect(() => {
     if (userState.userDetails?.uid) {
-      recycled = recycledThesis(userState.userDetails?.uid);
+      recycled = recycledThesis(userState.userDetails.uid);
       recycled.load();
     }
     if (socketRef.current !== null && socketInstRef.current === undefined) {
@@ -34,20 +34,21 @@ const useSocket = () => {
           loadUser(userState.userDetails?.uid ?? "");
         });
         socket.on("thesis-abstract-update", () => {
-          console.log("thesis abstract update");
           loadThesisItems();
-          recycled.load();
+          if (userState.userDetails?.uid) {
+            recycledThesis(userState.userDetails.uid).load();
+          }
         });
         (socketInstRef as any).current = socket;
       };
-      if (connect) {
+      if (connect && userState.userDetails) {
         socketRef.current?.()?.then(() => setConnect(true));
       } else {
         setConnect(true);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userState.userDetails?.uid, connect]);
+  }, [userState.userDetails, connect]);
 
   const clearSocket = () => {
     if (socketInstRef.current?.connected) {

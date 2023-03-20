@@ -7,16 +7,16 @@ import {
   getData,
   isAuthenticated,
 } from "@/lib/mongo";
+import { validateAuth } from "@/utils/server-utils";
 import { ObjectId } from "mongodb";
 import { NextApiRequest, NextApiResponse } from "next";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
-    if (!req.headers.authorization)
-      return res.status(400).json({ error: "Insufficient Input" });
-    const uid = req.headers.authorization?.slice(7);
-    const checkAuth = (await isAuthenticated(uid!))[0];
-    if (!checkAuth) return res.status(400).json({ error: "auth failed" });
+    const isValidated = await validateAuth(req, res);
+    if (isValidated.error) {
+      return res.status(400).json(isValidated);
+    }
 
     switch (req.method) {
       case "GET": {

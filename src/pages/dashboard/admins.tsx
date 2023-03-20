@@ -11,7 +11,11 @@ import Password from "antd/lib/input/Password";
 import { useForm } from "antd/lib/form/Form";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/lib/firebase";
-import { removePending, utils_Delete_Account } from "@/utils/account";
+import {
+  firebase_admin_delete_user,
+  removePending,
+  utils_Delete_Account,
+} from "@/utils/account";
 
 const DashboardAdmin = () => {
   return (
@@ -94,7 +98,7 @@ const RemoveAdmin = ({ record }: { record: AdminData }) => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const userCtxState = useUserContext();
-  const userEmail = userCtxState.state.userDetails?.email;
+  const userEmail = userCtxState.state.userDetails;
 
   const handleFinish = async () => {
     try {
@@ -103,7 +107,7 @@ const RemoveAdmin = ({ record }: { record: AdminData }) => {
         throw new Error("Please fillup password");
       });
       const password = form.getFieldValue("password");
-      const email = userEmail;
+      const email = userEmail?.email;
       await signInWithEmailAndPassword(auth, email ?? "", password);
       if (record.status === "admin") {
         await utils_Delete_Account(record.key);

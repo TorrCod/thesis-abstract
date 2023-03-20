@@ -43,6 +43,23 @@ export const utils_Delete_Account = async (_id: string) => {
   await axios.post("/api/remove-item-db", mongoQuery);
 };
 
+export const firebase_admin_delete_user = async (
+  email: string,
+  uid: string
+) => {
+  const url = "/api/firebase-admin";
+  try {
+    const response = await axios.delete(url, {
+      data: { email: email },
+      headers: { Authorization: `Bearer ${uid}` },
+    });
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
 export const addThesis = async (data: ThesisItems) => {
   await axios.post("/api/addThesisItems", data);
 };

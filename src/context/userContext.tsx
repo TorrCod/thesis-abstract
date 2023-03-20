@@ -93,9 +93,8 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
   }, [triggerUpdate]);
 
   useEffect(() => {
-    if (!state.userDetails) {
-    } else {
-      loadUser(state.userDetails.uid ?? "");
+    if (state.userDetails?.uid) {
+      loadUser(state.userDetails.uid);
     }
   }, [state.userDetails]);
 

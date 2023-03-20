@@ -27,7 +27,14 @@ import React, { useEffect, useState } from "react";
 import { AiFillDelete, AiFillFileAdd } from "react-icons/ai";
 import { BsBookFill } from "react-icons/bs";
 import { MdRestoreFromTrash } from "react-icons/md";
-import { Legend, PolarAngleAxis, PolarGrid, Radar, RadarChart } from "recharts";
+import {
+  Label,
+  Legend,
+  PolarAngleAxis,
+  PolarGrid,
+  Radar,
+  RadarChart,
+} from "recharts";
 import { ResponsiveContainer } from "recharts";
 
 const DashboardThesis = () => {
@@ -69,20 +76,7 @@ const DashboardThesis = () => {
             </Space>
             <div className="h-96 w-full relative overflow-auto">
               <div className="h-full w-full min-w-[32em]">
-                <ResponsiveContainer width={"99%"} height="99%">
-                  <RadarChart outerRadius={90} data={totalData}>
-                    <PolarGrid />
-                    <PolarAngleAxis dataKey="course" />
-                    <Radar
-                      name="Count"
-                      dataKey="count"
-                      stroke="#82ca9d"
-                      fill="#82ca9d"
-                      fillOpacity={0.6}
-                    />
-                    <Legend />
-                  </RadarChart>
-                </ResponsiveContainer>
+                <ThesisCharts />
               </div>
             </div>
           </div>
@@ -129,6 +123,47 @@ const DashboardThesis = () => {
     </DashboardLayout>
   );
 };
+
+export const ThesisCharts = () => {
+  const [totalData, settotalData] = useState<
+    { course: Course; count: number }[]
+  >([
+    { course: "Civil Engineer", count: 0 },
+    { course: "Computer Engineer", count: 0 },
+    { course: "Mechanical Engineer", count: 0 },
+    { course: "Electronics Engineer", count: 0 },
+    { course: "Electrical Engineer", count: 0 },
+  ]);
+  const { state: globalStatate } = useGlobalContext();
+  useEffect(() => {
+    settotalData((oldTotalData) => {
+      const newTotalData = oldTotalData.map((item) => {
+        item.count = globalStatate.thesisItems.filter(
+          (_item) => _item.course === item.course
+        ).length;
+        return item;
+      });
+      return newTotalData;
+    });
+  }, [globalStatate.thesisItems]);
+  return (
+    <ResponsiveContainer width={"99%"} height="99%">
+      <RadarChart outerRadius={90} data={totalData}>
+        <PolarGrid />
+        <PolarAngleAxis dataKey="course" />
+        <Radar
+          name="Thesis Count"
+          dataKey="count"
+          stroke="#82ca9d"
+          fill="#82ca9d"
+          fillOpacity={0.6}
+        />
+        <Legend />
+      </RadarChart>
+    </ResponsiveContainer>
+  );
+};
+
 type DataType = {
   key: string;
   title: string;

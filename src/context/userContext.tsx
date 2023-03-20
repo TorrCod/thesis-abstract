@@ -105,7 +105,7 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
       .then(
         (res: {
           users: UserDetails[];
-          pendingUsers: { payload: string; _id: string; createdAt: string }[];
+          pendingUsers: { email: string; _id: string; createdAt: string }[];
         }) => {
           const admins: AdminData[] = res.users.map((item) => ({
             ...item,
@@ -117,7 +117,7 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
 
           const pendingAdmins: AdminData[] = res.pendingUsers.map((item) => ({
             ...item,
-            email: item.payload,
+            email: item.email,
             key: item._id,
             dateAdded: new Date(item.createdAt).toLocaleString(),
             status: "pending",

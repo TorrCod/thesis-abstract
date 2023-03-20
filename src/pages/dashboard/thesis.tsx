@@ -34,6 +34,7 @@ import {
   PolarGrid,
   Radar,
   RadarChart,
+  Tooltip,
 } from "recharts";
 import { ResponsiveContainer } from "recharts";
 
@@ -154,10 +155,11 @@ export const ThesisCharts = () => {
         <Radar
           name="Thesis Count"
           dataKey="count"
-          stroke="#82ca9d"
-          fill="#82ca9d"
+          stroke="#F8B49C"
+          fill="#F8B49C"
           fillOpacity={0.6}
         />
+        <Tooltip />
         <Legend />
       </RadarChart>
     </ResponsiveContainer>

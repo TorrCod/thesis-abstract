@@ -1,6 +1,10 @@
 import useUserContext from "@/context/userContext";
 import { auth } from "@/lib/firebase";
-import { addPendingInvite, removePending } from "@/utils/account-utils";
+import {
+  addPendingInvite,
+  inviteUser,
+  removePending,
+} from "@/utils/account-utils";
 import { Avatar, Dropdown, Form, Input, Menu, MenuProps, message } from "antd";
 import { useForm } from "antd/lib/form/Form";
 import { sendSignInLinkToEmail } from "firebase/auth";
@@ -91,23 +95,28 @@ export const AdminMenu = ({
 };
 
 export const AddAdmin = () => {
-  const userUid = useUserContext().state.userDetails?.uid;
+  const userDetails = useUserContext().state.userDetails;
   const [form] = useForm();
   const onFinish = async ({ email }: any) => {
     let id: string = "";
     try {
-      id = await addPendingInvite(email, userUid ?? "");
-      const actionCodeSettings = {
-        url: `${process.env.NEXT_PUBLIC_DOMAIN}/sign-up/${id}`,
-        handleCodeInApp: true,
-      };
-      await sendSignInLinkToEmail(auth, email, actionCodeSettings);
-      message.success("Invite Sent");
-      form.resetFields();
+      const token = await auth.currentUser?.getIdToken();
+      id = await inviteUser(token, {
+        email: email,
+        approove: `${userDetails?.userName}`,
+      });
+      console.log(id);
+      // id = await addPendingInvite(email, userUid ?? "");
+      // const actionCodeSettings = {
+      //   url: `${process.env.NEXT_PUBLIC_DOMAIN}/sign-up/${id}`,
+      //   handleCodeInApp: true,
+      // };
+      // await sendSignInLinkToEmail(auth, email, actionCodeSettings);
+      // message.success("Invite Sent");
+      // form.resetFields();
     } catch (e) {
       message.error("Invite failed");
       console.log(e);
-      await removePending(id);
     }
   };
   return (

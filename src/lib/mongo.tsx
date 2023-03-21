@@ -123,6 +123,13 @@ export const updateUser = async (userDetails: UserDetails) => {
   }
 };
 
+/**
+ * This function adds two numbers together.
+ * @param timer Timer in seconds.
+ * @param dbName Database name.
+ * @param colName Collection name.
+ * @returns Insert Result.
+ */
 export const addDataWithExpiration = async (
   dbName: DatabaseName,
   colName: CollectionName,

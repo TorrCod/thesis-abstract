@@ -27,6 +27,20 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       case "DELETE": {
       }
       case "POST": {
+        switch (req.query.objective) {
+          case "invite-user": {
+            const collection = req.query.collection as CollectionName;
+            const inserResult = await addDataWithExpiration(
+              "accounts",
+              collection,
+              req.body,
+              604800
+            );
+            return res.status(200).json(inserResult);
+          }
+          default:
+            return res.status(400).send("syntax error");
+        }
       }
       default:
         return res.status(400).json({ error: "no method" });

@@ -21,6 +21,18 @@ export const getUserDetails = async (token: string, uid: string) => {
   } else throw new Error("canont read user token");
 };
 
+export const inviteUser = async (token: string | undefined, data: any) => {
+  if (token) {
+    const insertResult = await axios.request({
+      url: `/api/admin-user?collection=pending&objective=invite-user`,
+      data: data,
+      method: "POST",
+      ...userConfig(token),
+    });
+    return insertResult.data;
+  } else throw new Error("canont read user token");
+};
+
 export const updateUser = async (payload: UserDetails) => {
   const res = await axios.post("/api/updateUser", payload);
   return res;

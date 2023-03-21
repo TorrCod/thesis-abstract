@@ -1,16 +1,10 @@
-import { PriButton } from "@/components/button";
 import DashboardLayout from "@/components/dashboardLayout";
 import QuerySearch from "@/components/QuerySearch";
 import useGlobalContext from "@/context/globalContext";
-import { Course, ThesisItems } from "@/context/types.d";
+import { Course } from "@/context/types.d";
 import useUserContext from "@/context/userContext";
-import { tableData } from "@/data/dummydata";
 import { auth } from "@/lib/firebase";
-import {
-  removeThesisITems,
-  restoreThesisAbstract,
-  thesisToDataType,
-} from "@/utils/helper";
+import { thesisToDataType } from "@/utils/helper";
 import { removeThesis, restoreThesis } from "@/utils/thesis-item-utils";
 import {
   Button,
@@ -176,10 +170,18 @@ type DataType = {
 };
 
 export const ThesisTable = () => {
-  const { state } = useGlobalContext();
+  const { state, recycledThesis } = useGlobalContext();
+  const userDetails = useUserContext().state.userDetails;
   const [thesisTableData, setThesisTableData] = useState<DataType[]>([]);
   const [removedTableData, setRemovedTableData] = useState<DataType[]>([]);
   const [selectedKeys, setSelectedKeys] = useState("thesis-items");
+
+  useEffect(() => {
+    if (!userDetails) return;
+    const recycled = recycledThesis();
+    recycled.load();
+    return recycled.clear;
+  }, [userDetails]);
 
   useEffect(() => {
     const thesisItems = state.thesisItems;

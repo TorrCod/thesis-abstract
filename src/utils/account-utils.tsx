@@ -15,7 +15,7 @@ export const addUserAccount = async (token: string, data: any) => {
         method: "POST",
         ...userConfig(token),
       })
-    ).data[0];
+    ).data;
     return userDetails;
   } else throw new Error("canont read user token");
 };

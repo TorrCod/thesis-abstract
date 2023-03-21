@@ -174,7 +174,8 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
   };
 
   const saveUploadThesis = async (thesisItems: ThesisItems) => {
-    await addThesis(thesisItems);
+    const userToken = await auth.currentUser?.getIdToken();
+    await addThesis(thesisItems, userToken);
   };
 
   return (

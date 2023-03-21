@@ -26,3 +26,15 @@ export const admin_deleteUser = async (email: string) => {
   const uid = (await auth.getUserByEmail(email)).uid;
   await auth.deleteUser(uid);
 };
+
+export const verifyIdToken = async (idToken: string) => {
+  const adminApp = firebaseAdminInit();
+  const auth = adminApp.auth();
+  try {
+    const decodedToken = await auth.verifyIdToken(idToken);
+    return decodedToken;
+  } catch (e) {
+    console.log(e);
+    return false;
+  }
+};

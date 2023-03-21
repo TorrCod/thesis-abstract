@@ -5,6 +5,7 @@ import { DefaultEventsMap } from "socket.io/dist/typed-events";
 import recycledThesis from "@/pages/api/recycled-thesis";
 import useGlobalContext from "@/context/globalContext";
 import useUserContext from "@/context/userContext";
+import { auth } from "@/lib/firebase";
 
 let recycled: any | null = null;
 const useSocket = () => {
@@ -16,16 +17,22 @@ const useSocket = () => {
   } = useGlobalContext();
   const [connect, setConnect] = useState(false);
 
+  const loadRecycleThesis = async () => {
+    if (auth.currentUser) {
+      auth.currentUser.getIdToken().then((token) => {
+        recycled = recycledThesis(token);
+        recycled.load();
+      });
+    }
+  };
+
   const socketRef = useRef<(() => Promise<void> | null) | undefined>(undefined);
   const socketInstRef = useRef<
     Socket<DefaultEventsMap, DefaultEventsMap> | undefined
   >(undefined);
 
   useEffect(() => {
-    if (userState.userDetails?.uid) {
-      recycled = recycledThesis(userState.userDetails.uid);
-      recycled.load();
-    }
+    loadRecycleThesis();
     if (socketRef.current !== null && socketInstRef.current === undefined) {
       socketRef.current = async () => {
         await axios.get("/api/socket");
@@ -35,9 +42,7 @@ const useSocket = () => {
         });
         socket.on("thesis-abstract-update", () => {
           loadThesisItems();
-          if (userState.userDetails?.uid) {
-            recycledThesis(userState.userDetails.uid).load();
-          }
+          loadRecycleThesis();
         });
         (socketInstRef as any).current = socket;
       };

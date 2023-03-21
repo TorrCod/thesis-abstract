@@ -2,15 +2,11 @@ import { ThesisItems, UserDetails } from "@/context/types.d";
 import { AddPost, MongoDetails, QueryPost } from "@/lib/types";
 import axios, { AxiosError } from "axios";
 
+const userConfig = (token: string) => ({
+  headers: { authorization: `Bearer ${token}` },
+});
+
 export const addUserAccount = async (userDetails: UserDetails) => {
-  // fetch("/api/addUser", {
-  //   method: "POST",
-  //   body: JSON.stringify(userDetails),
-  //   headers: {
-  //     Accept: "application/json, text/plain, */*",
-  //     "Content-Type": "application/json",
-  //   },
-  // });
   const res = await axios.post("/api/addUser", userDetails);
   return res.data;
 };
@@ -61,8 +57,12 @@ export const firebase_admin_delete_user = async (
   }
 };
 
-export const addThesis = async (data: ThesisItems) => {
-  await axios.post("/api/addThesisItems", data);
+export const addThesis = async (
+  data: ThesisItems,
+  token: string | undefined
+) => {
+  if (token) await axios.post("/api/thesis-items", data, userConfig(token));
+  else throw new Error("canont read user token");
 };
 
 export const addPendingInvite = async (email: string, uid: string) => {

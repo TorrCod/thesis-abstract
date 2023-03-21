@@ -13,7 +13,6 @@ const firebaseAdminInit = () => {
     return adminApp;
   } catch (e) {
     if ((e as any).code === "app/duplicate-app") {
-      console.log("firebase-admin already initialize");
       return admin.app("admin-app");
     }
     throw new Error(e as any);

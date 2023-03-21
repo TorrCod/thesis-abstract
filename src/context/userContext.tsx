@@ -1,12 +1,12 @@
 import { auth, signUp } from "@/lib/firebase";
 import {
-  addThesis,
   addUserAccount,
   getAllUsers,
   getUserDetails,
   updateUser,
   utils_Delete_Account,
 } from "@/utils/account";
+import { addThesis } from "@/utils/thesis-item-utils";
 import { message } from "antd";
 import {
   EmailAuthProvider,

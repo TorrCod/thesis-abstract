@@ -64,11 +64,6 @@ export const removeThesisITems = async (
   uid: string,
   thesisItem: ThesisItems
 ) => {
-  // const data = await (
-  //   await axios.post("/api/recycled-thesis", thesisItem, {
-  //     headers: { Authorization: `Bearer ${uid}` },
-  //   })
-  // ).data;
   const data = await (
     await axios.delete("/api/recycled-thesis", {
       data: thesisItem,

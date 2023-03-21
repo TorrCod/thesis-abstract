@@ -1,8 +1,6 @@
 import LoadingIcon from "@/components/loadingIcon";
 import { auth } from "@/lib/firebase";
-import { getData } from "@/lib/mongo";
-import { getAllThesis, getDeletedThesis } from "@/utils/helper";
-import { getAllDeletedThesis } from "@/utils/thesis-item-utils";
+import { getAllDeletedThesis, getAllThesis } from "@/utils/thesis-item-utils";
 import React, {
   createContext,
   useContext,

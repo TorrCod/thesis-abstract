@@ -2,6 +2,11 @@ import { ThesisItems } from "@/context/types.d";
 import axios from "axios";
 import { userConfig } from "./account";
 
+export const getAllThesis = async () => {
+  const res = await axios.get("/api/thesis-items?container=thesis-items");
+  return res.data;
+};
+
 export const getAllDeletedThesis = async (token: string | undefined) => {
   if (token) {
     const res = await axios.get(

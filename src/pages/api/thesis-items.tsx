@@ -12,13 +12,15 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
-    const isValidated = await validateAuth(req);
-    if (isValidated.error) {
-      return res.status(400).json(isValidated);
+    if (req.query.container !== "thesis-items") {
+      const isValidated = await validateAuth(req);
+      if (isValidated.error) {
+        return res.status(400).json(isValidated);
+      }
     }
     switch (req.method) {
       case "GET": {
-        type ActionKey = "deleted-thesis";
+        type ActionKey = "deleted-thesis" | "thesis-items";
         const action = {
           "deleted-thesis": async () => {
             const deletedThesis = await getData(
@@ -26,6 +28,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               "deleted-thesis"
             );
             return deletedThesis;
+          },
+          "thesis-items": async () => {
+            const thesisItems = await getData(
+              "thesis-abstract",
+              "thesis-items"
+            );
+            return thesisItems;
           },
         };
         const query = req.query.container as ActionKey;

@@ -101,19 +101,18 @@ export const AddAdmin = () => {
     let id: string = "";
     try {
       const token = await auth.currentUser?.getIdToken();
-      id = await inviteUser(token, {
+      const inserResult = await inviteUser(token, {
         email: email,
         approove: `${userDetails?.userName}`,
       });
-      console.log(id);
-      // id = await addPendingInvite(email, userUid ?? "");
-      // const actionCodeSettings = {
-      //   url: `${process.env.NEXT_PUBLIC_DOMAIN}/sign-up/${id}`,
-      //   handleCodeInApp: true,
-      // };
-      // await sendSignInLinkToEmail(auth, email, actionCodeSettings);
-      // message.success("Invite Sent");
-      // form.resetFields();
+      id = inserResult.insertedId;
+      const actionCodeSettings = {
+        url: `${process.env.NEXT_PUBLIC_DOMAIN}/sign-up/${id}`,
+        handleCodeInApp: true,
+      };
+      await sendSignInLinkToEmail(auth, email, actionCodeSettings);
+      message.success("Invite Sent");
+      form.resetFields();
     } catch (e) {
       message.error("Invite failed");
       console.log(e);

@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import axios from "axios";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
-import recycledThesis from "@/pages/api/recycled-thesis";
 import useGlobalContext from "@/context/globalContext";
 import useUserContext from "@/context/userContext";
 import { auth } from "@/lib/firebase";
@@ -30,7 +29,6 @@ const useSocket = () => {
   >(undefined);
 
   useEffect(() => {
-    loadRecycleThesis();
     if (socketRef.current !== null && socketInstRef.current === undefined) {
       socketRef.current = async () => {
         await axios.get("/api/socket");

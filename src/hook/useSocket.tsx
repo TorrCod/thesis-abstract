@@ -19,10 +19,8 @@ const useSocket = () => {
 
   const loadRecycleThesis = async () => {
     if (auth.currentUser) {
-      auth.currentUser.getIdToken().then((token) => {
-        recycled = recycledThesis(token);
-        recycled.load();
-      });
+      recycled = recycledThesis();
+      recycled.load();
     }
   };
 

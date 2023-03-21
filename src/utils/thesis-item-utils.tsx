@@ -2,6 +2,16 @@ import { ThesisItems } from "@/context/types.d";
 import axios from "axios";
 import { userConfig } from "./account";
 
+export const getAllDeletedThesis = async (token: string | undefined) => {
+  if (token) {
+    const res = await axios.get(
+      "/api/thesis-items?container=deleted-thesis",
+      userConfig(token)
+    );
+    return res.data;
+  } else throw new Error("canont read user token");
+};
+
 export const addThesis = async (
   data: ThesisItems,
   token: string | undefined

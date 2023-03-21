@@ -270,8 +270,6 @@ export const ThesisTable = () => {
 };
 
 const RemoveThesis = (props: DataType & { id: string }) => {
-  const thesisItems = useGlobalContext().state.thesisItems;
-  const uid = useUserContext().state.userDetails?.uid;
   const handleClick = async () => {
     try {
       const token = await auth.currentUser?.getIdToken();

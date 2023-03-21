@@ -7,7 +7,6 @@ import {
   getData,
 } from "@/lib/mongo";
 import { validateAuth } from "@/utils/server-utils";
-import { AxiosRequestConfig } from "axios";
 import { ObjectId } from "mongodb";
 import { NextApiRequest, NextApiResponse } from "next";
 
@@ -19,6 +18,19 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
     switch (req.method) {
       case "GET": {
+        type ActionKey = "deleted-thesis";
+        const action = {
+          "deleted-thesis": async () => {
+            const deletedThesis = await getData(
+              "thesis-abstract",
+              "deleted-thesis"
+            );
+            return deletedThesis;
+          },
+        };
+        const query = req.query.container as ActionKey;
+        const payload = await action[query]();
+        return res.status(200).json(payload);
       }
       case "DELETE": {
         const id = req.body;

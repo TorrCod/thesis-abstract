@@ -55,7 +55,7 @@ export type GlobalValue = {
   state: GlobalState;
   dispatch: Dispatch<GlobalAction>;
   loadThesisItems: () => Promise<void>;
-  recycledThesis: (uid: string) => {
+  recycledThesis: () => {
     load: () => Promise<void>;
     clear: () => void;
   };

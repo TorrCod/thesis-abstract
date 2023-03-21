@@ -32,6 +32,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                 { deleteAfterGet: true }
               )
             )[0];
+            delete thesisItems.createdAt;
+            delete thesisItems.expireAfterSeconds;
             const resData = await addData(
               "thesis-abstract",
               "thesis-items",

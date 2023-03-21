@@ -8,6 +8,7 @@ import {
 } from "@/lib/mongo";
 import { CollectionName } from "@/lib/types";
 import { validateAuth } from "@/utils/server-utils";
+import { ObjectId } from "mongodb";
 import { NextApiRequest, NextApiResponse } from "next";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -25,6 +26,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         return res.status(200).json(userDetails);
       }
       case "DELETE": {
+        const collection = req.query.collection as CollectionName;
+        const _id = req.query._id as string | undefined;
+        const deleteRes = await deleteData("accounts", collection, {
+          _id: new ObjectId(_id),
+        });
+        return res.status(200).json(deleteRes);
       }
       case "POST": {
         switch (req.query.objective) {

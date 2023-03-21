@@ -82,13 +82,15 @@ export const addPendingInvite = async (email: string, uid: string) => {
   }
 };
 
-export const removePending = async (id: string) => {
-  const mongoQuery: QueryPost = {
-    data: "",
-    mongoDetails: { collectionName: "pending", databaseName: "accounts" },
-    query: { _id: id },
-  };
-  await axios.post("/api/remove-item-db", mongoQuery);
+export const removePending = async (token: string | undefined, id: string) => {
+  if (token) {
+    const deleteResult = await axios.request({
+      url: `/api/admin-user?collection=pending&_id=${id}`,
+      method: "DELETE",
+      ...userConfig(token),
+    });
+    return deleteResult.data;
+  } else throw new Error("canont read user token");
 };
 
 export const getAllUsers = async (uid: string) => {

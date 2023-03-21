@@ -62,13 +62,13 @@ export const addData = async (
 export const deleteData = async (
   dbName: DatabaseName,
   colName: CollectionName,
-  query: Filter<Document>
+  query: Filter<{ _id: ObjectId }>
 ) => {
   try {
     const client = await connectToDatabase();
     const database = client.db(dbName);
     const collection = database.collection(colName);
-    const res = await collection.deleteOne({ query });
+    const res = await collection.deleteOne(query, undefined);
     client.close();
     return res;
   } catch (e) {

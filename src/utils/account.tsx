@@ -1,6 +1,6 @@
 import { ThesisItems, UserDetails } from "@/context/types.d";
 import { AddPost, MongoDetails, QueryPost } from "@/lib/types";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 export const addUserAccount = async (userDetails: UserDetails) => {
   // fetch("/api/addUser", {
@@ -55,8 +55,9 @@ export const firebase_admin_delete_user = async (
     });
     return response.data;
   } catch (error) {
-    console.error(error);
-    throw error;
+    if ((error as AxiosError).status === 400)
+      throw new Error((error as AxiosError).response?.data as string);
+    else throw new Error((error as AxiosError).response?.data as string);
   }
 };
 

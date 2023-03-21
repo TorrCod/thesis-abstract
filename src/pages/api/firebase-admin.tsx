@@ -1,5 +1,6 @@
 import { admin_deleteUser } from "@/lib/firebase-admin";
 import { validateAuth } from "@/utils/server-utils";
+import { FirebaseError } from "firebase-admin";
 import { NextApiRequest, NextApiResponse } from "next";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -16,8 +17,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       }
     }
   } catch (e) {
+    if ((e as FirebaseError).code === "auth/user-not-found") {
+      return res.status(400).json({ error: (e as FirebaseError).message });
+    }
     console.error(e);
-    return res.status(500).send("internal server error");
+    return res.status(500).send("API Error");
   }
 };
 

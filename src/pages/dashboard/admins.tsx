@@ -110,12 +110,8 @@ const RemoveAdmin = ({ record }: { record: AdminData }) => {
       const email = userEmail?.email;
       await signInWithEmailAndPassword(auth, email ?? "", password);
       if (record.status === "admin") {
+        await firebase_admin_delete_user(record.email, userEmail?.uid ?? "");
         await utils_Delete_Account(record.key);
-        const res = await firebase_admin_delete_user(
-          record.email,
-          userEmail?.uid ?? ""
-        );
-        console.log(res);
       } else if (record.status === "pending") {
         await removePending(record.key);
       }

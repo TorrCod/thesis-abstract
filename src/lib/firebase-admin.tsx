@@ -1,9 +1,27 @@
-import { initializeApp } from "firebase-admin";
+import * as admin from "firebase-admin";
 import { firebaseConfig } from "./firebase";
 
-const adminApp = initializeApp(firebaseConfig);
+const firebaseAdminInit = () => {
+  try {
+    const firebase_admin_config = {
+      ...firebaseConfig,
+      credential: admin.credential.cert(
+        JSON.parse(process.env.ADMIN_CONFIG ?? "")
+      ),
+    };
+    const adminApp = admin.initializeApp(firebase_admin_config, "admin-app");
+    return adminApp;
+  } catch (e) {
+    if ((e as any).code === "app/duplicate-app") {
+      console.log("firebase-admin already initialize");
+      return admin.app("admin-app");
+    }
+    throw new Error(e as any);
+  }
+};
 
 export const admin_deleteUser = async (email: string) => {
+  const adminApp = firebaseAdminInit();
   const auth = adminApp.auth();
   const uid = (await auth.getUserByEmail(email)).uid;
   await auth.deleteUser(uid);

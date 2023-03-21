@@ -12,6 +12,7 @@ import { useForm } from "antd/lib/form/Form";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import {
+  deleteAdmin,
   firebase_admin_delete_user,
   removePending,
   utils_Delete_Account,
@@ -110,8 +111,9 @@ const RemoveAdmin = ({ record }: { record: AdminData }) => {
       const email = userEmail?.email;
       await signInWithEmailAndPassword(auth, email ?? "", password);
       if (record.status === "admin") {
-        await firebase_admin_delete_user(record.email, userEmail?.uid ?? "");
-        await utils_Delete_Account(record.key);
+        const token = await auth.currentUser?.getIdToken();
+        // await firebase_admin_delete_user(token, record.email);
+        await deleteAdmin(token, record.key);
       } else if (record.status === "pending") {
         const token = await auth.currentUser?.getIdToken();
         await removePending(token, record.key);

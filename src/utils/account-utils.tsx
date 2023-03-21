@@ -42,6 +42,44 @@ export const inviteUser = async (token: string | undefined, data: any) => {
   } else throw new Error("canont read user token");
 };
 
+export const removePending = async (token: string | undefined, id: string) => {
+  if (token) {
+    const deleteResult = await axios.request({
+      url: `/api/admin-user?collection=pending&_id=${id}`,
+      method: "DELETE",
+      ...userConfig(token),
+    });
+    return deleteResult.data;
+  } else throw new Error("canont read user token");
+};
+
+export const deleteAdmin = async (token: string | undefined, id: string) => {
+  if (token) {
+    const deleteResult = await axios.request({
+      url: `/api/admin-user?collection=user&_id=${id}`,
+      method: "DELETE",
+      ...userConfig(token),
+    });
+    return deleteResult.data;
+  } else throw new Error("canont read user token");
+};
+
+export const firebase_admin_delete_user = async (
+  token: string | undefined,
+  email: string
+) => {
+  if (token) {
+    const deleteResult = await axios.request({
+      url: `/api/firebase-admin?email=${email}`,
+      method: "DELETE",
+      ...userConfig(token),
+    });
+    return deleteResult.data;
+  } else throw new Error("canont read user token");
+};
+
+// -----------------------------
+
 export const updateUser = async (payload: UserDetails) => {
   const res = await axios.post("/api/updateUser", payload);
   return res;
@@ -59,24 +97,6 @@ export const utils_Delete_Account = async (_id: string) => {
   await axios.post("/api/remove-item-db", mongoQuery);
 };
 
-export const firebase_admin_delete_user = async (
-  email: string,
-  uid: string
-) => {
-  const url = "/api/firebase-admin";
-  try {
-    const response = await axios.delete(url, {
-      data: { email: email },
-      headers: { Authorization: `Bearer ${uid}` },
-    });
-    return response.data;
-  } catch (error) {
-    if ((error as AxiosError).status === 400)
-      throw new Error((error as AxiosError).response?.data as string);
-    else throw new Error((error as AxiosError).response?.data as string);
-  }
-};
-
 export const addPendingInvite = async (email: string, uid: string) => {
   try {
     const data = await axios.post("/api/invite-admin", {
@@ -89,17 +109,6 @@ export const addPendingInvite = async (email: string, uid: string) => {
     console.error(e);
     throw new Error(e as any);
   }
-};
-
-export const removePending = async (token: string | undefined, id: string) => {
-  if (token) {
-    const deleteResult = await axios.request({
-      url: `/api/admin-user?collection=pending&_id=${id}`,
-      method: "DELETE",
-      ...userConfig(token),
-    });
-    return deleteResult.data;
-  } else throw new Error("canont read user token");
 };
 
 export const getAllUsers = async (uid: string) => {

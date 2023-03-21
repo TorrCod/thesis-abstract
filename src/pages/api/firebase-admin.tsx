@@ -5,14 +5,14 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
-    const isValidate = await validateAuth(req, res);
+    const isValidate = await validateAuth(req);
     if (isValidate.error) {
       return res.status(400).json(isValidate);
     }
     switch (req.method) {
       case "DELETE": {
-        if (!req.body.email) return res.status(400).send("insufficient input");
-        await admin_deleteUser(req.body.email);
+        if (!req.query.email) return res.status(204).send("email not set");
+        await admin_deleteUser(req.query.email as string);
         return res.status(200).json({ message: "account deleted" });
       }
     }

@@ -1,11 +1,5 @@
 import { ThesisItems } from "@/context/types.d";
-import {
-  addData,
-  addDataWithExpiration,
-  deleteData,
-  generateId,
-  getData,
-} from "@/lib/mongo";
+import { addData, addDataWithExpiration, getData } from "@/lib/mongo";
 import { validateAuth } from "@/utils/server-utils";
 import { ObjectId } from "mongodb";
 import { NextApiRequest, NextApiResponse } from "next";

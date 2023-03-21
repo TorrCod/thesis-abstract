@@ -1,5 +1,5 @@
 import { UserDetails } from "@/context/types.d";
-import { ChangeStreamDocument, MongoClient, ObjectId } from "mongodb";
+import { ChangeStreamDocument, Filter, MongoClient, ObjectId } from "mongodb";
 import { useEffect } from "react";
 import { CollectionName, DatabaseName, QueryPost } from "./types";
 
@@ -38,25 +38,6 @@ export const getData = async (
   }
 };
 
-export const deleteData = async (queryPost: QueryPost) => {
-  try {
-    const client = await connectToDatabase();
-    const database = client.db(queryPost.mongoDetails.databaseName);
-    const collection = database.collection(
-      queryPost.mongoDetails.collectionName
-    );
-    if (queryPost.query["_id"]) {
-      queryPost.query["_id"] = new ObjectId(queryPost.query["_id"] as string);
-    }
-    const res = await collection.deleteOne(queryPost.query);
-    client.close();
-    return res;
-  } catch (e) {
-    console.error(e);
-    throw new Error(e as string).message;
-  }
-};
-
 export const addData = async (
   dbName: DatabaseName,
   colName: CollectionName,
@@ -74,6 +55,43 @@ export const addData = async (
     throw new Error(e as string).message;
   }
 };
+
+export const deleteData = async (
+  dbName: DatabaseName,
+  colName: CollectionName,
+  query: Filter<Document>
+) => {
+  try {
+    const client = await connectToDatabase();
+    const database = client.db(dbName);
+    const collection = database.collection(colName);
+    const res = await collection.deleteOne({ query });
+    client.close();
+    return res;
+  } catch (e) {
+    console.error(e);
+    throw new Error(e as string).message;
+  }
+};
+
+// export const deleteData = async (queryPost: QueryPost) => {
+//   try {
+//     const client = await connectToDatabase();
+//     const database = client.db(queryPost.mongoDetails.databaseName);
+//     const collection = database.collection(
+//       queryPost.mongoDetails.collectionName
+//     );
+//     if (queryPost.query["_id"]) {
+//       queryPost.query["_id"] = new ObjectId(queryPost.query["_id"] as string);
+//     }
+//     const res = await collection.deleteOne(queryPost.query);
+//     client.close();
+//     return res;
+//   } catch (e) {
+//     console.error(e);
+//     throw new Error(e as string).message;
+//   }
+// };
 
 export const generateId = (items: any[]) =>
   items.map((child) => ({

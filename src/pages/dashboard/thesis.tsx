@@ -5,11 +5,13 @@ import useGlobalContext from "@/context/globalContext";
 import { Course, ThesisItems } from "@/context/types.d";
 import useUserContext from "@/context/userContext";
 import { tableData } from "@/data/dummydata";
+import { auth } from "@/lib/firebase";
 import {
   removeThesisITems,
   restoreThesisAbstract,
   thesisToDataType,
 } from "@/utils/helper";
+import { removeThesis, restoreThesis } from "@/utils/thesis-item-utils";
 import {
   Button,
   Card,
@@ -272,10 +274,8 @@ const RemoveThesis = (props: DataType & { id: string }) => {
   const uid = useUserContext().state.userDetails?.uid;
   const handleClick = async () => {
     try {
-      const thesisItem: ThesisItems = thesisItems.filter(
-        (item) => item.id === props.id
-      )[0];
-      await removeThesisITems(uid ?? "", thesisItem);
+      const token = await auth.currentUser?.getIdToken();
+      await removeThesis({ token: token, thesisId: props.id });
       message.success("Removed Success");
     } catch (e) {
       message.error("remove failed");
@@ -296,10 +296,10 @@ const RemoveThesis = (props: DataType & { id: string }) => {
 };
 
 const RestoreThesis = (props: DataType & { id: string }) => {
-  const uid = useUserContext().state.userDetails?.uid;
   const handleClick = async () => {
     try {
-      await restoreThesisAbstract(uid ?? "", props.id);
+      const token = await auth.currentUser?.getIdToken();
+      await restoreThesis({ token: token, thesisId: props.id });
       message.success("Restore Success");
     } catch (e) {
       message.error("Restore failed");

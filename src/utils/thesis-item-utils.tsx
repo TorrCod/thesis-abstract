@@ -1,6 +1,6 @@
 import { ThesisItems } from "@/context/types.d";
 import axios from "axios";
-import { userConfig } from "./account";
+import { userConfig } from "./account-utils";
 
 export const getAllThesis = async () => {
   const res = await axios.get("/api/thesis-items?container=thesis-items");

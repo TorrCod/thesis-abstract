@@ -15,7 +15,7 @@ import {
   firebase_admin_delete_user,
   removePending,
   utils_Delete_Account,
-} from "@/utils/account";
+} from "@/utils/account-utils";
 
 const DashboardAdmin = () => {
   return (

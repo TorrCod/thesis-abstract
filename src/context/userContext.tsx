@@ -5,7 +5,7 @@ import {
   getUserDetails,
   updateUser,
   utils_Delete_Account,
-} from "@/utils/account";
+} from "@/utils/account-utils";
 import { addThesis } from "@/utils/thesis-item-utils";
 import { message } from "antd";
 import {
@@ -70,19 +70,18 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
   const [triggerUpdate, setTriggerUpdate] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        const id = user.uid;
-        getUserDetails(id)
-          .then((res) => {
-            if (typeof res === "object" && res !== null) {
-              res.profilePic = auth.currentUser?.photoURL ?? undefined;
-              dispatch({ type: "on-signin", payload: { userDetails: res } });
-            }
-          })
-          .catch((e) => {
-            console.error(e);
-          });
+        try {
+          console.log("signed in");
+          const token = await user.getIdToken();
+          const res = await getUserDetails(token, user.uid);
+          res.profilePic = user.photoURL;
+          dispatch({ type: "on-signin", payload: { userDetails: res } });
+        } catch (e) {
+          message.error("failed to fetch user details");
+          console.error(e);
+        }
       } else {
         dispatch({
           type: "on-logout",

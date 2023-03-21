@@ -11,15 +11,14 @@ export const addUserAccount = async (userDetails: UserDetails) => {
   return res.data;
 };
 
-export const getUserDetails = async (id: string): Promise<UserDetails> => {
-  try {
-    const { data } = await axios.post("/api/getUser", { _id: id });
-    if (data.error) throw new Error("No Data");
-    return data;
-  } catch (error) {
-    console.error(error);
-    throw new Error("Failed to fetch user details");
-  }
+export const getUserDetails = async (token: string, uid: string) => {
+  if (token) {
+    const res = await axios.get(
+      `/api/admin-user?collection=user&uid=${uid}`,
+      userConfig(token)
+    );
+    return res.data[0];
+  } else throw new Error("canont read user token");
 };
 
 export const updateUser = async (payload: UserDetails) => {

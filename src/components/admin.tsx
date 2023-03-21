@@ -1,15 +1,9 @@
 import useUserContext from "@/context/userContext";
 import { auth } from "@/lib/firebase";
-import {
-  addPendingInvite,
-  addUserAccount,
-  removePending,
-} from "@/utils/account";
+import { addPendingInvite, removePending } from "@/utils/account-utils";
 import { Avatar, Dropdown, Form, Input, Menu, MenuProps, message } from "antd";
 import { useForm } from "antd/lib/form/Form";
-import axios from "axios";
 import { sendSignInLinkToEmail } from "firebase/auth";
-import { ObjectId } from "mongodb";
 import Link from "next/link";
 import router from "next/router";
 import React, { useState } from "react";

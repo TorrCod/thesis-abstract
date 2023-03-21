@@ -45,6 +45,24 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             );
             return res.status(200).json(inserResult);
           }
+          case "signup": {
+            const collection = req.query.collection as CollectionName;
+            req.body._id = new ObjectId(req.body._id);
+            await getData(
+              "accounts",
+              "pending",
+              { _id: req.body._id },
+              { deleteAfterGet: true }
+            );
+            const insertResult = await addData(
+              "accounts",
+              collection,
+              req.body
+            );
+            if (!insertResult.acknowledged)
+              return res.status(204).json({ error: "Insert Data failed" });
+            return res.status(200).json(req.body);
+          }
           default:
             return res.status(400).send("syntax error");
         }

@@ -6,9 +6,18 @@ export const userConfig = (token: string) => ({
   headers: { authorization: `Bearer ${token}` },
 });
 
-export const addUserAccount = async (userDetails: UserDetails) => {
-  const res = await axios.post("/api/addUser", userDetails);
-  return res.data;
+export const addUserAccount = async (token: string, data: any) => {
+  if (token) {
+    const userDetails = (
+      await axios.request({
+        url: `/api/admin-user?collection=user&objective=signup`,
+        data: data,
+        method: "POST",
+        ...userConfig(token),
+      })
+    ).data[0];
+    return userDetails;
+  } else throw new Error("canont read user token");
 };
 
 export const getUserDetails = async (token: string, uid: string) => {

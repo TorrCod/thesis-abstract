@@ -45,7 +45,7 @@ export const signUp = async (details: UserDetails) => {
   updateProfile(res.user, {
     displayName: details.userName,
   });
-  return res.user.uid;
+  return res;
 };
 
 export const uploadProfile = async (dataUrl: string, uid: string) => {

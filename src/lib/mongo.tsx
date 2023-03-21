@@ -19,7 +19,7 @@ export async function connectToDatabase() {
 export const getData = async (
   dbName: DatabaseName,
   colName: CollectionName,
-  query?: Record<string, any>,
+  query?: Filter<Document | {}>,
   option?: { deleteAfterGet: boolean }
 ) => {
   try {

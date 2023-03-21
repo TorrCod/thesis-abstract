@@ -1,4 +1,5 @@
-import { Dispatch } from "react";
+import { Unsubscribe } from "firebase/auth";
+import { Dispatch, MutableRefObject } from "react";
 
 export interface GlobalState {
   thesisItems: ThesisItems[];
@@ -99,6 +100,7 @@ export type UserValue = {
   deleteAccount?: (currpass: string) => Promise<void>;
   saveUploadThesis: (data: ThesisItems) => Promise<void>;
   loadUser: (uid: string) => void;
+  unsubscribeRef: MutableRefObject<Unsubscribe | null>;
 };
 
 export type UserAction =

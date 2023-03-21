@@ -3,7 +3,6 @@ import { LoadingGlobal } from "@/context/globalContext";
 import { Course, UserDetails } from "@/context/types.d";
 import useUserContext from "@/context/userContext";
 import { getData, generateId } from "@/lib/mongo";
-import { getUserDetails, removePending } from "@/utils/account";
 import { Form, Input, message, Select } from "antd";
 import { ObjectId } from "mongodb";
 import { GetStaticProps, GetStaticPaths } from "next";
@@ -51,7 +50,7 @@ const courseOpt: { value: Course; label: Course }[] = [
 ];
 
 const HandleInviteLink = (props: {
-  data: { email: string; id: string; _id: any; addedByUid: string };
+  data: { email: string; _id: string; approove: string };
   hasError: boolean;
 }) => {
   const [formSignUp] = Form.useForm();
@@ -67,7 +66,6 @@ const HandleInviteLink = (props: {
   const handleSignUp = async () => {
     try {
       await formSignUp.validateFields();
-      const adminName = await await getUserDetails(props.data.addedByUid);
       const payload = formSignUp.getFieldsValue();
       const userDetails: UserDetails = {
         email: payload["sign-up-email"],
@@ -78,10 +76,10 @@ const HandleInviteLink = (props: {
         password: payload["confirm-password"],
         dateAdded: new Date().toLocaleString(),
         profilePic: undefined,
-        approove: `${adminName.firstName} ${adminName.lastName}`,
+        approove: props.data.approove,
+        _id: props.data._id,
       };
       await userCtx.userSignUp?.(userDetails);
-      await removePending(props.data["_id"]);
       message.success({
         type: "success",
         content: "Initialized Successfully",

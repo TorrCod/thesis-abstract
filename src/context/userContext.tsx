@@ -13,6 +13,7 @@ import {
   onAuthStateChanged,
   reauthenticateWithCredential,
   sendPasswordResetEmail,
+  Unsubscribe,
   updatePassword,
   updateProfile,
 } from "firebase/auth";
@@ -21,6 +22,7 @@ import {
   useContext,
   useEffect,
   useReducer,
+  useRef,
   useState,
 } from "react";
 import {
@@ -42,6 +44,7 @@ const userValueInit: UserValue = {
   dispatch: () => {},
   saveUploadThesis: async () => {},
   loadUser: (arg) => {},
+  unsubscribeRef: { current: null },
 };
 
 const UserContext = createContext<UserValue>(userValueInit);
@@ -67,7 +70,7 @@ const userReducer = (state: UserState, action: UserAction): UserState => {
 
 export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(userReducer, userStateInit);
-  const [triggerUpdate, setTriggerUpdate] = useState(false);
+  const unsubscribeRef = useRef<Unsubscribe | null>(null);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -87,9 +90,10 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
           type: "on-logout",
         });
       }
+      unsubscribeRef.current = unsubscribe;
     });
     return () => unsubscribe();
-  }, [triggerUpdate]);
+  }, []);
 
   useEffect(() => {
     if (state.userDetails?.uid) {
@@ -130,9 +134,12 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
   };
 
   const userSignUp = async (userDetails: UserDetails) => {
-    const uid = await signUp(userDetails);
+    unsubscribeRef.current?.();
+    const credential = await signUp(userDetails);
     delete userDetails.password;
-    const res = await addUserAccount({ ...userDetails, uid: uid });
+    const token = await credential.user.getIdToken();
+    userDetails.uid = credential.user.uid;
+    const res = await addUserAccount(token, userDetails);
     dispatch({ type: "on-signin", payload: { userDetails: res } });
   };
 
@@ -189,6 +196,7 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
         updateProfileUrl,
         deleteAccount,
         saveUploadThesis,
+        unsubscribeRef,
       }}
     >
       {children}

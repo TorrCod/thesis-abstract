@@ -43,7 +43,7 @@ const userValueInit: UserValue = {
   state: userStateInit,
   dispatch: () => {},
   saveUploadThesis: async () => {},
-  loadUser: (arg) => {},
+  loadAllUsers: async () => {},
   unsubscribeRef: { current: null },
 };
 
@@ -55,8 +55,6 @@ const userReducer = (state: UserState, action: UserAction): UserState => {
       const newState = { ...state };
       newState["userDetails"] =
         action.payload.userDetails ?? newState["userDetails"];
-      newState["listOfAdmins"] =
-        action.payload.allUsers ?? newState["listOfAdmins"];
       return newState;
     }
     case "on-signup": {
@@ -64,6 +62,27 @@ const userReducer = (state: UserState, action: UserAction): UserState => {
     }
     case "on-logout": {
       return { ...state, userDetails: undefined, listOfAdmins: [] };
+    }
+    case "load-all-users": {
+      const payload = action.payload;
+      const adminUsers: AdminData[] = payload.adminList.map((item) => {
+        return {
+          ...item,
+          key: item._id,
+          status: "Admin",
+          dateAdded: item.dateAdded!,
+        };
+      });
+      const pendingUsers: AdminData[] = payload.pendingAdminList.map((item) => {
+        return {
+          ...item,
+          key: item._id,
+          status: "Pending",
+          dateAdded: item.createdAt,
+        };
+      });
+      const allUsers: AdminData[] = [...adminUsers, ...pendingUsers];
+      return { ...state, listOfAdmins: allUsers };
     }
   }
 };
@@ -95,42 +114,15 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
     return () => unsubscribe();
   }, []);
 
-  useEffect(() => {
-    if (state.userDetails?.uid) {
-      loadUser(state.userDetails.uid);
+  const loadAllUsers = async () => {
+    try {
+      const token = await auth.currentUser?.getIdToken();
+      const allUsers = await getAllUsers(token);
+      dispatch({ type: "load-all-users", payload: allUsers });
+    } catch (e) {
+      message.error("failed to load all users");
+      console.error(e);
     }
-  }, [state.userDetails]);
-
-  const loadUser = (uid: string) => {
-    getAllUsers(uid)
-      .then(
-        (res: {
-          users: UserDetails[];
-          pendingUsers: { email: string; _id: string; createdAt: string }[];
-        }) => {
-          const admins: AdminData[] = res.users.map((item) => ({
-            ...item,
-            name: `${item.firstName} ${item.lastName}`,
-            key: item._id ?? "",
-            status: "admin",
-            dateAdded: new Date(item.dateAdded ?? "").toLocaleString(),
-          }));
-
-          const pendingAdmins: AdminData[] = res.pendingUsers.map((item) => ({
-            ...item,
-            email: item.email,
-            key: item._id,
-            dateAdded: new Date(item.createdAt).toLocaleString(),
-            status: "pending",
-          }));
-
-          const allAdmins: AdminData[] = [...admins, ...pendingAdmins];
-          dispatch({ type: "on-signin", payload: { allUsers: allAdmins } });
-        }
-      )
-      .catch((res) => {
-        message.error((res as Error).message);
-      });
   };
 
   const userSignUp = async (userDetails: UserDetails) => {
@@ -188,7 +180,7 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
     <UserContext.Provider
       value={{
         state,
-        loadUser,
+        loadAllUsers,
         dispatch,
         userSignUp,
         userUpdateInfo,

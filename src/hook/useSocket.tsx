@@ -8,7 +8,7 @@ import { auth } from "@/lib/firebase";
 
 let recycled: any | null = null;
 const useSocket = () => {
-  const { loadUser, state: userState } = useUserContext();
+  const { loadAllUsers, state: userState } = useUserContext();
   const {
     loadThesisItems,
     recycledThesis,
@@ -34,7 +34,7 @@ const useSocket = () => {
         await axios.get("/api/socket");
         const socket = io();
         socket.on("account-update", (msg) => {
-          loadUser(userState.userDetails?.uid ?? "");
+          loadAllUsers();
         });
         socket.on("thesis-abstract-update", () => {
           loadThesisItems();

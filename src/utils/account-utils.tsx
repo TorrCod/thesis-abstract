@@ -1,4 +1,4 @@
-import { ThesisItems, UserDetails } from "@/context/types.d";
+import { PendingAdminList, ThesisItems, UserDetails } from "@/context/types.d";
 import { AddPost, MongoDetails, QueryPost } from "@/lib/types";
 import axios, { AxiosError } from "axios";
 
@@ -78,6 +78,26 @@ export const firebase_admin_delete_user = async (
   } else throw new Error("canont read user token");
 };
 
+export const getAllUsers = async (token: string | undefined) => {
+  if (token) {
+    const response: {
+      adminList: UserDetails[];
+      pendingAdminList: PendingAdminList[];
+    } = { adminList: [], pendingAdminList: [] };
+    const pendingList = await axios.get(
+      `/api/admin-user?collection=pending`,
+      userConfig(token)
+    );
+    const adminList = await axios.get(
+      `/api/admin-user?collection=user`,
+      userConfig(token)
+    );
+    response.adminList = adminList.data;
+    response.pendingAdminList = pendingList.data;
+    return response;
+  } else throw new Error("canont read user token");
+};
+
 // -----------------------------
 
 export const updateUser = async (payload: UserDetails) => {
@@ -108,17 +128,5 @@ export const addPendingInvite = async (email: string, uid: string) => {
   } catch (e) {
     console.error(e);
     throw new Error(e as any);
-  }
-};
-
-export const getAllUsers = async (uid: string) => {
-  try {
-    const allUsers = await (
-      await axios.get("/api/get-all-user", { headers: { uid: uid } })
-    ).data;
-    return allUsers;
-  } catch (e) {
-    console.error(e);
-    throw new Error("failed to load data");
   }
 };

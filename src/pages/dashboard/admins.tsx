@@ -68,7 +68,7 @@ export const AdminTable = ({ noAction }: { noAction?: boolean }) => {
       render: (value) => (
         <div
           className={`grid ${
-            value === `pending` ? `bg-yellow-500` : `bg-lime-500`
+            value === `Pending` ? `bg-yellow-500` : `bg-lime-500`
           } place-items-center rounded-xl w-[6em] py-1 text-white`}
         >
           {value}
@@ -81,8 +81,18 @@ export const AdminTable = ({ noAction }: { noAction?: boolean }) => {
       render: (_, record) => <RemoveAdmin record={record} />,
     },
   ]);
-  const data = useUserContext().state.listOfAdmins;
+  const { state, loadAllUsers, dispatch } = useUserContext();
   const dataColRef = useRef(dataCol);
+  useEffect(() => {
+    loadAllUsers();
+    return () => {
+      dispatch({
+        type: "load-all-users",
+        payload: { adminList: [], pendingAdminList: [] },
+      });
+    };
+  }, []);
+
   useEffect(() => {
     if (noAction) {
       const oldDataCol = [...dataColRef.current];
@@ -91,7 +101,13 @@ export const AdminTable = ({ noAction }: { noAction?: boolean }) => {
     }
   }, [noAction]);
 
-  return <Table columns={dataCol} dataSource={data} scroll={{ x: 50 }} />;
+  return (
+    <Table
+      columns={dataCol}
+      dataSource={state.listOfAdmins}
+      scroll={{ x: 50 }}
+    />
+  );
 };
 
 const RemoveAdmin = ({ record }: { record: AdminData }) => {

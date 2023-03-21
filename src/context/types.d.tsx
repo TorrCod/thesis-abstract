@@ -99,8 +99,16 @@ export type UserValue = {
   updateProfileUrl?: (userDetails: UserDetails) => Promise<void>;
   deleteAccount?: (currpass: string) => Promise<void>;
   saveUploadThesis: (data: ThesisItems) => Promise<void>;
-  loadUser: (uid: string) => void;
+  loadAllUsers: () => Promise<void>;
   unsubscribeRef: MutableRefObject<Unsubscribe | null>;
+};
+
+export type PendingAdminList = {
+  _id: string;
+  email: string;
+  approove: string;
+  createdAt: string;
+  expireAfterSeconds: number;
 };
 
 export type UserAction =
@@ -108,10 +116,16 @@ export type UserAction =
       type: "on-signin";
       payload: {
         userDetails?: UserDetails | null;
-        allUsers?: AdminData[] | null;
       };
     }
   | { type: "on-signup"; payload: UserDetails }
   | {
       type: "on-logout";
+    }
+  | {
+      type: "load-all-users";
+      payload: {
+        adminList: UserDetails[];
+        pendingAdminList: PendingAdminList[];
+      };
     };

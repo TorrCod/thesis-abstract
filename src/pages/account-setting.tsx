@@ -22,6 +22,7 @@ import React, { useEffect, useState } from "react";
 import { BsImage } from "react-icons/bs";
 import { useRouter } from "next/router";
 import { IoSettings } from "react-icons/io5";
+import { FirebaseError } from "firebase-admin";
 const courseOpt: { value: Course; label: Course }[] = [
   { value: "Civil Engineer", label: "Civil Engineer" },
   { value: "Computer Engineer", label: "Computer Engineer" },
@@ -103,8 +104,9 @@ const AccountSetting = () => {
           message.success("Account Deleted");
         })
         .catch((e) => {
-          console.error(e);
-          message.error("Wrong Password");
+          if ((e as FirebaseError).code === "auth/wrong-password")
+            message.error("Wrong password");
+          else console.error(e);
         })
         .finally(() => setLoading({ status: false, name: "delete" }));
       setCfrmDltAcc("");

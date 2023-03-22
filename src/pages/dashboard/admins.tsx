@@ -60,7 +60,7 @@ const DashboardAdmin = () => {
       {userDetails ? (
         <UserProfile userDetails={userDetails} />
       ) : (
-        <div className="bg-white rounded-md p-5 flex flex-col gap-2">
+        <div className="bg-white rounded-md p-5 flex flex-col gap-2 md:min-h-[85vh]">
           <p className="opacity-60 mb-5">Manage Co-Admins</p>
           <AddAdmin />
           <QuerySearch

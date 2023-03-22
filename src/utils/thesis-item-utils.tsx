@@ -3,14 +3,14 @@ import axios from "axios";
 import { userConfig } from "./account-utils";
 
 export const getAllThesis = async () => {
-  const res = await axios.get("/api/thesis-items?container=thesis-items");
+  const res = await axios.get("/api/thesis-items?collection=thesis-items");
   return res.data;
 };
 
 export const getAllDeletedThesis = async (token: string | undefined) => {
   if (token) {
     const res = await axios.get(
-      "/api/thesis-items?container=deleted-thesis",
+      "/api/thesis-items?collection=deleted-thesis",
       userConfig(token)
     );
     return res.data;

@@ -74,6 +74,15 @@ export type AdminData = {
 export type UserState = {
   userDetails: UserDetails | undefined;
   listOfAdmins: AdminData[];
+  activityLog: ActivityLog[];
+};
+
+export type ActivityLog = {
+  userName: string;
+  _id: string;
+  id: string;
+  itemId: string;
+  date: string;
 };
 
 export type UserDetails = {
@@ -101,6 +110,7 @@ export type UserValue = {
   saveUploadThesis: (data: ThesisItems) => Promise<void>;
   loadAllUsers: () => Promise<void>;
   unsubscribeRef: MutableRefObject<Unsubscribe | null>;
+  loadActivityLog: () => Promise<void>;
 };
 
 export type PendingAdminList = {
@@ -128,4 +138,8 @@ export type UserAction =
         adminList: UserDetails[];
         pendingAdminList: PendingAdminList[];
       };
+    }
+  | {
+      type: "load-activity-log";
+      payload: ActivityLog[];
     };

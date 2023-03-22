@@ -1,38 +1,27 @@
 import { ThesisItems } from "@/context/types.d";
 import { addData, addDataWithExpiration, getData } from "@/lib/mongo";
-import { validateAuth } from "@/utils/server-utils";
+import { CollectionName } from "@/lib/types";
+import { updateActivityLog, validateAuth } from "@/utils/server-utils";
+import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import { ObjectId } from "mongodb";
 import { NextApiRequest, NextApiResponse } from "next";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
-    if (req.query.container !== "thesis-items") {
-      const isValidated = await validateAuth(req);
-      if (isValidated.error) {
-        return res.status(400).json(isValidated);
-      }
+    if (req.query.collection === "thesis-items" && req.method === "GET") {
+      const thesisItems = await getData("thesis-abstract", "thesis-items");
+      return res.status(200).json(thesisItems);
+    }
+    const isValidated = await validateAuth(req);
+    if (isValidated.error) {
+      return res.status(400).json(isValidated);
     }
     switch (req.method) {
       case "GET": {
-        type ActionKey = "deleted-thesis" | "thesis-items";
-        const action = {
-          "deleted-thesis": async () => {
-            const deletedThesis = await getData(
-              "thesis-abstract",
-              "deleted-thesis"
-            );
-            return deletedThesis;
-          },
-          "thesis-items": async () => {
-            const thesisItems = await getData(
-              "thesis-abstract",
-              "thesis-items"
-            );
-            return thesisItems;
-          },
-        };
-        const query = req.query.container as ActionKey;
-        const payload = await action[query]();
+        const payload = await getData(
+          "thesis-abstract",
+          req.query.collection as CollectionName
+        );
         return res.status(200).json(payload);
       }
       case "DELETE": {
@@ -81,6 +70,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           "thesis-abstract",
           "thesis-items",
           thesisItem
+        );
+        await updateActivityLog(
+          isValidated.decodedToken as DecodedIdToken,
+          "add a thesis",
+          resData.insertedId,
+          thesisItem.dateAdded
         );
         return res.status(200).json(resData);
       }

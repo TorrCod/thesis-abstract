@@ -126,6 +126,17 @@ export const getAllUsers = async (token: string | undefined) => {
   } else throw new Error("canont read user token");
 };
 
+export const getActivityLog = async (token: string | undefined) => {
+  if (token) {
+    const deleteResult = await axios.request({
+      url: `/api/admin-user?collection=user&objective=get-all-username`,
+      method: "GET",
+      ...userConfig(token),
+    });
+    return deleteResult.data;
+  } else throw new Error("canont read user token");
+};
+
 // -----------------------------
 
 export const findUser = (_id: string, arr: UserDetails[]) =>

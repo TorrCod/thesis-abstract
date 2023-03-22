@@ -2,6 +2,7 @@ import { auth, signUp } from "@/lib/firebase";
 import {
   addUserAccount,
   deleteAdmin,
+  getActivityLog,
   getAllUsers,
   getUserDetails,
   updateUser,
@@ -27,6 +28,7 @@ import {
   useState,
 } from "react";
 import {
+  ActivityLog,
   AdminData,
   ThesisItems,
   UserAction,
@@ -38,6 +40,7 @@ import {
 const userStateInit: UserState = {
   userDetails: undefined,
   listOfAdmins: [],
+  activityLog: [],
 };
 
 const userValueInit: UserValue = {
@@ -46,6 +49,7 @@ const userValueInit: UserValue = {
   saveUploadThesis: async () => {},
   loadAllUsers: async () => {},
   unsubscribeRef: { current: null },
+  loadActivityLog: async () => {},
 };
 
 const UserContext = createContext<UserValue>(userValueInit);
@@ -84,6 +88,9 @@ const userReducer = (state: UserState, action: UserAction): UserState => {
       });
       const allUsers: AdminData[] = [...adminUsers, ...pendingUsers];
       return { ...state, listOfAdmins: allUsers };
+    }
+    case "load-activity-log": {
+      return { ...state, activityLog: action.payload };
     }
   }
 };
@@ -181,6 +188,12 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
     await addThesis(thesisItems, userToken);
   };
 
+  const loadActivityLog = async () => {
+    const token = await auth.currentUser?.getIdToken();
+    const activityLog = (await getActivityLog(token)) as ActivityLog[];
+    dispatch({ type: "load-activity-log", payload: activityLog });
+  };
+
   return (
     <UserContext.Provider
       value={{
@@ -194,6 +207,7 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
         deleteAccount,
         saveUploadThesis,
         unsubscribeRef,
+        loadActivityLog,
       }}
     >
       {children}

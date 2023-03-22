@@ -1,6 +1,6 @@
 import { UserDetails } from "@/context/types.d"
 
-export type CollectionName = "thesis-items"|"user"|"admin"|"profiles"|"pdf-files"|"pending"|"deleted-thesis"
+export type CollectionName = "thesis-items"|"user"|"admin"|"profiles"|"pdf-files"|"pending"|"deleted-thesis"|"activity-log"
 
 export type DatabaseName = "thesis-abstract"|"accounts"
 
@@ -46,3 +46,4 @@ export interface GeneratedTextRes {
     };
   }
 
+export type ActivitylogReason = | "add a thesis" | "remove a thesis" | "invite an admin" | "accepted the invite" | "remove an admin"

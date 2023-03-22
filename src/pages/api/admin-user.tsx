@@ -74,6 +74,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             );
             if (!insertResult.acknowledged)
               return res.status(204).json({ error: "Insert Data failed" });
+
+            updateActivityLog(
+              isValidated.decodedToken as DecodedIdToken,
+              "accepted the invite",
+              insertResult.insertedId,
+              req.body.dateAdded
+            );
             return res.status(200).json(req.body);
           }
           default:

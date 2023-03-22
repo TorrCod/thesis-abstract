@@ -47,7 +47,6 @@ const useSocket = () => {
           loadRecycleThesis();
         });
         (socketInstRef as any).current = socket;
-        loadActivityLog();
       };
       if (connect && userState.userDetails) {
         socketRef.current?.()?.then(() => setConnect(true));

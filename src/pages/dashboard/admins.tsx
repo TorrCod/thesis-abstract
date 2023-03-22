@@ -235,12 +235,8 @@ export const AdminTable = ({ noAction }: { noAction?: boolean }) => {
       render: (_, record) => <RemoveAdmin record={record} />,
     },
   ]);
-  const { state, loadAllUsers, dispatch } = useUserContext();
+  const { state } = useUserContext();
   const dataColRef = useRef(dataCol);
-  useEffect(() => {
-    loadAllUsers();
-  }, []);
-
   useEffect(() => {
     if (noAction) {
       const oldDataCol = [...dataColRef.current];

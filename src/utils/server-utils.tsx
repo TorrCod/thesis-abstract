@@ -31,7 +31,7 @@ export const updateActivityLog = async (
     uid: userUid,
   })) as UserDetails[];
   const userName = userDetailsList[0].userName;
-  const insertedResult = await addData("thesis-abstract", "activity-log", {
+  const insertedResult = await addData("accounts", "activity-log", {
     userName: userName,
     reason: reason,
     itemId: Itemid,

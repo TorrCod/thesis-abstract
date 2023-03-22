@@ -129,7 +129,7 @@ export const getAllUsers = async (token: string | undefined) => {
 export const getActivityLog = async (token: string | undefined) => {
   if (token) {
     const deleteResult = await axios.request({
-      url: `/api/admin-user?collection=user&objective=get-all-username`,
+      url: `/api/admin-user?collection=activity-log`,
       method: "GET",
       ...userConfig(token),
     });

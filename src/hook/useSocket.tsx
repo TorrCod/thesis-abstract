@@ -8,7 +8,7 @@ import { auth } from "@/lib/firebase";
 
 let recycled: any | null = null;
 const useSocket = () => {
-  const { loadAllUsers, state: userState } = useUserContext();
+  const { loadAllUsers, state: userState, loadActivityLog } = useUserContext();
   const {
     loadThesisItems,
     recycledThesis,
@@ -35,6 +35,7 @@ const useSocket = () => {
         const socket = io();
         socket.on("account-update", (msg) => {
           loadAllUsers();
+          loadActivityLog();
         });
         socket.on("thesis-abstract-update", () => {
           loadThesisItems();

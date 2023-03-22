@@ -1,3 +1,4 @@
+import { ActivitylogReason } from "@/lib/types";
 import { Unsubscribe } from "firebase/auth";
 import { Dispatch, MutableRefObject } from "react";
 
@@ -83,6 +84,7 @@ export type ActivityLog = {
   id: string;
   itemId: string;
   date: string;
+  reason: ActivitylogReason;
 };
 
 export type UserDetails = {
@@ -110,7 +112,7 @@ export type UserValue = {
   saveUploadThesis: (data: ThesisItems) => Promise<void>;
   loadAllUsers: () => Promise<void>;
   unsubscribeRef: MutableRefObject<Unsubscribe | null>;
-  loadActivityLog: () => Promise<void>;
+  loadActivityLog: () => Promise<ActivityLog[]>;
 };
 
 export type PendingAdminList = {

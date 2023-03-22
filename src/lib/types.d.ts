@@ -46,4 +46,4 @@ export interface GeneratedTextRes {
     };
   }
 
-export type ActivitylogReason = | "add a thesis" | "remove a thesis" | "invite an admin" | "accepted the invite" | "remove an admin"
+export type ActivitylogReason = | "added a thesis" | "removed a thesis" | "invited an admin" | "accepted the invite" | "removed an admin"

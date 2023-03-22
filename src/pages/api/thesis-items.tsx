@@ -73,7 +73,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         );
         await updateActivityLog(
           isValidated.decodedToken as DecodedIdToken,
-          "add a thesis",
+          "added a thesis",
           resData.insertedId,
           thesisItem.dateAdded
         );

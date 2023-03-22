@@ -49,7 +49,9 @@ const userValueInit: UserValue = {
   saveUploadThesis: async () => {},
   loadAllUsers: async () => {},
   unsubscribeRef: { current: null },
-  loadActivityLog: async () => {},
+  loadActivityLog: async () => {
+    return [];
+  },
 };
 
 const UserContext = createContext<UserValue>(userValueInit);
@@ -192,6 +194,7 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
     const token = await auth.currentUser?.getIdToken();
     const activityLog = (await getActivityLog(token)) as ActivityLog[];
     dispatch({ type: "load-activity-log", payload: activityLog });
+    return activityLog;
   };
 
   return (

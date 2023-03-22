@@ -43,7 +43,7 @@ const DashboardAdmin = () => {
     } else {
       setUserDetails(undefined);
     }
-  }, [router.query._id]);
+  }, [router.query._id, allUsers]);
   return (
     <DashboardLayout
       userSelectedMenu="/dashboard"
@@ -76,22 +76,26 @@ const DashboardAdmin = () => {
 };
 
 const UserProfile = ({ userDetails }: { userDetails: UserDetails }) => {
-  console.log(userDetails);
   return (
-    <div className="bg-white rounded-md w-full p-1 relative">
-      <AdminProfile
-        userDetails={userDetails}
-        size={{ height: "5em", width: "5em" }}
-      />
-      <div>{(userDetails as any).status}</div>
-      <div>{userDetails.firstName}</div>
-      <div>{userDetails.lastName}</div>
-      <div>{userDetails.email}</div>
-      <div>{userDetails.course}</div>
-      <div>{userDetails.approove}</div>
-      <div>{userDetails["dateAdded"]}</div>
-      <ActivityTimeline username={userDetails.userName ?? "none"} />
-    </div>
+    <>
+      <div className="bg-white rounded-md w-full p-1 relative">
+        <AdminProfile
+          userDetails={userDetails}
+          size={{ height: "5em", width: "5em" }}
+        />
+        <div>{(userDetails as any).status}</div>
+        <div>{userDetails.firstName}</div>
+        <div>{userDetails.lastName}</div>
+        <div>{userDetails.email}</div>
+        <div>{userDetails.course}</div>
+        <div>{userDetails.approove}</div>
+        <div>{userDetails["dateAdded"]}</div>
+      </div>
+      <div className="p-5 bg-white my-2 rounded-md grid gap-5 place-content-start">
+        <div className="opacity-80">History</div>
+        <ActivityTimeline username={userDetails.userName ?? "none"} />
+      </div>
+    </>
   );
 };
 

@@ -90,15 +90,35 @@ export const AdminTable = ({ noAction }: { noAction?: boolean }) => {
       title: "Status",
       dataIndex: "status",
       key: "status",
-      render: (value) => (
-        <div
-          className={`grid ${
-            value === `Pending` ? `bg-yellow-500` : `bg-lime-500`
-          } place-items-center rounded-xl w-[6em] py-1 text-white`}
-        >
-          {value}
-        </div>
-      ),
+      render: (value, record) => {
+        // Set the date the item was added
+        const addedDate = new Date(record.dateAdded);
+
+        // Calculate the expiration date
+        const expirationDate = new Date(
+          addedDate.getTime() + 7 * 24 * 60 * 60 * 1000
+        );
+
+        // Calculate the remaining days
+        const remainingDays = Math.ceil(
+          (expirationDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+        );
+
+        return (
+          <>
+            <div
+              className={`grid ${
+                value === `Pending` ? `bg-yellow-500` : `bg-lime-500`
+              } place-items-center rounded-xl w-[6em] py-1 text-white`}
+            >
+              {value}
+            </div>
+            {value === "Pending" && (
+              <div className="text-sm">Expire in {remainingDays} days</div>
+            )}
+          </>
+        );
+      },
     },
     {
       title: "Action",

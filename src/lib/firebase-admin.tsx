@@ -33,7 +33,6 @@ export const verifyIdToken = async (idToken: string) => {
     const decodedToken = await auth.verifyIdToken(idToken);
     return decodedToken;
   } catch (e) {
-    console.log(e);
     return false;
   }
 };

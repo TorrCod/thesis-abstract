@@ -63,7 +63,7 @@ const DashboardThesis = () => {
       userSelectedSider="/dashboard/thesis"
     >
       <div className="m-auto relative">
-        <h3 className="opacity-80 mb-3">Dashboard {">"} Thesis</h3>
+        <div className="opacity-80 mb-3">Dashboard {">"} Thesis</div>
         <div className="md:grid gap-2 lg:grid-cols-2 relative w-full">
           <div className="bg-white rounded-md shadow-md pt-7 mb-2 md:mb-0">
             <p className="ml-6 opacity-60">Total Thesis Abstracts</p>

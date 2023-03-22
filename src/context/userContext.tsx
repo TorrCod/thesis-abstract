@@ -172,7 +172,7 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
       await auth.currentUser?.delete();
       await deleteAdmin(token, userId);
     } catch (e) {
-      throw new Error(e as string);
+      throw e;
     }
   };
 

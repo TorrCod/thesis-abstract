@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Form, Input, message, Modal, Popconfirm, Table } from "antd";
+import { Form, Input, message, Modal, Popconfirm, Space, Table } from "antd";
 import DashboardLayout from "@/components/dashboardLayout";
 import QuerySearch from "@/components/QuerySearch";
 import { PriButton } from "@/components/button";
@@ -40,16 +40,38 @@ const DashboardAdmin = () => {
 };
 
 export const AdminTable = ({ noAction }: { noAction?: boolean }) => {
+  const useDetails = useUserContext().state.userDetails;
   const [dataCol, setDataCol] = useState<ColumnsType<AdminData>>([
     {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
+      title: "Username",
+      dataIndex: "userName",
+      key: "userName",
+      render: (val, record) => {
+        const userId = useDetails?._id;
+        const isUser = Object.values(record).includes(userId);
+        return val ? (
+          <Space direction="horizontal">
+            <div>{val}</div>
+            {isUser && (
+              <div className="bg-[#38649C] text-white px-3 rounded-md text-center">
+                you
+              </div>
+            )}
+          </Space>
+        ) : (
+          <div>------</div>
+        );
+      },
     },
     {
       title: "Date Added",
       dataIndex: "dateAdded",
       key: "dateAdded",
+      render: (val, record) => {
+        const dateAdded = new Date(val as string);
+        const localString = dateAdded.toLocaleString();
+        return localString;
+      },
     },
     {
       title: "Email",
@@ -60,6 +82,9 @@ export const AdminTable = ({ noAction }: { noAction?: boolean }) => {
       title: "Course",
       dataIndex: "course",
       key: "course",
+      render: (val) => {
+        return val ?? "-------";
+      },
     },
     {
       title: "Status",

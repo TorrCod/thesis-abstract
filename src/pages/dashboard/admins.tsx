@@ -120,7 +120,7 @@ const UserProfile = ({ userDetails }: { userDetails: UserDetails }) => {
                 {userDetails.approove ?? "---"}
               </div>
               <div>
-                <div className="text-sm opacity-80 ">Date</div>
+                <div className="text-sm opacity-80 ">Date joined</div>
                 {new Date(userDetails.dateAdded as string).toLocaleString()}
               </div>
             </div>

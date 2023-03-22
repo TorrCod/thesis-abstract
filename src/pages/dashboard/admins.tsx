@@ -77,7 +77,7 @@ const DashboardAdmin = () => {
 
 const UserProfile = ({ userDetails }: { userDetails: UserDetails }) => {
   return (
-    <div className="grid gap-2">
+    <div className="grid gap-2 max-w-5xl m-auto lg:grid-cols-[1.2fr_0.8fr] auto-rows-auto">
       <div className="bg-white rounded-md w-full p-3 relative grid gap-5">
         <div className="opacity-70">Profile</div>
         <div className="w-fit m-auto">
@@ -113,31 +113,34 @@ const UserProfile = ({ userDetails }: { userDetails: UserDetails }) => {
                 {(userDetails as any).status as string}
               </div>
             </div>
-            <div>
-              <div className="text-sm opacity-80 ">Email</div>
-              {(userDetails as any).email}
-            </div>
-            <div>
-              <div className="text-sm opacity-80 ">Username</div>
-              {(userDetails as any).userName}
-            </div>
-            <div>
-              <div className="text-sm opacity-80 ">Course</div>
-              {(userDetails as any).course}
-            </div>
-            <div>
-              <div className="text-sm opacity-80 ">Invited By</div>
-              {userDetails.approove ?? "---"}
-            </div>
-            <div>
-              <div className="text-sm opacity-80 ">Date</div>
-              {new Date(userDetails.dateAdded as string).toLocaleString()}
+
+            <div className="grid gap-5 min-[350px]:grid-cols-2">
+              <div>
+                <div className="text-sm opacity-80 ">Email</div>
+                {(userDetails as any).email}
+              </div>
+              <div>
+                <div className="text-sm opacity-80 ">Username</div>
+                {(userDetails as any).userName}
+              </div>
+              <div>
+                <div className="text-sm opacity-80 ">Course</div>
+                {(userDetails as any).course}
+              </div>
+              <div>
+                <div className="text-sm opacity-80 ">Invited By</div>
+                {userDetails.approove ?? "---"}
+              </div>
+              <div>
+                <div className="text-sm opacity-80 ">Date</div>
+                {new Date(userDetails.dateAdded as string).toLocaleString()}
+              </div>
             </div>
           </>
         )}
       </div>
-      <div className="bg-white rounded-md p-3">
-        <div className="opacity-80 mb-5">History</div>
+      <div className="bg-white rounded-md p-3 row-span-2 grid gap-5">
+        <div className="opacity-80">History</div>
         <ActivityTimeline username={userDetails.userName ?? "none"} />
       </div>
     </div>

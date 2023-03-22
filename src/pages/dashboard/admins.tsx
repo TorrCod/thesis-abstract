@@ -171,11 +171,11 @@ const RemoveAdmin = ({ record }: { record: AdminData }) => {
       const password = form.getFieldValue("password");
       const email = userEmail?.email;
       await signInWithEmailAndPassword(auth, email ?? "", password);
-      if (record.status === "admin") {
+      if (record.status === "Admin") {
         const token = await auth.currentUser?.getIdToken();
         await firebase_admin_delete_user(token, record.email);
         await deleteAdmin(token, record.key);
-      } else if (record.status === "pending") {
+      } else if (record.status === "Pending") {
         const token = await auth.currentUser?.getIdToken();
         await removePending(token, record.key);
       }

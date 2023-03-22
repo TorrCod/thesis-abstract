@@ -81,6 +81,17 @@ export const updateUser = async (
   } else throw new Error("canont read user token");
 };
 
+export const getAllUserName = async (token: string | undefined) => {
+  if (token) {
+    const deleteResult = await axios.request({
+      url: `/api/admin-user?collection=user&objective=get-all-username`,
+      method: "GET",
+      ...userConfig(token),
+    });
+    return deleteResult.data;
+  } else throw new Error("canont read user token");
+};
+
 export const firebase_admin_delete_user = async (
   token: string | undefined,
   email: string

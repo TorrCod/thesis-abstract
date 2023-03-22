@@ -32,78 +32,12 @@ const courseOpt: { value: Course; label: Course }[] = [
 const AccountSetting = () => {
   const userCtx = useUserContext();
   const userDetails = userCtx.state.userDetails;
-  const [form] = useForm();
-  const [passForm] = useForm();
-  const [infoSave, setInfoSave] = useState(true);
-  const [newData, setNewData] = useState<UserDetails>();
-  const [chngPassSave, setChngPassSave] = useState(true);
   const [chngProfSave, setChngProfSave] = useState(true);
   const [newProfile, setNewProfile] = useState<string | undefined>();
   const [cfrmDltAcc, setCfrmDltAcc] = useState("");
   const [onConfirm, setOnConfirm] = useState(false);
   const [loading, setLoading] = useState({ status: false, name: "" });
   const router = useRouter();
-
-  useEffect(() => {
-    form.resetFields();
-    setNewProfile(userDetails?.profilePic);
-    setChngProfSave(true);
-  }, [userDetails, form]);
-
-  useEffect(() => {
-    if (userDetails && newData) {
-      const isInclude = isObjectIncluded(newData, userDetails);
-      setInfoSave(isInclude);
-    }
-  }, [newData, userDetails]);
-
-  const handleInfoChange = () => {
-    const infoFieldsData = form.getFieldsValue();
-    setNewData(infoFieldsData);
-  };
-
-  const onInfoSave = async () => {
-    try {
-      setLoading({ status: true, name: "info" });
-      const updatedUsdDtls: UserDetails = { ...userDetails!, ...newData };
-      await userCtx.userUpdateInfo!(updatedUsdDtls);
-      message.success("Your info is saved");
-    } catch {
-      message.error("Something Went Wrong! Please try in another time");
-    } finally {
-      setLoading({ status: false, name: "info" });
-    }
-  };
-
-  const handlePassChange = async () => {
-    try {
-      await passForm.validateFields();
-      setChngPassSave(false);
-    } catch (e) {
-      setChngPassSave(true);
-    }
-  };
-
-  const handlePassSave = async () => {
-    try {
-      setLoading({ status: true, name: "pass" });
-      const data = passForm.getFieldsValue();
-      const currPass = data["currPass"];
-      const newPass = data["newPass"];
-      await userCtx.changePass!(currPass, newPass);
-      message.success("Your info is saved");
-      passForm.resetFields();
-    } catch (e) {
-      const errMsg = (e as any).message;
-      if (errMsg) {
-        message.error("email / password incorrect");
-      } else {
-        message.error("Something Went Wrong! Please try in another time");
-      }
-    } finally {
-      () => setLoading({ status: false, name: "pass" });
-    }
-  };
 
   const uploadProps: UploadProps = {
     onChange(info) {
@@ -195,146 +129,13 @@ const AccountSetting = () => {
             <div className="bg-white p-5 rounded-md shadow-md">
               <p>Information</p>
               <Divider />
-              <Form
-                onValuesChange={handleInfoChange}
-                initialValues={{ ...userDetails }}
-                form={form}
-                layout="vertical"
-                name="info"
-              >
-                <div className="md:grid md:grid-cols-2 md:place-items-center">
-                  <div className="relative w-full px-10">
-                    <Form.Item
-                      name="firstName"
-                      label={<div className="opacity-80">First Name</div>}
-                      rules={[
-                        {
-                          required: true,
-                          message: "Please enter your first name",
-                        },
-                      ]}
-                    >
-                      <Input />
-                    </Form.Item>
-                    <Form.Item
-                      name="lastName"
-                      label={<div className="opacity-80">Last Name</div>}
-                      rules={[
-                        {
-                          required: true,
-                          message: "Please enter your last name",
-                        },
-                      ]}
-                    >
-                      <Input />
-                    </Form.Item>
-                    <Form.Item
-                      name="course"
-                      label={<div className="opacity-80">Course</div>}
-                    >
-                      <Select
-                        style={{ width: "auto", textAlign: "center" }}
-                        options={courseOpt}
-                      />
-                    </Form.Item>
-                  </div>
-                  <div className="relative w-full px-10">
-                    <Form.Item
-                      name="email"
-                      label={<div className="opacity-80">Email</div>}
-                      rules={[
-                        { required: true, message: "Please enter your email" },
-                      ]}
-                    >
-                      <Input disabled />
-                    </Form.Item>
-                    <Form.Item
-                      name="userName"
-                      label={<div className="opacity-80">Username</div>}
-                      rules={[
-                        {
-                          required: true,
-                          message: "Please enter your username",
-                        },
-                      ]}
-                    >
-                      <Input disabled />
-                    </Form.Item>
-                    <Form.Item
-                      name="approove"
-                      label={<div className="opacity-80">Added by</div>}
-                    >
-                      <Input disabled />
-                    </Form.Item>
-                  </div>
-                </div>
-                <Divider />
-                <PriButton
-                  loading={loading.status && loading.name === "info"}
-                  onClick={onInfoSave}
-                  disabled={infoSave}
-                >
-                  Save
-                </PriButton>
-              </Form>
+              <InformationForm />
             </div>
             <div className="grid md:grid-cols-2 gap-2">
               <div className="bg-white p-5 rounded-md shadow-md">
                 <p>Change Password</p>
                 <Divider />
-                <Form
-                  onValuesChange={handlePassChange}
-                  form={passForm}
-                  className="px-10"
-                  layout="vertical"
-                  name="change-password"
-                >
-                  <Form.Item
-                    name="newPass"
-                    label={<div className="opacity-80">New Password</div>}
-                  >
-                    <Input.Password />
-                  </Form.Item>
-                  <Form.Item
-                    dependencies={["newPass"]}
-                    name="confirm-new-password"
-                    label={
-                      <div className="opacity-80">Confirm New Password</div>
-                    }
-                    rules={[
-                      {
-                        required: true,
-                        message: "Please confirm your password",
-                      },
-                      ({ getFieldValue }) => ({
-                        validator(_, value) {
-                          if (!value || getFieldValue("newPass") === value) {
-                            return Promise.resolve();
-                          }
-                          return Promise.reject(
-                            new Error("The two passwords do not match")
-                          );
-                        },
-                      }),
-                    ]}
-                  >
-                    <Input.Password />
-                  </Form.Item>
-                  <Form.Item
-                    name="currPass"
-                    label={<div className="opacity-80">Current Password</div>}
-                  >
-                    <Input.Password />
-                  </Form.Item>
-                </Form>
-                <Divider />
-                <PriButton
-                  loading={loading.status && loading.name === "pass"}
-                  onClick={handlePassSave}
-                  disabled={chngPassSave}
-                >
-                  Save
-                </PriButton>
+                <PasswordForm />
               </div>
               <div className="bg-white p-5 rounded-md shadow-md w-full">
                 <p>Profile Picture</p>
@@ -389,6 +190,227 @@ const AccountSetting = () => {
           </div>
         </div>
       </DashboardLayout>
+    </>
+  );
+};
+
+const InformationForm = () => {
+  const userCtx = useUserContext();
+  const userDetails = userCtx.state.userDetails;
+  const loadAllUsers = userCtx.loadAllUsers;
+  const allUsers = userCtx.state.listOfAdmins;
+  const [form] = useForm();
+  const [infoSave, setInfoSave] = useState(true);
+  const [newData, setNewData] = useState<UserDetails>();
+  const [loading, setLoading] = useState({ status: false, name: "" });
+
+  useEffect(() => {
+    if (userDetails && newData) {
+      const isInclude = isObjectIncluded(newData, userDetails);
+      setInfoSave(isInclude);
+    }
+  }, [newData, userDetails]);
+
+  const handleInfoChange = () => {
+    const infoFieldsData = form.getFieldsValue();
+    setNewData(infoFieldsData);
+  };
+
+  const onInfoSave = async () => {
+    try {
+      setLoading({ status: true, name: "info" });
+      const updatedUsdDtls: UserDetails = { ...userDetails!, ...newData };
+      await userCtx.userUpdateInfo!(updatedUsdDtls);
+      message.success("Your info is saved");
+    } catch {
+      message.error("Something Went Wrong! Please try in another time");
+    } finally {
+      setLoading({ status: false, name: "info" });
+    }
+  };
+
+  return (
+    <Form
+      onValuesChange={handleInfoChange}
+      initialValues={{ ...userDetails }}
+      form={form}
+      layout="vertical"
+    >
+      <div className="md:grid md:grid-cols-2 md:place-items-center">
+        <div className="relative w-full px-10">
+          <Form.Item
+            name="firstName"
+            label={<div className="opacity-80">First Name</div>}
+            rules={[
+              {
+                required: true,
+                message: "Please enter your first name",
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="lastName"
+            label={<div className="opacity-80">Last Name</div>}
+            rules={[
+              {
+                required: true,
+                message: "Please enter your last name",
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="course"
+            label={<div className="opacity-80">Course</div>}
+          >
+            <Select
+              style={{ width: "auto", textAlign: "center" }}
+              options={courseOpt}
+            />
+          </Form.Item>
+        </div>
+        <div className="relative w-full px-10">
+          <Form.Item
+            name="userName"
+            label={<div className="opacity-80">Username</div>}
+            rules={[
+              {
+                required: true,
+                message: "Please enter your username",
+              },
+              () => ({
+                async validator(rule, value) {
+                  await loadAllUsers();
+                  const isExist = (allUsers as any).filter(
+                    (item: any) => item.userName === value
+                  );
+                  return isExist
+                    ? Promise.resolve()
+                    : Promise.reject("Username is already exist");
+                },
+              }),
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="email"
+            label={<div className="opacity-80">Email</div>}
+            rules={[{ required: true, message: "Please enter your email" }]}
+          >
+            <Input disabled />
+          </Form.Item>
+          <Form.Item
+            name="approove"
+            label={<div className="opacity-80">Added by</div>}
+          >
+            <Input disabled />
+          </Form.Item>
+        </div>
+      </div>
+      <Divider />
+      <PriButton
+        loading={loading.status && loading.name === "info"}
+        onClick={onInfoSave}
+        disabled={infoSave}
+      >
+        Save
+      </PriButton>
+    </Form>
+  );
+};
+
+const PasswordForm = () => {
+  const [passForm] = useForm();
+  const [chngPassSave, setChngPassSave] = useState(true);
+  const [loading, setLoading] = useState({ status: false, name: "" });
+  const userCtx = useUserContext();
+  const handlePassChange = async () => {
+    try {
+      await passForm.validateFields();
+      setChngPassSave(false);
+    } catch (e) {
+      setChngPassSave(true);
+    }
+  };
+
+  const handlePassSave = async () => {
+    try {
+      setLoading({ status: true, name: "pass" });
+      const data = passForm.getFieldsValue();
+      const currPass = data["currPass"];
+      const newPass = data["newPass"];
+      await userCtx.changePass!(currPass, newPass);
+      message.success("Your info is saved");
+      passForm.resetFields();
+    } catch (e) {
+      const errMsg = (e as any).message;
+      if (errMsg) {
+        message.error("email / password incorrect");
+      } else {
+        message.error("Something Went Wrong! Please try in another time");
+      }
+    } finally {
+      () => setLoading({ status: false, name: "pass" });
+    }
+  };
+
+  return (
+    <>
+      <Form
+        onValuesChange={handlePassChange}
+        form={passForm}
+        className="px-10"
+        layout="vertical"
+        name="change-password"
+      >
+        <Form.Item
+          name="newPass"
+          label={<div className="opacity-80">New Password</div>}
+        >
+          <Input.Password />
+        </Form.Item>
+        <Form.Item
+          dependencies={["newPass"]}
+          name="confirm-new-password"
+          label={<div className="opacity-80">Confirm New Password</div>}
+          rules={[
+            {
+              required: true,
+              message: "Please confirm your password",
+            },
+            ({ getFieldValue }) => ({
+              validator(_, value) {
+                if (!value || getFieldValue("newPass") === value) {
+                  return Promise.resolve();
+                }
+                return Promise.reject(
+                  new Error("The two passwords do not match")
+                );
+              },
+            }),
+          ]}
+        >
+          <Input.Password />
+        </Form.Item>
+        <Form.Item
+          name="currPass"
+          label={<div className="opacity-80">Current Password</div>}
+        >
+          <Input.Password />
+        </Form.Item>
+      </Form>
+      <Divider />
+      <PriButton
+        loading={loading.status && loading.name === "pass"}
+        onClick={handlePassSave}
+        disabled={chngPassSave}
+      >
+        Save
+      </PriButton>
     </>
   );
 };

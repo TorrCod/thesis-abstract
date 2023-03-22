@@ -14,6 +14,7 @@ import {
   reauthenticateWithCredential,
   sendPasswordResetEmail,
   Unsubscribe,
+  updateCurrentUser,
   updatePassword,
   updateProfile,
 } from "firebase/auth";

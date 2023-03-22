@@ -67,8 +67,14 @@ function DashboardLayout({
     (
       document.getElementsByClassName("bg-circle")[0] as HTMLDivElement
     ).style.display = "none";
-    loadActivityLog();
-    loadAllUsers();
+    if (isLogin) {
+      try {
+        loadActivityLog();
+        loadAllUsers();
+      } catch (e) {
+        console.error(e);
+      }
+    }
     return () => {
       (
         document.getElementsByClassName("navbar")[0] as HTMLDivElement
@@ -79,7 +85,7 @@ function DashboardLayout({
       clearSocket();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isLogin]);
 
   const menuItem: MenuProps["items"] = [
     {

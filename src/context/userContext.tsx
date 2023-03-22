@@ -1,10 +1,10 @@
 import { auth, signUp } from "@/lib/firebase";
 import {
   addUserAccount,
+  deleteAdmin,
   getAllUsers,
   getUserDetails,
   updateUser,
-  utils_Delete_Account,
 } from "@/utils/account-utils";
 import { addThesis } from "@/utils/thesis-item-utils";
 import { message } from "antd";
@@ -136,7 +136,9 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
   };
 
   const userUpdateInfo = async (userDetails: UserDetails) => {
-    await updateUser(userDetails);
+    const token = await auth.currentUser?.getIdToken();
+    const id = userDetails._id;
+    await updateUser(token, id, userDetails);
     dispatch({ type: "on-signin", payload: { userDetails: userDetails } });
   };
 
@@ -164,8 +166,10 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
     );
     try {
       await reauthenticateWithCredential(auth.currentUser!, cred);
+      const userId = state.userDetails?._id;
+      const token = await auth.currentUser?.getIdToken();
       await auth.currentUser?.delete();
-      await utils_Delete_Account(state.userDetails?._id);
+      await deleteAdmin(token, userId);
     } catch (e) {
       throw new Error(e as string);
     }

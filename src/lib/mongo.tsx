@@ -77,6 +77,29 @@ export const deleteData = async (
   }
 };
 
+export const updateData = async (
+  dbName: DatabaseName,
+  colName: CollectionName,
+  query: Filter<{ _id: ObjectId }>,
+  data: Record<string, any>
+) => {
+  try {
+    const client = await connectToDatabase();
+    const database = client.db(dbName);
+    const collection = database.collection(colName);
+    const res = await collection.updateOne(
+      query,
+      { $set: data },
+      { upsert: true }
+    );
+    client.close();
+    return res;
+  } catch (e) {
+    console.error(e);
+    throw new Error(e as string).message;
+  }
+};
+
 // export const deleteData = async (queryPost: QueryPost) => {
 //   try {
 //     const client = await connectToDatabase();

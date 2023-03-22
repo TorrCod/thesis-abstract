@@ -5,6 +5,8 @@ import {
   deleteData,
   generateId,
   getData,
+  updateData,
+  updateUser,
 } from "@/lib/mongo";
 import { CollectionName } from "@/lib/types";
 import { validateAuth } from "@/utils/server-utils";
@@ -66,6 +68,16 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           default:
             return res.status(400).send("syntax error");
         }
+      }
+      case "PUT": {
+        const collection = req.query.collection as CollectionName;
+        const updateResult = await updateData(
+          "accounts",
+          collection,
+          { _id: new ObjectId(req.query._id as string) },
+          req.body
+        );
+        return res.status(200).json(updateResult);
       }
       default:
         return res.status(400).json({ error: "no method" });

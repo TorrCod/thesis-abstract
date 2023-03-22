@@ -64,6 +64,23 @@ export const deleteAdmin = async (token: string | undefined, id: string) => {
   } else throw new Error("canont read user token");
 };
 
+export const updateUser = async (
+  token: string | undefined,
+  id: string,
+  data: UserDetails
+) => {
+  if (token) {
+    delete data._id;
+    const deleteResult = await axios.request({
+      url: `/api/admin-user?collection=user&_id=${id}`,
+      method: "PUT",
+      data: data,
+      ...userConfig(token),
+    });
+    return deleteResult.data;
+  } else throw new Error("canont read user token");
+};
+
 export const firebase_admin_delete_user = async (
   token: string | undefined,
   email: string
@@ -100,33 +117,5 @@ export const getAllUsers = async (token: string | undefined) => {
 
 // -----------------------------
 
-export const updateUser = async (payload: UserDetails) => {
-  const res = await axios.post("/api/updateUser", payload);
-  return res;
-};
-
 export const findUser = (_id: string, arr: UserDetails[]) =>
   arr.filter((item) => item.uid === _id);
-
-export const utils_Delete_Account = async (_id: string) => {
-  const mongoQuery: QueryPost = {
-    data: _id,
-    mongoDetails: { collectionName: "user", databaseName: "accounts" },
-    query: { _id: _id },
-  };
-  await axios.post("/api/remove-item-db", mongoQuery);
-};
-
-export const addPendingInvite = async (email: string, uid: string) => {
-  try {
-    const data = await axios.post("/api/invite-admin", {
-      dbName: "accounts",
-      colName: "pending",
-      payload: { email: email, addedByUid: uid },
-    } as AddPost);
-    return data.data.response.insertedId;
-  } catch (e) {
-    console.error(e);
-    throw new Error(e as any);
-  }
-};

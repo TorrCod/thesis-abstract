@@ -1,20 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
-import {
-  Form,
-  Input,
-  message,
-  Modal,
-  Popconfirm,
-  Space,
-  Table,
-  TimelineProps,
-} from "antd";
+import { Form, message, Modal, Space, Table } from "antd";
 import DashboardLayout from "@/components/dashboardLayout";
 import QuerySearch from "@/components/QuerySearch";
 import { PriButton } from "@/components/button";
 import AdminProfile, { AddAdmin } from "@/components/admin";
 import useUserContext from "@/context/userContext";
-import { AdminData, PendingAdminList, UserDetails } from "@/context/types.d";
+import { AdminData, UserDetails } from "@/context/types.d";
 import { ColumnsType } from "antd/lib/table";
 import Password from "antd/lib/input/Password";
 import { useForm } from "antd/lib/form/Form";
@@ -22,10 +13,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import {
   deleteAdmin,
-  findUser,
   firebase_admin_delete_user,
-  getUserActivitylog,
-  getUserDetails,
   removePending,
 } from "@/utils/account-utils";
 import { useRouter } from "next/router";

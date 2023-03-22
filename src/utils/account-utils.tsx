@@ -106,6 +106,20 @@ export const firebase_admin_delete_user = async (
   } else throw new Error("canont read user token");
 };
 
+export const getUserActivitylog = async (
+  token: string | undefined,
+  id: string
+) => {
+  if (token) {
+    const deleteResult = await axios.request({
+      url: `/api/admin-user?collection=activity-log&_id=${id}`,
+      method: "GET",
+      ...userConfig(token),
+    });
+    return deleteResult.data;
+  } else throw new Error("canont read user token");
+};
+
 export const getAllUsers = async (token: string | undefined) => {
   if (token) {
     const response: {
@@ -128,12 +142,12 @@ export const getAllUsers = async (token: string | undefined) => {
 
 export const getActivityLog = async (token: string | undefined) => {
   if (token) {
-    const deleteResult = await axios.request({
+    const activityLog = await axios.request({
       url: `/api/admin-user?collection=activity-log`,
       method: "GET",
       ...userConfig(token),
     });
-    return deleteResult.data;
+    return activityLog.data;
   } else throw new Error("canont read user token");
 };
 

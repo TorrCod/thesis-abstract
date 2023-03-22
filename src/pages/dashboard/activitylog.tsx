@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import { Timeline, TimelineItemProps } from "antd";
 import DashboardLayout from "@/components/dashboardLayout";
 import { activity } from "@/data/dummydata";
 import useUserContext from "@/context/userContext";
+import { MdEmail } from "react-icons/md";
+import Link from "next/link";
 
 const ActivityLog = () => {
   return (
@@ -19,26 +21,42 @@ const ActivityLog = () => {
   );
 };
 
-export const ActivityTimeline = () => {
+export const ActivityTimeline = ({ username }: { username?: string }) => {
   const [log, setLog] = useState<TimelineItemProps[]>([]);
-  const { activityLog } = useUserContext().state;
+  const userCtx = useUserContext();
+  const { activityLog } = userCtx.state;
 
   useEffect(() => {
     const load = async () => {
-      const newLog: TimelineItemProps[] = activityLog.map((item) => {
+      const newLog = activityLog.map((item) => {
+        if (username && username !== item.userName) {
+          return;
+        }
+        let dot = undefined;
+        let color = undefined;
+        let reason: ReactNode = <></>;
+        switch (item.reason) {
+          case "invited an admin": {
+            dot = <MdEmail />;
+            color = "green";
+            reason = (
+              <Link href={`/dashboard/admins?_id=${item.itemId}`}>
+                {item.userName} {item.reason}
+              </Link>
+            );
+          }
+        }
         return {
           label: new Date(item.date).toLocaleString(),
-          children: (
-            <div>
-              {item.userName} {item.reason}
-            </div>
-          ),
+          children: <div>{reason}</div>,
+          dot: dot,
+          color: color,
         };
       });
-      setLog(newLog);
+      setLog(newLog as any);
     };
     load();
-  }, []);
+  }, [activityLog]);
 
   return <Timeline mode="left" items={log} />;
 };

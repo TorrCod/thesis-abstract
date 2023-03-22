@@ -1,11 +1,20 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Form, Input, message, Modal, Popconfirm, Space, Table } from "antd";
+import {
+  Form,
+  Input,
+  message,
+  Modal,
+  Popconfirm,
+  Space,
+  Table,
+  TimelineProps,
+} from "antd";
 import DashboardLayout from "@/components/dashboardLayout";
 import QuerySearch from "@/components/QuerySearch";
 import { PriButton } from "@/components/button";
-import { AddAdmin } from "@/components/admin";
+import AdminProfile, { AddAdmin } from "@/components/admin";
 import useUserContext from "@/context/userContext";
-import { AdminData, UserDetails } from "@/context/types.d";
+import { AdminData, PendingAdminList, UserDetails } from "@/context/types.d";
 import { ColumnsType } from "antd/lib/table";
 import Password from "antd/lib/input/Password";
 import { useForm } from "antd/lib/form/Form";
@@ -13,28 +22,76 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import {
   deleteAdmin,
+  findUser,
   firebase_admin_delete_user,
+  getUserActivitylog,
+  getUserDetails,
   removePending,
 } from "@/utils/account-utils";
+import { useRouter } from "next/router";
+import Link from "next/link";
+import { ActivityTimeline } from "./activitylog";
 
 const DashboardAdmin = () => {
+  const router = useRouter();
+  const allUsers = useUserContext().state.listOfAdmins;
+  const [userDetails, setUserDetails] = useState<any>();
+  useEffect(() => {
+    const isExist = allUsers.filter((item) => item.key === router.query._id);
+    if (isExist[0] && allUsers[0]) {
+      setUserDetails(isExist[0]);
+    } else {
+      setUserDetails(undefined);
+    }
+  }, [router.query._id]);
   return (
     <DashboardLayout
       userSelectedMenu="/dashboard"
       userSelectedSider="/dashboard/admins"
     >
-      <h3 className="opacity-80 mb-3">Dashboard {">"} Admin</h3>
-      <div className="bg-white rounded-md p-5 flex flex-col gap-2">
-        <p className="opacity-60 mb-5">Manage Co-Admins</p>
-        <AddAdmin />
-        <QuerySearch
-          onSearch={(e) => {
-            console.log(e);
-          }}
-        />
-        <AdminTable />
-      </div>
+      <h3 className="opacity-80 mb-3">
+        Dashboard {">"} <Link href={"/dashboard/admins"}>Admin</Link>{" "}
+        {userDetails ? (
+          <>
+            {">"} {userDetails.userName ?? userDetails._id}
+          </>
+        ) : null}
+      </h3>
+      {userDetails ? (
+        <UserProfile userDetails={userDetails} />
+      ) : (
+        <div className="bg-white rounded-md p-5 flex flex-col gap-2">
+          <p className="opacity-60 mb-5">Manage Co-Admins</p>
+          <AddAdmin />
+          <QuerySearch
+            onSearch={(e) => {
+              console.log(e);
+            }}
+          />
+          <AdminTable />
+        </div>
+      )}
     </DashboardLayout>
+  );
+};
+
+const UserProfile = ({ userDetails }: { userDetails: UserDetails }) => {
+  console.log(userDetails);
+  return (
+    <div className="bg-white rounded-md w-full p-1 relative">
+      <AdminProfile
+        userDetails={userDetails}
+        size={{ height: "5em", width: "5em" }}
+      />
+      <div>{(userDetails as any).status}</div>
+      <div>{userDetails.firstName}</div>
+      <div>{userDetails.lastName}</div>
+      <div>{userDetails.email}</div>
+      <div>{userDetails.course}</div>
+      <div>{userDetails.approove}</div>
+      <div>{userDetails["dateAdded"]}</div>
+      <ActivityTimeline username={userDetails.userName ?? "none"} />
+    </div>
   );
 };
 
@@ -48,17 +105,21 @@ export const AdminTable = ({ noAction }: { noAction?: boolean }) => {
       render: (val, record) => {
         const userId = useDetails?._id;
         const isUser = Object.values(record).includes(userId);
-        return val ? (
-          <Space direction="horizontal">
-            <div>{val}</div>
-            {isUser && (
-              <div className="bg-[#38649C] text-white px-3 rounded-md text-center">
-                you
-              </div>
+        return (
+          <Link href={`/dashboard/admins?_id=${record.key}`}>
+            {val ? (
+              <Space direction="horizontal">
+                <div>{val}</div>
+                {isUser && (
+                  <div className="bg-[#38649C] text-white px-3 rounded-md text-center">
+                    you
+                  </div>
+                )}
+              </Space>
+            ) : (
+              <div>------</div>
             )}
-          </Space>
-        ) : (
-          <div>------</div>
+          </Link>
         );
       },
     },
@@ -129,12 +190,6 @@ export const AdminTable = ({ noAction }: { noAction?: boolean }) => {
   const dataColRef = useRef(dataCol);
   useEffect(() => {
     loadAllUsers();
-    return () => {
-      dispatch({
-        type: "load-all-users",
-        payload: { adminList: [], pendingAdminList: [] },
-      });
-    };
   }, []);
 
   useEffect(() => {

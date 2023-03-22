@@ -8,7 +8,12 @@ import { auth } from "@/lib/firebase";
 
 let recycled: any | null = null;
 const useSocket = () => {
-  const { loadAllUsers, state: userState, loadActivityLog } = useUserContext();
+  const {
+    loadAllUsers,
+    state: userState,
+    loadActivityLog,
+    dispatch,
+  } = useUserContext();
   const {
     loadThesisItems,
     recycledThesis,
@@ -42,6 +47,7 @@ const useSocket = () => {
           loadRecycleThesis();
         });
         (socketInstRef as any).current = socket;
+        loadActivityLog();
       };
       if (connect && userState.userDetails) {
         socketRef.current?.()?.then(() => setConnect(true));
@@ -56,6 +62,14 @@ const useSocket = () => {
     if (socketInstRef.current?.connected) {
       socketInstRef.current?.disconnect();
       recycled?.clear();
+      dispatch({
+        type: "load-all-users",
+        payload: { adminList: [], pendingAdminList: [] },
+      });
+      dispatch({
+        type: "load-activity-log",
+        payload: [],
+      });
     }
   };
 

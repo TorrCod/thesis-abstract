@@ -9,7 +9,8 @@ import {
   updateUser,
 } from "@/lib/mongo";
 import { CollectionName } from "@/lib/types";
-import { validateAuth } from "@/utils/server-utils";
+import { updateActivityLog, validateAuth } from "@/utils/server-utils";
+import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import { ObjectId } from "mongodb";
 import { NextApiRequest, NextApiResponse } from "next";
 
@@ -23,7 +24,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       case "GET": {
         const collection = req.query.collection as CollectionName;
         const uid = req.query.uid as string | undefined;
-        const query = uid ? { uid: uid } : undefined;
+        const query = uid
+          ? { uid: uid }
+          : req.query._id
+          ? { _id: new ObjectId(req.query._ud as string) }
+          : undefined;
         const userDetails = await getData("accounts", collection, query);
         return res.status(200).json(userDetails);
       }
@@ -39,13 +44,19 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         switch (req.query.objective) {
           case "invite-user": {
             const collection = req.query.collection as CollectionName;
-            const inserResult = await addDataWithExpiration(
+            const { insertedResult, dateNow } = await addDataWithExpiration(
               "accounts",
               collection,
               req.body,
               604800
             );
-            return res.status(200).json(inserResult);
+            await updateActivityLog(
+              isValidated.decodedToken as DecodedIdToken,
+              "invited an admin",
+              insertedResult.insertedId,
+              dateNow
+            );
+            return res.status(200).json(insertedResult);
           }
           case "signup": {
             const collection = req.query.collection as CollectionName;

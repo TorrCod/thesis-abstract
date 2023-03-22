@@ -1,10 +1,6 @@
 import useUserContext from "@/context/userContext";
 import { auth } from "@/lib/firebase";
-import {
-  addPendingInvite,
-  inviteUser,
-  removePending,
-} from "@/utils/account-utils";
+import { inviteUser } from "@/utils/account-utils";
 import { Avatar, Dropdown, Form, Input, Menu, MenuProps, message } from "antd";
 import { useForm } from "antd/lib/form/Form";
 import { sendSignInLinkToEmail } from "firebase/auth";

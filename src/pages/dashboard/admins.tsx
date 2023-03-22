@@ -78,21 +78,25 @@ const DashboardAdmin = () => {
 const UserProfile = ({ userDetails }: { userDetails: UserDetails }) => {
   return (
     <>
-      <div className="bg-white rounded-md w-full p-1 relative">
-        <AdminProfile
-          userDetails={userDetails}
-          size={{ height: "5em", width: "5em" }}
-        />
+      <div className="bg-white rounded-md w-full p-3 relative">
+        <div className="opacity-70">Profile</div>
+        <div className="w-fit m-auto">
+          <AdminProfile
+            userDetails={userDetails}
+            size={{ height: "5em", width: "5em" }}
+          />
+        </div>
+        <div className="text-center">
+          {userDetails.firstName} {userDetails.lastName}
+        </div>
         <div>{(userDetails as any).status}</div>
-        <div>{userDetails.firstName}</div>
-        <div>{userDetails.lastName}</div>
         <div>{userDetails.email}</div>
         <div>{userDetails.course}</div>
         <div>{userDetails.approove}</div>
         <div>{userDetails["dateAdded"]}</div>
       </div>
-      <div className="p-5 bg-white my-2 rounded-md grid gap-5 place-content-start">
-        <div className="opacity-80">History</div>
+      <div className="bg-white my-2 rounded-md p-3">
+        <div className="opacity-80 mb-5">History</div>
         <ActivityTimeline username={userDetails.userName ?? "none"} />
       </div>
     </>

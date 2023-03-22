@@ -56,7 +56,8 @@ export const ActivityTimeline = ({ username }: { username?: string }) => {
       setLog(newLog as any);
     };
     load();
-  }, [activityLog]);
+    return () => setLog([]);
+  }, [activityLog, username]);
 
   return <Timeline mode="left" items={log} />;
 };

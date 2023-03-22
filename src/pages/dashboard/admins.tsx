@@ -49,14 +49,14 @@ const DashboardAdmin = () => {
       userSelectedMenu="/dashboard"
       userSelectedSider="/dashboard/admins"
     >
-      <h3 className="opacity-80 mb-3">
+      <div className="opacity-80 mb-3">
         Dashboard {">"} <Link href={"/dashboard/admins"}>Admin</Link>{" "}
         {userDetails ? (
           <>
             {">"} {userDetails.userName ?? userDetails._id}
           </>
         ) : null}
-      </h3>
+      </div>
       {userDetails ? (
         <UserProfile userDetails={userDetails} />
       ) : (
@@ -77,29 +77,70 @@ const DashboardAdmin = () => {
 
 const UserProfile = ({ userDetails }: { userDetails: UserDetails }) => {
   return (
-    <>
-      <div className="bg-white rounded-md w-full p-3 relative">
+    <div className="grid gap-2">
+      <div className="bg-white rounded-md w-full p-3 relative grid gap-5">
         <div className="opacity-70">Profile</div>
         <div className="w-fit m-auto">
           <AdminProfile
             userDetails={userDetails}
-            size={{ height: "5em", width: "5em" }}
+            size={{ height: "7em", width: "7em" }}
           />
         </div>
-        <div className="text-center">
-          {userDetails.firstName} {userDetails.lastName}
-        </div>
-        <div>{(userDetails as any).status}</div>
-        <div>{userDetails.email}</div>
-        <div>{userDetails.course}</div>
-        <div>{userDetails.approove}</div>
-        <div>{userDetails["dateAdded"]}</div>
+        {(userDetails as any).status === "Pending" ? (
+          <>
+            <div className="text-center">
+              <div>{userDetails.email}</div>
+              <div className="text-sm bg-yellow-500 w-fit m-auto text-white px-2 rounded-md">
+                {(userDetails as any).status}
+              </div>
+            </div>
+            <div>
+              <div className="text-sm opacity-80 ">Invited By</div>
+              {(userDetails as any).approove}
+            </div>
+            <div>
+              <div className="text-sm opacity-80 ">Date Invited</div>
+              {new Date(userDetails.dateAdded as string).toLocaleString()}
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="text-center">
+              <div>
+                {userDetails.firstName} {userDetails.lastName}
+              </div>
+              <div className="text-sm bg-lime-500 w-fit m-auto text-white px-2 rounded-md">
+                {(userDetails as any).status as string}
+              </div>
+            </div>
+            <div>
+              <div className="text-sm opacity-80 ">Email</div>
+              {(userDetails as any).email}
+            </div>
+            <div>
+              <div className="text-sm opacity-80 ">Username</div>
+              {(userDetails as any).userName}
+            </div>
+            <div>
+              <div className="text-sm opacity-80 ">Course</div>
+              {(userDetails as any).course}
+            </div>
+            <div>
+              <div className="text-sm opacity-80 ">Invited By</div>
+              {userDetails.approove ?? "---"}
+            </div>
+            <div>
+              <div className="text-sm opacity-80 ">Date</div>
+              {new Date(userDetails.dateAdded as string).toLocaleString()}
+            </div>
+          </>
+        )}
       </div>
-      <div className="bg-white my-2 rounded-md p-3">
+      <div className="bg-white rounded-md p-3">
         <div className="opacity-80 mb-5">History</div>
         <ActivityTimeline username={userDetails.userName ?? "none"} />
       </div>
-    </>
+    </div>
   );
 };
 

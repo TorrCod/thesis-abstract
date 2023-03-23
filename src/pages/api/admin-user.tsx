@@ -8,7 +8,7 @@ import {
   updateData,
   updateUser,
 } from "@/lib/mongo";
-import { CollectionName } from "@/lib/types";
+import { ActivitylogReason, CollectionName } from "@/lib/types";
 import { updateActivityLog, validateAuth } from "@/utils/server-utils";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import { ObjectId } from "mongodb";
@@ -82,6 +82,18 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               req.body.dateAdded
             );
             return res.status(200).json(req.body);
+          }
+          case "update-activity-log": {
+            const reason = req.body.reason as ActivitylogReason;
+            const itemId = req.body.itemId as string;
+            const date = req.body.date as Date;
+            const insertedResult = await updateActivityLog(
+              isValidated.decodedToken as DecodedIdToken,
+              reason,
+              new ObjectId(itemId),
+              date
+            );
+            return res.status(200).json(insertedResult);
           }
           default:
             return res.status(400).send("syntax error");

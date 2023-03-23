@@ -1,5 +1,10 @@
 import { PendingAdminList, ThesisItems, UserDetails } from "@/context/types.d";
-import { AddPost, MongoDetails, QueryPost } from "@/lib/types";
+import {
+  ActivitylogReason,
+  AddPost,
+  MongoDetails,
+  QueryPost,
+} from "@/lib/types";
 import axios, { AxiosError } from "axios";
 
 export const userConfig = (token: string) => ({
@@ -149,6 +154,20 @@ export const getActivityLog = async (token: string | undefined) => {
     });
     return activityLog.data;
   } else throw new Error("canont read user token");
+};
+
+export const customUpdateActivityLog = async (
+  token: string | undefined,
+  option: { reason: ActivitylogReason; itemId: string; date: Date }
+) => {
+  if (!token) throw new Error("token is undefined");
+  const updateResult = await axios.request({
+    url: `/api/admin-user?objective=update-activity-log`,
+    method: "POST",
+    ...userConfig(token),
+    data: option,
+  });
+  return updateResult.data;
 };
 
 // -----------------------------

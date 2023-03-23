@@ -12,6 +12,7 @@ import { useForm } from "antd/lib/form/Form";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import {
+  customUpdateActivityLog,
   deleteAdmin,
   firebase_admin_delete_user,
   removePending,
@@ -269,6 +270,11 @@ const RemoveAdmin = ({ record }: { record: AdminData }) => {
         const token = await auth.currentUser?.getIdToken();
         await firebase_admin_delete_user(token, record.email);
         await deleteAdmin(token, record.key);
+        await customUpdateActivityLog(token, {
+          reason: "removed an admin",
+          itemId: record.key,
+          date: new Date(),
+        });
       } else if (record.status === "Pending") {
         const token = await auth.currentUser?.getIdToken();
         await removePending(token, record.key);

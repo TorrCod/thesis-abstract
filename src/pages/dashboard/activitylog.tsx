@@ -7,6 +7,12 @@ import { MdEmail, MdRestore } from "react-icons/md";
 import Link from "next/link";
 import { BsBookmarkPlus, BsBookmarkX } from "react-icons/bs";
 import { RiMailAddLine, RiMailCheckLine } from "react-icons/ri";
+import {
+  HiOutlineMinus,
+  HiOutlineUser,
+  HiOutlineUserMinus,
+  HiOutlineUserPlus,
+} from "react-icons/hi2";
 
 const ActivityLog = () => {
   return (
@@ -40,7 +46,7 @@ export const ActivityTimeline = ({ username }: { username?: string }) => {
             case "invited an admin": {
               dot = (
                 <div className="bg-[#f0c11a] rounded-full p-[3px]">
-                  <RiMailAddLine />
+                  <HiOutlineUserPlus />
                 </div>
               );
               color = "white";
@@ -54,7 +60,7 @@ export const ActivityTimeline = ({ username }: { username?: string }) => {
             case "accepted the invite": {
               dot = (
                 <div className="bg-[#29de18] rounded-full p-[3px]">
-                  <RiMailCheckLine />
+                  <HiOutlineUser />
                 </div>
               );
               color = "white";
@@ -104,6 +110,20 @@ export const ActivityTimeline = ({ username }: { username?: string }) => {
               color = "white";
               reason = (
                 <Link href={`/thesis/${item.itemId}`}>
+                  {item.userName} {item.reason}
+                </Link>
+              );
+              break;
+            }
+            case "removed an admin": {
+              dot = (
+                <div className="bg-[#f54242] rounded-full p-[3px]">
+                  <HiOutlineUserMinus />
+                </div>
+              );
+              color = "white";
+              reason = (
+                <Link href={`/dashboard/admins?_id=${item.itemId}`}>
                   {item.userName} {item.reason}
                 </Link>
               );

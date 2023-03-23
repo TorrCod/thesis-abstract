@@ -27,6 +27,7 @@ export type ThesisItems = {
   abstract: string;
   date: string;
   dateAdded: Date;
+  _id: string;
 };
 
 export type GlobalAction =

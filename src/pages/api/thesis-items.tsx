@@ -83,7 +83,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       }
       case "POST": {
         const thesisItem: ThesisItems = req.body;
-        delete req.body._id;
+        const new_id = new ObjectId();
+        (thesisItem._id as any) = new_id;
+        thesisItem.id = new_id.toString();
         const resData = await addData(
           "thesis-abstract",
           "thesis-items",

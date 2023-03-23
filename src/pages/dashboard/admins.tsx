@@ -38,7 +38,7 @@ const DashboardAdmin = () => {
       userSelectedSider="/dashboard/admins"
     >
       <div className="opacity-80 mb-3">
-        Dashboard {">"} <Link href={"/dashboard/admins"}>Admin</Link>{" "}
+        Dashboard {">"} <Link href={"/dashboard/admins"}>Admin</Link>
         {userDetails ? (
           <>
             {">"} {userDetails.userName ?? userDetails._id}

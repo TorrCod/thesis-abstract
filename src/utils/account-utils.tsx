@@ -158,7 +158,12 @@ export const getActivityLog = async (token: string | undefined) => {
 
 export const customUpdateActivityLog = async (
   token: string | undefined,
-  option: { reason: ActivitylogReason; itemId: string; date: Date }
+  option: {
+    reason: ActivitylogReason;
+    itemId: string;
+    date: Date;
+    name: string;
+  }
 ) => {
   if (!token) throw new Error("token is undefined");
   const updateResult = await axios.request({

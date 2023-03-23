@@ -3,7 +3,7 @@ import { Timeline, TimelineItemProps } from "antd";
 import DashboardLayout from "@/components/dashboardLayout";
 import { activity } from "@/data/dummydata";
 import useUserContext from "@/context/userContext";
-import { MdEmail, MdRestore } from "react-icons/md";
+import { MdEmail, MdRemove, MdRestore } from "react-icons/md";
 import Link from "next/link";
 import { BsBookmarkPlus, BsBookmarkX } from "react-icons/bs";
 import { RiMailAddLine, RiMailCheckLine } from "react-icons/ri";
@@ -46,7 +46,7 @@ export const ActivityTimeline = ({ username }: { username?: string }) => {
             case "invited an admin": {
               dot = (
                 <div className="bg-[#f0c11a] rounded-full p-[3px]">
-                  <HiOutlineUserPlus />
+                  <RiMailAddLine />
                 </div>
               );
               color = "white";
@@ -71,19 +71,31 @@ export const ActivityTimeline = ({ username }: { username?: string }) => {
               );
               break;
             }
-            case "removed a thesis": {
+            case "removed an admin": {
               dot = (
                 <div className="bg-[#f54242] rounded-full p-[3px]">
-                  <BsBookmarkX />
+                  <HiOutlineUserMinus />
                 </div>
               );
               color = "white";
               reason = (
-                <Link
-                  href={`/dashboard/thesis?tab=recyclebin&_id=${item.data.itemId}`}
-                >
+                <Link href={`/dashboard/admins?_id=${item.data.itemId}`}>
                   {item.userName} {item.reason} ({item.data.name})
                 </Link>
+              );
+              break;
+            }
+            case "removed an invite": {
+              dot = (
+                <div className="bg-[#f54242] rounded-full p-[3px]">
+                  <MdRemove />
+                </div>
+              );
+              color = "white";
+              reason = (
+                <div>
+                  {item.userName} {item.reason} ({item.data.name})
+                </div>
               );
               break;
             }
@@ -101,6 +113,22 @@ export const ActivityTimeline = ({ username }: { username?: string }) => {
               );
               break;
             }
+            case "removed a thesis": {
+              dot = (
+                <div className="bg-[#f54242] rounded-full p-[3px]">
+                  <BsBookmarkX />
+                </div>
+              );
+              color = "white";
+              reason = (
+                <Link
+                  href={`/dashboard/thesis?tab=recyclebin&_id=${item.data.itemId}`}
+                >
+                  {item.userName} {item.reason} ({item.data.name})
+                </Link>
+              );
+              break;
+            }
             case "restored a thesis": {
               dot = (
                 <div className="bg-[#4287f5] rounded-full p-[3px]">
@@ -110,20 +138,6 @@ export const ActivityTimeline = ({ username }: { username?: string }) => {
               color = "white";
               reason = (
                 <Link href={`/thesis/${item.data.itemId}`}>
-                  {item.userName} {item.reason} ({item.data.name})
-                </Link>
-              );
-              break;
-            }
-            case "removed an admin": {
-              dot = (
-                <div className="bg-[#f54242] rounded-full p-[3px]">
-                  <HiOutlineUserMinus />
-                </div>
-              );
-              color = "white";
-              reason = (
-                <Link href={`/dashboard/admins?_id=${item.data.itemId}`}>
                   {item.userName} {item.reason} ({item.data.name})
                 </Link>
               );

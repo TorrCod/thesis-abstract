@@ -274,10 +274,17 @@ const RemoveAdmin = ({ record }: { record: AdminData }) => {
           reason: "removed an admin",
           itemId: record.key,
           date: new Date(),
+          name: record.email,
         });
       } else if (record.status === "Pending") {
         const token = await auth.currentUser?.getIdToken();
         await removePending(token, record.key);
+        await customUpdateActivityLog(token, {
+          reason: "removed an invite",
+          itemId: record.key,
+          date: new Date(),
+          name: record.email,
+        });
       }
       setOpen(false);
     } catch (e) {

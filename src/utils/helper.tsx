@@ -29,15 +29,17 @@ export const thesisToDataType = (
   })[]
 ) => {
   const newData = thesisItems.map((item) => {
-    const { id, expireAfterSeconds, createdAt } = item;
-    const date = new Date(createdAt ?? "0");
+    const { id, expireAfterSeconds, createdAt, dateAdded } = item;
+    const expireDate = new Date(createdAt ?? "0");
     const secondsToAdd = expireAfterSeconds ?? 0;
     const millisecondsToAdd = secondsToAdd * 1000;
-    date.setTime(date.getTime() + millisecondsToAdd);
-    const localizedDateString = date.toLocaleString();
+    expireDate.setTime(expireDate.getTime() + millisecondsToAdd);
+    const localizedDateString = expireDate.toLocaleString();
+    const dateAddedFormat = new Date(dateAdded).toLocaleString();
     return {
       ...item,
       key: id,
+      dateAdded: dateAddedFormat,
       expireAt: expireAfterSeconds ? localizedDateString : undefined,
     };
   });
@@ -51,55 +53,4 @@ export const getPdfText = (data: GeneratedTextRes) => {
     extractedText = extractedText + content;
   }
   return extractedText;
-};
-
-export const getAllThesis = async () => {
-  const thesisItems: ThesisItems[] = await (
-    await axios.get("/api/getThesisItems")
-  ).data;
-  return thesisItems;
-};
-
-export const removeThesisITems = async (
-  uid: string,
-  thesisItem: ThesisItems
-) => {
-  // const data = await (
-  //   await axios.post("/api/recycled-thesis", thesisItem, {
-  //     headers: { Authorization: `Bearer ${uid}` },
-  //   })
-  // ).data;
-  const data = await (
-    await axios.delete("/api/recycled-thesis", {
-      data: thesisItem,
-      headers: { Authorization: `Bearer ${uid}` },
-    })
-  ).data;
-  return data;
-};
-
-export const getDeletedThesis = async (uid: string) => {
-  try {
-    const thesisItems: ThesisItems[] = await (
-      await axios.get("/api/recycled-thesis", {
-        headers: { Authorization: `Bearer ${uid}` },
-      })
-    ).data;
-    return thesisItems;
-  } catch (e) {
-    console.error((e as Error).message);
-  }
-};
-
-export const restoreThesisAbstract = async (uid: string, id: string) => {
-  const res = await axios.post(
-    "/api/recycled-thesis",
-    {
-      _id: id,
-    },
-    {
-      headers: { Authorization: `Bearer ${uid}` },
-    }
-  );
-  return res.data;
 };

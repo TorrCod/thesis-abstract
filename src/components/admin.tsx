@@ -1,15 +1,9 @@
 import useUserContext from "@/context/userContext";
 import { auth } from "@/lib/firebase";
-import {
-  addPendingInvite,
-  addUserAccount,
-  removePending,
-} from "@/utils/account";
+import { inviteUser } from "@/utils/account-utils";
 import { Avatar, Dropdown, Form, Input, Menu, MenuProps, message } from "antd";
 import { useForm } from "antd/lib/form/Form";
-import axios from "axios";
 import { sendSignInLinkToEmail } from "firebase/auth";
-import { ObjectId } from "mongodb";
 import Link from "next/link";
 import router from "next/router";
 import React, { useState } from "react";
@@ -97,11 +91,17 @@ export const AdminMenu = ({
 };
 
 export const AddAdmin = () => {
+  const userDetails = useUserContext().state.userDetails;
   const [form] = useForm();
   const onFinish = async ({ email }: any) => {
     let id: string = "";
     try {
-      id = await addPendingInvite(email);
+      const token = await auth.currentUser?.getIdToken();
+      const inserResult = await inviteUser(token, {
+        email: email,
+        approove: `${userDetails?.userName}`,
+      });
+      id = inserResult.insertedId;
       const actionCodeSettings = {
         url: `${process.env.NEXT_PUBLIC_DOMAIN}/sign-up/${id}`,
         handleCodeInApp: true,
@@ -112,7 +112,6 @@ export const AddAdmin = () => {
     } catch (e) {
       message.error("Invite failed");
       console.log(e);
-      await removePending(id);
     }
   };
   return (

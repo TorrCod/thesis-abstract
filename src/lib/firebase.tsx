@@ -14,7 +14,7 @@ import {
   uploadString,
 } from "firebase/storage";
 
-const firebaseConfig = {
+export const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_AUTH_DOMAIN,
   projectId: process.env.NEXT_PUBLIC_PROJECT_ID,
@@ -29,8 +29,8 @@ const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const firebaseStorage = getStorage(app);
 
-// console.log("emulator connected");
-// connectAuthEmulator(auth, "http://localhost:9099");
+console.log("emulator connected");
+connectAuthEmulator(auth, "http://localhost:9099");
 
 export const signIn = async (email: string, password: string) => {
   await signInWithEmailAndPassword(auth, email, password);
@@ -45,7 +45,7 @@ export const signUp = async (details: UserDetails) => {
   updateProfile(res.user, {
     displayName: details.userName,
   });
-  return res.user.uid;
+  return res;
 };
 
 export const uploadProfile = async (dataUrl: string, uid: string) => {

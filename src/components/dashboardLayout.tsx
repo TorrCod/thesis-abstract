@@ -46,12 +46,12 @@ function DashboardLayout({
   const isLogin = useAuth();
   const [selectedSider, setSelectedSider] = useState(userSelectedSider);
   const [selectedMenu, setSelectedMenu] = useState(userSelectedMenu);
-  const router = useRouter();
+  const [isScreen, setIsScreen] = useState(false);
+  const { loadActivityLog, loadAllUsers } = useUserContext();
+  const { clearSocket } = useSocket();
   const { width } = useWindowSize();
   const { pathname } = useLocation();
-  const [isScreen, setIsScreen] = useState(false);
-  const { clearSocket } = useSocket();
-
+  const router = useRouter();
   useEffect(() => {
     if (width >= 768) {
       setIsScreen(true);
@@ -67,6 +67,14 @@ function DashboardLayout({
     (
       document.getElementsByClassName("bg-circle")[0] as HTMLDivElement
     ).style.display = "none";
+    if (isLogin) {
+      try {
+        loadActivityLog();
+        loadAllUsers();
+      } catch (e) {
+        console.error(e);
+      }
+    }
     return () => {
       (
         document.getElementsByClassName("navbar")[0] as HTMLDivElement
@@ -77,7 +85,7 @@ function DashboardLayout({
       clearSocket();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isLogin]);
 
   const menuItem: MenuProps["items"] = [
     {

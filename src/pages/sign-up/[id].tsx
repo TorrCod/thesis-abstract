@@ -3,7 +3,6 @@ import { LoadingGlobal } from "@/context/globalContext";
 import { Course, UserDetails } from "@/context/types.d";
 import useUserContext from "@/context/userContext";
 import { getData, generateId } from "@/lib/mongo";
-import { removePending } from "@/utils/account";
 import { Form, Input, message, Select } from "antd";
 import { ObjectId } from "mongodb";
 import { GetStaticProps, GetStaticPaths } from "next";
@@ -51,7 +50,7 @@ const courseOpt: { value: Course; label: Course }[] = [
 ];
 
 const HandleInviteLink = (props: {
-  data: { payload: string; id: string; _id: any };
+  data: { email: string; _id: string; approove: string };
   hasError: boolean;
 }) => {
   const [formSignUp] = Form.useForm();
@@ -77,10 +76,10 @@ const HandleInviteLink = (props: {
         password: payload["confirm-password"],
         dateAdded: new Date().toLocaleString(),
         profilePic: undefined,
-        approove: undefined,
+        approove: props.data.approove,
+        _id: props.data._id,
       };
       await userCtx.userSignUp?.(userDetails);
-      await removePending(props.data["_id"]);
       message.success({
         type: "success",
         content: "Initialized Successfully",
@@ -129,7 +128,7 @@ const HandleInviteLink = (props: {
             { required: true, message: "Please enter your email" },
             ({ getFieldValue }) => ({
               validator(_, value) {
-                if (!value || props.data.payload === value) {
+                if (!value || props.data.email === value) {
                   return Promise.resolve();
                 }
                 return Promise.reject(

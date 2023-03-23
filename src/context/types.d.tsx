@@ -1,4 +1,6 @@
-import { Dispatch } from "react";
+import { ActivitylogReason } from "@/lib/types";
+import { Unsubscribe } from "firebase/auth";
+import { Dispatch, MutableRefObject } from "react";
 
 export interface GlobalState {
   thesisItems: ThesisItems[];
@@ -14,6 +16,7 @@ export type Course =
   | "Mechanical Engineer"
   | "Electrical Engineer"
   | "Civil Engineer"
+  | "------"
   | "Electronics Engineer";
 
 export type ThesisItems = {
@@ -55,7 +58,7 @@ export type GlobalValue = {
   state: GlobalState;
   dispatch: Dispatch<GlobalAction>;
   loadThesisItems: () => Promise<void>;
-  recycledThesis: (uid: string) => {
+  recycledThesis: () => {
     load: () => Promise<void>;
     clear: () => void;
   };
@@ -68,11 +71,21 @@ export type AdminData = {
   email: string;
   course?: string;
   status: React.ReactNode;
-};
+} & UserDetails;
 
 export type UserState = {
   userDetails: UserDetails | undefined;
   listOfAdmins: AdminData[];
+  activityLog: ActivityLog[];
+};
+
+export type ActivityLog = {
+  userName: string;
+  _id: string;
+  id: string;
+  data: { itemId: string; name: string };
+  date: string;
+  reason: ActivitylogReason;
 };
 
 export type UserDetails = {
@@ -87,6 +100,7 @@ export type UserDetails = {
   _id?: any;
   password?: string;
   dateAdded?: string;
+  status?: "Pending" | "Admin";
 };
 
 export type UserValue = {
@@ -98,8 +112,21 @@ export type UserValue = {
   updateProfileUrl?: (userDetails: UserDetails) => Promise<void>;
   deleteAccount?: (currpass: string) => Promise<void>;
   saveUploadThesis: (data: ThesisItems) => Promise<void>;
-  setTrigger: () => void;
-  loadUser: (uid: string) => void;
+  loadAllUsers: () => Promise<void>;
+  unsubscribeRef: MutableRefObject<Unsubscribe | null>;
+  loadActivityLog: () => Promise<ActivityLog[]>;
+};
+
+export type PendingAdminList = {
+  _id: string;
+  email: string;
+  approove: string;
+  createdAt: string;
+  expireAfterSeconds: number;
+  firstName: string | "----";
+  lastName: string | "----";
+  course: Course;
+  userName: string | "----";
 };
 
 export type UserAction =
@@ -107,10 +134,20 @@ export type UserAction =
       type: "on-signin";
       payload: {
         userDetails?: UserDetails | null;
-        allUsers?: AdminData[] | null;
       };
     }
   | { type: "on-signup"; payload: UserDetails }
   | {
       type: "on-logout";
+    }
+  | {
+      type: "load-all-users";
+      payload: {
+        adminList: UserDetails[];
+        pendingAdminList: PendingAdminList[];
+      };
+    }
+  | {
+      type: "load-activity-log";
+      payload: ActivityLog[];
     };

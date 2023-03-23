@@ -1,6 +1,6 @@
 import LoadingIcon from "@/components/loadingIcon";
-import { getData } from "@/lib/mongo";
-import { getAllThesis, getDeletedThesis } from "@/utils/helper";
+import { auth } from "@/lib/firebase";
+import { getAllDeletedThesis, getAllThesis } from "@/utils/thesis-item-utils";
 import React, {
   createContext,
   useContext,
@@ -75,7 +75,6 @@ const globalReducer = (
 
 export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(globalReducer, globalStateInit);
-  const firstRender = useRef(false);
 
   useEffect(() => {
     loadThesisItems().catch((e) => {
@@ -99,10 +98,16 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
     });
   };
 
-  const recycledThesis = (uid: string) => ({
+  const recycledThesis = () => ({
     load: async () => {
-      const recycledThesis = await getDeletedThesis(uid);
-      dispatch({ type: "load-recycle", payload: recycledThesis ?? [] });
+      try {
+        const token = await auth.currentUser?.getIdToken();
+        const recycledThesis = await getAllDeletedThesis(token);
+        dispatch({ type: "load-recycle", payload: recycledThesis ?? [] });
+      } catch (e) {
+        console.error("failed to load deleted thesis");
+        console.error(e);
+      }
     },
     clear: () => dispatch({ type: "load-recycle", payload: [] }),
   });

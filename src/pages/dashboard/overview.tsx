@@ -3,41 +3,22 @@ import DashboardLayout from "@/components/dashboardLayout";
 import QuerySearch from "@/components/QuerySearch";
 import { Course } from "@/context/types.d";
 import { activity } from "@/data/dummydata";
-import { Button, Card, Space, Statistic, Table, Timeline } from "antd";
-import { ColumnsType } from "antd/lib/table";
-import Head from "next/head";
+import { Timeline } from "antd";
 import Link from "next/link";
-import React, { Component } from "react";
-import { AiFillDelete } from "react-icons/ai";
-import { BsBookFill } from "react-icons/bs";
+import React from "react";
 import { GoLinkExternal } from "react-icons/go";
-import {
-  ResponsiveContainer,
-  RadarChart,
-  PolarGrid,
-  PolarAngleAxis,
-  Radar,
-  Legend,
-} from "recharts";
+import { ActivityTimeline } from "./activitylog";
 import { AdminTable } from "./admins";
 import { ThesisCharts } from "./thesis";
 
 const DashboardOverview = () => {
-  const totalData: { course: Course; count: number }[] = [
-    { course: "Civil Engineer", count: 320 },
-    { course: "Computer Engineer", count: 230 },
-    { course: "Mechanical Engineer", count: 300 },
-    { course: "Electronics Engineer", count: 257 },
-    { course: "Electrical Engineer", count: 314 },
-  ];
-
   return (
     <>
       <DashboardLayout
         userSelectedMenu="/dashboard"
         userSelectedSider="/dashboard/overview"
       >
-        <h3 className="opacity-80 mb-3">Dashboard {">"} Overview</h3>
+        <div className="opacity-80 mb-3">Dashboard {">"} Overview</div>
 
         <div className="dashboard-overview md:gap-2 w-full grid relative gap-2">
           <div className="bg-white rounded-md shadow-md thesis grid relative content-start">
@@ -73,7 +54,7 @@ const DashboardOverview = () => {
               <h3 className="opacity-80 mb-3">Acitivity Log</h3>
               <p className="opacity-60 mb-5">History</p>
             </Link>
-            <Timeline mode="left" items={activity} />
+            <ActivityTimeline />
           </div>
         </div>
       </DashboardLayout>

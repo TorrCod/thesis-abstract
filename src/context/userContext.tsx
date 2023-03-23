@@ -1,18 +1,21 @@
 import { auth, signUp } from "@/lib/firebase";
 import {
-  addThesis,
   addUserAccount,
+  deleteAdmin,
+  getActivityLog,
   getAllUsers,
   getUserDetails,
   updateUser,
-  utils_Delete_Account,
-} from "@/utils/account";
+} from "@/utils/account-utils";
+import { addThesis } from "@/utils/thesis-item-utils";
 import { message } from "antd";
 import {
   EmailAuthProvider,
   onAuthStateChanged,
   reauthenticateWithCredential,
   sendPasswordResetEmail,
+  Unsubscribe,
+  updateCurrentUser,
   updatePassword,
   updateProfile,
 } from "firebase/auth";
@@ -21,9 +24,11 @@ import {
   useContext,
   useEffect,
   useReducer,
+  useRef,
   useState,
 } from "react";
 import {
+  ActivityLog,
   AdminData,
   ThesisItems,
   UserAction,
@@ -35,14 +40,18 @@ import {
 const userStateInit: UserState = {
   userDetails: undefined,
   listOfAdmins: [],
+  activityLog: [],
 };
 
 const userValueInit: UserValue = {
   state: userStateInit,
   dispatch: () => {},
   saveUploadThesis: async () => {},
-  setTrigger: () => {},
-  loadUser: (arg) => {},
+  loadAllUsers: async () => {},
+  unsubscribeRef: { current: null },
+  loadActivityLog: async () => {
+    return [];
+  },
 };
 
 const UserContext = createContext<UserValue>(userValueInit);
@@ -53,8 +62,6 @@ const userReducer = (state: UserState, action: UserAction): UserState => {
       const newState = { ...state };
       newState["userDetails"] =
         action.payload.userDetails ?? newState["userDetails"];
-      newState["listOfAdmins"] =
-        action.payload.allUsers ?? newState["listOfAdmins"];
       return newState;
     }
     case "on-signup": {
@@ -63,84 +70,85 @@ const userReducer = (state: UserState, action: UserAction): UserState => {
     case "on-logout": {
       return { ...state, userDetails: undefined, listOfAdmins: [] };
     }
+    case "load-all-users": {
+      const payload = action.payload;
+      const adminUsers: AdminData[] = payload.adminList.map((item) => {
+        return {
+          ...item,
+          key: item._id,
+          status: "Admin",
+          dateAdded: item.dateAdded!,
+        };
+      });
+      const pendingUsers: AdminData[] = payload.pendingAdminList.map((item) => {
+        return {
+          ...item,
+          key: item._id,
+          status: "Pending",
+          dateAdded: item.createdAt,
+        };
+      });
+      const allUsers: AdminData[] = [...adminUsers, ...pendingUsers];
+      return { ...state, listOfAdmins: allUsers };
+    }
+    case "load-activity-log": {
+      return { ...state, activityLog: action.payload };
+    }
   }
 };
 
 export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(userReducer, userStateInit);
-  const [triggerUpdate, setTriggerUpdate] = useState(false);
+  const unsubscribeRef = useRef<Unsubscribe | null>(null);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        const id = user.uid;
-        getUserDetails(id)
-          .then((res) => {
-            if (typeof res === "object" && res !== null) {
-              res.profilePic = auth.currentUser?.photoURL ?? undefined;
-              dispatch({ type: "on-signin", payload: { userDetails: res } });
-            }
-          })
-          .catch((e) => {
-            console.error(e);
-          });
+        try {
+          console.log("signed in");
+          const token = await user.getIdToken();
+          const res = await getUserDetails(token, user.uid);
+          res.profilePic = user.photoURL;
+          dispatch({ type: "on-signin", payload: { userDetails: res } });
+        } catch (e) {
+          message.error("failed to fetch user details");
+          console.error(e);
+        }
       } else {
         dispatch({
           type: "on-logout",
         });
       }
+      unsubscribeRef.current = unsubscribe;
     });
     return () => unsubscribe();
-  }, [triggerUpdate]);
+  }, []);
 
-  useEffect(() => {
-    if (!state.userDetails) {
-    } else {
-      loadUser(state.userDetails.uid ?? "");
+  const loadAllUsers = async () => {
+    try {
+      const token = await auth.currentUser?.getIdToken();
+      const allUsers = await getAllUsers(token);
+      dispatch({ type: "load-all-users", payload: allUsers });
+    } catch (e) {
+      message.error("failed to load all users");
+      console.error(e);
     }
-  }, [state.userDetails]);
-
-  const loadUser = (uid: string) => {
-    getAllUsers(uid)
-      .then(
-        (res: {
-          users: UserDetails[];
-          pendingUsers: { payload: string; _id: string; createdAt: string }[];
-        }) => {
-          const admins: AdminData[] = res.users.map((item) => ({
-            ...item,
-            name: `${item.firstName} ${item.lastName}`,
-            key: item._id ?? "",
-            status: "admin",
-            dateAdded: new Date(item.dateAdded ?? "").toLocaleString(),
-          }));
-
-          const pendingAdmins: AdminData[] = res.pendingUsers.map((item) => ({
-            ...item,
-            email: item.payload,
-            key: item._id,
-            dateAdded: item.createdAt,
-            status: "pending",
-          }));
-
-          const allAdmins: AdminData[] = [...admins, ...pendingAdmins];
-          dispatch({ type: "on-signin", payload: { allUsers: allAdmins } });
-        }
-      )
-      .catch((res) => {
-        message.error((res as Error).message);
-      });
   };
 
   const userSignUp = async (userDetails: UserDetails) => {
-    const uid = await signUp(userDetails);
+    unsubscribeRef.current?.();
+    const credential = await signUp(userDetails);
     delete userDetails.password;
-    await addUserAccount({ ...userDetails, uid: uid });
-    setTriggerUpdate(!triggerUpdate);
+    const token = await credential.user.getIdToken();
+    userDetails.uid = credential.user.uid;
+    const res = await addUserAccount(token, userDetails);
+    dispatch({ type: "on-signin", payload: { userDetails: res } });
   };
 
   const userUpdateInfo = async (userDetails: UserDetails) => {
-    await updateUser(userDetails);
+    const token = await auth.currentUser?.getIdToken();
+    const id = userDetails._id;
+    await updateUser(token, id, userDetails);
     dispatch({ type: "on-signin", payload: { userDetails: userDetails } });
   };
 
@@ -168,26 +176,32 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
     );
     try {
       await reauthenticateWithCredential(auth.currentUser!, cred);
+      const userId = state.userDetails?._id;
+      const token = await auth.currentUser?.getIdToken();
       await auth.currentUser?.delete();
-      await utils_Delete_Account(state.userDetails?._id);
+      await deleteAdmin(token, userId);
     } catch (e) {
-      throw new Error(e as string);
+      throw e;
     }
   };
 
   const saveUploadThesis = async (thesisItems: ThesisItems) => {
-    await addThesis(thesisItems);
+    const userToken = await auth.currentUser?.getIdToken();
+    await addThesis(thesisItems, userToken);
   };
 
-  const setTrigger = () => {
-    setTriggerUpdate(!triggerUpdate);
+  const loadActivityLog = async () => {
+    const token = await auth.currentUser?.getIdToken();
+    const activityLog = (await getActivityLog(token)) as ActivityLog[];
+    dispatch({ type: "load-activity-log", payload: activityLog });
+    return activityLog;
   };
 
   return (
     <UserContext.Provider
       value={{
         state,
-        loadUser,
+        loadAllUsers,
         dispatch,
         userSignUp,
         userUpdateInfo,
@@ -195,7 +209,8 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
         updateProfileUrl,
         deleteAccount,
         saveUploadThesis,
-        setTrigger,
+        unsubscribeRef,
+        loadActivityLog,
       }}
     >
       {children}

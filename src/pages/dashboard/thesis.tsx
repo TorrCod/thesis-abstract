@@ -1,15 +1,11 @@
-import { PriButton } from "@/components/button";
 import DashboardLayout from "@/components/dashboardLayout";
 import QuerySearch from "@/components/QuerySearch";
 import useGlobalContext from "@/context/globalContext";
-import { Course, ThesisItems } from "@/context/types.d";
+import { Course } from "@/context/types.d";
 import useUserContext from "@/context/userContext";
-import { tableData } from "@/data/dummydata";
-import {
-  removeThesisITems,
-  restoreThesisAbstract,
-  thesisToDataType,
-} from "@/utils/helper";
+import { auth } from "@/lib/firebase";
+import { thesisToDataType } from "@/utils/helper";
+import { removeThesis, restoreThesis } from "@/utils/thesis-item-utils";
 import {
   Button,
   Card,
@@ -22,6 +18,7 @@ import {
 } from "antd";
 import { ColumnsType } from "antd/es/table";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { MenuProps } from "rc-menu";
 import React, { useEffect, useState } from "react";
 import { AiFillDelete, AiFillFileAdd } from "react-icons/ai";
@@ -67,7 +64,7 @@ const DashboardThesis = () => {
       userSelectedSider="/dashboard/thesis"
     >
       <div className="m-auto relative">
-        <h3 className="opacity-80 mb-3">Dashboard {">"} Thesis</h3>
+        <div className="opacity-80 mb-3">Dashboard {">"} Thesis</div>
         <div className="md:grid gap-2 lg:grid-cols-2 relative w-full">
           <div className="bg-white rounded-md shadow-md pt-7 mb-2 md:mb-0">
             <p className="ml-6 opacity-60">Total Thesis Abstracts</p>
@@ -174,10 +171,28 @@ type DataType = {
 };
 
 export const ThesisTable = () => {
-  const { state } = useGlobalContext();
+  const { state, recycledThesis } = useGlobalContext();
+  const userDetails = useUserContext().state.userDetails;
   const [thesisTableData, setThesisTableData] = useState<DataType[]>([]);
   const [removedTableData, setRemovedTableData] = useState<DataType[]>([]);
   const [selectedKeys, setSelectedKeys] = useState("thesis-items");
+  const router = useRouter();
+
+  useEffect(() => {
+    if (router.query.tab) {
+      setRemovedTableData((oldState) => {
+        return oldState.filter((item) => item.key === router.query.id);
+      });
+      setSelectedKeys(router.query.tab as string);
+    }
+  }, [router.query.tab]);
+
+  useEffect(() => {
+    if (!userDetails) return;
+    const recycled = recycledThesis();
+    recycled.load();
+    return recycled.clear;
+  }, [userDetails]);
 
   useEffect(() => {
     const thesisItems = state.thesisItems;
@@ -244,10 +259,11 @@ export const ThesisTable = () => {
       <Menu
         onSelect={(item) => {
           setSelectedKeys(item.key);
+          router.push("/dashboard/thesis");
         }}
         mode="horizontal"
         items={menuItems}
-        defaultSelectedKeys={["thesis-items"]}
+        defaultSelectedKeys={[(router.query.tab as string) ?? "thesis-items"]}
       />
       {selectedKeys === "thesis-items" && (
         <Table
@@ -259,7 +275,10 @@ export const ThesisTable = () => {
       {selectedKeys === "recyclebin" && (
         <Table
           className="min-w-[40em]"
-          columns={removeTableColumn}
+          columns={removeTableColumn.map((item) => {
+            if (item.key === "title") item.render = undefined;
+            return item;
+          })}
           dataSource={removedTableData}
         />
       )}
@@ -268,14 +287,10 @@ export const ThesisTable = () => {
 };
 
 const RemoveThesis = (props: DataType & { id: string }) => {
-  const thesisItems = useGlobalContext().state.thesisItems;
-  const uid = useUserContext().state.userDetails?.uid;
   const handleClick = async () => {
     try {
-      const thesisItem: ThesisItems = thesisItems.filter(
-        (item) => item.id === props.id
-      )[0];
-      await removeThesisITems(uid ?? "", thesisItem);
+      const token = await auth.currentUser?.getIdToken();
+      await removeThesis({ token: token, thesisId: props.id });
       message.success("Removed Success");
     } catch (e) {
       message.error("remove failed");
@@ -296,10 +311,10 @@ const RemoveThesis = (props: DataType & { id: string }) => {
 };
 
 const RestoreThesis = (props: DataType & { id: string }) => {
-  const uid = useUserContext().state.userDetails?.uid;
   const handleClick = async () => {
     try {
-      await restoreThesisAbstract(uid ?? "", props.id);
+      const token = await auth.currentUser?.getIdToken();
+      await restoreThesis({ token: token, thesisId: props.id });
       message.success("Restore Success");
     } catch (e) {
       message.error("Restore failed");

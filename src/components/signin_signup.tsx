@@ -36,7 +36,7 @@ const SignInSignUp = () => {
     } catch (error) {
       const errorMessage: string = (error as any).message;
       if (errorMessage) {
-        message.error("User Not Found");
+        message.error("Wrong email or password");
       }
       console.error(error);
     } finally {

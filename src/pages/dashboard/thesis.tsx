@@ -18,6 +18,7 @@ import {
 } from "antd";
 import { ColumnsType } from "antd/es/table";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { MenuProps } from "rc-menu";
 import React, { useEffect, useState } from "react";
 import { AiFillDelete, AiFillFileAdd } from "react-icons/ai";
@@ -175,6 +176,16 @@ export const ThesisTable = () => {
   const [thesisTableData, setThesisTableData] = useState<DataType[]>([]);
   const [removedTableData, setRemovedTableData] = useState<DataType[]>([]);
   const [selectedKeys, setSelectedKeys] = useState("thesis-items");
+  const router = useRouter();
+
+  useEffect(() => {
+    if (router.query.tab) {
+      setRemovedTableData((oldState) => {
+        return oldState.filter((item) => item.key === router.query.id);
+      });
+      setSelectedKeys(router.query.tab as string);
+    }
+  }, [router.query.tab]);
 
   useEffect(() => {
     if (!userDetails) return;
@@ -248,10 +259,11 @@ export const ThesisTable = () => {
       <Menu
         onSelect={(item) => {
           setSelectedKeys(item.key);
+          router.push("/dashboard/thesis");
         }}
         mode="horizontal"
         items={menuItems}
-        defaultSelectedKeys={["thesis-items"]}
+        defaultSelectedKeys={[(router.query.tab as string) ?? "thesis-items"]}
       />
       {selectedKeys === "thesis-items" && (
         <Table
@@ -263,7 +275,10 @@ export const ThesisTable = () => {
       {selectedKeys === "recyclebin" && (
         <Table
           className="min-w-[40em]"
-          columns={removeTableColumn}
+          columns={removeTableColumn.map((item) => {
+            if (item.key === "title") item.render = undefined;
+            return item;
+          })}
           dataSource={removedTableData}
         />
       )}

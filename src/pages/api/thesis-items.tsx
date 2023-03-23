@@ -25,14 +25,17 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         return res.status(200).json(payload);
       }
       case "DELETE": {
-        const id = req.body;
+        const thesisId = req.query._id as string | undefined;
+        if (!thesisId) {
+          return res.status(400).json({ error: "undefined id" });
+        }
         switch (req.query.method) {
           case "RESTORE": {
             const thesisItems = (
               await getData(
                 "thesis-abstract",
                 "deleted-thesis",
-                { _id: new ObjectId(id) },
+                { _id: new ObjectId(thesisId) },
                 { deleteAfterGet: true }
               )
             )[0];
@@ -50,7 +53,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               await getData(
                 "thesis-abstract",
                 "thesis-items",
-                { _id: new ObjectId(id) },
+                { _id: new ObjectId(thesisId) },
                 { deleteAfterGet: true }
               )
             )[0];
@@ -59,6 +62,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               "deleted-thesis",
               thesisItems,
               604800
+            );
+            await updateActivityLog(
+              isValidated.decodedToken as DecodedIdToken,
+              "removed a thesis",
+              resData.insertedResult.insertedId,
+              resData.dateNow
             );
             return res.status(200).json(resData);
           }

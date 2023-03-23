@@ -34,7 +34,7 @@ export const removeThesis = async ({
 }) => {
   if (token) {
     const config = userConfig(token);
-    await axios.delete("/api/thesis-items", { ...config, data: thesisId });
+    await axios.delete(`/api/thesis-items?_id=${thesisId}`, { ...config });
   } else throw new Error("canont read user token");
 };
 
@@ -48,8 +48,7 @@ export const restoreThesis = async ({
   if (token) {
     const config = userConfig(token);
     await axios.request({
-      url: "/api/thesis-items?method=RESTORE",
-      data: thesisId,
+      url: `/api/thesis-items?method=RESTORE&_id=${thesisId}`,
       method: "DELETE",
       headers: config.headers,
     });

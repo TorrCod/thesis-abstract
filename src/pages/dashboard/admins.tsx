@@ -25,7 +25,6 @@ const DashboardAdmin = () => {
   const allUsers = useUserContext().state.listOfAdmins;
   const [userDetails, setUserDetails] = useState<UserDetails | undefined>();
   useEffect(() => {
-    console.log(router.query._id);
     const isExist = allUsers.filter((item) => item.key === router.query._id);
     if (isExist[0] && allUsers[0]) {
       setUserDetails(isExist[0] as UserDetails);

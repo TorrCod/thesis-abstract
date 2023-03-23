@@ -86,13 +86,6 @@ const Search = ({ className }: SearchProps) => {
     const searchTitle = searchState.searchTitle;
     const filterCourse: Course[] = searchState.checkBox.course.option as any;
     const filterDate = searchState.checkBox.date.option;
-    globalCtx.dispatch({
-      type: "search-data",
-      payload: {
-        text: searchTitle,
-        filter: { course: filterCourse, date: filterDate },
-      },
-    });
   };
 
   const handleCheckBxCourse = (valueType: CheckboxValueType[]) => {

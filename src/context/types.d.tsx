@@ -4,7 +4,6 @@ import { Dispatch, MutableRefObject } from "react";
 
 export interface GlobalState {
   thesisItems: ThesisItems[];
-  searchItems: ThesisItems[];
   dateOption: string[];
   recyclebin: ThesisItems[];
   signIn?: boolean;
@@ -16,7 +15,7 @@ export type Course =
   | "Mechanical Engineer"
   | "Electrical Engineer"
   | "Civil Engineer"
-  | "------"
+  | undefined
   | "Electronics Engineer";
 
 export type ThesisItems = {
@@ -41,10 +40,6 @@ export type GlobalAction =
         thesisItems: ThesisItems[];
         dateOpt: string[];
       };
-    }
-  | {
-      type: "search-data";
-      payload: { text: string; filter: { course: Course[]; date: string[] } };
     }
   | {
       type: "sign-in";

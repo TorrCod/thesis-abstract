@@ -13,7 +13,6 @@ import { GlobalAction, GlobalState, GlobalValue, ThesisItems } from "./types.d";
 
 const globalStateInit: GlobalState = {
   thesisItems: [],
-  searchItems: [],
   dateOption: [],
   loading: true,
   recyclebin: [],
@@ -44,25 +43,8 @@ const globalReducer = (
     case "load-data": {
       const newState = { ...state };
       newState["thesisItems"] = action.payload.thesisItems;
-      newState["searchItems"] = action.payload.thesisItems;
       newState["dateOption"] = action.payload.dateOpt;
       newState["loading"] = false;
-      return newState;
-    }
-    case "search-data": {
-      const newState = { ...state };
-      const searchedItems = newState.thesisItems.filter((item) => {
-        const itemTitle = item.title.toLowerCase();
-        const itemDate = item.date;
-        const searchTitle = action.payload.text.toLowerCase();
-        const searchFilterDate = action.payload.filter.date;
-        return (
-          itemTitle.includes(searchTitle) &&
-          searchFilterDate.includes(itemDate.slice(0, 4)) &&
-          action.payload.filter.course.includes(item.course)
-        );
-      });
-      newState["searchItems"] = searchedItems;
       return newState;
     }
     case "sign-in":

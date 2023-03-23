@@ -5,10 +5,9 @@ import { Divider } from "antd";
 import Head from "next/head";
 import Link from "next/link";
 
-// use pdf lib for creating pdf
-
 const Thesis = () => {
-  const { state } = useGlobalContext();
+  const { thesisItems } = useGlobalContext().state;
+
   return (
     <>
       <Head>
@@ -23,10 +22,11 @@ const Thesis = () => {
         <div className="md:pt-20 md:flex md:place-items-center md:flex-col">
           <div className="grid w-full">
             <Search className="place-self-center my-5" />
+            {/* <SelectedFilter /> */}
             <Divider className="bg-white/30" />
           </div>
           <div className="grid gap-2 w-full place-items-center lg:grid-cols-2 relative">
-            {state.searchItems.map((props) => {
+            {thesisItems?.map((props) => {
               return <Items key={props._id} {...props} />;
             })}
           </div>

@@ -70,9 +70,6 @@ export const addData = async (
     const client = await connectToDatabase();
     const database = client.db(dbName);
     const collection = database.collection(colName);
-    const _id = new ObjectId();
-    payload._id = _id;
-    payload.id = _id.toString();
     const res = await collection.insertOne(payload);
     client.close();
     return res;

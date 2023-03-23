@@ -66,6 +66,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       }
       case "POST": {
         const thesisItem: ThesisItems = req.body;
+        delete req.body._id;
         const resData = await addData(
           "thesis-abstract",
           "thesis-items",

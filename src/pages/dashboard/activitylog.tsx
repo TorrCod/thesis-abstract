@@ -5,6 +5,7 @@ import { activity } from "@/data/dummydata";
 import useUserContext from "@/context/userContext";
 import { MdEmail, MdMarkEmailRead } from "react-icons/md";
 import Link from "next/link";
+import { BsFillBookmarkCheckFill } from "react-icons/bs";
 
 const ActivityLog = () => {
   return (
@@ -49,6 +50,26 @@ export const ActivityTimeline = ({ username }: { username?: string }) => {
               color = "#a0f589";
               reason = (
                 <Link href={`/dashboard/admins?_id=${item.itemId}`}>
+                  {item.userName} {item.reason}
+                </Link>
+              );
+              break;
+            }
+            case "added a thesis": {
+              dot = <BsFillBookmarkCheckFill />;
+              color = "#4287f5";
+              reason = (
+                <Link href={`/thesis/${item.itemId}`}>
+                  {item.userName} {item.reason}
+                </Link>
+              );
+              break;
+            }
+            case "removed a thesis": {
+              dot = <BsFillBookmarkCheckFill />;
+              color = "#f54242";
+              reason = (
+                <Link href={`/dashboard/thesis/${item.itemId}`}>
                   {item.userName} {item.reason}
                 </Link>
               );

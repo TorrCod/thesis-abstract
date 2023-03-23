@@ -83,7 +83,7 @@ export type ActivityLog = {
   userName: string;
   _id: string;
   id: string;
-  itemId: string;
+  data: { itemId: string; name: string };
   date: string;
   reason: ActivitylogReason;
 };

@@ -54,7 +54,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               isValidated.decodedToken as DecodedIdToken,
               "invited an admin",
               insertedResult.insertedId,
-              dateNow
+              dateNow,
+              req.body.email
             );
             return res.status(200).json(insertedResult);
           }
@@ -79,7 +80,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               isValidated.decodedToken as DecodedIdToken,
               "accepted the invite",
               insertResult.insertedId,
-              req.body.dateAdded
+              req.body.dateAdded,
+              req.body.email
             );
             return res.status(200).json(req.body);
           }
@@ -87,11 +89,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             const reason = req.body.reason as ActivitylogReason;
             const itemId = req.body.itemId as string;
             const date = req.body.date as Date;
+            const name = req.body.name as string;
             const insertedResult = await updateActivityLog(
               isValidated.decodedToken as DecodedIdToken,
               reason,
               new ObjectId(itemId),
-              date
+              date,
+              name
             );
             return res.status(200).json(insertedResult);
           }

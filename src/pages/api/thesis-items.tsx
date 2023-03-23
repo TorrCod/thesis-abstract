@@ -50,7 +50,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               isValidated.decodedToken as DecodedIdToken,
               "restored a thesis",
               resData.insertedId,
-              new Date()
+              new Date(),
+              thesisItems.title
             );
             return res.status(200).json(resData);
           }
@@ -73,7 +74,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               isValidated.decodedToken as DecodedIdToken,
               "removed a thesis",
               resData.insertedResult.insertedId,
-              resData.dateNow
+              resData.dateNow,
+              thesisItems.title
             );
             return res.status(200).json(resData);
           }
@@ -91,7 +93,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           isValidated.decodedToken as DecodedIdToken,
           "added a thesis",
           resData.insertedId,
-          thesisItem.dateAdded
+          thesisItem.dateAdded,
+          thesisItem.title
         );
         return res.status(200).json(resData);
       }

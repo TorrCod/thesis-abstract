@@ -24,7 +24,8 @@ export const updateActivityLog = async (
   decodedToken: DecodedIdToken,
   reason: ActivitylogReason,
   Itemid: ObjectId,
-  date: Date
+  date: Date,
+  name: string
 ) => {
   const userUid = decodedToken.uid;
   const userDetailsList = (await getData("accounts", "user", {
@@ -34,7 +35,7 @@ export const updateActivityLog = async (
   const insertedResult = await addData("accounts", "activity-log", {
     userName: userName,
     reason: reason,
-    itemId: Itemid,
+    data: { itemId: Itemid, name: name },
     date: date,
   });
   return insertedResult;

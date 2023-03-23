@@ -51,8 +51,8 @@ export const ActivityTimeline = ({ username }: { username?: string }) => {
               );
               color = "white";
               reason = (
-                <Link href={`/dashboard/admins?_id=${item.itemId}`}>
-                  {item.userName} {item.reason}
+                <Link href={`/dashboard/admins?_id=${item.data.itemId}`}>
+                  {item.userName} {item.reason} ({item.data.name})
                 </Link>
               );
               break; // <-- Add break statements for each case
@@ -65,21 +65,7 @@ export const ActivityTimeline = ({ username }: { username?: string }) => {
               );
               color = "white";
               reason = (
-                <Link href={`/dashboard/admins?_id=${item.itemId}`}>
-                  {item.userName} {item.reason}
-                </Link>
-              );
-              break;
-            }
-            case "added a thesis": {
-              dot = (
-                <div className="bg-[#4287f5] rounded-full p-[3px]">
-                  <BsBookmarkPlus />
-                </div>
-              );
-              color = "white";
-              reason = (
-                <Link href={`/thesis/${item.itemId}`}>
+                <Link href={`/dashboard/admins?_id=${item.data.itemId}`}>
                   {item.userName} {item.reason}
                 </Link>
               );
@@ -94,8 +80,22 @@ export const ActivityTimeline = ({ username }: { username?: string }) => {
               color = "white";
               reason = (
                 <Link
-                  href={`/dashboard/thesis?tab=recyclebin&_id=${item.itemId}`}
+                  href={`/dashboard/thesis?tab=recyclebin&_id=${item.data.itemId}`}
                 >
+                  {item.userName} {item.reason}
+                </Link>
+              );
+              break;
+            }
+            case "added a thesis": {
+              dot = (
+                <div className="bg-[#4287f5] rounded-full p-[3px]">
+                  <BsBookmarkPlus />
+                </div>
+              );
+              color = "white";
+              reason = (
+                <Link href={`/thesis/${item.data.itemId}`}>
                   {item.userName} {item.reason}
                 </Link>
               );
@@ -109,7 +109,7 @@ export const ActivityTimeline = ({ username }: { username?: string }) => {
               );
               color = "white";
               reason = (
-                <Link href={`/thesis/${item.itemId}`}>
+                <Link href={`/thesis/${item.data.itemId}`}>
                   {item.userName} {item.reason}
                 </Link>
               );
@@ -123,7 +123,7 @@ export const ActivityTimeline = ({ username }: { username?: string }) => {
               );
               color = "white";
               reason = (
-                <Link href={`/dashboard/admins?_id=${item.itemId}`}>
+                <Link href={`/dashboard/admins?_id=${item.data.itemId}`}>
                   {item.userName} {item.reason}
                 </Link>
               );

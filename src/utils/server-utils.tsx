@@ -4,7 +4,7 @@ import { addData, getData } from "@/lib/mongo";
 import { ActivitylogReason } from "@/lib/types";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import { ObjectId } from "mongodb";
-import { NextApiRequest, NextApiResponse } from "next";
+import { NextApiRequest } from "next";
 
 export const validateAuth = async (
   req: NextApiRequest

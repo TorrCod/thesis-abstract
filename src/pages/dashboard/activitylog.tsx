@@ -66,7 +66,7 @@ export const ActivityTimeline = ({ username }: { username?: string }) => {
               color = "white";
               reason = (
                 <Link href={`/dashboard/admins?_id=${item.data.itemId}`}>
-                  {item.userName} {item.reason}
+                  {item.userName} {item.reason} ({item.data.name})
                 </Link>
               );
               break;
@@ -82,7 +82,7 @@ export const ActivityTimeline = ({ username }: { username?: string }) => {
                 <Link
                   href={`/dashboard/thesis?tab=recyclebin&_id=${item.data.itemId}`}
                 >
-                  {item.userName} {item.reason}
+                  {item.userName} {item.reason} ({item.data.name})
                 </Link>
               );
               break;
@@ -96,7 +96,7 @@ export const ActivityTimeline = ({ username }: { username?: string }) => {
               color = "white";
               reason = (
                 <Link href={`/thesis/${item.data.itemId}`}>
-                  {item.userName} {item.reason}
+                  {item.userName} {item.reason} ({item.data.name})
                 </Link>
               );
               break;
@@ -110,7 +110,7 @@ export const ActivityTimeline = ({ username }: { username?: string }) => {
               color = "white";
               reason = (
                 <Link href={`/thesis/${item.data.itemId}`}>
-                  {item.userName} {item.reason}
+                  {item.userName} {item.reason} ({item.data.name})
                 </Link>
               );
               break;
@@ -124,7 +124,7 @@ export const ActivityTimeline = ({ username }: { username?: string }) => {
               color = "white";
               reason = (
                 <Link href={`/dashboard/admins?_id=${item.data.itemId}`}>
-                  {item.userName} {item.reason}
+                  {item.userName} {item.reason} ({item.data.name})
                 </Link>
               );
               break;

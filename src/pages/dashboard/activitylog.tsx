@@ -169,7 +169,7 @@ export const ActivityTimeline = ({ username }: { username?: string }) => {
     return () => setLog([]);
   }, [activityLog, username]);
 
-  return <Timeline mode="left" items={log} />;
+  return <Timeline reverse mode="left" items={log} />;
 };
 
 export default ActivityLog;

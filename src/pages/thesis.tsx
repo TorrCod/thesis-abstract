@@ -72,7 +72,7 @@ const Items = ({
           </ul>
         </div>
       </div>
-      <div className="div1 p-3 bg-white shadow-md rounded-sm h-52 overflow-h_idden text-[0.1em] relative max-w-[100em] text-justify justify-self-center leading-3">
+      <div className="div1 p-3 bg-white shadow-md rounded-sm h-52 overflow-h_idden text-[0.7em] relative text-justify justify-self-center leading-4 ">
         <Link href={`/thesis/${_id}`}>
           <div className="overflow-hidden w-full h-full">
             <h4 className="text-center">Abstract</h4>

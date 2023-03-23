@@ -1,20 +1,43 @@
 import { UserDetails } from "@/context/types.d";
-import { ChangeStreamDocument, Filter, MongoClient, ObjectId } from "mongodb";
-import { useEffect } from "react";
+import {
+  ChangeStreamDocument,
+  Filter,
+  MongoClient,
+  MongoServerError,
+  ObjectId,
+} from "mongodb";
 import { CollectionName, DatabaseName, QueryPost } from "./types";
 
-let CONNECTION = process.env["MONGO_URI"] ?? "mongodb://localhost:27017";
+let CONNECTION = [
+  process.env["MONGO_URI1"],
+  process.env["MONGO_URI2"],
+  process.env["MONGO_URI3"],
+];
 
-export async function connectToDatabase() {
-  try {
-    let client = new MongoClient(CONNECTION);
-    await client.connect();
-    return client;
-  } catch (e) {
-    console.error(e);
-    throw new Error((e as Error).message);
+export const connectToDatabase = async () => {
+  let client: MongoClient | undefined;
+  let connected = false;
+
+  for (const connString of CONNECTION) {
+    try {
+      client = new MongoClient(connString ?? process.env["MONGO_URI"]!);
+      await client.connect();
+      const db = client.db();
+      const isMasterResult = await db.command({ isMaster: 1 });
+      if (isMasterResult.ismaster) {
+        connected = true;
+        break;
+      } else {
+        await client.close();
+      }
+    } catch (e) {
+      console.error((e as MongoServerError).code);
+    }
   }
-}
+
+  if (connected && client) return client;
+  else throw new Error("Can't Connect to Database");
+};
 
 export const getData = async (
   dbName: DatabaseName,

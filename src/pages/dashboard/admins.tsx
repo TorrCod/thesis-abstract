@@ -68,7 +68,7 @@ const UserProfile = ({ userDetails }: { userDetails?: UserDetails }) => {
     <></>
   ) : (
     <div className="grid gap-2 max-w-5xl m-auto lg:grid-cols-[1.2fr_0.8fr] auto-rows-auto">
-      <div className="bg-white rounded-md w-full p-3 relative grid gap-5">
+      <div className="bg-white rounded-md w-full p-3 relative grid gap-5 min-h-[28em]">
         <div className="opacity-70">Profile</div>
         <div className="w-fit m-auto">
           <AdminProfile

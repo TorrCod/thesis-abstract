@@ -16,6 +16,7 @@ export type Course =
   | "Mechanical Engineer"
   | "Electrical Engineer"
   | "Civil Engineer"
+  | "------"
   | "Electronics Engineer";
 
 export type ThesisItems = {
@@ -70,7 +71,7 @@ export type AdminData = {
   email: string;
   course?: string;
   status: React.ReactNode;
-};
+} & UserDetails;
 
 export type UserState = {
   userDetails: UserDetails | undefined;
@@ -99,6 +100,7 @@ export type UserDetails = {
   _id?: any;
   password?: string;
   dateAdded?: string;
+  status?: "Pending" | "Admin";
 };
 
 export type UserValue = {
@@ -121,6 +123,10 @@ export type PendingAdminList = {
   approove: string;
   createdAt: string;
   expireAfterSeconds: number;
+  firstName: string | "----";
+  lastName: string | "----";
+  course: Course;
+  userName: string | "----";
 };
 
 export type UserAction =

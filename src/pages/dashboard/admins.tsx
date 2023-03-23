@@ -5,7 +5,7 @@ import QuerySearch from "@/components/QuerySearch";
 import { PriButton } from "@/components/button";
 import AdminProfile, { AddAdmin } from "@/components/admin";
 import useUserContext from "@/context/userContext";
-import { AdminData, UserDetails } from "@/context/types.d";
+import { AdminData, PendingAdminList, UserDetails } from "@/context/types.d";
 import { ColumnsType } from "antd/lib/table";
 import Password from "antd/lib/input/Password";
 import { useForm } from "antd/lib/form/Form";
@@ -23,11 +23,12 @@ import { ActivityTimeline } from "./activitylog";
 const DashboardAdmin = () => {
   const router = useRouter();
   const allUsers = useUserContext().state.listOfAdmins;
-  const [userDetails, setUserDetails] = useState<any>();
+  const [userDetails, setUserDetails] = useState<UserDetails | undefined>();
   useEffect(() => {
+    console.log(router.query._id);
     const isExist = allUsers.filter((item) => item.key === router.query._id);
     if (isExist[0] && allUsers[0]) {
-      setUserDetails(isExist[0]);
+      setUserDetails(isExist[0] as UserDetails);
     } else {
       setUserDetails(undefined);
     }
@@ -45,7 +46,7 @@ const DashboardAdmin = () => {
           </>
         ) : null}
       </div>
-      {userDetails ? (
+      {router.query._id ? (
         <UserProfile userDetails={userDetails} />
       ) : (
         <div className="bg-white rounded-md p-5 flex flex-col gap-2 md:min-h-[85vh]">
@@ -63,8 +64,10 @@ const DashboardAdmin = () => {
   );
 };
 
-const UserProfile = ({ userDetails }: { userDetails: UserDetails }) => {
-  return (
+const UserProfile = ({ userDetails }: { userDetails?: UserDetails }) => {
+  return !userDetails ? (
+    <></>
+  ) : (
     <div className="grid gap-2 max-w-5xl m-auto lg:grid-cols-[1.2fr_0.8fr] auto-rows-auto">
       <div className="bg-white rounded-md w-full p-3 relative grid gap-5">
         <div className="opacity-70">Profile</div>
@@ -74,17 +77,17 @@ const UserProfile = ({ userDetails }: { userDetails: UserDetails }) => {
             size={{ height: "7em", width: "7em" }}
           />
         </div>
-        {(userDetails as any).status === "Pending" ? (
+        {userDetails?.status === "Pending" ? (
           <>
             <div className="text-center">
               <div>{userDetails.email}</div>
               <div className="text-sm bg-yellow-500 w-fit m-auto text-white px-2 rounded-md">
-                {(userDetails as any).status}
+                {userDetails.status}
               </div>
             </div>
             <div>
               <div className="text-sm opacity-80 ">Invited By</div>
-              {(userDetails as any).approove}
+              {userDetails.approove}
             </div>
             <div>
               <div className="text-sm opacity-80 ">Date Invited</div>
@@ -95,33 +98,33 @@ const UserProfile = ({ userDetails }: { userDetails: UserDetails }) => {
           <>
             <div className="text-center">
               <div>
-                {userDetails.firstName} {userDetails.lastName}
+                {userDetails?.firstName} {userDetails?.lastName}
               </div>
               <div className="text-sm bg-lime-500 w-fit m-auto text-white px-2 rounded-md">
-                {(userDetails as any).status as string}
+                {userDetails.status}
               </div>
             </div>
 
             <div className="grid gap-5 min-[350px]:grid-cols-2">
               <div>
                 <div className="text-sm opacity-80 ">Email</div>
-                {(userDetails as any).email}
+                {userDetails.email}
               </div>
               <div>
                 <div className="text-sm opacity-80 ">Username</div>
-                {(userDetails as any).userName}
+                {userDetails.userName}
               </div>
               <div>
                 <div className="text-sm opacity-80 ">Course</div>
-                {(userDetails as any).course}
+                {userDetails.course}
               </div>
               <div>
                 <div className="text-sm opacity-80 ">Invited By</div>
-                {userDetails.approove ?? "---"}
+                {userDetails?.approove ?? "---"}
               </div>
               <div>
                 <div className="text-sm opacity-80 ">Date joined</div>
-                {new Date(userDetails.dateAdded as string).toLocaleString()}
+                {new Date(userDetails?.dateAdded as string).toLocaleString()}
               </div>
             </div>
           </>
@@ -130,7 +133,7 @@ const UserProfile = ({ userDetails }: { userDetails: UserDetails }) => {
       <div className="bg-white rounded-md p-3 row-span-2 grid relative gap-5 grid-rows-[_0.2fr_1.8fr]">
         <div className="opacity-80">History</div>
         <div className="w-full">
-          <ActivityTimeline username={userDetails.userName ?? "none"} />
+          <ActivityTimeline username={userDetails?.userName ?? "none"} />
         </div>
       </div>
     </div>

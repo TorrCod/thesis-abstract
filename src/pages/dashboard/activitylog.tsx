@@ -1,14 +1,12 @@
-import React, { ReactNode, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Timeline, TimelineItemProps } from "antd";
 import DashboardLayout from "@/components/dashboardLayout";
 import { activity } from "@/data/dummydata";
 import useUserContext from "@/context/userContext";
-import { MdEmail, MdMarkEmailRead } from "react-icons/md";
+import { MdEmail, MdRestore } from "react-icons/md";
 import Link from "next/link";
-import {
-  BsFillBookmarkCheckFill,
-  BsFillBookmarkDashFill,
-} from "react-icons/bs";
+import { BsBookmarkPlus, BsBookmarkX } from "react-icons/bs";
+import { RiMailAddLine, RiMailCheckLine } from "react-icons/ri";
 
 const ActivityLog = () => {
   return (
@@ -40,8 +38,12 @@ export const ActivityTimeline = ({ username }: { username?: string }) => {
 
           switch (item.reason) {
             case "invited an admin": {
-              dot = <MdEmail />;
-              color = "#f5f189";
+              dot = (
+                <div className="bg-[#f0c11a] rounded-full p-[3px]">
+                  <RiMailAddLine />
+                </div>
+              );
+              color = "white";
               reason = (
                 <Link href={`/dashboard/admins?_id=${item.itemId}`}>
                   {item.userName} {item.reason}
@@ -50,7 +52,12 @@ export const ActivityTimeline = ({ username }: { username?: string }) => {
               break; // <-- Add break statements for each case
             }
             case "accepted the invite": {
-              color = "#a0f589";
+              dot = (
+                <div className="bg-[#29de18] rounded-full p-[3px]">
+                  <RiMailCheckLine />
+                </div>
+              );
+              color = "white";
               reason = (
                 <Link href={`/dashboard/admins?_id=${item.itemId}`}>
                   {item.userName} {item.reason}
@@ -59,8 +66,12 @@ export const ActivityTimeline = ({ username }: { username?: string }) => {
               break;
             }
             case "added a thesis": {
-              dot = <BsFillBookmarkCheckFill />;
-              color = "#4287f5";
+              dot = (
+                <div className="bg-[#4287f5] rounded-full p-[3px]">
+                  <BsBookmarkPlus />
+                </div>
+              );
+              color = "white";
               reason = (
                 <Link href={`/thesis/${item.itemId}`}>
                   {item.userName} {item.reason}
@@ -69,12 +80,30 @@ export const ActivityTimeline = ({ username }: { username?: string }) => {
               break;
             }
             case "removed a thesis": {
-              dot = <BsFillBookmarkDashFill />;
-              color = "#f54242";
+              dot = (
+                <div className="bg-[#f54242] rounded-full p-[3px]">
+                  <BsBookmarkX />
+                </div>
+              );
+              color = "white";
               reason = (
                 <Link
                   href={`/dashboard/thesis?tab=recyclebin&_id=${item.itemId}`}
                 >
+                  {item.userName} {item.reason}
+                </Link>
+              );
+              break;
+            }
+            case "restored a thesis": {
+              dot = (
+                <div className="bg-[#4287f5] rounded-full p-[3px]">
+                  <MdRestore />
+                </div>
+              );
+              color = "white";
+              reason = (
+                <Link href={`/thesis/${item.itemId}`}>
                   {item.userName} {item.reason}
                 </Link>
               );

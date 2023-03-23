@@ -104,7 +104,7 @@ const UserProfile = ({ userDetails }: { userDetails?: UserDetails }) => {
               </div>
             </div>
 
-            <div className="grid gap-5 min-[350px]:grid-cols-2">
+            <div className="grid gap-5 min-[400px]:grid-cols-2">
               <div>
                 <div className="text-sm opacity-80 ">Email</div>
                 {userDetails.email}

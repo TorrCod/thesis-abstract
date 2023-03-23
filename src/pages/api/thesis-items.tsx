@@ -46,6 +46,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               "thesis-items",
               thesisItems
             );
+            await updateActivityLog(
+              isValidated.decodedToken as DecodedIdToken,
+              "restored a thesis",
+              resData.insertedId,
+              new Date()
+            );
             return res.status(200).json(resData);
           }
           default: {

@@ -88,7 +88,7 @@ export const getAllUserName = async (token: string | undefined) => {
       method: "GET",
       ...userConfig(token),
     });
-    return deleteResult.data;
+    return deleteResult.data as string[];
   } else throw new Error("canont read user token");
 };
 

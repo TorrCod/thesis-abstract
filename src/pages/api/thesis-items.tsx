@@ -1,5 +1,10 @@
 import { SearchThesis, ThesisItems } from "@/context/types.d";
-import { addData, addDataWithExpiration, getData } from "@/lib/mongo";
+import {
+  addData,
+  addDataWithExpiration,
+  getData,
+  getDistinctData,
+} from "@/lib/mongo";
 import { CollectionName } from "@/lib/types";
 import {
   parseQuery,
@@ -21,7 +26,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         "thesis-items",
         filteredQuery
       );
-      return res.status(200).json(thesisItems);
+      const distinctYear = await getDistinctData(
+        "thesis-abstract",
+        "thesis-items",
+        "year"
+      );
+      return res.status(200).json({ thesisItems, distinctYear });
     }
     const isValidated = await validateAuth(req);
     if (isValidated.error) {

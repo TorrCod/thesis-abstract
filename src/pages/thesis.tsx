@@ -20,12 +20,15 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const data = await getAllThesis({ limit, year, course, title });
   return {
     props: {
-      thesisItems: data,
+      ...data,
     },
   };
 };
 
-const Thesis = (props: { thesisItems: ThesisItems[] }) => {
+const Thesis = (props: {
+  thesisItems: ThesisItems[];
+  distinctYear: number[];
+}) => {
   return (
     <>
       <Head>
@@ -39,7 +42,7 @@ const Thesis = (props: { thesisItems: ThesisItems[] }) => {
       <section>
         <div className="md:pt-20 md:flex md:place-items-center md:flex-col">
           <div className="grid w-full">
-            <Search className="place-self-center my-5" />
+            {/* <Search className="place-self-center my-5" /> */}
             {/* <SelectedFilter /> */}
             <Divider className="bg-white/30" />
           </div>

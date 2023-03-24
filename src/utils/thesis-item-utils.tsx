@@ -15,7 +15,7 @@ export const getAllThesis = async (option?: SearchThesis) => {
     }`
   );
 
-  return res.data as ThesisItems[];
+  return res.data as { thesisItems: ThesisItems[]; distinctYear: number[] };
 };
 
 export const getAllDeletedThesis = async (token: string | undefined) => {

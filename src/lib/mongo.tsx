@@ -122,6 +122,24 @@ export const updateData = async (
   }
 };
 
+export const getDistinctData = async (
+  dbName: DatabaseName,
+  colName: CollectionName,
+  distinct: string | number
+) => {
+  try {
+    const client = await connectToDatabase();
+    const database = client.db(dbName);
+    const collection = database.collection(colName);
+    const res = await collection.distinct(distinct);
+    client.close();
+    return res;
+  } catch (e) {
+    console.error(e);
+    throw new Error(e as string).message;
+  }
+};
+
 // export const deleteData = async (queryPost: QueryPost) => {
 //   try {
 //     const client = await connectToDatabase();
@@ -234,15 +252,5 @@ export const watchThesisAbstract = async (
   } catch (e) {
     console.log("watch thesis items failed");
     console.error(e);
-  }
-};
-
-export const isAuthenticated = async (uid: string) => {
-  try {
-    const user = await getData("accounts", "user", { uid: uid });
-    return user;
-  } catch (e) {
-    console.error(e);
-    throw new Error((e as Error).message);
   }
 };

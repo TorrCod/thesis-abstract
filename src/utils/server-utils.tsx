@@ -45,6 +45,6 @@ export const parseQuery = (object: Object) => {
   const res = Object.fromEntries(
     Object.entries(object).filter(([_, value]) => value !== undefined)
   );
-  res.course = { $in: JSON.parse(res.course) };
+  if (res.course) res.course = { $in: JSON.parse(res.course) };
   return res;
 };

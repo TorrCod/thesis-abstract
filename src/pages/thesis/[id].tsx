@@ -63,7 +63,7 @@ const ThesisItemsView = (props: { data: ThesisItems; hasError: boolean }) => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <section className="flex flex-col gap-1 md:pt-20 items-center">
-        <Search />
+        {/* <Search /> */}
         <Divider />
         <div className="rs-container bg-slate-100 rounded-md max-w-5xl grid p-5 gap-2 md:gap-5 w-full relative">
           <div className="rs-preview p-3 bg-white shadow-md rounded-sm h-52 overflow-hidden text-[0.1em] relative max-w-[100em] text-justify justify-self-center">

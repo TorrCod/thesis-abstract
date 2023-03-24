@@ -20,6 +20,7 @@ const globalStateInit: GlobalState = {
   dateOption: [],
   loading: false,
   recyclebin: [],
+  searchThesis: [],
 };
 
 const globalCtxInit: GlobalValue = {

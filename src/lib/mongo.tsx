@@ -43,14 +43,21 @@ export const getData = async (
   dbName: DatabaseName,
   colName: CollectionName,
   query?: Filter<Document | {}>,
-  option?: { deleteAfterGet?: boolean; limit?: number }
+  option?: {
+    deleteAfterGet?: boolean;
+    limit?: number;
+    projection?: Record<string, 0 | 1>;
+  }
 ) => {
   try {
     const client = await connectToDatabase();
     const database = client.db(dbName);
     const collection = database.collection(colName);
     const res = await collection
-      .find(query ?? {}, { limit: option?.limit })
+      .find(query ?? {}, {
+        limit: option?.limit,
+        projection: option?.projection,
+      })
       .toArray();
     if (option?.deleteAfterGet && res.length) {
       await collection.deleteOne({ _id: res[0]._id });

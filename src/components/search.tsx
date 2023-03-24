@@ -1,4 +1,13 @@
-import { Checkbox, Dropdown, Form, Input, InputRef, Space } from "antd";
+import {
+  Checkbox,
+  Dropdown,
+  Form,
+  Input,
+  InputRef,
+  Menu,
+  MenuProps,
+  Space,
+} from "antd";
 import React, { useEffect, useReducer, useRef, useState } from "react";
 import { BsSearch } from "react-icons/bs";
 import { PriButton } from "./button";
@@ -14,6 +23,7 @@ import {
 import Link from "next/link";
 import { Course } from "@/context/types.d";
 import useGlobalContext from "@/context/globalContext";
+import { getAllThesis } from "@/utils/thesis-item-utils";
 
 const courseOption = [
   "Computer Engineer",
@@ -187,7 +197,6 @@ const Search = ({ className }: SearchProps) => {
           prefix={<BsSearch color="#38649C" />}
           placeholder="Search"
         />
-
         <Link href={"/thesis"}>
           <PriButton htmlType="submit" onClick={handleSearch}>
             <BsSearch color="white" />
@@ -234,8 +243,31 @@ const Search = ({ className }: SearchProps) => {
           </Dropdown>
         </Space>
       </div>
+      <SearchItem {...searchState} />
     </div>
   );
+};
+
+const SearchItem = (props: SearchState) => {
+  const [menuItem, setMenuItem] = useState<MenuProps["items"]>([]);
+  let searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  useEffect(() => {
+    clearTimeout(searchTimeoutRef.current ?? 0);
+    searchTimeoutRef.current = setTimeout(() => {
+      if (props.searchTitle) {
+        getAllThesis({ title: props.searchTitle, limit: 10 })
+          .then((res) => {
+            console.log(res);
+          })
+          .catch((e) => {
+            console.error(e);
+          });
+      }
+    }, 500);
+    return () => clearTimeout(searchTimeoutRef.current ?? 0);
+  }, [props]);
+
+  return <Menu items={menuItem} />;
 };
 
 export default Search;

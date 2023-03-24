@@ -29,13 +29,18 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           return res.status(200).json(stringifyYears);
         }
         default: {
-          const { year, course, title, limit }: SearchThesis = req.query;
+          const { year, course, title, limit, projection }: SearchThesis =
+            req.query;
           const query = { year, course, title };
           const filteredQuery = parseQuery(query);
           const thesisItems = await getData(
             "thesis-abstract",
             "thesis-items",
-            filteredQuery
+            filteredQuery,
+            {
+              limit,
+              projection,
+            }
           );
           return res.status(200).json(thesisItems);
         }

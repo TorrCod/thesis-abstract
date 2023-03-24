@@ -4,6 +4,7 @@ import { Dispatch, MutableRefObject } from "react";
 
 export interface GlobalState {
   thesisItems: ThesisItems[];
+  searchThesis: ThesisItems[];
   dateOption: string[];
   recyclebin: ThesisItems[];
   signIn?: boolean;
@@ -34,6 +35,7 @@ export type SearchThesis = {
   course?: Course[];
   year?: number;
   title?: string;
+  projection?: Record<string, 0 | 1>;
 };
 
 export type GlobalAction =

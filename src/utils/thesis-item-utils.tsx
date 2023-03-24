@@ -3,7 +3,7 @@ import axios from "axios";
 import { userConfig } from "./account-utils";
 
 export const getAllThesis = async (option?: SearchThesis) => {
-  const { limit, title, year, course } = option || {};
+  const { limit, title, year, course, projection } = option || {};
 
   const res = await axios.get(
     `${
@@ -12,7 +12,7 @@ export const getAllThesis = async (option?: SearchThesis) => {
       title ? `title=${title}` : ""
     }&${course ? `course=${course}` : ""}&${year ? `year=${year}` : ""}&${
       limit ? `limit=${limit}` : ""
-    }`
+    }&${projection ? `projection=${projection}` : ""}`
   );
   const data = res.data as ThesisItems[];
   return data;

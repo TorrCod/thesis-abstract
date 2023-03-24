@@ -256,7 +256,6 @@ const Search = ({ className, limit }: SearchProps) => {
 
 const SearchItem = (props: SearchState & { limit?: number }) => {
   const [menuItem, setMenuItem] = useState<MenuProps["items"]>([]);
-  let itemRef = useRef<MenuProps["items"] | null>(null);
   let searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   useEffect(() => {
     clearTimeout(searchTimeoutRef.current ?? 0);

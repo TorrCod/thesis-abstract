@@ -243,7 +243,7 @@ const Search = ({ className }: SearchProps) => {
           </Dropdown>
         </Space>
       </div>
-      <div className="relative w-full">
+      <div className="relative w-fulls shadow-md rounded-md overflow-hidden">
         <SearchItem {...searchState} />
       </div>
     </div>
@@ -286,7 +286,7 @@ const SearchItem = (props: SearchState) => {
     return () => clearTimeout(searchTimeoutRef.current ?? 0);
   }, [props.checkBox, props.searchTitle]);
 
-  return <Menu items={menuItem} />;
+  return <Menu className="" items={menuItem} />;
 };
 
 export default Search;

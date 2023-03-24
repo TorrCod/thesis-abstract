@@ -262,7 +262,7 @@ const SearchItem = (props: SearchState) => {
             title: props.searchTitle,
           },
           {
-            limit: 5,
+            limit: 10,
             projection: { _id: 1, title: 1 },
           }
         )
@@ -286,7 +286,7 @@ const SearchItem = (props: SearchState) => {
     return () => clearTimeout(searchTimeoutRef.current ?? 0);
   }, [props.checkBox, props.searchTitle]);
 
-  return <Menu className="" items={menuItem} />;
+  return <Menu className="max-h-80 overflow-auto" items={menuItem} />;
 };
 
 export default Search;

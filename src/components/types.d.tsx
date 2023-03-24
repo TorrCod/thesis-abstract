@@ -50,6 +50,7 @@ export const searchState_init: SearchState = {
 
 export type SearchProps = {
   className?: string;
+  limit?: number;
 };
 
 export type AdminProps = {

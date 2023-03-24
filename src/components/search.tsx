@@ -62,7 +62,7 @@ const searchReducer: (
   }
 };
 
-const Search = ({ className }: SearchProps) => {
+const Search = ({ className, limit }: SearchProps) => {
   const searchRef: React.Ref<InputRef> | undefined = useRef(null);
   const [searchState, searchDispatch] = useReducer(
     searchReducer,
@@ -182,9 +182,9 @@ const Search = ({ className }: SearchProps) => {
   return (
     <div
       className={
-        "p-2 bg-slate-100 rounded-md grid transition-all ease-in-out duration-300 " +
+        "p-2 bg-slate-100 rounded-md grid " +
         className +
-        (searchState.searchFocus ? " gap-2" : " gap-0")
+        (searchState.searchFocus ? " gap-2" : " overflow-hidden max-h-12")
       }
       onFocus={() => searchDispatch({ type: "focus", payload: true })}
       onBlur={() => searchDispatch({ type: "focus", payload: false })}
@@ -204,7 +204,7 @@ const Search = ({ className }: SearchProps) => {
         </Link>
       </Form>
       <div
-        className={`transition-all ease-in-out duration-300 overflow-hidden relative ${
+        className={`overflow-hidden relative ${
           searchState.searchFocus ? "max-h-28" : "max-h-0"
         }`}
       >
@@ -243,15 +243,16 @@ const Search = ({ className }: SearchProps) => {
           </Dropdown>
         </Space>
       </div>
-      <div className="relative w-fulls shadow-md rounded-md overflow-hidden">
-        <SearchItem {...searchState} />
+      <div className="w-fulls shadow-md rounded-md overflow-hidden relative">
+        <SearchItem {...searchState} limit={limit} />
       </div>
     </div>
   );
 };
 
-const SearchItem = (props: SearchState) => {
+const SearchItem = (props: SearchState & { limit?: number }) => {
   const [menuItem, setMenuItem] = useState<MenuProps["items"]>([]);
+  let itemRef = useRef<MenuProps["items"] | null>(null);
   let searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   useEffect(() => {
     clearTimeout(searchTimeoutRef.current ?? 0);
@@ -262,19 +263,23 @@ const SearchItem = (props: SearchState) => {
             title: props.searchTitle,
           },
           {
-            limit: 10,
+            limit: props.limit ?? 10,
             projection: { _id: 1, title: 1 },
           }
         )
           .then((res) => {
-            console.log(res);
-            const myMenu = res.map((item) => {
+            const myMenu: MenuProps["items"] = res.map((item) => {
               return {
-                key: item._id,
+                key: item._id!,
                 label: item.title,
               };
             });
-            setMenuItem(myMenu as any);
+            if (myMenu.length >= (props.limit ?? 10)) {
+              setMenuItem([
+                ...myMenu,
+                { label: "view more ...", key: "viewmore" },
+              ]);
+            } else setMenuItem(myMenu as any);
           })
           .catch((e) => {
             console.error(e);
@@ -285,8 +290,7 @@ const SearchItem = (props: SearchState) => {
     }, 500);
     return () => clearTimeout(searchTimeoutRef.current ?? 0);
   }, [props.checkBox, props.searchTitle]);
-
-  return <Menu className="max-h-80 overflow-auto" items={menuItem} />;
+  return <Menu items={menuItem} />;
 };
 
 export default Search;

@@ -31,11 +31,13 @@ export default function Home() {
             <h1 className="drop-shadow-lg">
               Thesis Abstract Management System for College of Engineering
             </h1>
-            <div className="text-white/80 drop-shadow-lg pb-9">
+            <div className="text-white/80 drop-shadow-lg relative">
               Find related Ideas for your projects Hello World
-              <Search className="absolute w-[90vw] max-w-2xl top-0" />
+              <div className="absolute w-[97vw] md:w-full lg:w-[35em]">
+                <Search className="w-full" limit={5} />
+              </div>
             </div>
-            <div className="z-[-1]">
+            <div className="z-[-1] mt-12">
               <PriButton size="large">Get Started</PriButton>
             </div>
           </div>

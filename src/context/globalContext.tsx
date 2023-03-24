@@ -14,7 +14,7 @@ import { GlobalAction, GlobalState, GlobalValue, ThesisItems } from "./types.d";
 const globalStateInit: GlobalState = {
   thesisItems: [],
   dateOption: [],
-  loading: true,
+  loading: false,
   recyclebin: [],
 };
 
@@ -57,13 +57,6 @@ const globalReducer = (
 
 export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(globalReducer, globalStateInit);
-
-  useEffect(() => {
-    loadThesisItems().catch((e) => {
-      console.log("Cannot Load Data");
-      console.error(e);
-    });
-  }, []);
 
   const loadThesisItems = async () => {
     const thesisItems = await getAllThesis();
@@ -112,8 +105,8 @@ export const LoadingGlobal = ({
   loading: boolean;
   backgroundColor?: string;
 }) => {
-  const [noLoading, setNoLoading] = useState(true);
-  const [slide, setSlide] = useState(false);
+  const [noLoading, setNoLoading] = useState(loading);
+  const [slide, setSlide] = useState(loading);
 
   useEffect(() => {
     setSlide(!loading);

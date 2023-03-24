@@ -5,9 +5,26 @@ import { Divider } from "antd";
 import Head from "next/head";
 import Link from "next/link";
 
-const Thesis = () => {
-  const { thesisItems } = useGlobalContext().state;
+// You should use getStaticProps when:
+//- The data required to render the page is available at build time ahead of a user’s request.
+//- The data comes from a headless CMS.
+//- The data can be publicly cached (not user-specific).
+//- The page must be pre-rendered (for SEO) and be very fast — getStaticProps generates HTML and JSON files, both of which can be cached by a CDN for performance.
+// You should use getServerSideProps when:
+// - Only if you need to pre-render a page whose data must be fetched at request time
+import { GetServerSideProps } from "next";
+import { getAllThesis } from "@/utils/thesis-item-utils";
 
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const data = await getAllThesis({ limit: 5, year: 2020 });
+  return {
+    props: {
+      thesisItems: data,
+    },
+  };
+};
+
+const Thesis = (props: { thesisItems: ThesisItems[] }) => {
   return (
     <>
       <Head>
@@ -26,7 +43,7 @@ const Thesis = () => {
             <Divider className="bg-white/30" />
           </div>
           <div className="grid gap-2 w-full place-items-center lg:grid-cols-2 relative">
-            {thesisItems?.map((props) => {
+            {props.thesisItems?.map((props) => {
               return <Items key={props._id} {...props} />;
             })}
           </div>

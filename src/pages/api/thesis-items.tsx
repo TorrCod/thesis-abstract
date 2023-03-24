@@ -9,6 +9,14 @@ import { NextApiRequest, NextApiResponse } from "next";
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     if (req.query.collection === "thesis-items" && req.method === "GET") {
+      const limit = req.query.limit as string | undefined;
+      const query = {
+        year: req.query.year as number | undefined,
+        title: req.query.title as string | undefined,
+        course: req.query.course as string | undefined,
+      };
+      console.log(query);
+      console.log(limit);
       const thesisItems = await getData("thesis-abstract", "thesis-items");
       return res.status(200).json(thesisItems);
     }

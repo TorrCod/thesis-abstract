@@ -1,10 +1,17 @@
-import { ThesisItems } from "@/context/types.d";
+import { Course, ThesisItems } from "@/context/types.d";
 import axios from "axios";
 import { userConfig } from "./account-utils";
 
-export const getAllThesis = async () => {
-  const res = await axios.get("/api/thesis-items?collection=thesis-items");
-  return res.data;
+export const getAllThesis = async (option?: {
+  limit?: number;
+  course?: Course;
+  year?: number;
+  title?: string;
+}) => {
+  const res = await axios.get(
+    `${process.env.NEXT_PUBLIC_DOMAIN}/api/thesis-items?collection=thesis-items&limit=${option?.limit}&course=${option?.course}&year=${option?.year}&title=${option?.title}`
+  );
+  return res.data as ThesisItems[];
 };
 
 export const getAllDeletedThesis = async (token: string | undefined) => {

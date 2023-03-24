@@ -118,7 +118,7 @@ const NavBar = () => {
         (y > 0 ? "shadow-md flex bg-[#38649C] " : "md:bg-transparent ")
       }
     >
-      <div className="md:hidden flex relative w-full gap-5">
+      <div className="md:hidden flex relative w-full gap-5 h-14">
         <Button
           className="flex justify-center place-items-center text-3xl w-fit md:hidden auto-rows-fr"
           type="ghost"
@@ -126,7 +126,13 @@ const NavBar = () => {
           style={{ color: "rgba(255, 255, 255, 0.80)" }}
           onClick={() => setOpen(!open)}
         />
-        {y > 60 ? <Search className="w-full" /> : <></>}
+        {y > 60 ? (
+          <div className="absolute m-auto left-10">
+            <Search limit={5} className="w-full" />{" "}
+          </div>
+        ) : (
+          <></>
+        )}
       </div>
       <div className="hidden md:flex md:gap-10 text-white/70 align-center justify-center">
         {MENU_LIST.map(({ text, href, icon }, index) => (

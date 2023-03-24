@@ -1,11 +1,9 @@
 import Search from "@/components/search";
-import useGlobalContext from "@/context/globalContext";
 import { SearchThesis, ThesisItems } from "@/context/types.d";
 import { Divider } from "antd";
 import Head from "next/head";
 import Link from "next/link";
 import { GetServerSideProps } from "next";
-import { getAllThesis } from "@/utils/thesis-item-utils";
 import { parseQuery } from "@/utils/server-utils";
 import { getData } from "@/lib/mongo";
 

@@ -53,7 +53,6 @@ export const getData = async (
     const client = await connectToDatabase();
     const database = client.db(dbName);
     const collection = database.collection(colName);
-    console.log(option);
     const res = await collection
       .find(query ?? {}, {
         limit: option?.limit,

@@ -38,10 +38,10 @@ const Thesis = (props: { thesisItems: ThesisItems[] }) => {
       </Head>
       <section>
         <div className="md:pt-20 md:flex md:place-items-center md:flex-col">
-          <div className="grid w-full">
-            <Search className="place-self-center my-5" />
+          <div className="grid w-full relative">
+            <Search className="place-self-center my-5 w-full max-w-3xl absolute top-0 z-10" />
             {/* <SelectedFilter /> */}
-            <Divider className="bg-white/30" />
+            <Divider className="bg-white/30 mt-32" />
           </div>
           <div className="grid gap-2 w-full place-items-center lg:grid-cols-2 relative">
             {props.thesisItems.map((props) => {

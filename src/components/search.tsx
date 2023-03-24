@@ -182,7 +182,7 @@ const Search = ({ className }: SearchProps) => {
   return (
     <div
       className={
-        "p-2 bg-slate-100 rounded-md grid transition-all ease-in-out duration-300 max-w-[30em] w-full " +
+        "p-2 bg-slate-100 rounded-md grid transition-all ease-in-out duration-300 " +
         className +
         (searchState.searchFocus ? " gap-2" : " gap-0")
       }
@@ -243,7 +243,9 @@ const Search = ({ className }: SearchProps) => {
           </Dropdown>
         </Space>
       </div>
-      <SearchItem {...searchState} />
+      <div className="relative w-full">
+        <SearchItem {...searchState} />
+      </div>
     </div>
   );
 };
@@ -267,13 +269,18 @@ const SearchItem = (props: SearchState) => {
           .then((res) => {
             console.log(res);
             const myMenu = res.map((item) => {
-              return { key: item._id, label: item.title };
+              return {
+                key: item._id,
+                label: item.title,
+              };
             });
             setMenuItem(myMenu as any);
           })
           .catch((e) => {
             console.error(e);
           });
+      } else {
+        setMenuItem([]);
       }
     }, 500);
     return () => clearTimeout(searchTimeoutRef.current ?? 0);

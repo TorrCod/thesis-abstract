@@ -41,7 +41,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             projection: Record<string, 0 | 1> | undefined;
             limit: number | undefined;
           };
-          console.log(projection);
           const query = { year, course, title };
           const filteredQuery = parseQuery(query);
           const thesisItems = await getData(

@@ -1,6 +1,6 @@
 import Search from "@/components/search";
 import useGlobalContext from "@/context/globalContext";
-import { ThesisItems } from "@/context/types.d";
+import { SearchThesis, ThesisItems } from "@/context/types.d";
 import { Divider } from "antd";
 import Head from "next/head";
 import Link from "next/link";
@@ -16,7 +16,8 @@ import { GetServerSideProps } from "next";
 import { getAllThesis } from "@/utils/thesis-item-utils";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const data = await getAllThesis({ limit: 5, year: 2020 });
+  const { year, course, title, limit }: SearchThesis = ctx.query;
+  const data = await getAllThesis({ limit, year, course, title });
   return {
     props: {
       thesisItems: data,

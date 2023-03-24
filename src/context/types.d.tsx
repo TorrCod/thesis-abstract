@@ -29,6 +29,13 @@ export type ThesisItems = {
   _id: string;
 };
 
+export type SearchThesis = {
+  limit?: number;
+  course?: Course[];
+  year?: number;
+  title?: string;
+};
+
 export type GlobalAction =
   | {
       type: "add-thesis";

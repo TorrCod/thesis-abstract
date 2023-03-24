@@ -59,6 +59,7 @@ const Search = ({ className }: SearchProps) => {
     searchState_init
   );
   const globalCtx = useGlobalContext();
+
   useEffect(() => {
     searchDispatch({
       type: "populate-option",

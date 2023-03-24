@@ -1,6 +1,10 @@
 import LoadingIcon from "@/components/loadingIcon";
 import { auth } from "@/lib/firebase";
-import { getAllDeletedThesis, getAllThesis } from "@/utils/thesis-item-utils";
+import {
+  getAllDeletedThesis,
+  getAllThesis,
+  getDistincYear,
+} from "@/utils/thesis-item-utils";
 import React, {
   createContext,
   useContext,
@@ -58,17 +62,17 @@ const globalReducer = (
 export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(globalReducer, globalStateInit);
 
+  useEffect(() => {
+    loadThesisItems();
+  }, []);
+
   const loadThesisItems = async () => {
-    const thesisItems = await getAllThesis();
-    const listOfDate = [
-      ...(thesisItems as ThesisItems[]).map((child) => child.date.slice(0, 4)),
-    ];
-    const dateOpt = Array.from(new Set(listOfDate)).sort();
+    const distinctYear = await getDistincYear();
     dispatch({
       type: "load-data",
       payload: {
-        dateOpt: dateOpt,
-        thesisItems: thesisItems,
+        dateOpt: distinctYear,
+        thesisItems: [],
       },
     });
   };

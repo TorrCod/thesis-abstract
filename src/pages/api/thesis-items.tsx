@@ -18,20 +18,28 @@ import { NextApiRequest, NextApiResponse } from "next";
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     if (req.query.collection === "thesis-items" && req.method === "GET") {
-      const { year, course, title, limit }: SearchThesis = req.query;
-      const query = { year, course, title };
-      const filteredQuery = parseQuery(query);
-      const thesisItems = await getData(
-        "thesis-abstract",
-        "thesis-items",
-        filteredQuery
-      );
-      const distinctYear = await getDistinctData(
-        "thesis-abstract",
-        "thesis-items",
-        "year"
-      );
-      return res.status(200).json({ thesisItems, distinctYear });
+      switch (req.query.objective) {
+        case "get-distinct-years": {
+          const distinctYears = (await getDistinctData(
+            "thesis-abstract",
+            "thesis-items",
+            "year"
+          )) as number[];
+          const stringifyYears = distinctYears.map((item) => item.toString());
+          return res.status(200).json(stringifyYears);
+        }
+        default: {
+          const { year, course, title, limit }: SearchThesis = req.query;
+          const query = { year, course, title };
+          const filteredQuery = parseQuery(query);
+          const thesisItems = await getData(
+            "thesis-abstract",
+            "thesis-items",
+            filteredQuery
+          );
+          return res.status(200).json(thesisItems);
+        }
+      }
     }
     const isValidated = await validateAuth(req);
     if (isValidated.error) {

@@ -50,7 +50,6 @@ export const searchState_init: SearchState = {
 
 export type SearchProps = {
   className?: string;
-  distinctyear: number[];
 };
 
 export type AdminProps = {

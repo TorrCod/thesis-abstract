@@ -14,8 +14,16 @@ export const getAllThesis = async (option?: SearchThesis) => {
       limit ? `limit=${limit}` : ""
     }`
   );
+  const data = res.data as ThesisItems[];
+  return data;
+};
 
-  return res.data as { thesisItems: ThesisItems[]; distinctYear: number[] };
+export const getDistincYear = async () => {
+  const res = await axios.get(
+    `${process.env.NEXT_PUBLIC_DOMAIN}/api/thesis-items?collection=thesis-items&objective=get-distinct-years`
+  );
+  const data = res.data as string[];
+  return data;
 };
 
 export const getAllDeletedThesis = async (token: string | undefined) => {

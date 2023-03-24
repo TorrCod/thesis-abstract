@@ -4,31 +4,30 @@ import { SearchThesis, ThesisItems } from "@/context/types.d";
 import { Divider } from "antd";
 import Head from "next/head";
 import Link from "next/link";
-
-// You should use getStaticProps when:
-//- The data required to render the page is available at build time ahead of a user’s request.
-//- The data comes from a headless CMS.
-//- The data can be publicly cached (not user-specific).
-//- The page must be pre-rendered (for SEO) and be very fast — getStaticProps generates HTML and JSON files, both of which can be cached by a CDN for performance.
-// You should use getServerSideProps when:
-// - Only if you need to pre-render a page whose data must be fetched at request time
 import { GetServerSideProps } from "next";
 import { getAllThesis } from "@/utils/thesis-item-utils";
+import { parseQuery } from "@/utils/server-utils";
+import { getData } from "@/lib/mongo";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const { year, course, title, limit }: SearchThesis = ctx.query;
-  const data = await getAllThesis({ limit, year, course, title });
+  const query = { year, course, title };
+  const filteredQuery = parseQuery(query);
+  const thesisItems = await getData(
+    "thesis-abstract",
+    "thesis-items",
+    filteredQuery
+  );
+  const response = thesisItems.map((item) => {
+    (item._id as unknown as string) = item._id.toString();
+    return item;
+  });
   return {
-    props: {
-      ...data,
-    },
+    props: { thesisItems: response },
   };
 };
 
-const Thesis = (props: {
-  thesisItems: ThesisItems[];
-  distinctYear: number[];
-}) => {
+const Thesis = (props: { thesisItems: ThesisItems[] }) => {
   return (
     <>
       <Head>
@@ -42,12 +41,12 @@ const Thesis = (props: {
       <section>
         <div className="md:pt-20 md:flex md:place-items-center md:flex-col">
           <div className="grid w-full">
-            {/* <Search className="place-self-center my-5" /> */}
+            <Search className="place-self-center my-5" />
             {/* <SelectedFilter /> */}
             <Divider className="bg-white/30" />
           </div>
           <div className="grid gap-2 w-full place-items-center lg:grid-cols-2 relative">
-            {props.thesisItems?.map((props) => {
+            {props.thesisItems.map((props) => {
               return <Items key={props._id} {...props} />;
             })}
           </div>

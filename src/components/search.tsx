@@ -182,7 +182,7 @@ const Search = ({ className, limit }: SearchProps) => {
   return (
     <div
       className={
-        "p-2 bg-slate-100 rounded-md grid " +
+        "p-2 bg-slate-100 rounded-md grid shadow-md " +
         className +
         (searchState.searchFocus ? " gap-2" : " overflow-hidden max-h-12")
       }
@@ -243,7 +243,11 @@ const Search = ({ className, limit }: SearchProps) => {
           </Dropdown>
         </Space>
       </div>
-      <div className="w-fulls shadow-md rounded-md overflow-hidden relative">
+      <div
+        className={`w-fulls rounded-md overflow-hidden relative ${
+          searchState.searchFocus ? "" : "mt-5"
+        }`}
+      >
         <SearchItem {...searchState} limit={limit} />
       </div>
     </div>
@@ -277,7 +281,11 @@ const SearchItem = (props: SearchState & { limit?: number }) => {
             if (myMenu.length >= (props.limit ?? 10)) {
               setMenuItem([
                 ...myMenu,
-                { label: "view more ...", key: "viewmore" },
+                {
+                  label: "view more ...",
+                  key: "viewmore",
+                  icon: <BsSearch color="#F8B49C" />,
+                },
               ]);
             } else setMenuItem(myMenu as any);
           })

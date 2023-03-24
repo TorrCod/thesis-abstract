@@ -6,8 +6,11 @@
 
 ### Custom Scripts
 
-- start dev build with local database `npm run dev-mongo`
-- update the default data in database `npm run updatedb`
+- build with docker `npm run docker-build`
+- update the default data in database `npm run updatedb-dev`
+- start mongodb in local machine using docker `npm run mongo-dev`
+- import the default data in database `npm run importdb-dev`
+- start firebase emulators `npm run emulators`
 
 ## Documentation
 

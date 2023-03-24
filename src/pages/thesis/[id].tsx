@@ -82,8 +82,8 @@ const ThesisItemsView = (props: { data: ThesisItems; hasError: boolean }) => {
               <h2>{props.data.course}</h2>
             </div>
             <div>
-              <span className="text-sm text-[#38649C]">Date</span>
-              <h2>{props.data.date}</h2>
+              <span className="text-sm text-[#38649C]">Year</span>
+              <h2>{props.data.year}</h2>
             </div>
           </div>
           <div className="rs-researchers">

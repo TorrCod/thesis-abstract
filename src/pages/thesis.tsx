@@ -60,7 +60,7 @@ const Items = ({
   researchers,
   abstract,
   _id,
-  date,
+  year,
 }: ThesisItems) => {
   return (
     <div className="thesis_items w-full bg-slate-100 max-w-[50em] shadow-md rounded-md p-5 gap-2 md:gap-5 grid">
@@ -76,8 +76,8 @@ const Items = ({
           <h2>{course}</h2>
         </div>
         <div>
-          <span className="text-sm text-[#38649C]">Date</span>
-          <h2>{date}</h2>
+          <span className="text-sm text-[#38649C]">year</span>
+          <h2>{year}</h2>
         </div>
       </div>
       <div className="div3">

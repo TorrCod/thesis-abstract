@@ -24,9 +24,9 @@ export type ThesisItems = {
   researchers: string[];
   course: Course;
   abstract: string;
-  date: string;
+  year: number;
   dateAdded: Date;
-  _id: string;
+  _id?: string;
 };
 
 export type SearchThesis = {

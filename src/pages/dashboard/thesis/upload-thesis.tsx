@@ -36,7 +36,7 @@ import { useRouter } from "next/router";
 
 interface FormValues {
   title: string;
-  date: string;
+  year: number;
   course: string;
   researchers: string[];
   abstract: string;
@@ -65,7 +65,7 @@ const UploadThesis = () => {
         abstract: values.abstract,
         course: values.course as any,
         dateAdded: dateNow,
-        date: moment(values.date).format("YYYY-MM-DD"),
+        year: values.year,
         title: values.title,
         id: "",
         researchers: researchers,
@@ -155,8 +155,8 @@ const UploadThesis = () => {
           <Form.Item name="title" label="Title" rules={[{ required: true }]}>
             <Input suffix={<MdSubtitles />} />
           </Form.Item>
-          <Form.Item name="date" label="Date" rules={[{ required: true }]}>
-            <DatePicker />
+          <Form.Item name="year" label="Year" rules={[{ required: true }]}>
+            <Input placeholder={new Date().getFullYear().toString()} />
           </Form.Item>
           <Form.Item
             className=""

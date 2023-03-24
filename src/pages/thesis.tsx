@@ -1,31 +1,38 @@
 import Search from "@/components/search";
 import { SearchQuery, ThesisItems } from "@/context/types.d";
-import { Divider } from "antd";
+import { Button, Divider } from "antd";
 import Head from "next/head";
 import Link from "next/link";
 import { GetServerSideProps } from "next";
 import { parseQuery } from "@/utils/server-utils";
 import { getData } from "@/lib/mongo";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const { year, course, title }: SearchQuery = ctx.query;
-  const query = { year, course, title };
-  const filteredQuery = parseQuery(query);
-  const thesisItems = await getData(
-    "thesis-abstract",
-    "thesis-items",
-    filteredQuery
-  );
-  const response = thesisItems.map((item) => {
-    (item._id as unknown as string) = item._id.toString();
-    return item;
-  });
-  return {
-    props: { thesisItems: response },
-  };
-};
+// export const getServerSideProps: GetServerSideProps = async (ctx) => {
+//   const { year, course, title }: SearchQuery = ctx.query;
+//   const query = { year, course, title };
+//   const filteredQuery = parseQuery(query);
+//   const thesisItems = await getData(
+//     "thesis-abstract",
+//     "thesis-items",
+//     filteredQuery
+//   );
+//   const response = thesisItems.map((item) => {
+//     (item._id as unknown as string) = item._id.toString();
+//     return item;
+//   });
+//   return {
+//     props: { thesisItems: response },
+//   };
+// };
 
 const Thesis = (props: { thesisItems: ThesisItems[] }) => {
+  const router = useRouter();
+  useEffect(() => {
+    console.log(router.query);
+  }, [router]);
+
   return (
     <>
       <Head>
@@ -39,12 +46,21 @@ const Thesis = (props: { thesisItems: ThesisItems[] }) => {
       <section>
         <div className="md:pt-20 md:flex md:place-items-center md:flex-col">
           <div className="grid w-full relative">
+            <Button
+              onClick={() => {
+                router.push("/thesis?title=hello");
+              }}
+            >
+              test
+            </Button>
+
             <Search className="place-self-center my-5 w-full max-w-3xl absolute top-0 z-10" />
+
             {/* <SelectedFilter /> */}
             <Divider className="bg-white/30 mt-32" />
           </div>
           <div className="grid gap-2 w-full place-items-center lg:grid-cols-2 relative">
-            {props.thesisItems.map((props) => {
+            {props.thesisItems?.map((props) => {
               return <Items key={props._id} {...props} />;
             })}
           </div>

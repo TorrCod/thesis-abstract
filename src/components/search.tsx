@@ -24,6 +24,7 @@ import Link from "next/link";
 import { Course } from "@/context/types.d";
 import useGlobalContext from "@/context/globalContext";
 import { getAllThesis } from "@/utils/thesis-item-utils";
+import { useRouter } from "next/router";
 
 const courseOption = [
   "Computer Engineer",
@@ -69,6 +70,7 @@ const Search = ({ className, limit }: SearchProps) => {
     searchState_init
   );
   const globalCtx = useGlobalContext();
+  const router = useRouter();
 
   useEffect(() => {
     searchDispatch({
@@ -97,6 +99,7 @@ const Search = ({ className, limit }: SearchProps) => {
     const searchTitle = searchState.searchTitle;
     const filterCourse: Course[] = searchState.checkBox.course.option as any;
     const filterDate = searchState.checkBox.date.option;
+    router.push(`/thesis?title=${searchTitle}`);
   };
 
   const handleCheckBxCourse = (valueType: CheckboxValueType[]) => {

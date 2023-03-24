@@ -255,9 +255,21 @@ const SearchItem = (props: SearchState) => {
     clearTimeout(searchTimeoutRef.current ?? 0);
     searchTimeoutRef.current = setTimeout(() => {
       if (props.searchTitle) {
-        getAllThesis({ title: props.searchTitle, limit: 10 })
+        getAllThesis(
+          {
+            title: props.searchTitle,
+          },
+          {
+            limit: 5,
+            projection: { _id: 1, title: 1 },
+          }
+        )
           .then((res) => {
             console.log(res);
+            const myMenu = res.map((item) => {
+              return { key: item._id, label: item.title };
+            });
+            setMenuItem(myMenu as any);
           })
           .catch((e) => {
             console.error(e);
@@ -265,7 +277,7 @@ const SearchItem = (props: SearchState) => {
       }
     }, 500);
     return () => clearTimeout(searchTimeoutRef.current ?? 0);
-  }, [props]);
+  }, [props.checkBox, props.searchTitle]);
 
   return <Menu items={menuItem} />;
 };

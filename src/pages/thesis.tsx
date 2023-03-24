@@ -1,5 +1,5 @@
 import Search from "@/components/search";
-import { SearchThesis, ThesisItems } from "@/context/types.d";
+import { SearchQuery, ThesisItems } from "@/context/types.d";
 import { Divider } from "antd";
 import Head from "next/head";
 import Link from "next/link";
@@ -8,7 +8,7 @@ import { parseQuery } from "@/utils/server-utils";
 import { getData } from "@/lib/mongo";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const { year, course, title, limit }: SearchThesis = ctx.query;
+  const { year, course, title }: SearchQuery = ctx.query;
   const query = { year, course, title };
   const filteredQuery = parseQuery(query);
   const thesisItems = await getData(

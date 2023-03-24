@@ -1,4 +1,4 @@
-import { SearchThesis, ThesisItems } from "@/context/types.d";
+import { ThesisItems } from "@/context/types.d";
 import {
   addData,
   addDataWithExpiration,
@@ -29,8 +29,19 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           return res.status(200).json(stringifyYears);
         }
         default: {
-          const { year, course, title, limit, projection }: SearchThesis =
-            req.query;
+          const { year, course, title } = req.query as {
+            year: string | undefined;
+            course: string | undefined;
+            title: string | undefined;
+          };
+
+          const { projection, limit } = JSON.parse(
+            req.query.option as string
+          ) as {
+            projection: Record<string, 0 | 1> | undefined;
+            limit: number | undefined;
+          };
+          console.log(projection);
           const query = { year, course, title };
           const filteredQuery = parseQuery(query);
           const thesisItems = await getData(
@@ -38,8 +49,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             "thesis-items",
             filteredQuery,
             {
-              limit,
-              projection,
+              limit: limit,
+              projection: projection,
             }
           );
           return res.status(200).json(thesisItems);

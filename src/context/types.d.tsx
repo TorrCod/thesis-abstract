@@ -30,11 +30,14 @@ export type ThesisItems = {
   _id?: string;
 };
 
-export type SearchThesis = {
-  limit?: number;
+export type SearchQuery = {
   course?: Course[];
   year?: number;
   title?: string;
+};
+
+export type SearchOption = {
+  limit?: number;
   projection?: Record<string, 0 | 1>;
 };
 

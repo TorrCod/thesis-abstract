@@ -1,6 +1,6 @@
 import Search from "@/components/search";
-import { SearchQuery, ThesisItems } from "@/context/types.d";
-import { Button, Divider } from "antd";
+import { ThesisItems } from "@/context/types.d";
+import { Divider } from "antd";
 import Head from "next/head";
 import Link from "next/link";
 import { GetServerSideProps } from "next";

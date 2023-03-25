@@ -51,6 +51,11 @@ export const searchState_init: SearchState = {
 export type SearchProps = {
   className?: string;
   limit?: number;
+  onSearch?: (payload: {
+    title?: string;
+    course?: Course[];
+    year?: string[];
+  }) => void;
 };
 
 export type AdminProps = {

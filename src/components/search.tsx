@@ -63,15 +63,13 @@ const searchReducer: (
   }
 };
 
-const Search = ({ className, limit }: SearchProps) => {
+const Search = ({ className, limit, onSearch }: SearchProps) => {
   const searchRef: React.Ref<InputRef> | undefined = useRef(null);
   const [searchState, searchDispatch] = useReducer(
     searchReducer,
     searchState_init
   );
   const globalCtx = useGlobalContext();
-  const router = useRouter();
-
   useEffect(() => {
     searchDispatch({
       type: "populate-option",
@@ -96,10 +94,10 @@ const Search = ({ className, limit }: SearchProps) => {
   const handleSearch = () => {
     searchDispatch({ type: "focus", payload: false });
     searchRef.current?.blur();
-    const searchTitle = searchState.searchTitle;
-    const filterCourse: Course[] = searchState.checkBox.course.option as any;
-    const filterDate = searchState.checkBox.date.option;
-    router.push(`/thesis?title=${searchTitle}`);
+    const title = searchState.searchTitle;
+    const course: Course[] = searchState.checkBox.course.option as any;
+    const year = searchState.checkBox.date.option;
+    onSearch?.({ title, course, year });
   };
 
   const handleCheckBxCourse = (valueType: CheckboxValueType[]) => {

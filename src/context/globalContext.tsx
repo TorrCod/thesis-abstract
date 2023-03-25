@@ -5,6 +5,7 @@ import {
   getAllThesis,
   getDistincYear,
 } from "@/utils/thesis-item-utils";
+import { useRouter } from "next/router";
 import React, {
   createContext,
   useContext,
@@ -13,7 +14,13 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { GlobalAction, GlobalState, GlobalValue, ThesisItems } from "./types.d";
+import {
+  Course,
+  GlobalAction,
+  GlobalState,
+  GlobalValue,
+  ThesisItems,
+} from "./types.d";
 
 const globalStateInit: GlobalState = {
   thesisItems: [],
@@ -62,7 +69,6 @@ const globalReducer = (
 
 export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(globalReducer, globalStateInit);
-
   useEffect(() => {
     loadThesisItems();
   }, []);

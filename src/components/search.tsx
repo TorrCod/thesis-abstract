@@ -103,8 +103,8 @@ const Search = ({ className, limit, onSearch }: SearchProps) => {
     searchDispatch({ type: "focus", payload: false });
     searchRef.current?.blur();
     const title = searchState.searchTitle;
-    const course: Course[] = searchState.checkBox.course.option as any;
-    const year = searchState.checkBox.date.option;
+    const course: Course[] = courseOpt.option as any;
+    const year = yearsOpt.option;
     onSearch?.({ title, course, year });
   };
 
@@ -230,17 +230,15 @@ const Search = ({ className, limit, onSearch }: SearchProps) => {
           href={`/thesis?title=${
             searchState.searchTitle ? `${searchState.searchTitle}` : ``
           }${
-            searchState.checkBox.course.all
+            courseOpt.all
               ? ``
               : `&course=${encodeURIComponent(
-                  JSON.stringify(searchState.checkBox.course.option)
+                  JSON.stringify(courseOpt.option)
                 )}`
           }${
-            searchState.checkBox.date.all
+            yearsOpt.all
               ? ``
-              : `&year=${encodeURIComponent(
-                  JSON.stringify(searchState.checkBox.date.option)
-                )}`
+              : `&year=${encodeURIComponent(JSON.stringify(yearsOpt.option))}`
           }`}
         >
           <PriButton htmlType="submit" onClick={handleSearch}>

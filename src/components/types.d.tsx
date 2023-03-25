@@ -6,6 +6,11 @@ export type NavItemProps = {
   href: string;
 };
 
+export type FilterCheckBox = {
+  all: boolean;
+  option: string[];
+};
+
 export type SearchState = {
   focus: boolean;
   searchTitle: string;

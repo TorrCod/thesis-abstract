@@ -66,6 +66,7 @@ const Search = ({ className, limit, onSearch }: SearchProps) => {
   const globalCtx = useGlobalContext();
   const { course: courseOpt, years: yearsOpt } = globalCtx.state.filterState;
   const searchRef = useRef<HTMLDivElement>(null);
+  const onSearchRef = useRef<HTMLAnchorElement>(null);
   useClickAway(searchRef, () => {
     searchDispatch({ type: "onfocus", payload: false });
   });
@@ -79,6 +80,10 @@ const Search = ({ className, limit, onSearch }: SearchProps) => {
 
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     searchDispatch({ type: "onchange", payload: e.target.value });
+  };
+
+  const handleShowMore = () => {
+    onSearchRef.current?.click();
   };
 
   return (
@@ -95,6 +100,7 @@ const Search = ({ className, limit, onSearch }: SearchProps) => {
           placeholder="Search"
         />
         <Link
+          ref={onSearchRef}
           href={`/thesis?${
             searchState.searchTitle ? `title=${searchState.searchTitle}` : ``
           }${
@@ -127,7 +133,13 @@ const Search = ({ className, limit, onSearch }: SearchProps) => {
         </Space>
       </div>
       <div className={`w-fulls rounded-md overflow-hidden relative z-20`}>
-        {searchState.focus && <SearchItem {...searchState} limit={limit} />}
+        {searchState.focus && (
+          <SearchItem
+            {...searchState}
+            limit={limit}
+            onShowMore={handleShowMore}
+          />
+        )}
       </div>
     </div>
   );
@@ -305,7 +317,9 @@ const DropdownYear = ({
   );
 };
 
-const SearchItem = (props: SearchState & { limit?: number }) => {
+const SearchItem = (
+  props: SearchState & { limit?: number; onShowMore?: () => void }
+) => {
   const [menuItem, setMenuItem] = useState<MenuProps["items"]>([]);
   let searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   useEffect(() => {
@@ -332,6 +346,7 @@ const SearchItem = (props: SearchState & { limit?: number }) => {
               setMenuItem([
                 ...myMenu,
                 {
+                  onClick: props.onShowMore,
                   label: "view more ...",
                   key: "viewmore",
                   icon: <BsSearch color="#F8B49C" />,

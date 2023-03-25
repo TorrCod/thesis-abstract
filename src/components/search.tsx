@@ -199,8 +199,8 @@ const Search = ({ className, limit, onSearch }: SearchProps) => {
           placeholder="Search"
         />
         <Link
-          href={`/thesis?${
-            searchState.searchTitle ? `title=${searchState.searchTitle}` : ``
+          href={`/thesis?title=${
+            searchState.searchTitle ? `${searchState.searchTitle}` : ``
           }${
             searchState.checkBox.course.all
               ? ``

@@ -43,7 +43,9 @@ export const updateActivityLog = async (
 
 export const parseQuery = (object: Object) => {
   const res = Object.fromEntries(
-    Object.entries(object).filter(([_, value]) => value !== undefined)
+    Object.entries(object).filter(
+      ([_, value]) => value !== undefined && value !== ""
+    )
   );
   if (res.course) (res.course as any) = { $in: JSON.parse(res.course) };
   if (res.year) {

@@ -43,6 +43,7 @@ const globalCtxInit: GlobalValue = {
     load: async () => {},
     clear: () => {},
   }),
+  updateFilter: () => {},
 };
 
 const GlobalContext = createContext<GlobalValue>(globalCtxInit);
@@ -113,9 +114,22 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
     clear: () => dispatch({ type: "load-recycle", payload: [] }),
   });
 
+  const updateFilter = (payload: {
+    years: {
+      all: boolean;
+      option: string[];
+    };
+    course: {
+      all: boolean;
+      option: Course[];
+    };
+  }) => {
+    dispatch({ type: "update-filter", payload: payload });
+  };
+
   return (
     <GlobalContext.Provider
-      value={{ state, dispatch, loadThesisItems, recycledThesis }}
+      value={{ state, dispatch, loadThesisItems, recycledThesis, updateFilter }}
     >
       <LoadingGlobal loading={state.loading}>{children}</LoadingGlobal>
     </GlobalContext.Provider>

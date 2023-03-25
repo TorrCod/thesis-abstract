@@ -76,6 +76,7 @@ const Search = ({ className, limit, onSearch }: SearchProps) => {
     searchState_init
   );
   const globalCtx = useGlobalContext();
+  const { updateFilter } = globalCtx;
   const { course: courseOpt, years: yearsOpt } = globalCtx.state.filterState;
   useEffect(() => {
     searchDispatch({
@@ -110,18 +111,15 @@ const Search = ({ className, limit, onSearch }: SearchProps) => {
   const handleCheckBxCourse = (valueType: CheckboxValueType[]) => {
     const isCheckAll = valueType.length === courseOption.length;
     const item = valueType as Course[];
-    globalCtx.dispatch({
-      type: "update-filter",
-      payload: {
-        ...globalCtx.state.filterState,
-        course: {
-          all: isCheckAll,
-          option: isCheckAll
-            ? (courseOption as Course[])
-            : item.length
-            ? item
-            : ["Computer Engineer"],
-        },
+    updateFilter({
+      ...globalCtx.state.filterState,
+      course: {
+        all: isCheckAll,
+        option: isCheckAll
+          ? (courseOption as Course[])
+          : item.length
+          ? item
+          : ["Computer Engineer"],
       },
     });
   };
@@ -129,68 +127,43 @@ const Search = ({ className, limit, onSearch }: SearchProps) => {
   const handleCheckBxDate = (valueType: CheckboxValueType[]) => {
     const isCheckAll = valueType.length === globalCtx.state.dateOption.length;
     const item = valueType as string[];
-    globalCtx.dispatch({
-      type: "update-filter",
-      payload: {
-        ...globalCtx.state.filterState,
-        years: {
-          all: isCheckAll,
-          option: isCheckAll
-            ? globalCtx.state.dateOption
-            : item.length
-            ? item
-            : [
-                globalCtx.state.dateOption[
-                  globalCtx.state.dateOption.length - 1
-                ],
-              ],
-        },
+    updateFilter({
+      ...globalCtx.state.filterState,
+      years: {
+        all: isCheckAll,
+        option: isCheckAll
+          ? globalCtx.state.dateOption
+          : item.length
+          ? item
+          : [globalCtx.state.dateOption[globalCtx.state.dateOption.length - 1]],
       },
     });
   };
 
   const handleCheckBxAllCourse = (e: CheckboxChangeEvent) => {
     const isChecked = e.target.checked;
-    globalCtx.dispatch({
-      type: "update-filter",
-      payload: {
-        ...globalCtx.state.filterState,
-        course: {
-          all: isChecked,
-          option: isChecked
-            ? (courseOption as Course[])
-            : ["Computer Engineer"],
-        },
+    updateFilter({
+      ...globalCtx.state.filterState,
+      course: {
+        all: isChecked,
+        option: isChecked ? (courseOption as Course[]) : ["Computer Engineer"],
       },
     });
-    // searchDispatch({
-    //   type: "oncheck-all",
-    //   payload: {
-    //     type: "course",
-    //     all: isChecked,
-    //     option: isChecked ? courseOption : [],
-    //   },
-    // });
   };
 
   const handleCheckBxAllDate = (e: CheckboxChangeEvent) => {
     const isChecked = e.target.checked;
-    console.log(globalCtx.state.dateOption[0]);
-
-    globalCtx.dispatch({
-      type: "update-filter",
-      payload: {
-        ...globalCtx.state.filterState,
-        years: {
-          all: isChecked,
-          option: isChecked
-            ? globalCtx.state.dateOption
-            : [
-                globalCtx.state.dateOption[
-                  globalCtx.state.dateOption.length - 1
-                ].toString(),
-              ],
-        },
+    updateFilter({
+      ...globalCtx.state.filterState,
+      years: {
+        all: isChecked,
+        option: isChecked
+          ? globalCtx.state.dateOption
+          : [
+              globalCtx.state.dateOption[
+                globalCtx.state.dateOption.length - 1
+              ].toString(),
+            ],
       },
     });
   };

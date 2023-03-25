@@ -81,6 +81,16 @@ export type GlobalValue = {
     load: () => Promise<void>;
     clear: () => void;
   };
+  updateFilter: (payload: {
+    years: {
+      all: boolean;
+      option: string[];
+    };
+    course: {
+      all: boolean;
+      option: Course[];
+    };
+  }) => void;
 };
 
 export type AdminData = {

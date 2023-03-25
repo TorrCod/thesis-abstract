@@ -105,7 +105,6 @@ const Search = ({ className, limit, onSearch, showFilter }: SearchProps) => {
 
   return (
     <div
-      id="search-component"
       ref={searchRef}
       onFocus={() => searchDispatch({ type: "onfocus", payload: true })}
       className={"p-2 bg-slate-100 rounded-md grid shadow-md " + className}
@@ -139,7 +138,7 @@ const Search = ({ className, limit, onSearch, showFilter }: SearchProps) => {
       </Form>
       {(searchState.focus || showFilter) && (
         <div className="mt-2">
-          <div className="flex gap-5">
+          <div className="flex gap-5" id="filter-component">
             <div>
               <DropDownCourse
                 searchDispatch={searchDispatch}
@@ -202,7 +201,7 @@ const FilterItems = ({
   };
 
   return (
-    <div className={`grid gap-1 ${type === "years" ? `grid-cols-4` : ""}`}>
+    <div className="flex flex-wrap gap-1">
       {items.map((item, index) => (
         <div
           key={index}
@@ -294,7 +293,7 @@ const DropDownCourse = ({
       open={searchState.dropDownState.course}
       onOpenChange={handleOpenCourse}
       dropdownRender={dropdownContentCourse}
-      getPopupContainer={() => document.getElementById("search-component")!}
+      getPopupContainer={() => document.getElementById("filter-component")!}
       destroyPopupOnHide
       autoAdjustOverflow
     >
@@ -393,10 +392,10 @@ const DropdownYear = ({
       open={searchState.dropDownState.date}
       onOpenChange={handleOpenDate}
       dropdownRender={dropdownContentDate}
-      getPopupContainer={() => document.getElementById("search-component")!}
+      getPopupContainer={() => document.getElementById("filter-component")!}
       destroyPopupOnHide
     >
-      <div
+      <a
         className="cursor-pointer text-slate-900"
         onClick={(e) => e.preventDefault()}
       >
@@ -404,7 +403,7 @@ const DropdownYear = ({
           Date
           <DownOutlined />
         </Space>
-      </div>
+      </a>
     </Dropdown>
   );
 };

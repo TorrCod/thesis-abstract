@@ -83,6 +83,7 @@ const Search = ({ className, limit, onSearch }: SearchProps) => {
 
   return (
     <div
+      id="search-component"
       ref={searchRef}
       onFocus={() => searchDispatch({ type: "onfocus", payload: true })}
       className={"p-2 bg-slate-100 rounded-md grid shadow-md " + className}
@@ -194,6 +195,8 @@ const DropDownCourse = ({
       onOpenChange={handleOpenCourse}
       dropdownRender={dropdownContentCourse}
       trigger={["click"]}
+      getPopupContainer={() => document.getElementById("search-component")!}
+      destroyPopupOnHide
     >
       <a
         className="cursor-pointer text-slate-900"
@@ -286,8 +289,10 @@ const DropdownYear = ({
       onOpenChange={handleOpenDate}
       dropdownRender={dropdownContentDate}
       trigger={["click"]}
+      getPopupContainer={() => document.getElementById("search-component")!}
+      destroyPopupOnHide
     >
-      <a
+      <div
         className="cursor-pointer text-slate-900"
         onClick={(e) => e.preventDefault()}
       >
@@ -295,7 +300,7 @@ const DropdownYear = ({
           Date
           <DownOutlined />
         </Space>
-      </a>
+      </div>
     </Dropdown>
   );
 };

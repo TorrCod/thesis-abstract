@@ -1,11 +1,13 @@
 import {
   Checkbox,
+  Col,
   Dropdown,
   Form,
   Input,
   InputRef,
   Menu,
   MenuProps,
+  Row,
   Space,
 } from "antd";
 import React, { useEffect, useReducer, useRef, useState } from "react";
@@ -82,11 +84,6 @@ const Search = ({ className, limit, onSearch }: SearchProps) => {
     });
   }, [globalCtx.state.dateOption]);
 
-  useEffect(() => {}, [
-    searchState.checkBox.course.all,
-    searchState.checkBox.date.all,
-  ]);
-
   const handleOpenCourse = (flag: boolean) => {
     searchDispatch({
       type: "dropdown",
@@ -119,14 +116,14 @@ const Search = ({ className, limit, onSearch }: SearchProps) => {
         ...globalCtx.state.filterState,
         course: {
           all: isCheckAll,
-          option: isCheckAll ? (courseOption as Course[]) : item,
+          option: isCheckAll
+            ? (courseOption as Course[])
+            : item.length
+            ? item
+            : ["Computer Engineer"],
         },
       },
     });
-    // searchDispatch({
-    //   type: "oncheck-all",
-    //   payload: { type: "course", option: item, all: isCheckAll },
-    // });
   };
 
   const handleCheckBxDate = (valueType: CheckboxValueType[]) => {
@@ -138,14 +135,18 @@ const Search = ({ className, limit, onSearch }: SearchProps) => {
         ...globalCtx.state.filterState,
         years: {
           all: isCheckAll,
-          option: isCheckAll ? globalCtx.state.dateOption : item,
+          option: isCheckAll
+            ? globalCtx.state.dateOption
+            : item.length
+            ? item
+            : [
+                globalCtx.state.dateOption[
+                  globalCtx.state.dateOption.length - 1
+                ],
+              ],
         },
       },
     });
-    // searchDispatch({
-    //   type: "oncheck-all",
-    //   payload: { type: "date", option: item, all: isCheckAll },
-    // });
   };
 
   const handleCheckBxAllCourse = (e: CheckboxChangeEvent) => {
@@ -192,14 +193,6 @@ const Search = ({ className, limit, onSearch }: SearchProps) => {
         },
       },
     });
-    // searchDispatch({
-    //   type: "oncheck-all",
-    //   payload: {
-    //     type: "date",
-    //     all: isChecked,
-    //     option: isChecked ? globalCtx.state.dateOption : [],
-    //   },
-    // });
   };
 
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
@@ -220,15 +213,25 @@ const Search = ({ className, limit, onSearch }: SearchProps) => {
   );
 
   const dropdownContentDate = () => (
-    <div className="bg-white p-2 shadow-lg relative rounded-md">
+    <div className="bg-white shadow-lg relative rounded-md p-2">
       <Checkbox checked={yearsOpt.all} onChange={handleCheckBxAllDate}>
         All
       </Checkbox>
       <Checkbox.Group
-        options={globalCtx.state.dateOption}
+        // options={globalCtx.state.dateOption}
         value={yearsOpt.option}
         onChange={handleCheckBxDate}
-      />
+      >
+        <Row>
+          {globalCtx.state.dateOption.map((years, index) => {
+            return (
+              <Col key={index} span={8}>
+                <Checkbox value={years}>{years}</Checkbox>
+              </Col>
+            );
+          })}
+        </Row>
+      </Checkbox.Group>
     </div>
   );
 

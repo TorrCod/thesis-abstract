@@ -202,7 +202,7 @@ const FilterItems = ({
   };
 
   return (
-    <div className="grid gap-1">
+    <div className={`grid gap-1 ${type === "years" ? `grid-cols-4` : ""}`}>
       {items.map((item, index) => (
         <div
           key={index}

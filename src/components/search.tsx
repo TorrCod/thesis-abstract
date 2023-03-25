@@ -100,8 +100,8 @@ const Search = ({ className, limit, onSearch }: SearchProps) => {
           placeholder="Search"
         />
         <Link
-          href={`/thesis?title=${
-            searchState.searchTitle ? `${searchState.searchTitle}` : ``
+          href={`/thesis?${
+            searchState.searchTitle ? `title=${searchState.searchTitle}` : ``
           }${
             courseOpt.all
               ? ``

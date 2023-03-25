@@ -14,12 +14,7 @@ import { PriButton } from "./button";
 import { DownOutlined } from "@ant-design/icons";
 import { CheckboxChangeEvent } from "antd/es/checkbox";
 import { CheckboxValueType } from "antd/es/checkbox/Group";
-import {
-  SearchAction,
-  SearchProps,
-  SearchState,
-  searchState_init,
-} from "./types.d";
+import { SearchAction, SearchProps, SearchState } from "./types.d";
 import Link from "next/link";
 import { Course } from "@/context/types.d";
 import useGlobalContext from "@/context/globalContext";
@@ -32,6 +27,15 @@ const courseOption = [
   "Electrical Engineer",
   "Civil Engineer",
 ];
+export const searchState_init: SearchState = {
+  searchTitle: "",
+  searchFocus: false,
+  dropDownState: { course: false, date: false },
+  checkBox: {
+    course: { all: true, option: [] },
+    date: { all: true, option: [] },
+  },
+};
 
 const searchReducer: (
   state: SearchState,
@@ -76,6 +80,11 @@ const Search = ({ className, limit, onSearch }: SearchProps) => {
       payload: { course: courseOption, date: globalCtx.state.dateOption },
     });
   }, [globalCtx.state.dateOption]);
+
+  useEffect(() => {}, [
+    searchState.checkBox.course.all,
+    searchState.checkBox.date.all,
+  ]);
 
   const handleOpenCourse = (flag: boolean) => {
     searchDispatch({

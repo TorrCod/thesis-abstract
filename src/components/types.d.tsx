@@ -38,16 +38,6 @@ export type SearchAction =
       payload: { all: boolean; option: string[]; type: "course" | "date" };
     };
 
-export const searchState_init: SearchState = {
-  searchTitle: "",
-  searchFocus: false,
-  dropDownState: { course: false, date: false },
-  checkBox: {
-    course: { all: true, option: [] },
-    date: { all: true, option: [] },
-  },
-};
-
 export type SearchProps = {
   className?: string;
   limit?: number;

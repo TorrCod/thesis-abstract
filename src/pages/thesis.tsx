@@ -45,7 +45,7 @@ const Thesis = (props: { thesisItems: ThesisItems[] }) => {
             {/* <SelectedFilter /> */}
             <Divider className="bg-white/30 mt-32" />
           </div>
-          <div className="grid gap-2 w-full place-items-center lg:grid-cols-2 relative">
+          <div className="grid gap-2 w-full place-items-center lg:grid-cols-2 relative px-5">
             {props.thesisItems?.map((props) => {
               return <Items key={props._id} {...props} />;
             })}
@@ -65,7 +65,7 @@ const Items = ({
   year,
 }: ThesisItems) => {
   return (
-    <div className="thesis_items w-full bg-slate-100 max-w-[50em] shadow-md rounded-md p-5 gap-2 md:gap-5 grid">
+    <div className="thesis_items w-full bg-slate-100 max-w-[50em] shadow-md rounded-md p-5 gap-2 md:gap-5 grid h-full">
       <div className="div2 flex flex-col gap-2">
         <div>
           <Link href={`/thesis/${_id}`}>

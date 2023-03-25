@@ -1,4 +1,5 @@
 import LoadingIcon from "@/components/loadingIcon";
+import { courseOption } from "@/components/search";
 import { auth } from "@/lib/firebase";
 import {
   getAllDeletedThesis,
@@ -28,6 +29,10 @@ const globalStateInit: GlobalState = {
   loading: false,
   recyclebin: [],
   searchThesis: [],
+  filterState: {
+    years: { all: true, option: [] },
+    course: { all: true, option: courseOption as Course[] },
+  },
 };
 
 const globalCtxInit: GlobalValue = {
@@ -64,6 +69,9 @@ const globalReducer = (
 
     case "load-recycle":
       return { ...state, recyclebin: action.payload };
+
+    case "update-filter":
+      return { ...state, filterState: action.payload };
   }
 };
 
@@ -80,6 +88,13 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
       payload: {
         dateOpt: distinctYear,
         thesisItems: [],
+      },
+    });
+    dispatch({
+      type: "update-filter",
+      payload: {
+        ...state.filterState,
+        years: { all: true, option: distinctYear },
       },
     });
   };

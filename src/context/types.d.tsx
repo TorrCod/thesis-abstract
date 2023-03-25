@@ -9,6 +9,10 @@ export interface GlobalState {
   recyclebin: ThesisItems[];
   signIn?: boolean;
   loading: boolean;
+  filterState: {
+    years: { all: boolean; option: string[] };
+    course: { all: boolean; option: Course[] };
+  };
 }
 
 export type Course =
@@ -60,6 +64,13 @@ export type GlobalAction =
   | {
       type: "load-recycle";
       payload: ThesisItems[];
+    }
+  | {
+      type: "update-filter";
+      payload: {
+        years: { all: boolean; option: string[] };
+        course: { all: boolean; option: Course[] };
+      };
     };
 
 export type GlobalValue = {

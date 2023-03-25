@@ -18,6 +18,7 @@ import { CheckboxChangeEvent } from "antd/es/checkbox";
 import { CheckboxValueType } from "antd/es/checkbox/Group";
 import {
   courseOption,
+  FilterCheckBox,
   SearchAction,
   SearchProps,
   SearchState,
@@ -71,6 +72,21 @@ const Search = ({ className, limit, onSearch, showFilter }: SearchProps) => {
   useClickAway(searchRef, () => {
     searchDispatch({ type: "onfocus", payload: false });
   });
+
+  useEffect(() => {
+    if (!yearsOpt.option.length) {
+      globalCtx.updateFilter({
+        ...globalCtx.state.filterState,
+        years: { all: true, option: globalCtx.state.dateOption },
+      });
+    }
+    if (!courseOpt.option.length) {
+      globalCtx.updateFilter({
+        ...globalCtx.state.filterState,
+        course: { all: true, option: courseOption },
+      });
+    }
+  }, [yearsOpt.option.length, courseOpt.option.length]);
 
   const handleSearch = () => {
     const title = searchState.searchTitle;
@@ -129,18 +145,25 @@ const Search = ({ className, limit, onSearch, showFilter }: SearchProps) => {
                 searchDispatch={searchDispatch}
                 searchState={searchState}
               />
-              <FilterItems
-                items={courseOpt.option as string[]}
-                onRemove={(item) => {
-                  console.log(item);
-                }}
-              />
+              {courseOpt.all ? (
+                <FilterItems type="course" items={["All"]} noAction />
+              ) : (
+                <FilterItems
+                  type="course"
+                  items={courseOpt.option as string[]}
+                />
+              )}
             </div>
             <div>
               <DropdownYear
                 searchDispatch={searchDispatch}
                 searchState={searchState}
               />
+              {yearsOpt.all ? (
+                <FilterItems type="years" items={["All"]} noAction />
+              ) : (
+                <FilterItems type="years" items={yearsOpt.option as string[]} />
+              )}
             </div>
           </div>
         </div>
@@ -161,19 +184,34 @@ const Search = ({ className, limit, onSearch, showFilter }: SearchProps) => {
 
 const FilterItems = ({
   items,
-  onRemove,
+  noAction,
+  type,
 }: {
   items: string[];
-  onRemove: (item: string) => void;
+  noAction?: boolean;
+  type: "course" | "years";
 }) => {
+  const { updateFilter, state } = useGlobalContext();
+  const handleRemove = (item: string) => {
+    console.log(item);
+    const searchFilter = { ...state.filterState };
+    searchFilter[type].option = (searchFilter[type].option as string[]).filter(
+      (oldItem) => oldItem !== item
+    );
+    updateFilter(searchFilter);
+  };
+
   return (
     <div className="grid gap-1">
-      {items.map((item) => (
+      {items.map((item, index) => (
         <div
-          className="text-white text-[0.75em] bg-[#38649C] rounded-full w-fit px-2 py-1 text-center"
-          onClick={() => onRemove(item)}
+          key={index}
+          className={`text-white text-[0.6em] bg-[#38649C] rounded-full w-fit px-2 py-1 text-center min-w-[4em] ${
+            !noAction && `cursor-pointer`
+          }`}
+          onClick={() => (noAction ? {} : handleRemove(item))}
         >
-          {item} x
+          {item} {!noAction && "x"}
         </div>
       ))}
     </div>
@@ -256,7 +294,6 @@ const DropDownCourse = ({
       open={searchState.dropDownState.course}
       onOpenChange={handleOpenCourse}
       dropdownRender={dropdownContentCourse}
-      trigger={["click"]}
       getPopupContainer={() => document.getElementById("search-component")!}
       destroyPopupOnHide
       autoAdjustOverflow
@@ -356,7 +393,6 @@ const DropdownYear = ({
       open={searchState.dropDownState.date}
       onOpenChange={handleOpenDate}
       dropdownRender={dropdownContentDate}
-      trigger={["click"]}
       getPopupContainer={() => document.getElementById("search-component")!}
       destroyPopupOnHide
     >

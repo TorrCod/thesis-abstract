@@ -22,6 +22,7 @@ import { Course } from "@/context/types.d";
 import useGlobalContext from "@/context/globalContext";
 import { getAllThesis } from "@/utils/thesis-item-utils";
 import { useRouter } from "next/router";
+import { useClickAway } from "react-use";
 
 export const courseOption = [
   "Computer Engineer",
@@ -70,16 +71,18 @@ const searchReducer: (
 };
 
 const Search = ({ className, limit, onSearch }: SearchProps) => {
-  const searchRef: React.Ref<InputRef> | undefined = useRef(null);
   const [searchState, searchDispatch] = useReducer(
     searchReducer,
     searchState_init
   );
   const globalCtx = useGlobalContext();
   const { course: courseOpt, years: yearsOpt } = globalCtx.state.filterState;
+  const searchRef = useRef<HTMLDivElement>(null);
+  useClickAway(searchRef, () => {
+    searchDispatch({ type: "onfocus", payload: false });
+  });
 
   const handleSearch = () => {
-    searchRef.current?.blur();
     const title = searchState.searchTitle;
     const course: Course[] = courseOpt.option as any;
     const year = yearsOpt.option;
@@ -91,11 +94,14 @@ const Search = ({ className, limit, onSearch }: SearchProps) => {
   };
 
   return (
-    <div className={"p-2 bg-slate-100 rounded-md grid shadow-md " + className}>
+    <div
+      ref={searchRef}
+      onFocus={() => searchDispatch({ type: "onfocus", payload: true })}
+      className={"p-2 bg-slate-100 rounded-md grid shadow-md " + className}
+    >
       <Form className="flex gap-2">
         <Input
           onChange={handleChange}
-          ref={searchRef}
           prefix={<BsSearch color="#38649C" />}
           placeholder="Search"
         />
@@ -132,7 +138,7 @@ const Search = ({ className, limit, onSearch }: SearchProps) => {
         </Space>
       </div>
       <div className={`w-fulls rounded-md overflow-hidden relative z-20`}>
-        <SearchItem {...searchState} limit={limit} />
+        {searchState.focus && <SearchItem {...searchState} limit={limit} />}
       </div>
     </div>
   );

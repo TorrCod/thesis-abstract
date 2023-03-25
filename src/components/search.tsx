@@ -31,7 +31,6 @@ export const courseOption = [
 ];
 export const searchState_init: SearchState = {
   searchTitle: "",
-  searchFocus: false,
   dropDownState: { course: false, date: false },
   checkBox: {
     course: { all: true, option: [] },
@@ -44,8 +43,6 @@ const searchReducer: (
   action: SearchAction
 ) => SearchState = (state, action) => {
   switch (action.type) {
-    case "focus":
-      return { ...state, searchFocus: action.payload };
     case "dropdown":
       return { ...state, dropDownState: action.payload };
     case "populate-option": {
@@ -100,7 +97,6 @@ const Search = ({ className, limit, onSearch }: SearchProps) => {
   };
 
   const handleSearch = () => {
-    searchDispatch({ type: "focus", payload: false });
     searchRef.current?.blur();
     const title = searchState.searchTitle;
     const course: Course[] = courseOpt.option as any;
@@ -209,16 +205,7 @@ const Search = ({ className, limit, onSearch }: SearchProps) => {
   );
 
   return (
-    <div
-      className={
-        "p-2 bg-slate-100 rounded-md grid shadow-md " +
-        className +
-        (searchState.searchFocus ? " gap-2" : " overflow-hidden max-h-12")
-      }
-      onFocus={() => searchDispatch({ type: "focus", payload: true })}
-      onBlur={() => searchDispatch({ type: "focus", payload: false })}
-      tabIndex={0}
-    >
+    <div className={"p-2 bg-slate-100 rounded-md grid shadow-md " + className}>
       <Form className="flex gap-2">
         <Input
           onChange={handleChange}
@@ -246,11 +233,7 @@ const Search = ({ className, limit, onSearch }: SearchProps) => {
           </PriButton>
         </Link>
       </Form>
-      <div
-        className={`overflow-hidden relative ${
-          searchState.searchFocus ? "max-h-28" : "max-h-0"
-        }`}
-      >
+      <div>
         <Space>
           <Dropdown
             open={searchState.dropDownState.course}
@@ -286,11 +269,7 @@ const Search = ({ className, limit, onSearch }: SearchProps) => {
           </Dropdown>
         </Space>
       </div>
-      <div
-        className={`w-fulls rounded-md overflow-hidden relative ${
-          searchState.searchFocus ? "" : "mt-5"
-        }`}
-      >
+      <div className={`w-fulls rounded-md overflow-hidden relative`}>
         <SearchItem {...searchState} limit={limit} />
       </div>
     </div>

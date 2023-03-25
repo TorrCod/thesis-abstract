@@ -8,7 +8,6 @@ export type NavItemProps = {
 
 export type SearchState = {
   searchTitle: string;
-  searchFocus: boolean;
   dropDownState: { course: boolean; date: boolean };
   checkBox: {
     course: { all: boolean; option: string[] };
@@ -20,10 +19,6 @@ export type SearchAction =
   | {
       type: "onchange";
       payload: string;
-    }
-  | {
-      type: "focus";
-      payload: boolean;
     }
   | {
       type: "dropdown";

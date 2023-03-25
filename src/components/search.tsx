@@ -112,8 +112,6 @@ const Search = ({ className, limit, onSearch }: SearchProps) => {
   const handleCheckBxDate = (valueType: CheckboxValueType[]) => {
     const isCheckAll = valueType.length === globalCtx.state.dateOption.length;
     const item = valueType as string[];
-    console.log(valueType);
-
     searchDispatch({
       type: "oncheck-all",
       payload: { type: "date", option: item, all: isCheckAll },

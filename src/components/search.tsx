@@ -198,7 +198,19 @@ const Search = ({ className, limit, onSearch }: SearchProps) => {
           prefix={<BsSearch color="#38649C" />}
           placeholder="Search"
         />
-        <Link href={"/thesis"}>
+        <Link
+          href={`/thesis?${
+            searchState.searchTitle ? `title=${searchState.searchTitle}` : ``
+          }${
+            searchState.checkBox.course.all
+              ? ``
+              : `&course=${searchState.checkBox.course.option}`
+          }${
+            searchState.checkBox.date.all
+              ? ``
+              : `&year=${searchState.checkBox.date.option}`
+          }`}
+        >
           <PriButton htmlType="submit" onClick={handleSearch}>
             <BsSearch color="white" />
           </PriButton>

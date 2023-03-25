@@ -31,11 +31,12 @@ export const searchState_init: SearchState = {
   focus: false,
 };
 
-export const courseOption = [
+export const courseOption: Course[] = [
   "Computer Engineer",
   "Mechanical Engineer",
   "Electrical Engineer",
   "Civil Engineer",
+  "Electronics Engineer",
 ];
 
 export type SearchAction =
@@ -63,6 +64,7 @@ export type SearchAction =
 export type SearchProps = {
   className?: string;
   limit?: number;
+  showFilter?: boolean;
   onSearch?: (payload: {
     title?: string;
     course?: Course[];

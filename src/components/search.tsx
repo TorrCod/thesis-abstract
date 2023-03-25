@@ -36,6 +36,7 @@ export const searchState_init: SearchState = {
     course: { all: true, option: [] },
     date: { all: true, option: [] },
   },
+  focus: false,
 };
 
 const searchReducer: (
@@ -63,6 +64,8 @@ const searchReducer: (
       newState["searchTitle"] = action.payload;
       return newState;
     }
+    case "onfocus":
+      return { ...state, focus: action.payload };
   }
 };
 
@@ -73,28 +76,7 @@ const Search = ({ className, limit, onSearch }: SearchProps) => {
     searchState_init
   );
   const globalCtx = useGlobalContext();
-  const { updateFilter } = globalCtx;
   const { course: courseOpt, years: yearsOpt } = globalCtx.state.filterState;
-  useEffect(() => {
-    searchDispatch({
-      type: "populate-option",
-      payload: { course: courseOption, date: globalCtx.state.dateOption },
-    });
-  }, [globalCtx.state.dateOption]);
-
-  const handleOpenCourse = (flag: boolean) => {
-    searchDispatch({
-      type: "dropdown",
-      payload: { ...searchState.dropDownState, course: flag },
-    });
-  };
-
-  const handleOpenDate = (flag: boolean) => {
-    searchDispatch({
-      type: "dropdown",
-      payload: { ...searchState.dropDownState, date: flag },
-    });
-  };
 
   const handleSearch = () => {
     searchRef.current?.blur();
@@ -104,105 +86,9 @@ const Search = ({ className, limit, onSearch }: SearchProps) => {
     onSearch?.({ title, course, year });
   };
 
-  const handleCheckBxCourse = (valueType: CheckboxValueType[]) => {
-    const isCheckAll = valueType.length === courseOption.length;
-    const item = valueType as Course[];
-    updateFilter({
-      ...globalCtx.state.filterState,
-      course: {
-        all: isCheckAll,
-        option: isCheckAll
-          ? (courseOption as Course[])
-          : item.length
-          ? item
-          : ["Computer Engineer"],
-      },
-    });
-  };
-
-  const handleCheckBxDate = (valueType: CheckboxValueType[]) => {
-    const isCheckAll = valueType.length === globalCtx.state.dateOption.length;
-    const item = valueType as string[];
-    updateFilter({
-      ...globalCtx.state.filterState,
-      years: {
-        all: isCheckAll,
-        option: isCheckAll
-          ? globalCtx.state.dateOption
-          : item.length
-          ? item
-          : [globalCtx.state.dateOption[globalCtx.state.dateOption.length - 1]],
-      },
-    });
-  };
-
-  const handleCheckBxAllCourse = (e: CheckboxChangeEvent) => {
-    const isChecked = e.target.checked;
-    updateFilter({
-      ...globalCtx.state.filterState,
-      course: {
-        all: isChecked,
-        option: isChecked ? (courseOption as Course[]) : ["Computer Engineer"],
-      },
-    });
-  };
-
-  const handleCheckBxAllDate = (e: CheckboxChangeEvent) => {
-    const isChecked = e.target.checked;
-    updateFilter({
-      ...globalCtx.state.filterState,
-      years: {
-        all: isChecked,
-        option: isChecked
-          ? globalCtx.state.dateOption
-          : [
-              globalCtx.state.dateOption[
-                globalCtx.state.dateOption.length - 1
-              ].toString(),
-            ],
-      },
-    });
-  };
-
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     searchDispatch({ type: "onchange", payload: e.target.value });
   };
-
-  const dropdownContentCourse = () => (
-    <div className="bg-white p-2 shadow-lg relative rounded-md">
-      <Checkbox checked={courseOpt.all} onChange={handleCheckBxAllCourse}>
-        All
-      </Checkbox>
-      <Checkbox.Group
-        options={courseOption}
-        value={courseOpt.option as string[]}
-        onChange={handleCheckBxCourse}
-      />
-    </div>
-  );
-
-  const dropdownContentDate = () => (
-    <div className="bg-white shadow-lg relative rounded-md p-2">
-      <Checkbox checked={yearsOpt.all} onChange={handleCheckBxAllDate}>
-        All
-      </Checkbox>
-      <Checkbox.Group
-        // options={globalCtx.state.dateOption}
-        value={yearsOpt.option}
-        onChange={handleCheckBxDate}
-      >
-        <Row>
-          {globalCtx.state.dateOption.map((years, index) => {
-            return (
-              <Col key={index} span={8}>
-                <Checkbox value={years}>{years}</Checkbox>
-              </Col>
-            );
-          })}
-        </Row>
-      </Checkbox.Group>
-    </div>
-  );
 
   return (
     <div className={"p-2 bg-slate-100 rounded-md grid shadow-md " + className}>
@@ -235,44 +121,188 @@ const Search = ({ className, limit, onSearch }: SearchProps) => {
       </Form>
       <div>
         <Space>
-          <Dropdown
-            open={searchState.dropDownState.course}
-            onOpenChange={handleOpenCourse}
-            dropdownRender={dropdownContentCourse}
-            trigger={["click"]}
-          >
-            <a
-              className="cursor-pointer text-slate-900"
-              onClick={(e) => e.preventDefault()}
-            >
-              <Space>
-                Course
-                <DownOutlined />
-              </Space>
-            </a>
-          </Dropdown>
-          <Dropdown
-            open={searchState.dropDownState.date}
-            onOpenChange={handleOpenDate}
-            dropdownRender={dropdownContentDate}
-            trigger={["click"]}
-          >
-            <a
-              className="cursor-pointer text-slate-900"
-              onClick={(e) => e.preventDefault()}
-            >
-              <Space>
-                Date
-                <DownOutlined />
-              </Space>
-            </a>
-          </Dropdown>
+          <DropDownCourse
+            searchDispatch={searchDispatch}
+            searchState={searchState}
+          />
+          <DropdownYear
+            searchDispatch={searchDispatch}
+            searchState={searchState}
+          />
         </Space>
       </div>
       <div className={`w-fulls rounded-md overflow-hidden relative z-20`}>
         <SearchItem {...searchState} limit={limit} />
       </div>
     </div>
+  );
+};
+
+const DropDownCourse = ({
+  searchDispatch,
+  searchState,
+}: {
+  searchDispatch: React.Dispatch<SearchAction>;
+  searchState: SearchState;
+}) => {
+  const globalCtx = useGlobalContext();
+  const { updateFilter } = globalCtx;
+  const { course: courseOpt } = globalCtx.state.filterState;
+  const handleCheckBxAllCourse = (e: CheckboxChangeEvent) => {
+    const isChecked = e.target.checked;
+    updateFilter({
+      ...globalCtx.state.filterState,
+      course: {
+        all: isChecked,
+        option: isChecked ? (courseOption as Course[]) : ["Computer Engineer"],
+      },
+    });
+  };
+  const handleCheckBxCourse = (valueType: CheckboxValueType[]) => {
+    const isCheckAll = valueType.length === courseOption.length;
+    const item = valueType as Course[];
+    updateFilter({
+      ...globalCtx.state.filterState,
+      course: {
+        all: isCheckAll,
+        option: isCheckAll
+          ? (courseOption as Course[])
+          : item.length
+          ? item
+          : ["Computer Engineer"],
+      },
+    });
+  };
+
+  const handleOpenCourse = (flag: boolean) => {
+    searchDispatch({
+      type: "dropdown",
+      payload: { ...searchState.dropDownState, course: flag },
+    });
+  };
+
+  const dropdownContentCourse = () => (
+    <div className="bg-white p-2 shadow-lg relative rounded-md">
+      <Checkbox checked={courseOpt.all} onChange={handleCheckBxAllCourse}>
+        All
+      </Checkbox>
+      <Checkbox.Group
+        options={courseOption}
+        value={courseOpt.option as string[]}
+        onChange={handleCheckBxCourse}
+      />
+    </div>
+  );
+
+  return (
+    <Dropdown
+      open={searchState.dropDownState.course}
+      onOpenChange={handleOpenCourse}
+      dropdownRender={dropdownContentCourse}
+      trigger={["click"]}
+    >
+      <a
+        className="cursor-pointer text-slate-900"
+        onClick={(e) => e.preventDefault()}
+      >
+        <Space>
+          Course
+          <DownOutlined />
+        </Space>
+      </a>
+    </Dropdown>
+  );
+};
+
+const DropdownYear = ({
+  searchDispatch,
+  searchState,
+}: {
+  searchDispatch: React.Dispatch<SearchAction>;
+  searchState: SearchState;
+}) => {
+  const globalCtx = useGlobalContext();
+  const { updateFilter } = globalCtx;
+  const { years: yearsOpt } = globalCtx.state.filterState;
+  const handleCheckBxDate = (valueType: CheckboxValueType[]) => {
+    const isCheckAll = valueType.length === globalCtx.state.dateOption.length;
+    const item = valueType as string[];
+    updateFilter({
+      ...globalCtx.state.filterState,
+      years: {
+        all: isCheckAll,
+        option: isCheckAll
+          ? globalCtx.state.dateOption
+          : item.length
+          ? item
+          : [globalCtx.state.dateOption[globalCtx.state.dateOption.length - 1]],
+      },
+    });
+  };
+
+  const handleCheckBxAllDate = (e: CheckboxChangeEvent) => {
+    const isChecked = e.target.checked;
+    updateFilter({
+      ...globalCtx.state.filterState,
+      years: {
+        all: isChecked,
+        option: isChecked
+          ? globalCtx.state.dateOption
+          : [
+              globalCtx.state.dateOption[
+                globalCtx.state.dateOption.length - 1
+              ].toString(),
+            ],
+      },
+    });
+  };
+
+  const dropdownContentDate = () => (
+    <div className="bg-white shadow-lg relative rounded-md p-2">
+      <Checkbox checked={yearsOpt.all} onChange={handleCheckBxAllDate}>
+        All
+      </Checkbox>
+      <Checkbox.Group
+        // options={globalCtx.state.dateOption}
+        value={yearsOpt.option}
+        onChange={handleCheckBxDate}
+      >
+        <Row>
+          {globalCtx.state.dateOption.map((years, index) => {
+            return (
+              <Col key={index} span={8}>
+                <Checkbox value={years}>{years}</Checkbox>
+              </Col>
+            );
+          })}
+        </Row>
+      </Checkbox.Group>
+    </div>
+  );
+  const handleOpenDate = (flag: boolean) => {
+    searchDispatch({
+      type: "dropdown",
+      payload: { ...searchState.dropDownState, date: flag },
+    });
+  };
+
+  return (
+    <Dropdown
+      open={searchState.dropDownState.date}
+      onOpenChange={handleOpenDate}
+      dropdownRender={dropdownContentDate}
+      trigger={["click"]}
+    >
+      <a
+        className="cursor-pointer text-slate-900"
+        onClick={(e) => e.preventDefault()}
+      >
+        <Space>
+          Date
+          <DownOutlined />
+        </Space>
+      </a>
+    </Dropdown>
   );
 };
 

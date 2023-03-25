@@ -7,6 +7,7 @@ export type NavItemProps = {
 };
 
 export type SearchState = {
+  focus: boolean;
   searchTitle: string;
   dropDownState: { course: boolean; date: boolean };
   checkBox: {
@@ -31,6 +32,10 @@ export type SearchAction =
   | {
       type: "oncheck-all";
       payload: { all: boolean; option: string[]; type: "course" | "date" };
+    }
+  | {
+      type: "onfocus";
+      payload: boolean;
     };
 
 export type SearchProps = {

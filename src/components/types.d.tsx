@@ -16,6 +16,23 @@ export type SearchState = {
   };
 };
 
+export const searchState_init: SearchState = {
+  searchTitle: "",
+  dropDownState: { course: false, date: false },
+  checkBox: {
+    course: { all: true, option: [] },
+    date: { all: true, option: [] },
+  },
+  focus: false,
+};
+
+export const courseOption = [
+  "Computer Engineer",
+  "Mechanical Engineer",
+  "Electrical Engineer",
+  "Civil Engineer",
+];
+
 export type SearchAction =
   | {
       type: "onchange";

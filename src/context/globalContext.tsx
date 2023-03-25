@@ -1,5 +1,5 @@
 import LoadingIcon from "@/components/loadingIcon";
-import { courseOption } from "@/components/search";
+import { courseOption } from "@/components/types.d";
 import { auth } from "@/lib/firebase";
 import {
   getAllDeletedThesis,

@@ -4,7 +4,6 @@ import {
   Dropdown,
   Form,
   Input,
-  InputRef,
   Menu,
   MenuProps,
   Row,
@@ -16,29 +15,18 @@ import { PriButton } from "./button";
 import { DownOutlined } from "@ant-design/icons";
 import { CheckboxChangeEvent } from "antd/es/checkbox";
 import { CheckboxValueType } from "antd/es/checkbox/Group";
-import { SearchAction, SearchProps, SearchState } from "./types.d";
+import {
+  courseOption,
+  SearchAction,
+  SearchProps,
+  SearchState,
+  searchState_init,
+} from "./types.d";
 import Link from "next/link";
 import { Course } from "@/context/types.d";
 import useGlobalContext from "@/context/globalContext";
 import { getAllThesis } from "@/utils/thesis-item-utils";
-import { useRouter } from "next/router";
 import { useClickAway } from "react-use";
-
-export const courseOption = [
-  "Computer Engineer",
-  "Mechanical Engineer",
-  "Electrical Engineer",
-  "Civil Engineer",
-];
-export const searchState_init: SearchState = {
-  searchTitle: "",
-  dropDownState: { course: false, date: false },
-  checkBox: {
-    course: { all: true, option: [] },
-    date: { all: true, option: [] },
-  },
-  focus: false,
-};
 
 const searchReducer: (
   state: SearchState,

@@ -204,11 +204,15 @@ const Search = ({ className, limit, onSearch }: SearchProps) => {
           }${
             searchState.checkBox.course.all
               ? ``
-              : `&course=${searchState.checkBox.course.option}`
+              : `&course=${encodeURIComponent(
+                  JSON.stringify(searchState.checkBox.course.option)
+                )}`
           }${
             searchState.checkBox.date.all
               ? ``
-              : `&year=${searchState.checkBox.date.option}`
+              : `&year=${encodeURIComponent(
+                  JSON.stringify(searchState.checkBox.date.option)
+                )}`
           }`}
         >
           <PriButton htmlType="submit" onClick={handleSearch}>

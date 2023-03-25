@@ -269,7 +269,7 @@ const Search = ({ className, limit, onSearch }: SearchProps) => {
           </Dropdown>
         </Space>
       </div>
-      <div className={`w-fulls rounded-md overflow-hidden relative`}>
+      <div className={`w-fulls rounded-md overflow-hidden relative z-20`}>
         <SearchItem {...searchState} limit={limit} />
       </div>
     </div>

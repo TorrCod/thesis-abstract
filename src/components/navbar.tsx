@@ -128,7 +128,7 @@ const NavBar = () => {
         />
         {y > 60 ? (
           <div className="absolute m-auto left-10">
-            <Search limit={5} className="w-full" />{" "}
+            <Search limit={5} className="w-[85vw]" />{" "}
           </div>
         ) : (
           <></>

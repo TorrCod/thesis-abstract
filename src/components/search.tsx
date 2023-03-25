@@ -59,7 +59,7 @@ const searchReducer: (
   }
 };
 
-const Search = ({ className, limit, onSearch }: SearchProps) => {
+const Search = ({ className, limit, onSearch, showFilter }: SearchProps) => {
   const [searchState, searchDispatch] = useReducer(
     searchReducer,
     searchState_init
@@ -121,18 +121,28 @@ const Search = ({ className, limit, onSearch }: SearchProps) => {
           </PriButton>
         </Link>
       </Form>
-      {searchState.focus && (
+      {(searchState.focus || showFilter) && (
         <div className="mt-2">
-          <Space>
-            <DropDownCourse
-              searchDispatch={searchDispatch}
-              searchState={searchState}
-            />
-            <DropdownYear
-              searchDispatch={searchDispatch}
-              searchState={searchState}
-            />
-          </Space>
+          <div className="flex gap-5">
+            <div>
+              <DropDownCourse
+                searchDispatch={searchDispatch}
+                searchState={searchState}
+              />
+              <FilterItems
+                items={courseOpt.option as string[]}
+                onRemove={(item) => {
+                  console.log(item);
+                }}
+              />
+            </div>
+            <div>
+              <DropdownYear
+                searchDispatch={searchDispatch}
+                searchState={searchState}
+              />
+            </div>
+          </div>
         </div>
       )}
       <div className={`w-fulls rounded-md overflow-hidden relative z-20`}>
@@ -145,6 +155,27 @@ const Search = ({ className, limit, onSearch }: SearchProps) => {
           />
         )}
       </div>
+    </div>
+  );
+};
+
+const FilterItems = ({
+  items,
+  onRemove,
+}: {
+  items: string[];
+  onRemove: (item: string) => void;
+}) => {
+  return (
+    <div className="grid gap-1">
+      {items.map((item) => (
+        <div
+          className="text-white text-[0.75em] bg-[#38649C] rounded-full w-fit px-2 py-1 text-center"
+          onClick={() => onRemove(item)}
+        >
+          {item} x
+        </div>
+      ))}
     </div>
   );
 };

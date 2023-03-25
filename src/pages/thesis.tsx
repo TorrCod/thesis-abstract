@@ -41,7 +41,10 @@ const Thesis = (props: { thesisItems: ThesisItems[] }) => {
       <section>
         <div className="md:pt-20 md:flex md:place-items-center md:flex-col">
           <div className="grid w-full relative">
-            <Search className="place-self-center my-5 w-full max-w-3xl z-10 absolute top-0" />
+            <Search
+              showFilter={true}
+              className="place-self-center my-5 w-full max-w-3xl z-10 absolute top-0"
+            />
             {/* <SelectedFilter /> */}
             <Divider className="bg-white/30 mt-32" />
           </div>

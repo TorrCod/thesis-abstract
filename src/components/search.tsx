@@ -121,18 +121,20 @@ const Search = ({ className, limit, onSearch }: SearchProps) => {
           </PriButton>
         </Link>
       </Form>
-      <div>
-        <Space>
-          <DropDownCourse
-            searchDispatch={searchDispatch}
-            searchState={searchState}
-          />
-          <DropdownYear
-            searchDispatch={searchDispatch}
-            searchState={searchState}
-          />
-        </Space>
-      </div>
+      {searchState.focus && (
+        <div className="mt-2">
+          <Space>
+            <DropDownCourse
+              searchDispatch={searchDispatch}
+              searchState={searchState}
+            />
+            <DropdownYear
+              searchDispatch={searchDispatch}
+              searchState={searchState}
+            />
+          </Space>
+        </div>
+      )}
       <div className={`w-fulls rounded-md overflow-hidden relative z-20`}>
         {searchState.focus && (
           <SearchItem

@@ -136,6 +136,7 @@ const Search = ({ className, limit, onSearch }: SearchProps) => {
       <div className={`w-fulls rounded-md overflow-hidden relative z-20`}>
         {searchState.focus && (
           <SearchItem
+            searchDispatch={searchDispatch}
             {...searchState}
             limit={limit}
             onShowMore={handleShowMore}
@@ -340,7 +341,11 @@ const DropdownYear = ({
 };
 
 const SearchItem = (
-  props: SearchState & { limit?: number; onShowMore?: () => void }
+  props: SearchState & {
+    limit?: number;
+    onShowMore?: () => void;
+    searchDispatch: React.Dispatch<SearchAction>;
+  }
 ) => {
   const [menuItem, setMenuItem] = useState<MenuProps["items"]>([]);
   let searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -385,7 +390,12 @@ const SearchItem = (
     }, 500);
     return () => clearTimeout(searchTimeoutRef.current ?? 0);
   }, [props.checkBox, props.searchTitle]);
-  return <Menu items={menuItem} />;
+  return (
+    <Menu
+      onSelect={() => props.searchDispatch({ type: "onfocus", payload: false })}
+      items={menuItem}
+    />
+  );
 };
 
 export default Search;

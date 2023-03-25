@@ -32,7 +32,7 @@ export type ThesisItems = {
 
 export type SearchQuery = {
   course?: Course[];
-  year?: number;
+  year?: string[];
   title?: string;
 };
 

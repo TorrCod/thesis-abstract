@@ -46,6 +46,10 @@ export const parseQuery = (object: Object) => {
     Object.entries(object).filter(([_, value]) => value !== undefined)
   );
   if (res.course) (res.course as any) = { $in: JSON.parse(res.course) };
+  if (res.year) {
+    res.year = (JSON.parse(res.year) as string[]).map((item) => parseInt(item));
+    res.year = { $in: res.year };
+  }
   if (res.title)
     (res.title as any) = { $regex: new RegExp(`${res.title}`, "i") };
   return res;

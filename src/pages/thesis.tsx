@@ -4,30 +4,26 @@ import { Button, Divider } from "antd";
 import Head from "next/head";
 import Link from "next/link";
 import { GetServerSideProps } from "next";
-import { parseQuery } from "@/utils/server-utils";
 import { getData } from "@/lib/mongo";
-import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { parseQuery } from "@/utils/server-utils";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const { year, course, title }: SearchQuery = ctx.query;
-  console.log(ctx.query);
-  // const query = { year, course, title };
-  // const filteredQuery = parseQuery(query);
-  // const thesisItems = await getData(
-  //   "thesis-abstract",
-  //   "thesis-items",
-  //   filteredQuery
-  // );
-  // const response = thesisItems.map((item) => {
-  //   (item._id as unknown as string) = item._id.toString();
-  //   return item;
-  // });
-  // return {
-  //   props: { thesisItems: response },
-  // };
+  const query = ctx.query;
+  const parsedQuery = parseQuery(query);
+  const thesisItems = await getData(
+    "thesis-abstract",
+    "thesis-items",
+    parsedQuery,
+    {
+      limit: 20,
+    }
+  );
+  const response = thesisItems.map((item) => {
+    (item._id as unknown as string) = item._id.toString();
+    return item;
+  });
   return {
-    props: { thesisItems: [] },
+    props: { thesisItems: response },
   };
 };
 

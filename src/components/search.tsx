@@ -1,6 +1,7 @@
 import {
   Checkbox,
   Col,
+  Divider,
   Dropdown,
   Form,
   Input,
@@ -155,6 +156,7 @@ const DropDownCourse = ({
   const globalCtx = useGlobalContext();
   const { updateFilter } = globalCtx;
   const { course: courseOpt } = globalCtx.state.filterState;
+
   const handleCheckBxAllCourse = (e: CheckboxChangeEvent) => {
     const isChecked = e.target.checked;
     updateFilter({
@@ -189,15 +191,29 @@ const DropDownCourse = ({
   };
 
   const dropdownContentCourse = () => (
-    <div className="bg-white p-2 shadow-lg relative rounded-md">
-      <Checkbox checked={courseOpt.all} onChange={handleCheckBxAllCourse}>
+    <div className="bg-white p-2 shadow-lg relative rounded-md grid">
+      <Checkbox
+        className="w-fit"
+        checked={courseOpt.all}
+        onChange={handleCheckBxAllCourse}
+      >
         All
       </Checkbox>
       <Checkbox.Group
-        options={courseOption}
+        // options={courseOption}
         value={courseOpt.option as string[]}
         onChange={handleCheckBxCourse}
-      />
+      >
+        <Row>
+          {courseOption.map((course, index) => {
+            return (
+              <Col key={index} span={12}>
+                <Checkbox value={course}>{course}</Checkbox>
+              </Col>
+            );
+          })}
+        </Row>
+      </Checkbox.Group>
     </div>
   );
 
@@ -209,6 +225,7 @@ const DropDownCourse = ({
       trigger={["click"]}
       getPopupContainer={() => document.getElementById("search-component")!}
       destroyPopupOnHide
+      autoAdjustOverflow
     >
       <a
         className="cursor-pointer text-slate-900"
@@ -233,6 +250,7 @@ const DropdownYear = ({
   const globalCtx = useGlobalContext();
   const { updateFilter } = globalCtx;
   const { years: yearsOpt } = globalCtx.state.filterState;
+
   const handleCheckBxDate = (valueType: CheckboxValueType[]) => {
     const isCheckAll = valueType.length === globalCtx.state.dateOption.length;
     const item = valueType as string[];
@@ -248,7 +266,6 @@ const DropdownYear = ({
       },
     });
   };
-
   const handleCheckBxAllDate = (e: CheckboxChangeEvent) => {
     const isChecked = e.target.checked;
     updateFilter({
@@ -265,12 +282,17 @@ const DropdownYear = ({
       },
     });
   };
-
   const dropdownContentDate = () => (
-    <div className="bg-white shadow-lg relative rounded-md p-2">
-      <Checkbox checked={yearsOpt.all} onChange={handleCheckBxAllDate}>
-        All
-      </Checkbox>
+    <div className="bg-white shadow-lg relative rounded-md p-2 grid">
+      <div>
+        <Checkbox
+          className="w-fit"
+          checked={yearsOpt.all}
+          onChange={handleCheckBxAllDate}
+        >
+          All
+        </Checkbox>
+      </div>
       <Checkbox.Group
         // options={globalCtx.state.dateOption}
         value={yearsOpt.option}

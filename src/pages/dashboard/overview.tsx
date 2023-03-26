@@ -3,7 +3,7 @@ import DashboardLayout from "@/components/dashboardLayout";
 import QuerySearch from "@/components/QuerySearch";
 import { Course } from "@/context/types.d";
 import { activity } from "@/data/dummydata";
-import { Timeline } from "antd";
+import { Button, Timeline } from "antd";
 import Link from "next/link";
 import React from "react";
 import { GoLinkExternal } from "react-icons/go";
@@ -27,6 +27,11 @@ const DashboardOverview = () => {
               <div className="ml-6 opacity-60 flex items-center gap-2">
                 Manage Thesis Abstracts <GoLinkExternal />
               </div>
+            </Link>
+            <Link href={"/dashboard/thesis/upload-thesis"}>
+              <PriButton className="w-fit bg-[#F8B49C] flex items-center gap-2 mx-5">
+                Upload <GoLinkExternal />
+              </PriButton>
             </Link>
             <div className="overflow-auto">
               <div className="h-96 min-w-[32em]">

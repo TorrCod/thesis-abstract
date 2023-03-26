@@ -71,6 +71,10 @@ export type GlobalAction =
         years: { all: boolean; option: string[] };
         course: { all: boolean; option: Course[] };
       };
+    }
+  | {
+      type: "update-default-years";
+      payload: string[];
     };
 
 export type GlobalValue = {

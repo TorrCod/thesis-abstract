@@ -73,6 +73,8 @@ const globalReducer = (
 
     case "update-filter":
       return { ...state, filterState: action.payload };
+    case "update-default-years":
+      return { ...state, dateOption: action.payload };
   }
 };
 
@@ -80,7 +82,7 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(globalReducer, globalStateInit);
   useEffect(() => {
     loadYearsOpt();
-  }, []);
+  }, [state.thesisItems]);
 
   const loadThesisItems = async (limit?: number) => {
     const thesisItems = await getAllThesis(undefined, {
@@ -91,18 +93,11 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
       type: "load-data",
       payload: { thesisItems: thesisItems, dateOpt: state.dateOption },
     });
-    loadYearsOpt();
   };
 
   const loadYearsOpt = async () => {
     const distinctYear = await getDistincYear();
-    dispatch({
-      type: "load-data",
-      payload: {
-        dateOpt: distinctYear.sort((a, b) => parseInt(b) - parseInt(a)),
-        thesisItems: state.thesisItems,
-      },
-    });
+    dispatch({ type: "update-default-years", payload: distinctYear });
     dispatch({
       type: "update-filter",
       payload: {

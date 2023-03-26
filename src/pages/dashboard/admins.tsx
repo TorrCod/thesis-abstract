@@ -20,6 +20,7 @@ import {
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { ActivityTimeline } from "./activitylog";
+import Fuse from "fuse.js";
 
 const DashboardAdmin = () => {
   const router = useRouter();
@@ -247,15 +248,13 @@ export const AdminTable = ({ noAction }: { noAction?: boolean }) => {
 
   useEffect(() => {
     if (router.query.username) {
-      const searchTerm = router.query.username;
-      const options = {
-        keys: ["name", "category"],
-        threshold: 0.4,
-      };
-      const searchRegex = new RegExp(searchTerm as string, "gi");
-      const source = state.listOfAdmins.filter(({ userName }) =>
-        searchRegex.test(userName)
-      );
+      const searchTerm = router.query.username as string;
+      const fuse = new Fuse<AdminData>(state.listOfAdmins, {
+        keys: ["userName"],
+      });
+      const source: AdminData[] = fuse
+        .search(searchTerm)
+        .map((item) => item.item);
       setDataSourse(source);
     } else {
       setDataSourse(state.listOfAdmins);

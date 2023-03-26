@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Timeline, TimelineItemProps } from "antd";
 import DashboardLayout from "@/components/dashboardLayout";
-import { activity } from "@/data/dummydata";
 import useUserContext from "@/context/userContext";
 import { MdEmail, MdRemove, MdRestore } from "react-icons/md";
 import Link from "next/link";

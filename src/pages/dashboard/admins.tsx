@@ -250,7 +250,7 @@ export const AdminTable = ({ noAction }: { noAction?: boolean }) => {
     if (router.query.username) {
       const searchTerm = router.query.username as string;
       const fuse = new Fuse<AdminData>(state.listOfAdmins, {
-        keys: ["userName"],
+        keys: ["userName", "email"],
       });
       const source: AdminData[] = fuse
         .search(searchTerm)

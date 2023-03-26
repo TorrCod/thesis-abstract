@@ -2,13 +2,10 @@ import { PriButton } from "@/components/button";
 import Search from "@/components/search";
 import { ThesisItems } from "@/context/types.d";
 import { Divider } from "antd";
-
-import { useRouter } from "next/router";
-import { generateId, getData } from "@/lib/mongo";
+import { getData } from "@/lib/mongo";
 import dynamic from "next/dynamic";
 import Head from "next/head";
 import { GetServerSideProps } from "next";
-import PageNotFound from "../page-not-found";
 import { ObjectId } from "mongodb";
 
 const PdfLink = dynamic(() => import("@/components/pdfDocs"), {

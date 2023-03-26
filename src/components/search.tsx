@@ -197,7 +197,6 @@ const FilterItems = ({
 }) => {
   const { updateFilter, state } = useGlobalContext();
   const handleRemove = (item: string) => {
-    console.log(item);
     const searchFilter = { ...state.filterState };
     searchFilter[type].option = (searchFilter[type].option as string[]).filter(
       (oldItem) => oldItem !== item

@@ -17,9 +17,9 @@ export const getAllThesis = async (
       process.env.NEXT_PUBLIC_DOMAIN
     }/api/thesis-items?collection=thesis-items${
       title ? `&title=${title}` : ""
-    }${course ? `&course=${course}` : ""}${year ? `&year=${year}` : ""}${
-      option ? `&option=${encodeURIComponent(JSON.stringify(option))}` : ""
-    }`
+    }${course ? `&course=${encodeURIComponent(JSON.stringify(course))}` : ""}${
+      year ? `&year=${encodeURIComponent(JSON.stringify(year))}` : ""
+    }${option ? `&option=${encodeURIComponent(JSON.stringify(option))}` : ""}`
   );
   const data = res.data as ThesisItems[];
   return data;

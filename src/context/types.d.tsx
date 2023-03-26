@@ -80,7 +80,7 @@ export type GlobalAction =
 export type GlobalValue = {
   state: GlobalState;
   dispatch: Dispatch<GlobalAction>;
-  loadThesisItems: () => Promise<void>;
+  loadThesisItems: (query?: SearchQuery, limit?: number) => Promise<void>;
   recycledThesis: () => {
     load: () => Promise<void>;
     clear: () => void;

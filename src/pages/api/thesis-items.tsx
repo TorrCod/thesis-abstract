@@ -35,13 +35,16 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             course: string | undefined;
             title: string | undefined;
           };
+          let option:
+            | {
+                projection: Record<string, 0 | 1> | undefined;
+                limit: number | undefined;
+              }
+            | undefined;
 
-          const { projection, limit } = JSON.parse(
-            req.query.option as string
-          ) as {
-            projection: Record<string, 0 | 1> | undefined;
-            limit: number | undefined;
-          };
+          if (req.query.option) {
+            option = JSON.parse(req.query.option as string);
+          }
           const query = { year, course, title };
           const filteredQuery = parseQuery(query);
           const thesisItems = await getData(
@@ -49,8 +52,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             "thesis-items",
             filteredQuery,
             {
-              limit: limit,
-              projection: projection,
+              limit: option?.limit,
+              projection: option?.projection,
             }
           );
           return res.status(200).json(thesisItems);

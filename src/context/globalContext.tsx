@@ -20,6 +20,7 @@ import {
   GlobalAction,
   GlobalState,
   GlobalValue,
+  SearchQuery,
   ThesisItems,
 } from "./types.d";
 
@@ -84,8 +85,8 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
     loadYearsOpt();
   }, [state.thesisItems]);
 
-  const loadThesisItems = async (limit?: number) => {
-    const thesisItems = await getAllThesis(undefined, {
+  const loadThesisItems = async (query?: SearchQuery, limit?: number) => {
+    const thesisItems = await getAllThesis(query, {
       limit,
       projection: { title: 1, course: 1, dateAdded: 1 },
     });

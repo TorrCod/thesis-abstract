@@ -2,56 +2,44 @@ import { PriButton } from "@/components/button";
 import Search from "@/components/search";
 import { ThesisItems } from "@/context/types.d";
 import { Divider } from "antd";
-import { GetStaticPaths, GetStaticProps } from "next";
+
 import { useRouter } from "next/router";
 import { generateId, getData } from "@/lib/mongo";
 import dynamic from "next/dynamic";
 import Head from "next/head";
+import { GetServerSideProps } from "next";
+import PageNotFound from "../page-not-found";
+import { ObjectId } from "mongodb";
 
 const PdfLink = dynamic(() => import("@/components/pdfDocs"), {
   ssr: false,
 });
 
-export const getStaticProps: GetStaticProps = async (context) => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
-    const res = await getData("thesis-abstract", "thesis-items");
-    const thesisItems: ThesisItems[] = generateId(res);
-    const itemId = context.params?.id;
-    const foundItem = thesisItems.find((item) => itemId === item["id"]);
+    const itemId = (context.params as any).id as string;
+    if (!itemId) {
+      throw new Error("no params");
+    }
+    const foundItem = await getData("thesis-abstract", "thesis-items", {
+      _id: new ObjectId(itemId),
+    });
+    if (!foundItem.length) {
+      throw new Error("not found");
+    }
+    (foundItem[0]._id as any) = foundItem[0]._id.toString();
     return {
-      props: { data: foundItem },
+      props: { data: foundItem[0] },
     };
-  } catch {
+  } catch (e) {
     return {
       props: { hasError: true },
+      redirect: { destination: "/page-not-found" },
     };
-  }
-};
-
-export const getStaticPaths: GetStaticPaths = async () => {
-  try {
-    const res = await getData("thesis-abstract", "thesis-items");
-    const thesisItems: ThesisItems[] = generateId(res);
-    const pathWithParams = thesisItems.map((item) => ({
-      params: { id: item.id },
-    }));
-    return {
-      paths: pathWithParams,
-      fallback: true,
-    };
-  } catch {
-    return { paths: [], fallback: true };
   }
 };
 
 const ThesisItemsView = (props: { data: ThesisItems; hasError: boolean }) => {
-  const router = useRouter();
-  if (props.hasError) {
-    return <h1>Error - please try another parameter</h1>;
-  }
-  if (router.isFallback) {
-    return <h1>Loading...</h1>;
-  }
   return (
     <>
       <Head>
@@ -63,10 +51,12 @@ const ThesisItemsView = (props: { data: ThesisItems; hasError: boolean }) => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <section className="flex flex-col gap-1 md:pt-20 items-center">
-        {/* <Search /> */}
+        <div className="relative z-10 w-full">
+          <Search className="w-screen max-w-lg absolute top-0 left-0 right-0 m-auto" />
+        </div>
         <Divider />
         <div className="rs-container bg-slate-100 rounded-md max-w-5xl grid p-5 gap-2 md:gap-5 w-full relative">
-          <div className="rs-preview p-3 bg-white shadow-md rounded-sm h-52 overflow-hidden text-[0.1em] relative max-w-[100em] text-justify justify-self-center">
+          <div className="rs-preview p-3 bg-white shadow-md rounded-sm h-52 overflow-hidden text-[0.7em] relative text-justify justify-self-center">
             <div className="w-full h-full overflow-hidden">
               <div className="text-center">Abstract</div>
               <p className="indent-3">{props.data.abstract}</p>

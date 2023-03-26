@@ -64,25 +64,10 @@ const MyDocument = (props: ThesisItems) => (
       </View>
       <View style={styles.twoColumn}>
         <View style={styles.twoColumn1Item}>
-          <Text>Authors:</Text>
-        </View>
-        <View
-          style={{
-            lineHeight: 1,
-            marginBottom: "16px",
-          }}
-        >
-          {props.researchers.map((child, index) => (
-            <Text key={index}>{`\u2022 ${child}`}</Text>
-          ))}
-        </View>
-      </View>
-      <View style={styles.twoColumn}>
-        <View style={styles.twoColumn1Item}>
-          <Text>Date:</Text>
+          <Text>Year:</Text>
         </View>
         <View style={styles.twoColumn2Item}>
-          <Text>{props.date}</Text>
+          <Text>{props.year}</Text>
         </View>
       </View>
       <View style={styles.twoColumn}>
@@ -91,6 +76,23 @@ const MyDocument = (props: ThesisItems) => (
         </View>
         <View style={styles.twoColumn2Item}>
           <Text>{props.course}</Text>
+        </View>
+      </View>
+      <View style={{ ...styles.twoColumn }}>
+        <View style={styles.twoColumn1Item}>
+          <Text>Authors:</Text>
+        </View>
+        <View
+          style={{
+            ...styles.twoColumn2Item,
+            flexDirection: "column",
+            // lineHeight: "1px",
+            // marginBottom: "10px",
+          }}
+        >
+          {props.researchers.map((child, index) => (
+            <Text key={index}>{`\u2022 ${child}`}</Text>
+          ))}
         </View>
       </View>
       <View style={styles.body}>

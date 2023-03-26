@@ -1,6 +1,12 @@
 import LoadingIcon from "@/components/loadingIcon";
+import { courseOption } from "@/components/types.d";
 import { auth } from "@/lib/firebase";
-import { getAllDeletedThesis, getAllThesis } from "@/utils/thesis-item-utils";
+import {
+  getAllDeletedThesis,
+  getAllThesis,
+  getDistincYear,
+} from "@/utils/thesis-item-utils";
+import { useRouter } from "next/router";
 import React, {
   createContext,
   useContext,
@@ -9,14 +15,25 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { GlobalAction, GlobalState, GlobalValue, ThesisItems } from "./types.d";
+import {
+  Course,
+  GlobalAction,
+  GlobalState,
+  GlobalValue,
+  SearchQuery,
+  ThesisItems,
+} from "./types.d";
 
 const globalStateInit: GlobalState = {
   thesisItems: [],
-  searchItems: [],
   dateOption: [],
-  loading: true,
+  loading: false,
   recyclebin: [],
+  searchThesis: [],
+  filterState: {
+    years: { all: true, option: [] },
+    course: { all: true, option: courseOption as Course[] },
+  },
 };
 
 const globalCtxInit: GlobalValue = {
@@ -27,6 +44,7 @@ const globalCtxInit: GlobalValue = {
     load: async () => {},
     clear: () => {},
   }),
+  updateFilter: () => {},
 };
 
 const GlobalContext = createContext<GlobalValue>(globalCtxInit);
@@ -41,28 +59,9 @@ const globalReducer = (
       newState.thesisItems.push(action.payload);
       return newState;
     }
-    case "load-data": {
+    case "load-thesis": {
       const newState = { ...state };
-      newState["thesisItems"] = action.payload.thesisItems;
-      newState["searchItems"] = action.payload.thesisItems;
-      newState["dateOption"] = action.payload.dateOpt;
-      newState["loading"] = false;
-      return newState;
-    }
-    case "search-data": {
-      const newState = { ...state };
-      const searchedItems = newState.thesisItems.filter((item) => {
-        const itemTitle = item.title.toLowerCase();
-        const itemDate = item.date;
-        const searchTitle = action.payload.text.toLowerCase();
-        const searchFilterDate = action.payload.filter.date;
-        return (
-          itemTitle.includes(searchTitle) &&
-          searchFilterDate.includes(itemDate.slice(0, 4)) &&
-          action.payload.filter.course.includes(item.course)
-        );
-      });
-      newState["searchItems"] = searchedItems;
+      newState["thesisItems"] = action.payload;
       return newState;
     }
     case "sign-in":
@@ -70,30 +69,40 @@ const globalReducer = (
 
     case "load-recycle":
       return { ...state, recyclebin: action.payload };
+
+    case "update-filter":
+      return { ...state, filterState: action.payload };
+    case "update-default-years":
+      return { ...state, dateOption: action.payload };
   }
 };
 
 export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(globalReducer, globalStateInit);
-
   useEffect(() => {
-    loadThesisItems().catch((e) => {
-      console.log("Cannot Load Data");
-      console.error(e);
-    });
-  }, []);
+    loadYearsOpt();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.thesisItems]);
 
-  const loadThesisItems = async () => {
-    const thesisItems = await getAllThesis();
-    const listOfDate = [
-      ...(thesisItems as ThesisItems[]).map((child) => child.date.slice(0, 4)),
-    ];
-    const dateOpt = Array.from(new Set(listOfDate)).sort();
+  const loadThesisItems = async (query?: SearchQuery, limit?: number) => {
+    const thesisItems = await getAllThesis(query, {
+      limit,
+      projection: { title: 1, course: 1, dateAdded: 1 },
+    });
     dispatch({
-      type: "load-data",
+      type: "load-thesis",
+      payload: thesisItems,
+    });
+  };
+
+  const loadYearsOpt = async () => {
+    const distinctYear = await getDistincYear();
+    dispatch({ type: "update-default-years", payload: distinctYear });
+    dispatch({
+      type: "update-filter",
       payload: {
-        dateOpt: dateOpt,
-        thesisItems: thesisItems,
+        ...state.filterState,
+        years: { all: true, option: distinctYear },
       },
     });
   };
@@ -112,9 +121,22 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
     clear: () => dispatch({ type: "load-recycle", payload: [] }),
   });
 
+  const updateFilter = (payload: {
+    years: {
+      all: boolean;
+      option: string[];
+    };
+    course: {
+      all: boolean;
+      option: Course[];
+    };
+  }) => {
+    dispatch({ type: "update-filter", payload: payload });
+  };
+
   return (
     <GlobalContext.Provider
-      value={{ state, dispatch, loadThesisItems, recycledThesis }}
+      value={{ state, dispatch, loadThesisItems, recycledThesis, updateFilter }}
     >
       <LoadingGlobal loading={state.loading}>{children}</LoadingGlobal>
     </GlobalContext.Provider>
@@ -130,8 +152,8 @@ export const LoadingGlobal = ({
   loading: boolean;
   backgroundColor?: string;
 }) => {
-  const [noLoading, setNoLoading] = useState(true);
-  const [slide, setSlide] = useState(false);
+  const [noLoading, setNoLoading] = useState(loading);
+  const [slide, setSlide] = useState(loading);
 
   useEffect(() => {
     setSlide(!loading);

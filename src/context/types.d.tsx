@@ -4,11 +4,15 @@ import { Dispatch, MutableRefObject } from "react";
 
 export interface GlobalState {
   thesisItems: ThesisItems[];
-  searchItems: ThesisItems[];
+  searchThesis: ThesisItems[];
   dateOption: string[];
   recyclebin: ThesisItems[];
   signIn?: boolean;
   loading: boolean;
+  filterState: {
+    years: { all: boolean; option: string[] };
+    course: { all: boolean; option: Course[] };
+  };
 }
 
 export type Course =
@@ -16,7 +20,7 @@ export type Course =
   | "Mechanical Engineer"
   | "Electrical Engineer"
   | "Civil Engineer"
-  | "------"
+  | undefined
   | "Electronics Engineer";
 
 export type ThesisItems = {
@@ -25,9 +29,20 @@ export type ThesisItems = {
   researchers: string[];
   course: Course;
   abstract: string;
-  date: string;
+  year: number;
   dateAdded: Date;
-  _id: string;
+  _id?: string;
+};
+
+export type SearchQuery = {
+  course?: Course[];
+  year?: string[];
+  title?: string;
+};
+
+export type SearchOption = {
+  limit?: number;
+  projection?: Record<string, 0 | 1>;
 };
 
 export type GlobalAction =
@@ -36,15 +51,8 @@ export type GlobalAction =
       payload: ThesisItems;
     }
   | {
-      type: "load-data";
-      payload: {
-        thesisItems: ThesisItems[];
-        dateOpt: string[];
-      };
-    }
-  | {
-      type: "search-data";
-      payload: { text: string; filter: { course: Course[]; date: string[] } };
+      type: "load-thesis";
+      payload: ThesisItems[];
     }
   | {
       type: "sign-in";
@@ -53,16 +61,37 @@ export type GlobalAction =
   | {
       type: "load-recycle";
       payload: ThesisItems[];
+    }
+  | {
+      type: "update-filter";
+      payload: {
+        years: { all: boolean; option: string[] };
+        course: { all: boolean; option: Course[] };
+      };
+    }
+  | {
+      type: "update-default-years";
+      payload: string[];
     };
 
 export type GlobalValue = {
   state: GlobalState;
   dispatch: Dispatch<GlobalAction>;
-  loadThesisItems: () => Promise<void>;
+  loadThesisItems: (query?: SearchQuery, limit?: number) => Promise<void>;
   recycledThesis: () => {
     load: () => Promise<void>;
     clear: () => void;
   };
+  updateFilter: (payload: {
+    years: {
+      all: boolean;
+      option: string[];
+    };
+    course: {
+      all: boolean;
+      option: Course[];
+    };
+  }) => void;
 };
 
 export type AdminData = {

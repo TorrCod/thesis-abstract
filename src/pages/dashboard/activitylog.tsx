@@ -1,18 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Timeline, TimelineItemProps } from "antd";
 import DashboardLayout from "@/components/dashboardLayout";
-import { activity } from "@/data/dummydata";
 import useUserContext from "@/context/userContext";
-import { MdEmail, MdRemove, MdRestore } from "react-icons/md";
+import { MdRemove, MdRestore } from "react-icons/md";
 import Link from "next/link";
 import { BsBookmarkPlus, BsBookmarkX } from "react-icons/bs";
-import { RiMailAddLine, RiMailCheckLine } from "react-icons/ri";
-import {
-  HiOutlineMinus,
-  HiOutlineUser,
-  HiOutlineUserMinus,
-  HiOutlineUserPlus,
-} from "react-icons/hi2";
+import { RiMailAddLine } from "react-icons/ri";
+import { HiOutlineUser, HiOutlineUserMinus } from "react-icons/hi2";
 
 const ActivityLog = () => {
   return (

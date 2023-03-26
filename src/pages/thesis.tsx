@@ -1,14 +1,33 @@
 import Search from "@/components/search";
-import useGlobalContext from "@/context/globalContext";
 import { ThesisItems } from "@/context/types.d";
 import { Divider } from "antd";
 import Head from "next/head";
 import Link from "next/link";
+import { GetServerSideProps } from "next";
+import { getData } from "@/lib/mongo";
+import { parseQuery } from "@/utils/server-utils";
 
-// use pdf lib for creating pdf
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const query = ctx.query;
+  const parsedQuery = parseQuery(query);
+  const thesisItems = await getData(
+    "thesis-abstract",
+    "thesis-items",
+    parsedQuery,
+    {
+      limit: 20,
+    }
+  );
+  const response = thesisItems.map((item) => {
+    (item._id as unknown as string) = item._id.toString();
+    return item;
+  });
+  return {
+    props: { thesisItems: response },
+  };
+};
 
-const Thesis = () => {
-  const { state } = useGlobalContext();
+const Thesis = (props: { thesisItems: ThesisItems[] }) => {
   return (
     <>
       <Head>
@@ -21,12 +40,16 @@ const Thesis = () => {
       </Head>
       <section>
         <div className="md:pt-20 md:flex md:place-items-center md:flex-col">
-          <div className="grid w-full">
-            <Search className="place-self-center my-5" />
-            <Divider className="bg-white/30" />
+          <div className="grid w-full relative">
+            <Search
+              showFilter={true}
+              className="place-self-center my-5 w-full max-w-3xl z-10 absolute top-0"
+            />
+            {/* <SelectedFilter /> */}
+            <Divider className="bg-white/30 mt-32" />
           </div>
-          <div className="grid gap-2 w-full place-items-center lg:grid-cols-2 relative">
-            {state.searchItems.map((props) => {
+          <div className="grid gap-2 w-full place-items-center lg:grid-cols-2 relative md:px-5">
+            {props.thesisItems?.map((props) => {
               return <Items key={props._id} {...props} />;
             })}
           </div>
@@ -42,10 +65,10 @@ const Items = ({
   researchers,
   abstract,
   _id,
-  date,
+  year,
 }: ThesisItems) => {
   return (
-    <div className="thesis_items w-full bg-slate-100 max-w-[50em] shadow-md rounded-md p-5 gap-2 md:gap-5 grid">
+    <div className="thesis_items w-full bg-slate-100 max-w-[50em] shadow-md rounded-md p-5 gap-2 md:gap-5 grid h-full">
       <div className="div2 flex flex-col gap-2">
         <div>
           <Link href={`/thesis/${_id}`}>
@@ -58,8 +81,8 @@ const Items = ({
           <h2>{course}</h2>
         </div>
         <div>
-          <span className="text-sm text-[#38649C]">Date</span>
-          <h2>{date}</h2>
+          <span className="text-sm text-[#38649C]">year</span>
+          <h2>{year}</h2>
         </div>
       </div>
       <div className="div3">

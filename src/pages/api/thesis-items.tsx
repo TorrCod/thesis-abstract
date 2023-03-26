@@ -1,7 +1,16 @@
 import { ThesisItems } from "@/context/types.d";
-import { addData, addDataWithExpiration, getData } from "@/lib/mongo";
+import {
+  addData,
+  addDataWithExpiration,
+  getData,
+  getDistinctData,
+} from "@/lib/mongo";
 import { CollectionName } from "@/lib/types";
-import { updateActivityLog, validateAuth } from "@/utils/server-utils";
+import {
+  parseQuery,
+  updateActivityLog,
+  validateAuth,
+} from "@/utils/server-utils";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import { ObjectId } from "mongodb";
 import { NextApiRequest, NextApiResponse } from "next";
@@ -9,8 +18,47 @@ import { NextApiRequest, NextApiResponse } from "next";
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     if (req.query.collection === "thesis-items" && req.method === "GET") {
-      const thesisItems = await getData("thesis-abstract", "thesis-items");
-      return res.status(200).json(thesisItems);
+      switch (req.query.objective) {
+        case "get-distinct-years": {
+          const distinctYears = (await getDistinctData(
+            "thesis-abstract",
+            "thesis-items",
+            "year"
+          )) as number[];
+          distinctYears.sort((a, b) => b - a);
+          const stringifyYears = distinctYears.map((item) => item.toString());
+          return res.status(200).json(stringifyYears);
+        }
+        default: {
+          const { year, course, title } = req.query as {
+            year: string | undefined;
+            course: string | undefined;
+            title: string | undefined;
+          };
+          let option:
+            | {
+                projection: Record<string, 0 | 1> | undefined;
+                limit: number | undefined;
+              }
+            | undefined;
+
+          if (req.query.option) {
+            option = JSON.parse(req.query.option as string);
+          }
+          const query = { year, course, title };
+          const filteredQuery = parseQuery(query);
+          const thesisItems = await getData(
+            "thesis-abstract",
+            "thesis-items",
+            filteredQuery,
+            {
+              limit: option?.limit,
+              projection: option?.projection,
+            }
+          );
+          return res.status(200).json(thesisItems);
+        }
+      }
     }
     const isValidated = await validateAuth(req);
     if (isValidated.error) {

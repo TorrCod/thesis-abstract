@@ -43,13 +43,22 @@ export const getData = async (
   dbName: DatabaseName,
   colName: CollectionName,
   query?: Filter<Document | {}>,
-  option?: { deleteAfterGet: boolean }
+  option?: {
+    deleteAfterGet?: boolean;
+    limit?: number;
+    projection?: Record<string, 0 | 1>;
+  }
 ) => {
   try {
     const client = await connectToDatabase();
     const database = client.db(dbName);
     const collection = database.collection(colName);
-    const res = await collection.find(query ?? {}).toArray();
+    const res = await collection
+      .find(query ?? {}, {
+        limit: option?.limit,
+        projection: option?.projection,
+      })
+      .toArray();
     if (option?.deleteAfterGet && res.length) {
       await collection.deleteOne({ _id: res[0]._id });
     }
@@ -112,6 +121,24 @@ export const updateData = async (
       { $set: data },
       { upsert: true }
     );
+    client.close();
+    return res;
+  } catch (e) {
+    console.error(e);
+    throw new Error(e as string).message;
+  }
+};
+
+export const getDistinctData = async (
+  dbName: DatabaseName,
+  colName: CollectionName,
+  distinct: string | number
+) => {
+  try {
+    const client = await connectToDatabase();
+    const database = client.db(dbName);
+    const collection = database.collection(colName);
+    const res = await collection.distinct(distinct);
     client.close();
     return res;
   } catch (e) {
@@ -232,15 +259,5 @@ export const watchThesisAbstract = async (
   } catch (e) {
     console.log("watch thesis items failed");
     console.error(e);
-  }
-};
-
-export const isAuthenticated = async (uid: string) => {
-  try {
-    const user = await getData("accounts", "user", { uid: uid });
-    return user;
-  } catch (e) {
-    console.error(e);
-    throw new Error((e as Error).message);
   }
 };

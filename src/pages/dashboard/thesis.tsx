@@ -5,7 +5,11 @@ import { Course } from "@/context/types.d";
 import useUserContext from "@/context/userContext";
 import { auth } from "@/lib/firebase";
 import { thesisToDataType } from "@/utils/helper";
-import { removeThesis, restoreThesis } from "@/utils/thesis-item-utils";
+import {
+  getAllThesis,
+  removeThesis,
+  restoreThesis,
+} from "@/utils/thesis-item-utils";
 import {
   Button,
   Card,
@@ -18,7 +22,7 @@ import {
 } from "antd";
 import { ColumnsType } from "antd/es/table";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { Router, useRouter } from "next/router";
 import { MenuProps } from "rc-menu";
 import React, { useEffect, useState } from "react";
 import { AiFillDelete, AiFillFileAdd } from "react-icons/ai";
@@ -35,17 +39,19 @@ import {
 } from "recharts";
 import { ResponsiveContainer } from "recharts";
 
+const totalDataInit: { course: Course; count: number }[] = [
+  { course: "Civil Engineer", count: 0 },
+  { course: "Computer Engineer", count: 0 },
+  { course: "Mechanical Engineer", count: 0 },
+  { course: "Electronics Engineer", count: 0 },
+  { course: "Electrical Engineer", count: 0 },
+];
+
 const DashboardThesis = () => {
-  const [totalData, settotalData] = useState<
-    { course: Course; count: number }[]
-  >([
-    { course: "Civil Engineer", count: 0 },
-    { course: "Computer Engineer", count: 0 },
-    { course: "Mechanical Engineer", count: 0 },
-    { course: "Electronics Engineer", count: 0 },
-    { course: "Electrical Engineer", count: 0 },
-  ]);
+  const [totalData, settotalData] =
+    useState<{ course: Course; count: number }[]>(totalDataInit);
   const { state: globalStatate } = useGlobalContext();
+  const router = useRouter();
   useEffect(() => {
     settotalData((oldTotalData) => {
       const newTotalData = oldTotalData.map((item) => {
@@ -114,7 +120,11 @@ const DashboardThesis = () => {
         <Divider />
         <div className="mt-5 bg-white grid gap-1 rounded-md p-5 overflow-auto">
           <p className="opacity-60 mb-5">Manage Thesis Abstracts</p>
-          <QuerySearch onSearch={() => {}} />
+          <QuerySearch
+            onSearch={(query) => {
+              router.push(`/dashboard/thesis${query ? `?title=${query}` : ``}`);
+            }}
+          />
           <ThesisTable />
         </div>
       </div>
@@ -171,8 +181,7 @@ type DataType = {
 };
 
 export const ThesisTable = () => {
-  const { state, recycledThesis } = useGlobalContext();
-  const userDetails = useUserContext().state.userDetails;
+  const { state, recycledThesis, loadThesisItems } = useGlobalContext();
   const [thesisTableData, setThesisTableData] = useState<DataType[]>([]);
   const [removedTableData, setRemovedTableData] = useState<DataType[]>([]);
   const [selectedKeys, setSelectedKeys] = useState("thesis-items");
@@ -184,15 +193,19 @@ export const ThesisTable = () => {
         return oldState.filter((item) => item.key === router.query.id);
       });
       setSelectedKeys(router.query.tab as string);
+    } else if (router.query.title) {
+      const title = router.query.title as string;
+      getAllThesis({ title: title }).then((thesisItems) => {
+        const tableData = thesisToDataType(thesisItems);
+        setThesisTableData(tableData);
+      });
+    } else {
+      const recycled = recycledThesis();
+      recycled.load();
+      loadThesisItems();
     }
-  }, [router.query.tab]);
-
-  useEffect(() => {
-    if (!userDetails) return;
-    const recycled = recycledThesis();
-    recycled.load();
-    return recycled.clear;
-  }, [userDetails]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.query]);
 
   useEffect(() => {
     const thesisItems = state.thesisItems;

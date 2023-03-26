@@ -31,15 +31,17 @@ export default function Home() {
             <h1 className="drop-shadow-lg">
               Thesis Abstract Management System for College of Engineering
             </h1>
-            <div className="text-white/80 drop-shadow-lg">
+            <div className="text-white/80 drop-shadow-lg relative z-10">
               Find related Ideas for your projects Hello World
-              <Search />
+              <div className="absolute w-[97vw] md:w-full lg:w-[35em]">
+                <Search className="w-full" limit={5} />
+              </div>
             </div>
-            <div>
+            <div className="mt-[4.5em] z-[1]">
               <PriButton size="large">Get Started</PriButton>
             </div>
           </div>
-          <div className="relative md:min-w-[50em] w-full h-[25em] md:w-full md:h-3/4 md:min-h-96">
+          <div className="relative md:min-w-[50em] w-full h-[25em] md:w-full md:h-3/4 md:min-h-96 -z-10">
             <Image
               priority={true}
               className="object-cover md:object-contain"

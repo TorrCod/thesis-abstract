@@ -20,6 +20,7 @@ import {
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { ActivityTimeline } from "./activitylog";
+import Fuse from "fuse.js";
 
 const DashboardAdmin = () => {
   const router = useRouter();
@@ -27,12 +28,13 @@ const DashboardAdmin = () => {
   const [userDetails, setUserDetails] = useState<UserDetails | undefined>();
   useEffect(() => {
     const isExist = allUsers.filter((item) => item.key === router.query._id);
-    if (isExist[0] && allUsers[0]) {
+    if (isExist[0]) {
       setUserDetails(isExist[0] as UserDetails);
     } else {
       setUserDetails(undefined);
     }
   }, [router.query._id, allUsers]);
+
   return (
     <DashboardLayout
       userSelectedMenu="/dashboard"
@@ -54,7 +56,7 @@ const DashboardAdmin = () => {
           <AddAdmin />
           <QuerySearch
             onSearch={(e) => {
-              console.log(e);
+              router.push(`/dashboard/admins${e ? `?username=${e}` : ``}`);
             }}
           />
           <AdminTable />
@@ -231,8 +233,11 @@ export const AdminTable = ({ noAction }: { noAction?: boolean }) => {
       render: (_, record) => <RemoveAdmin record={record} />,
     },
   ]);
+  const [dataSourse, setDataSourse] = useState<AdminData[]>([]);
   const { state } = useUserContext();
   const dataColRef = useRef(dataCol);
+  const router = useRouter();
+
   useEffect(() => {
     if (noAction) {
       const oldDataCol = [...dataColRef.current];
@@ -241,13 +246,22 @@ export const AdminTable = ({ noAction }: { noAction?: boolean }) => {
     }
   }, [noAction]);
 
-  return (
-    <Table
-      columns={dataCol}
-      dataSource={state.listOfAdmins}
-      scroll={{ x: 50 }}
-    />
-  );
+  useEffect(() => {
+    if (router.query.username) {
+      const searchTerm = router.query.username as string;
+      const fuse = new Fuse<AdminData>(state.listOfAdmins, {
+        keys: ["userName", "email"],
+      });
+      const source: AdminData[] = fuse
+        .search(searchTerm)
+        .map((item) => item.item);
+      setDataSourse(source);
+    } else {
+      setDataSourse(state.listOfAdmins);
+    }
+  }, [router.query, state.listOfAdmins]);
+
+  return <Table columns={dataCol} dataSource={dataSourse} scroll={{ x: 50 }} />;
 };
 
 const RemoveAdmin = ({ record }: { record: AdminData }) => {

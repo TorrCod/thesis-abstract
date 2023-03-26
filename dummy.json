@@ -1,0 +1,219 @@
+[
+    {
+        "title": "An Analysis of Machine Learning Algorithms",
+        "researchers": [
+            "John Doe",
+            "Jane Doe"
+        ],
+        "course": "Computer Engineer",
+        "abstract": "This thesis presents a comprehensive analysis of machine learning algorithms and their applications in various domains.",
+        "year": 2020,
+        "dateAdded": "2022-03-24T06:00:00.000Z"
+    },
+    {
+        "title": "Design and Analysis of a Mechanical System",
+        "researchers": [
+            "David Smith",
+            "Sarah Johnson"
+        ],
+        "course": "Mechanical Engineer",
+        "abstract": "This thesis presents the design and analysis of a mechanical system for a specific application.",
+        "year": 2019,
+        "dateAdded": "2022-03-24T06:00:00.000Z"
+    },
+    {
+        "title": "An Investigation of Renewable Energy Sources",
+        "researchers": [
+            "Michael Brown",
+            "Emma Wilson"
+        ],
+        "course": "Electrical Engineer",
+        "abstract": "This thesis investigates various renewable energy sources and their suitability for different applications.",
+        "year": 2018,
+        "dateAdded": "2022-03-24T06:00:00.000Z"
+    },
+    {
+        "title": "A Comparative Study of Structural Materials",
+        "researchers": [
+            "Peter Davis",
+            "Olivia Garcia"
+        ],
+        "course": "Civil Engineer",
+        "abstract": "This thesis presents a comparative study of various structural materials and their properties.",
+        "year": 2021,
+        "dateAdded": "2022-03-24T06:00:00.000Z"
+    },
+    {
+        "title": "Design and Implementation of an Electronics System",
+        "researchers": [
+            "Daniel Wilson",
+            "Megan Lee"
+        ],
+        "course": "Electronics Engineer",
+        "abstract": "This thesis presents the design and implementation of an electronics system for a specific application.",
+        "year": 2022,
+        "dateAdded": "2022-03-24T06:00:00.000Z"
+    },
+    {
+        "title": "The impact of renewable energy on economic growth",
+        "researchers": [
+            "Jane Smith",
+            "Michael Lee"
+        ],
+        "course": "Electrical Engineer",
+        "abstract": "This study examines the impact of renewable energy on economic growth in developing countries.",
+        "year": 2020,
+        "dateAdded": "2022-03-23T15:23:40.000Z"
+    },
+    {
+        "title": "Design and analysis of an energy-efficient HVAC system for residential buildings",
+        "researchers": [
+            "David Johnson",
+            "Emily Chen"
+        ],
+        "course": "Mechanical Engineer",
+        "abstract": "This paper presents the design and analysis of an energy-efficient HVAC system for residential buildings.",
+        "year": 2019,
+        "dateAdded": "2022-03-23T15:24:05.000Z"
+    },
+    {
+        "title": "Smart grid technologies for enhancing renewable energy integration",
+        "researchers": [
+            "John Doe",
+            "Rachel Kim"
+        ],
+        "course": "Electrical Engineer",
+        "abstract": "This study investigates the use of smart grid technologies for enhancing renewable energy integration into the existing power grid.",
+        "year": 2021,
+        "dateAdded": "2022-03-23T15:25:10.000Z"
+    },
+    {
+        "title": "Analysis of the performance of a geothermal power plant",
+        "researchers": [
+            "Samantha Lee",
+            "William Chen"
+        ],
+        "course": "Civil Engineer",
+        "abstract": "This paper presents an analysis of the performance of a geothermal power plant, including efficiency and environmental impact.",
+        "year": 2018,
+        "dateAdded": "2022-03-23T15:26:20.000Z"
+    },
+    {
+        "title": "Design and implementation of a solar-powered irrigation system",
+        "researchers": [
+            "Tom Brown",
+            "Linda Lee"
+        ],
+        "course": "Electronics Engineer",
+        "abstract": "This study describes the design and implementation of a solar-powered irrigation system for agricultural applications.",
+        "year": 2022,
+        "dateAdded": "2022-03-23T15:27:35.000Z"
+    },
+    {
+        "title": "Automation of Hospital Management System",
+        "researchers": [
+            "Emily Green",
+            "Mark Johnson"
+        ],
+        "course": "Computer Engineer",
+        "abstract": "This thesis focuses on developing a hospital management system that can automate various tasks such as patient registration, doctor appointments, billing, and more. The system is developed using modern web technologies and provides an easy-to-use interface for hospital staff and patients.",
+        "year": 2022,
+        "dateAdded": "2022-03-30T09:12:54.638Z"
+    },
+    {
+        "title": "Design and Development of Autonomous Drones",
+        "researchers": [
+            "John Doe",
+            "Sarah Lee"
+        ],
+        "course": "Electronics Engineer",
+        "abstract": "This thesis explores the design and development of autonomous drones that can perform various tasks such as surveying, mapping, and inspection. The drones are equipped with advanced sensors and computer vision algorithms that enable them to navigate in complex environments.",
+        "year": 2021,
+        "dateAdded": "2021-06-12T16:23:11.294Z"
+    },
+    {
+        "title": "Smart Traffic Management System",
+        "researchers": [
+            "Alex Wong",
+            "Rachel Chen"
+        ],
+        "course": "Civil Engineer",
+        "abstract": "This thesis proposes a smart traffic management system that uses advanced technologies such as IoT, computer vision, and machine learning to optimize traffic flow and reduce congestion. The system is designed to be scalable and adaptable to different cities and road networks.",
+        "year": 2023,
+        "dateAdded": "2023-01-02T11:07:35.578Z"
+    },
+    {
+        "title": "Design and Implementation of Renewable Energy System",
+        "researchers": [
+            "Andrew Ng",
+            "Mary Kim"
+        ],
+        "course": "Electrical Engineer",
+        "abstract": "This thesis presents the design and implementation of a renewable energy system that utilizes solar and wind power to generate electricity. The system is designed to be modular and can be easily integrated into existing power grids to reduce reliance on fossil fuels.",
+        "year": 2020,
+        "dateAdded": "2020-09-19T08:36:02.841Z"
+    },
+    {
+        "title": "Development of Smart Home Automation System",
+        "researchers": [
+            "David Chen",
+            "Jessica Liu"
+        ],
+        "course": "Computer Engineer",
+        "abstract": "This thesis focuses on developing a smart home automation system that can control various devices such as lights, thermostats, and security systems. The system is developed using IoT technologies and provides an intuitive interface for users to manage their smart homes.",
+        "year": 2022,
+        "dateAdded": "2022-08-08T14:51:29.743Z"
+    },
+    {
+        "title": "The Impact of Renewable Energy on Environmental Sustainability",
+        "researchers": [
+            "John Doe"
+        ],
+        "course": "Electrical Engineer",
+        "abstract": "This study analyzes the impact of renewable energy on environmental sustainability in developing countries.",
+        "year": 2018,
+        "dateAdded": "2018-08-03T08:30:00.000Z"
+    },
+    {
+        "title": "A Comparative Study of Data Mining Techniques for Fraud Detection in Banking Sector",
+        "researchers": [
+            "Jane Doe"
+        ],
+        "course": "Computer Engineer",
+        "abstract": "This study evaluates and compares the performance of different data mining techniques for fraud detection in banking sector.",
+        "year": 2019,
+        "dateAdded": "2019-05-01T11:15:00.000Z"
+    },
+    {
+        "title": "Design and Implementation of a Smart Traffic Management System using IoT",
+        "researchers": [
+            "Michael Smith",
+            "Maria Garcia"
+        ],
+        "course": "Electronics Engineer",
+        "abstract": "This study presents the design and implementation of a smart traffic management system using Internet of Things (IoT) technologies.",
+        "year": 2021,
+        "dateAdded": "2021-09-10T13:45:00.000Z"
+    },
+    {
+        "title": "An Investigation of Factors Influencing Employee Job Satisfaction in the Hospitality Industry",
+        "researchers": [
+            "David Lee",
+            "Amy Chen"
+        ],
+        "course": "Civil Engineer",
+        "abstract": "This study investigates the factors influencing employee job satisfaction in the hospitality industry using a mixed-methods approach.",
+        "year": 2020,
+        "dateAdded": "2020-02-28T10:20:00.000Z"
+    },
+    {
+        "title": "Design and Development of an Autonomous Robot for Agricultural Applications",
+        "researchers": [
+            "Sarah Johnson"
+        ],
+        "course": "Mechanical Engineer",
+        "abstract": "This study presents the design and development of an autonomous robot for agricultural applications, which can perform tasks such as planting and harvesting crops.",
+        "year": 2017,
+        "dateAdded": "2017-12-15T09:00:00.000Z"
+    }
+]

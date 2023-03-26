@@ -29,7 +29,7 @@ export const thesisToDataType = (
   })[]
 ) => {
   const newData = thesisItems.map((item) => {
-    const { id, expireAfterSeconds, createdAt, dateAdded } = item;
+    const { _id, expireAfterSeconds, createdAt, dateAdded } = item;
     const expireDate = new Date(createdAt ?? "0");
     const secondsToAdd = expireAfterSeconds ?? 0;
     const millisecondsToAdd = secondsToAdd * 1000;
@@ -38,7 +38,7 @@ export const thesisToDataType = (
     const dateAddedFormat = new Date(dateAdded).toLocaleString();
     return {
       ...item,
-      key: id,
+      key: _id!,
       dateAdded: dateAddedFormat,
       expireAt: expireAfterSeconds ? localizedDateString : undefined,
     };

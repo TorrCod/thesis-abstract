@@ -88,6 +88,7 @@ const Search = ({ className, limit, onSearch, showFilter }: SearchProps) => {
         course: { all: true, option: courseOption },
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [yearsOpt.option.length, courseOpt.option.length]);
 
   const handleSearch = () => {
@@ -472,7 +473,8 @@ const SearchItem = (
         });
     }, 200);
     return () => clearTimeout(searchTimeoutRef.current ?? 0);
-  }, [props.checkBox, props.searchTitle, props.filter]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.checkBox, props.searchTitle, props.filter, props.limit]);
 
   const handleSelect: MenuProps["onSelect"] = (item) => {
     props.searchDispatch({ type: "onfocus", payload: false });

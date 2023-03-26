@@ -204,6 +204,7 @@ export const ThesisTable = () => {
       recycled.load();
       loadThesisItems();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.query]);
 
   useEffect(() => {

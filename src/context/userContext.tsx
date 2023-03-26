@@ -133,6 +133,7 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
       unsubscribeRef.current = unsubscribe;
     });
     return () => unsubscribe();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadAllUsers = async () => {

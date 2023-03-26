@@ -81,6 +81,7 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(globalReducer, globalStateInit);
   useEffect(() => {
     loadYearsOpt();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.thesisItems]);
 
   const loadThesisItems = async (query?: SearchQuery, limit?: number) => {

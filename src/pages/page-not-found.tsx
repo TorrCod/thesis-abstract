@@ -14,7 +14,8 @@ const PageNotFound = () => {
         <div className="md:row-start-1 md:text-left">
           <h1 className="font-semibold text-white">Page Not Found</h1>
           <p className="text-white/80 max-w-xs my-5 mx-auto">
-            This page doesn't exist or was removed! We suggest you back to home
+            This page doesn&apos;t exist or was removed! We suggest you back to
+            home
           </p>
           <Button
             size="large"

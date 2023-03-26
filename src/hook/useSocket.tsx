@@ -17,7 +17,7 @@ const useSocket = () => {
   const {
     loadThesisItems,
     recycledThesis,
-    state: globalState,
+    dispatch: gloablDispatch,
   } = useGlobalContext();
   const [connect, setConnect] = useState(false);
 
@@ -60,15 +60,16 @@ const useSocket = () => {
   const clearSocket = () => {
     if (socketInstRef.current?.connected) {
       socketInstRef.current?.disconnect();
-      recycled?.clear();
-      dispatch({
-        type: "load-all-users",
-        payload: { adminList: [], pendingAdminList: [] },
-      });
-      dispatch({
-        type: "load-activity-log",
-        payload: [],
-      });
+      // recycled?.clear();
+      // dispatch({
+      //   type: "load-all-users",
+      //   payload: { adminList: [], pendingAdminList: [] },
+      // });
+      // dispatch({
+      //   type: "load-activity-log",
+      //   payload: [],
+      // });
+      // gloablDispatch({ type: "load-thesis", payload: [] });
     }
   };
 

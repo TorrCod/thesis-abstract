@@ -51,11 +51,8 @@ export type GlobalAction =
       payload: ThesisItems;
     }
   | {
-      type: "load-data";
-      payload: {
-        thesisItems: ThesisItems[];
-        dateOpt: string[];
-      };
+      type: "load-thesis";
+      payload: ThesisItems[];
     }
   | {
       type: "sign-in";

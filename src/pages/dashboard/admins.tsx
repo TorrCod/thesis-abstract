@@ -27,12 +27,13 @@ const DashboardAdmin = () => {
   const [userDetails, setUserDetails] = useState<UserDetails | undefined>();
   useEffect(() => {
     const isExist = allUsers.filter((item) => item.key === router.query._id);
-    if (isExist[0] && allUsers[0]) {
+    if (isExist[0]) {
       setUserDetails(isExist[0] as UserDetails);
     } else {
       setUserDetails(undefined);
     }
   }, [router.query._id, allUsers]);
+
   return (
     <DashboardLayout
       userSelectedMenu="/dashboard"
@@ -54,7 +55,7 @@ const DashboardAdmin = () => {
           <AddAdmin />
           <QuerySearch
             onSearch={(e) => {
-              console.log(e);
+              router.push(`/dashboard/admins${e ? `?username=${e}` : ``}`);
             }}
           />
           <AdminTable />

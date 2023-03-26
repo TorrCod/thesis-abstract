@@ -1,33 +1,23 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Dropdown, Layout, Menu } from "antd";
-const { Header, Content, Sider } = Layout;
+const { Header, Sider } = Layout;
 import Link from "next/link";
 import { HomeButton } from "@/components/button";
 import { MenuProps } from "antd";
-import { AiFillHome } from "react-icons/ai";
 import { FaSwatchbook } from "react-icons/fa";
-import { MdAdminPanelSettings, MdWorkHistory } from "react-icons/md";
+import { MdWorkHistory } from "react-icons/md";
 import { ImUserCheck } from "react-icons/im";
 import { BotomMenu } from "@/components/botomMenu";
 import { SelectedDashboardSider } from "@/components/types.d";
-import { IoMdArrowRoundBack } from "react-icons/io";
-import {
-  RiDashboardFill,
-  RiDashboardLine,
-  RiUserSettingsFill,
-} from "react-icons/ri";
+import { RiDashboardFill, RiUserSettingsFill } from "react-icons/ri";
 import { useRouter } from "next/router";
-import AdminProfile, { AdminMenu } from "./admin";
 import { BsThreeDots } from "react-icons/bs";
 import { useLocation, useWindowSize } from "react-use";
 import Head from "next/head";
 import useAuth from "@/hook/useAuth";
 import useGlobalContext, { LoadingGlobal } from "@/context/globalContext";
-import io, { Socket } from "socket.io-client";
-import axios from "axios";
-import { DefaultEventsMap } from "socket.io/dist/typed-events";
-import useUserContext from "@/context/userContext";
 import useSocket from "@/hook/useSocket";
+import useUserContext from "@/context/userContext";
 
 type SelectedMenu = "/dashboard" | "/account-setting";
 
@@ -47,10 +37,11 @@ function DashboardLayout({
   const [selectedSider, setSelectedSider] = useState(userSelectedSider);
   const [selectedMenu, setSelectedMenu] = useState(userSelectedMenu);
   const [isScreen, setIsScreen] = useState(false);
-  const { loadActivityLog, loadAllUsers } = useUserContext();
   const { clearSocket } = useSocket();
   const { width } = useWindowSize();
   const { pathname } = useLocation();
+  const { loadActivityLog, loadAllUsers } = useUserContext();
+  const { loadThesisItems, recycledThesis } = useGlobalContext();
   const router = useRouter();
   useEffect(() => {
     if (width >= 768) {
@@ -68,12 +59,10 @@ function DashboardLayout({
       document.getElementsByClassName("bg-circle")[0] as HTMLDivElement
     ).style.display = "none";
     if (isLogin) {
-      try {
-        loadActivityLog();
-        loadAllUsers();
-      } catch (e) {
-        console.error(e);
-      }
+      loadActivityLog();
+      loadAllUsers();
+      loadThesisItems();
+      recycledThesis().load();
     }
     return () => {
       (

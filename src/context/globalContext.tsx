@@ -59,11 +59,9 @@ const globalReducer = (
       newState.thesisItems.push(action.payload);
       return newState;
     }
-    case "load-data": {
+    case "load-thesis": {
       const newState = { ...state };
-      newState["thesisItems"] = action.payload.thesisItems;
-      newState["dateOption"] = action.payload.dateOpt;
-      newState["loading"] = false;
+      newState["thesisItems"] = action.payload;
       return newState;
     }
     case "sign-in":
@@ -91,8 +89,8 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
       projection: { title: 1, course: 1, dateAdded: 1 },
     });
     dispatch({
-      type: "load-data",
-      payload: { thesisItems: thesisItems, dateOpt: state.dateOption },
+      type: "load-thesis",
+      payload: thesisItems,
     });
   };
 

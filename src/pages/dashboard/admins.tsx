@@ -259,7 +259,7 @@ export const AdminTable = ({ noAction }: { noAction?: boolean }) => {
     } else {
       setDataSourse(state.listOfAdmins);
     }
-  }, [router.query]);
+  }, [router.query, state.listOfAdmins]);
 
   return <Table columns={dataCol} dataSource={dataSourse} scroll={{ x: 50 }} />;
 };

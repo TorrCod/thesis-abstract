@@ -171,7 +171,7 @@ type DataType = {
 };
 
 export const ThesisTable = () => {
-  const { state, recycledThesis } = useGlobalContext();
+  const { state, recycledThesis, loadThesisItems } = useGlobalContext();
   const userDetails = useUserContext().state.userDetails;
   const [thesisTableData, setThesisTableData] = useState<DataType[]>([]);
   const [removedTableData, setRemovedTableData] = useState<DataType[]>([]);
@@ -191,6 +191,7 @@ export const ThesisTable = () => {
     if (!userDetails) return;
     const recycled = recycledThesis();
     recycled.load();
+    loadThesisItems();
     return recycled.clear;
   }, [userDetails]);
 

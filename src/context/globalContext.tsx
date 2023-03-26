@@ -79,16 +79,28 @@ const globalReducer = (
 export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(globalReducer, globalStateInit);
   useEffect(() => {
-    loadThesisItems();
+    loadYearsOpt();
   }, []);
 
-  const loadThesisItems = async () => {
+  const loadThesisItems = async (limit?: number) => {
+    const thesisItems = await getAllThesis(undefined, {
+      limit,
+      projection: { title: 1, course: 1, dateAdded: 1 },
+    });
+    dispatch({
+      type: "load-data",
+      payload: { thesisItems: thesisItems, dateOpt: state.dateOption },
+    });
+    loadYearsOpt();
+  };
+
+  const loadYearsOpt = async () => {
     const distinctYear = await getDistincYear();
     dispatch({
       type: "load-data",
       payload: {
         dateOpt: distinctYear.sort((a, b) => parseInt(b) - parseInt(a)),
-        thesisItems: [],
+        thesisItems: state.thesisItems,
       },
     });
     dispatch({

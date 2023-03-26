@@ -30,6 +30,7 @@ import useGlobalContext from "@/context/globalContext";
 import { getAllThesis } from "@/utils/thesis-item-utils";
 import { useClickAway } from "react-use";
 import { TbSearchOff } from "react-icons/tb";
+import { useRouter } from "next/router";
 
 const searchReducer: (
   state: SearchState,
@@ -422,7 +423,7 @@ const SearchItem = (
 ) => {
   const [menuItem, setMenuItem] = useState<MenuProps["items"]>([]);
   let searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
+  const router = useRouter();
   useEffect(() => {
     clearTimeout(searchTimeoutRef.current ?? 0);
     searchTimeoutRef.current = setTimeout(() => {
@@ -441,7 +442,7 @@ const SearchItem = (
           const myMenu: MenuProps["items"] = res.map((item) => {
             return {
               key: item._id!,
-              label: item.title,
+              label: <Link href={`/thesis/${item._id}`}>{item.title}</Link>,
             };
           });
           if (!myMenu.length) {
@@ -470,12 +471,11 @@ const SearchItem = (
     }, 200);
     return () => clearTimeout(searchTimeoutRef.current ?? 0);
   }, [props.checkBox, props.searchTitle, props.filter]);
-  return (
-    <Menu
-      onSelect={() => props.searchDispatch({ type: "onfocus", payload: false })}
-      items={menuItem}
-    />
-  );
+
+  const handleSelect: MenuProps["onSelect"] = (item) => {
+    props.searchDispatch({ type: "onfocus", payload: false });
+  };
+  return <Menu onSelect={handleSelect} items={menuItem} />;
 };
 
 export default Search;

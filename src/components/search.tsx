@@ -169,7 +169,7 @@ const Search = ({ className, limit, onSearch, showFilter }: SearchProps) => {
           </div>
         </div>
       )}
-      <div className={`w-fulls rounded-md overflow-hidden relative z-20 mt-2`}>
+      <div className={`w-fulls rounded-md overflow-hidden relative z-20`}>
         {searchState.focus && (
           <SearchItem
             filter={{
@@ -448,7 +448,9 @@ const SearchItem = (
           if (!myMenu.length) {
             setMenuItem([
               {
-                label: `No results found for '${props.searchTitle}'`,
+                label: `No results found ${
+                  props.searchTitle ? `for '${props.searchTitle}'` : ""
+                }`,
                 key: "no-result",
                 icon: <TbSearchOff />,
               },
@@ -475,7 +477,7 @@ const SearchItem = (
   const handleSelect: MenuProps["onSelect"] = (item) => {
     props.searchDispatch({ type: "onfocus", payload: false });
   };
-  return <Menu onSelect={handleSelect} items={menuItem} />;
+  return <Menu className="mt-2" onSelect={handleSelect} items={menuItem} />;
 };
 
 export default Search;

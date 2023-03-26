@@ -27,6 +27,7 @@
     "firebase": "^9.17.1",
     "firebase-admin": "^11.5.0",
     "formidable": "^2.1.1",
+    "fuse.js": "^6.6.2",
     "install": "^0.13.0",
     "moment": "^2.29.4",
     "mongodb": "^5.1.0",

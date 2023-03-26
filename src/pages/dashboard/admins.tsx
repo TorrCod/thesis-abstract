@@ -248,6 +248,10 @@ export const AdminTable = ({ noAction }: { noAction?: boolean }) => {
   useEffect(() => {
     if (router.query.username) {
       const searchTerm = router.query.username;
+      const options = {
+        keys: ["name", "category"],
+        threshold: 0.4,
+      };
       const searchRegex = new RegExp(searchTerm as string, "gi");
       const source = state.listOfAdmins.filter(({ userName }) =>
         searchRegex.test(userName)

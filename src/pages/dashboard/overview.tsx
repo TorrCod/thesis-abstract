@@ -1,9 +1,5 @@
 import { PriButton } from "@/components/button";
 import DashboardLayout from "@/components/dashboardLayout";
-import QuerySearch from "@/components/QuerySearch";
-import { Course } from "@/context/types.d";
-import { activity } from "@/data/dummydata";
-import { Button, Timeline } from "antd";
 import Link from "next/link";
 import React from "react";
 import { GoLinkExternal } from "react-icons/go";

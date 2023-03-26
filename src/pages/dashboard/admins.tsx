@@ -232,8 +232,11 @@ export const AdminTable = ({ noAction }: { noAction?: boolean }) => {
       render: (_, record) => <RemoveAdmin record={record} />,
     },
   ]);
+  const [dataSourse, setDataSourse] = useState<AdminData[]>([]);
   const { state } = useUserContext();
   const dataColRef = useRef(dataCol);
+  const router = useRouter();
+
   useEffect(() => {
     if (noAction) {
       const oldDataCol = [...dataColRef.current];
@@ -242,13 +245,20 @@ export const AdminTable = ({ noAction }: { noAction?: boolean }) => {
     }
   }, [noAction]);
 
-  return (
-    <Table
-      columns={dataCol}
-      dataSource={state.listOfAdmins}
-      scroll={{ x: 50 }}
-    />
-  );
+  useEffect(() => {
+    if (router.query.username) {
+      const searchTerm = router.query.username;
+      const searchRegex = new RegExp(searchTerm as string, "gi");
+      const source = state.listOfAdmins.filter(({ userName }) =>
+        searchRegex.test(userName)
+      );
+      setDataSourse(source);
+    } else {
+      setDataSourse(state.listOfAdmins);
+    }
+  }, [router.query]);
+
+  return <Table columns={dataCol} dataSource={dataSourse} scroll={{ x: 50 }} />;
 };
 
 const RemoveAdmin = ({ record }: { record: AdminData }) => {

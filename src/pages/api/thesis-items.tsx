@@ -25,6 +25,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             "thesis-items",
             "year"
           )) as number[];
+          distinctYears.sort((a, b) => b - a);
           const stringifyYears = distinctYears.map((item) => item.toString());
           return res.status(200).json(stringifyYears);
         }

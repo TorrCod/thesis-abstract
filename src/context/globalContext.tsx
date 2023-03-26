@@ -87,7 +87,7 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
     dispatch({
       type: "load-data",
       payload: {
-        dateOpt: distinctYear,
+        dateOpt: distinctYear.sort((a, b) => parseInt(b) - parseInt(a)),
         thesisItems: [],
       },
     });

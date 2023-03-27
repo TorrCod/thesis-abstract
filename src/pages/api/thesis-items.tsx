@@ -56,10 +56,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               projection: option?.projection,
             }
           );
-          const sleep = (ms: number) => {
-            return new Promise((resolve) => setTimeout(resolve, ms));
-          };
-          await sleep(5000);
           return res.status(200).json(thesisItems);
         }
       }

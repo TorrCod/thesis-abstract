@@ -38,16 +38,10 @@ const Thesis = () => {
 
   useEffect(() => {
     loadingState.add("/thesis");
-    let title: string | undefined,
-      course: Course[] | undefined,
-      year: string[] | undefined;
-    try {
-      title = router.query.title as string | undefined;
-      course = JSON.parse(router.query.course as string) as
-        | Course[]
-        | undefined;
-      year = JSON.parse(router.query.year as string) as string[] | undefined;
-    } catch {}
+    const title = router.query.title as string | undefined;
+    const course =
+      router.query.course && JSON.parse(router.query.course as string);
+    const year = router.query.year && JSON.parse(router.query.year as string);
     getAllThesis({ title, course, year })
       .then((res) => {
         setThesisItems(res);

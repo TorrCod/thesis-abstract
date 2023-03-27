@@ -1,7 +1,6 @@
 import {
   Checkbox,
   Col,
-  Divider,
   Dropdown,
   Form,
   Input,
@@ -18,7 +17,6 @@ import { CheckboxChangeEvent } from "antd/es/checkbox";
 import { CheckboxValueType } from "antd/es/checkbox/Group";
 import {
   courseOption,
-  FilterCheckBox,
   SearchAction,
   SearchProps,
   SearchState,

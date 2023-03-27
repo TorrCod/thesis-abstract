@@ -6,6 +6,21 @@ import { GoLinkExternal } from "react-icons/go";
 import { ActivityTimeline } from "./activitylog";
 import { AdminTable } from "./admins";
 import { ThesisCharts } from "./thesis";
+import { GetServerSideProps } from "next";
+import { auth } from "firebase-admin";
+import { verifySessionCookie } from "@/lib/firebase-admin";
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  // const cookies = ctx.req.cookies;
+  // const sessionCookie = cookies["__session"] || "";
+  // const decodedClaims = await verifySessionCookie(sessionCookie);
+  // console.log(decodedClaims);
+  return {
+    props: {
+      data: [],
+    },
+  };
+};
 
 const DashboardOverview = () => {
   return (

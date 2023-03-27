@@ -21,6 +21,7 @@ import {
   Table,
 } from "antd";
 import { ColumnsType } from "antd/es/table";
+import { GetServerSideProps } from "next";
 import Link from "next/link";
 import { Router, useRouter } from "next/router";
 import { MenuProps } from "rc-menu";

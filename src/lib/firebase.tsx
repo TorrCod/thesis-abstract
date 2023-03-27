@@ -1,4 +1,6 @@
 import { UserDetails } from "@/context/types.d";
+import { userConfig } from "@/utils/account-utils";
+import axios from "axios";
 import { initializeApp } from "firebase/app";
 import {
   connectAuthEmulator,
@@ -33,7 +35,19 @@ export const firebaseStorage = getStorage(app);
 // connectAuthEmulator(auth, "http://localhost:9099");
 
 export const signIn = async (email: string, password: string) => {
-  await signInWithEmailAndPassword(auth, email, password);
+  const userCredential = await signInWithEmailAndPassword(
+    auth,
+    email,
+    password
+  );
+  // const token = await userCredential.user.getIdToken();
+  //   const csrfToken = {}
+  // await axios.request({
+  //   url: "/api/admin-user?objective=create-user-session",
+  //   method: "POST",
+  //   data: { token, csrfToken },
+  //   ...userConfig(token),
+  // });
 };
 
 export const signUp = async (details: UserDetails) => {

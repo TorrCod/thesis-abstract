@@ -1,4 +1,5 @@
 import * as admin from "firebase-admin";
+import { SessionCookieOptions } from "firebase-admin/lib/auth/base-auth";
 import { firebaseConfig } from "./firebase";
 
 const firebaseAdminInit = () => {
@@ -35,4 +36,20 @@ export const verifyIdToken = async (idToken: string) => {
   } catch (e) {
     return false;
   }
+};
+
+export const createSessionCookies = async (
+  token: string,
+  option: SessionCookieOptions
+) => {
+  const adminApp = firebaseAdminInit();
+  const succcess = await adminApp.auth().createSessionCookie(token, option);
+  return succcess;
+};
+
+export const verifySessionCookie = async (sessionCookies: string) => {
+  const adminApp = firebaseAdminInit();
+  const auth = adminApp.auth();
+  const decodedClaims = await auth.verifySessionCookie(sessionCookies);
+  return decodedClaims;
 };

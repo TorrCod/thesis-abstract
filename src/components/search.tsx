@@ -494,7 +494,7 @@ const SearchItem = (
     }, 200);
     return () => clearTimeout(searchTimeoutRef.current ?? 0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.checkBox, props.searchTitle, props.filter, props.limit]);
+  }, [props.searchTitle, props.filter, props.limit]);
 
   const handleSelect: MenuProps["onSelect"] = (item) => {
     props.searchDispatch({ type: "onfocus", payload: false });

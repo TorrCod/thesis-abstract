@@ -422,7 +422,6 @@ const SearchItem = (
 ) => {
   const [menuItem, setMenuItem] = useState<MenuProps["items"]>([]);
   let searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const router = useRouter();
   useEffect(() => {
     clearTimeout(searchTimeoutRef.current ?? 0);
     searchTimeoutRef.current = setTimeout(() => {

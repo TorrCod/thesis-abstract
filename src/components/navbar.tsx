@@ -14,8 +14,6 @@ import { RiDashboardLine } from "react-icons/ri";
 import { GrUserSettings } from "react-icons/gr";
 import { auth } from "@/lib/firebase";
 import { useRouter } from "next/router";
-import DevSignUp from "./devsignuptest";
-import Notification from "./notification";
 import { AdminMenu } from "./admin";
 
 const MENU_LIST = [

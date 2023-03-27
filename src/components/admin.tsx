@@ -42,13 +42,13 @@ export const AdminMenu = ({
       label: <Link href={"/account-setting"}>Account Setting</Link>,
     },
     {
-      key: "/dashboard/overview",
+      key: "/dashboard",
       icon: (
-        <Link href={"/dashboard/overview"}>
+        <Link href={"/dashboard"}>
           <RiDashboardLine size={"1.25em"} />
         </Link>
       ),
-      label: <Link href={"/dashboard/overview"}>Dashboard</Link>,
+      label: <Link href={"/dashboard"}>Dashboard</Link>,
     },
     {
       key: "logout",

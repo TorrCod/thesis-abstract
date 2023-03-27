@@ -335,6 +335,7 @@ const PasswordForm = () => {
       await passForm.validateFields();
       setChngPassSave(false);
     } catch (e) {
+      console.error(e);
       setChngPassSave(true);
     }
   };
@@ -368,7 +369,14 @@ const PasswordForm = () => {
         className="px-10"
         layout="vertical"
         name="change-password"
+        validateTrigger="onBlur"
       >
+        <Form.Item
+          name="currPass"
+          label={<div className="opacity-80">Current Password</div>}
+        >
+          <Input.Password />
+        </Form.Item>
         <Form.Item
           name="newPass"
           label={<div className="opacity-80">New Password</div>}
@@ -380,27 +388,20 @@ const PasswordForm = () => {
           name="confirm-new-password"
           label={<div className="opacity-80">Confirm New Password</div>}
           rules={[
-            {
-              required: true,
-              message: "Please confirm your password",
-            },
             ({ getFieldValue }) => ({
               validator(_, value) {
+                console.log(getFieldValue("newPass") === value);
+
                 if (!value || getFieldValue("newPass") === value) {
+                  console.log("resolve");
                   return Promise.resolve();
+                } else {
+                  console.log("reject");
+                  return Promise.reject("The two passwords do not match");
                 }
-                return Promise.reject(
-                  new Error("The two passwords do not match")
-                );
               },
             }),
           ]}
-        >
-          <Input.Password />
-        </Form.Item>
-        <Form.Item
-          name="currPass"
-          label={<div className="opacity-80">Current Password</div>}
         >
           <Input.Password />
         </Form.Item>

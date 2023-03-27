@@ -13,9 +13,7 @@ import {
   EmailAuthProvider,
   onAuthStateChanged,
   reauthenticateWithCredential,
-  sendPasswordResetEmail,
   Unsubscribe,
-  updateCurrentUser,
   updatePassword,
   updateProfile,
 } from "firebase/auth";
@@ -25,7 +23,6 @@ import {
   useEffect,
   useReducer,
   useRef,
-  useState,
 } from "react";
 import useGlobalContext from "./globalContext";
 import {
@@ -106,7 +103,6 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         try {
-          console.log("signed in");
           const token = await user.getIdToken();
           const res = await getUserDetails(token, user.uid);
           res.profilePic = user.photoURL;

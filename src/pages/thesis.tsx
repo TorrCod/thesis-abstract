@@ -11,26 +11,6 @@ import useGlobalContext from "@/context/globalContext";
 import { useRouter } from "next/router";
 import { getAllThesis } from "@/utils/thesis-item-utils";
 
-// export const getServerSideProps: GetServerSideProps = async (ctx) => {
-//   const query = ctx.query;
-//   const parsedQuery = parseQuery(query);
-//   const thesisItems = await getData(
-//     "thesis-abstract",
-//     "thesis-items",
-//     parsedQuery,
-//     {
-//       limit: 20,
-//     }
-//   );
-//   const response = thesisItems.map((item) => {
-//     (item._id as unknown as string) = item._id.toString();
-//     return item;
-//   });
-//   return {
-//     props: { thesisItems: response },
-//   };
-// };
-
 const Thesis = () => {
   const { state: globalState, loadingState } = useGlobalContext();
   const [thesisItems, setThesisItems] = useState<ThesisItems[]>([]);
@@ -102,8 +82,11 @@ const Items = ({
     <div className="thesis_items w-full bg-slate-100 max-w-[50em] shadow-md rounded-md p-5 gap-2 md:gap-5 grid h-full">
       <div className="div2 flex flex-col gap-2">
         <div>
-          <Link href={`/thesis/${_id}`}>
-            <span className="text-sm text-[#38649C]">Title</span>
+          <span className="text-sm text-[#38649C]">Title</span>
+          <Link
+            className="hover:text-sky-700 hover:underline hover:decoration-1"
+            href={`/thesis/${_id}`}
+          >
             <h2>{title}</h2>
           </Link>
         </div>

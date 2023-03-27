@@ -423,6 +423,29 @@ const SearchItem = (
   const [menuItem, setMenuItem] = useState<MenuProps["items"]>([]);
   let searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   useEffect(() => {
+    let data: MenuProps["items"] = [
+      {
+        key: 1,
+        label: <div className="sk_bg h-4 mt-3 w-full" />,
+      },
+      {
+        key: 2,
+        label: <div className="sk_bg h-4 mt-3 w-full" />,
+      },
+      {
+        key: 3,
+        label: <div className="sk_bg h-4 mt-3 w-full" />,
+      },
+      {
+        key: 4,
+        label: <div className="sk_bg h-4 mt-3 w-full" />,
+      },
+      {
+        key: 5,
+        label: <div className="sk_bg h-4 mt-3 w-full" />,
+      },
+    ];
+    setMenuItem(data);
     clearTimeout(searchTimeoutRef.current ?? 0);
     searchTimeoutRef.current = setTimeout(() => {
       getAllThesis(

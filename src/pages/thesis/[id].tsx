@@ -86,7 +86,7 @@ const ThesisItemsView = (props: { data: ThesisItems; hasError: boolean }) => {
           <div className="rs-abstract justify-self-center text-justify leading-10 w-full">
             <div className="max-w-xl">
               <h3 className="text-center">Abstract</h3>
-              <p className="indent-5">{props.data.abstract}</p>
+              <p className="indent-20">{props.data.abstract}</p>
             </div>
           </div>
           <div className="rs-button grid place-items-end md:place-items-start">

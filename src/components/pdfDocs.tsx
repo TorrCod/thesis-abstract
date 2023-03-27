@@ -12,9 +12,24 @@ import { ThesisItems } from "@/context/types.d";
 
 // Register font
 Font.register({
-  family: "Roboto",
-  src: "/asset/Roboto-Regular.ttf",
+  family: "Ubuntu",
+  fonts: [
+    {
+      src: "https://fonts.gstatic.com/s/questrial/v13/QdVUSTchPBm7nuUeVf7EuStkm20oJA.ttf",
+    },
+    {
+      src: "https://fonts.gstatic.com/s/questrial/v13/QdVUSTchPBm7nuUeVf7EuStkm20oJA.ttf",
+      fontWeight: "bold",
+    },
+    {
+      src: "https://fonts.gstatic.com/s/questrial/v13/QdVUSTchPBm7nuUeVf7EuStkm20oJA.ttf",
+      fontWeight: "normal",
+      fontStyle: "italic",
+    },
+  ],
 });
+
+Font.registerHyphenationCallback((word) => [word]);
 
 // Create styles
 const styles = StyleSheet.create({
@@ -26,7 +41,7 @@ const styles = StyleSheet.create({
     fontSize: "12px",
     lineHeight: 2,
     textAlign: "justify",
-    fontFamily: "Roboto",
+    fontFamily: "Ubuntu",
   },
   twoColumn: {
     flexDirection: "row",
@@ -51,7 +66,7 @@ const styles = StyleSheet.create({
 const MyDocument = (props: ThesisItems) => (
   <Document>
     <Page size="LETTER" style={styles.page}>
-      <View style={{ textAlign: "center", fontWeight: "extrabold" }}>
+      <View style={{ textAlign: "center" }}>
         <Text>ABSTRACT</Text>
       </View>
       <View style={styles.twoColumn}>
@@ -86,8 +101,6 @@ const MyDocument = (props: ThesisItems) => (
           style={{
             ...styles.twoColumn2Item,
             flexDirection: "column",
-            // lineHeight: "1px",
-            // marginBottom: "10px",
           }}
         >
           {props.researchers.map((child, index) => (
@@ -96,7 +109,13 @@ const MyDocument = (props: ThesisItems) => (
         </View>
       </View>
       <View style={styles.body}>
-        <Text style={{ textIndent: "50px" }}>{props.abstract}</Text>
+        <Text
+          style={{
+            textIndent: "50px",
+          }}
+        >
+          {props.abstract}
+        </Text>
       </View>
     </Page>
   </Document>

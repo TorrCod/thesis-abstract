@@ -31,7 +31,7 @@ const SignInSignUp = () => {
       await formSignIn.validateFields();
       const email = formSignIn.getFieldValue("sign-in-email");
       const password = formSignIn.getFieldValue("sign-in-password");
-      await router.push("/dashboard/overview");
+      await router.push("/dashboard");
       await signIn(email, password);
     } catch (error) {
       const errorMessage: string = (error as any).message;

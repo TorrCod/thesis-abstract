@@ -37,7 +37,7 @@ export default function Home() {
                 <Search className="w-full" limit={5} />
               </div>
             </div>
-            <div className="mt-[4.5em] z-[1]">
+            <div className="z-[1] mt-12">
               <PriButton size="large">Get Started</PriButton>
             </div>
           </div>

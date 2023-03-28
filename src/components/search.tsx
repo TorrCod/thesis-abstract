@@ -137,44 +137,39 @@ const Search = ({ className, limit, onSearch, showFilter }: SearchProps) => {
           </PriButton>
         </Link>
       </Form>
-      {(searchState.focus || showFilter) && (
-        <div className="mt-2">
-          <div className="flex gap-5" id="filter-component">
-            <div>
-              <DropDownCourse
-                searchDispatch={searchDispatch}
-                searchState={searchState}
-              />
-              {courseOpt.all ? (
-                <FilterItems type="course" items={["All"]} noAction />
-              ) : (
-                <FilterItems
-                  type="course"
-                  items={courseOpt.option as string[]}
-                />
-              )}
-            </div>
-            <div>
-              <DropdownYear
-                searchDispatch={searchDispatch}
-                searchState={searchState}
-              />
-              {yearsOpt.all ? (
-                <FilterItems type="years" items={["All"]} noAction />
-              ) : (
-                <FilterItems type="years" items={yearsOpt.option as string[]} />
-              )}
-            </div>
+      <div className={`mt-2 ${(!searchState.focus || showFilter) && `hidden`}`}>
+        <div className="flex gap-5" id="filter-component">
+          <div>
+            <DropDownCourse
+              searchDispatch={searchDispatch}
+              searchState={searchState}
+            />
+            {courseOpt.all ? (
+              <FilterItems type="course" items={["All"]} noAction />
+            ) : (
+              <FilterItems type="course" items={courseOpt.option as string[]} />
+            )}
+          </div>
+          <div>
+            <DropdownYear
+              searchDispatch={searchDispatch}
+              searchState={searchState}
+            />
+            {yearsOpt.all ? (
+              <FilterItems type="years" items={["All"]} noAction />
+            ) : (
+              <FilterItems type="years" items={yearsOpt.option as string[]} />
+            )}
           </div>
         </div>
-      )}
+      </div>
       <div className={`w-fulls rounded-md overflow-hidden relative z-20`}>
         {searchState.focus && (
           <SearchItem
-            filter={{
-              course: !courseOpt.all ? courseOpt.option : undefined,
-              years: !yearsOpt.all ? yearsOpt.option : undefined,
-            }}
+            // filter={{
+            //   course: !courseOpt.all ? courseOpt.option : undefined,
+            //   years: !yearsOpt.all ? yearsOpt.option : undefined,
+            // }}
             searchDispatch={searchDispatch}
             {...searchState}
             limit={limit}
@@ -417,42 +412,22 @@ const SearchItem = (
     limit?: number;
     onShowMore?: () => void;
     searchDispatch: React.Dispatch<SearchAction>;
-    filter: { course?: Course[]; years?: string[] };
   }
 ) => {
-  const [menuItem, setMenuItem] = useState<MenuProps["items"]>([]);
+  const [menuItem, setMenuItem] = useState<MenuProps["items"]>(menuLoading);
   let searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [loading, setLoading] = useState(false);
+  const { state } = useGlobalContext();
+  const router = useRouter();
   useEffect(() => {
-    let data: MenuProps["items"] = [
-      {
-        key: 1,
-        label: <div className="sk_bg h-4 mt-3 w-full" />,
-      },
-      {
-        key: 2,
-        label: <div className="sk_bg h-4 mt-3 w-full" />,
-      },
-      {
-        key: 3,
-        label: <div className="sk_bg h-4 mt-3 w-full" />,
-      },
-      {
-        key: 4,
-        label: <div className="sk_bg h-4 mt-3 w-full" />,
-      },
-      {
-        key: 5,
-        label: <div className="sk_bg h-4 mt-3 w-full" />,
-      },
-    ];
-    setMenuItem(data);
+    setLoading(true);
     clearTimeout(searchTimeoutRef.current ?? 0);
     searchTimeoutRef.current = setTimeout(() => {
       getAllThesis(
         {
           title: props.searchTitle,
-          course: props.filter.course,
-          year: props.filter.years,
+          course: state.filterState.course.option,
+          year: state.filterState.years.option,
         },
         {
           limit: props.limit ?? 10,
@@ -490,16 +465,46 @@ const SearchItem = (
         })
         .catch((e) => {
           console.error(e);
-        });
+        })
+        .finally(() => setLoading(false));
     }, 200);
     return () => clearTimeout(searchTimeoutRef.current ?? 0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.searchTitle, props.filter, props.limit]);
+  }, [props.searchTitle, props.limit, state.filterState]);
 
   const handleSelect: MenuProps["onSelect"] = (item) => {
     props.searchDispatch({ type: "onfocus", payload: false });
   };
-  return <Menu className="mt-2" onSelect={handleSelect} items={menuItem} />;
+  return (
+    <Menu
+      onSelect={handleSelect}
+      className="mt-2"
+      items={loading ? menuLoading : menuItem}
+    />
+  );
 };
+
+const menuLoading = [
+  {
+    key: 1,
+    label: <div className="sk_bg h-4 mt-3 w-full" />,
+  },
+  {
+    key: 2,
+    label: <div className="sk_bg h-4 mt-3 w-full" />,
+  },
+  {
+    key: 3,
+    label: <div className="sk_bg h-4 mt-3 w-full" />,
+  },
+  {
+    key: 4,
+    label: <div className="sk_bg h-4 mt-3 w-full" />,
+  },
+  {
+    key: 5,
+    label: <div className="sk_bg h-4 mt-3 w-full" />,
+  },
+];
 
 export default Search;

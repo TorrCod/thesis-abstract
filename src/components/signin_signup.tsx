@@ -7,6 +7,7 @@ import Link from "next/link";
 import useGlobalContext from "@/context/globalContext";
 import { useRouter } from "next/router";
 import { signIn } from "@/lib/firebase";
+import { useSession } from "next-auth/react";
 
 const SignInSignUp = () => {
   const [open, setOpen] = useState(false);
@@ -14,8 +15,8 @@ const SignInSignUp = () => {
   const userCtx = useUserContext();
   const { state, dispatch: globalDispatch } = useGlobalContext();
   const promtToSignIn = state.signIn;
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const session = useSession();
 
   useEffect(() => {
     if (promtToSignIn) {
@@ -52,7 +53,7 @@ const SignInSignUp = () => {
     setOpen(true);
   };
 
-  return userCtx.state.userDetails ? (
+  return session ? (
     <AdminProfile userDetails={userCtx.state.userDetails} />
   ) : (
     <>

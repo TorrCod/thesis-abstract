@@ -13,10 +13,17 @@ import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import { ObjectId } from "mongodb";
 import { NextApiRequest, NextApiResponse } from "next";
 import { serialize } from "cookie";
+import { getServerSession } from "next-auth";
+import { authOptions } from "./auth/[...nextauth]";
+import { getCsrfToken } from "next-auth/react";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
+    const session = await getServerSession(req, res, authOptions);
+    const csrfToken = await getCsrfToken({ req });
     const isValidated = await validateAuth(req);
+    if (!session && !csrfToken)
+      return res.status(401).send("UNAUTHORIZE ACCESS");
     if (isValidated.error) {
       return res.status(400).json(isValidated);
     }

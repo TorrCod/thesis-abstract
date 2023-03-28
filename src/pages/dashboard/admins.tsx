@@ -21,6 +21,10 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { ActivityTimeline } from "./activitylog";
 import Fuse from "fuse.js";
+import { GetServerSideProps } from "next";
+import { getServerSession } from "next-auth";
+import { getCsrfToken } from "next-auth/react";
+import { authOptions } from "../api/auth/[...nextauth]";
 
 const DashboardAdmin = () => {
   const router = useRouter();
@@ -352,6 +356,22 @@ const RemoveAdmin = ({ record }: { record: AdminData }) => {
       </Modal>
     </>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+  const session = await getServerSession(req, res, authOptions);
+  const csrfToken = await getCsrfToken({ req });
+  if (!session)
+    return {
+      redirect: { destination: "/?sign-in" },
+      props: { data: [] },
+    };
+  if (!csrfToken) return { notFound: true };
+  return {
+    props: {
+      data: [],
+    },
+  };
 };
 
 export default DashboardAdmin;

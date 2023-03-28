@@ -331,7 +331,7 @@ const DropdownYear = ({
           ? globalCtx.state.dateOption
           : item.length
           ? item
-          : [globalCtx.state.dateOption[globalCtx.state.dateOption.length - 1]],
+          : [globalCtx.state.dateOption[0]],
       },
     });
   };
@@ -343,11 +343,7 @@ const DropdownYear = ({
         all: isChecked,
         option: isChecked
           ? globalCtx.state.dateOption
-          : [
-              globalCtx.state.dateOption[
-                globalCtx.state.dateOption.length - 1
-              ].toString(),
-            ],
+          : [globalCtx.state.dateOption[0].toString()],
       },
     });
   };

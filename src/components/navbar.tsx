@@ -4,7 +4,7 @@ import { NavItemProps } from "./types.d";
 import { AiOutlineHome } from "react-icons/ai";
 import { BiGroup, BiLogOut } from "react-icons/bi";
 import { BsBook } from "react-icons/bs";
-import { Button, Divider, Drawer, Dropdown, Menu, MenuProps } from "antd";
+import { Button, Divider, Drawer, Menu, MenuProps } from "antd";
 import { FaBars } from "react-icons/fa";
 import { useLocation, useWindowScroll } from "react-use";
 import Search from "./search";
@@ -152,7 +152,6 @@ const NavBar = () => {
         ) : (
           <>
             <Login />
-            {/* <DevSignUp /> */}
           </>
         )}
       </div>

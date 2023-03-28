@@ -1,14 +1,12 @@
 import { useEffect, useState } from "react";
-import { Modal, Form, Input, Divider, Select, message } from "antd";
+import { Modal, Form, Input, Divider, message } from "antd";
 import { PriButton } from "./button";
-import { Course, UserDetails } from "@/context/types.d";
-import { auth, signIn } from "@/lib/firebase";
 import useUserContext from "@/context/userContext";
 import AdminProfile from "./admin";
-import { sendPasswordResetEmail } from "firebase/auth";
 import Link from "next/link";
-import useGlobalContext, { LoadingGlobal } from "@/context/globalContext";
+import useGlobalContext from "@/context/globalContext";
 import { useRouter } from "next/router";
+import { signIn } from "@/lib/firebase";
 
 const SignInSignUp = () => {
   const [open, setOpen] = useState(false);
@@ -31,7 +29,6 @@ const SignInSignUp = () => {
       await formSignIn.validateFields();
       const email = formSignIn.getFieldValue("sign-in-email");
       const password = formSignIn.getFieldValue("sign-in-password");
-      await router.push("/dashboard");
       await signIn(email, password);
     } catch (error) {
       const errorMessage: string = (error as any).message;

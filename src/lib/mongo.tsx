@@ -70,6 +70,33 @@ export const getData = async (
   }
 };
 
+export const getOneData = async (
+  dbName: DatabaseName,
+  colName: CollectionName,
+  query?: Filter<Document | {}>,
+  option?: {
+    deleteAfterGet?: boolean;
+    projection?: Record<string, 0 | 1>;
+  }
+) => {
+  try {
+    const client = await connectToDatabase();
+    const database = client.db(dbName);
+    const collection = database.collection(colName);
+    const res = await collection.findOne(query ?? {}, {
+      projection: option?.projection,
+    });
+    if (option?.deleteAfterGet && res) {
+      await collection.deleteOne({ _id: res[0]._id });
+    }
+    client.close();
+    return res;
+  } catch (e) {
+    console.error(e);
+    throw new Error(e as string).message;
+  }
+};
+
 export const addData = async (
   dbName: DatabaseName,
   colName: CollectionName,

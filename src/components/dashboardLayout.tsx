@@ -14,10 +14,7 @@ import { useRouter } from "next/router";
 import { BsThreeDots } from "react-icons/bs";
 import { useLocation, useWindowSize } from "react-use";
 import Head from "next/head";
-import useAuth from "@/hook/useAuth";
-import useGlobalContext, { LoadingGlobal } from "@/context/globalContext";
 import useSocket from "@/hook/useSocket";
-import useUserContext from "@/context/userContext";
 
 type SelectedMenu = "/dashboard" | "/account-setting";
 
@@ -33,16 +30,14 @@ function DashboardLayout({
   userSelectedMenu,
   userSelectedSider,
 }: DashboardProps) {
-  const isLogin = useAuth();
   const [selectedSider, setSelectedSider] = useState(userSelectedSider);
   const [selectedMenu, setSelectedMenu] = useState(userSelectedMenu);
   const [isScreen, setIsScreen] = useState(false);
   const { clearSocket } = useSocket();
   const { width } = useWindowSize();
   const { pathname } = useLocation();
-  const { loadActivityLog, loadAllUsers } = useUserContext();
-  const { loadThesisItems, recycledThesis } = useGlobalContext();
   const router = useRouter();
+
   useEffect(() => {
     if (width >= 768) {
       setIsScreen(true);
@@ -58,12 +53,6 @@ function DashboardLayout({
     (
       document.getElementsByClassName("bg-circle")[0] as HTMLDivElement
     ).style.display = "none";
-    if (isLogin) {
-      loadActivityLog();
-      loadAllUsers();
-      loadThesisItems();
-      recycledThesis().load();
-    }
     return () => {
       (
         document.getElementsByClassName("navbar")[0] as HTMLDivElement
@@ -74,12 +63,12 @@ function DashboardLayout({
       clearSocket();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLogin]);
+  }, []);
 
   const menuItem: MenuProps["items"] = [
     {
       key: "/dashboard",
-      label: <Link href={"/dashboard/overview"}>Dashboard</Link>,
+      label: <Link href={"/dashboard"}>Dashboard</Link>,
       icon: <RiDashboardFill />,
     },
     {
@@ -92,7 +81,7 @@ function DashboardLayout({
   const siderMenu: MenuProps["items"] = [
     {
       key: "/dashboard/overview",
-      label: <Link href={"/dashboard/overview"}>Overview</Link>,
+      label: <Link href={"/dashboard"}>Overview</Link>,
       icon: <RiDashboardFill size={"1.1em"} />,
     },
     {
@@ -100,11 +89,6 @@ function DashboardLayout({
       label: <Link href={"/dashboard/thesis"}>Thesis</Link>,
       icon: <FaSwatchbook size={"1.1em"} />,
     },
-    // {
-    //   key: "/dashboard/users",
-    //   label: <Link href={"/dashboard/users"}>Users</Link>,
-    //   icon: <MdAdminPanelSettings size={"1.1em"} />,
-    // },
     {
       key: "/dashboard/admins",
       label: <Link href={"/dashboard/admins"}>Admins</Link>,
@@ -117,9 +101,7 @@ function DashboardLayout({
     },
   ];
 
-  return !isLogin ? (
-    <LoadingGlobal loading={!isLogin} />
-  ) : (
+  return (
     <>
       <Head>
         <title>

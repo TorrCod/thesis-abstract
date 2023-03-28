@@ -4,7 +4,7 @@ import { NavItemProps } from "./types.d";
 import { AiOutlineHome } from "react-icons/ai";
 import { BiGroup, BiLogOut } from "react-icons/bi";
 import { BsBook } from "react-icons/bs";
-import { Button, Divider, Drawer, Dropdown, Menu, MenuProps } from "antd";
+import { Button, Divider, Drawer, Menu, MenuProps } from "antd";
 import { FaBars } from "react-icons/fa";
 import { useLocation, useWindowScroll } from "react-use";
 import Search from "./search";
@@ -14,8 +14,6 @@ import { RiDashboardLine } from "react-icons/ri";
 import { GrUserSettings } from "react-icons/gr";
 import { auth } from "@/lib/firebase";
 import { useRouter } from "next/router";
-import DevSignUp from "./devsignuptest";
-import Notification from "./notification";
 import { AdminMenu } from "./admin";
 
 const MENU_LIST = [
@@ -154,7 +152,6 @@ const NavBar = () => {
         ) : (
           <>
             <Login />
-            {/* <DevSignUp /> */}
           </>
         )}
       </div>

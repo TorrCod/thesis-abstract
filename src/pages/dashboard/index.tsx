@@ -6,6 +6,26 @@ import { GoLinkExternal } from "react-icons/go";
 import { ActivityTimeline } from "./activitylog";
 import { AdminTable } from "./admins";
 import { ThesisCharts } from "./thesis";
+import { GetServerSideProps } from "next";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../api/auth/[...nextauth]";
+import { getCsrfToken } from "next-auth/react";
+
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+  const session = await getServerSession(req, res, authOptions);
+  const csrfToken = await getCsrfToken({ req });
+  if (!session)
+    return {
+      redirect: { destination: "/?sign-in" },
+      props: { data: [] },
+    };
+  if (!csrfToken) return { notFound: true };
+  return {
+    props: {
+      data: [],
+    },
+  };
+};
 
 const DashboardOverview = () => {
   return (

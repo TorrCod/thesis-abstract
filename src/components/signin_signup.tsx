@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react";
-import { Modal, Form, Input, Divider, Select, message } from "antd";
+import { Modal, Form, Input, Divider, message } from "antd";
 import { PriButton } from "./button";
-import { Course, UserDetails } from "@/context/types.d";
-import { auth, signIn } from "@/lib/firebase";
 import useUserContext from "@/context/userContext";
 import AdminProfile from "./admin";
-import { sendPasswordResetEmail } from "firebase/auth";
 import Link from "next/link";
-import useGlobalContext, { LoadingGlobal } from "@/context/globalContext";
+import useGlobalContext from "@/context/globalContext";
 import { useRouter } from "next/router";
+import { signIn } from "@/lib/firebase";
+import { useSession } from "next-auth/react";
 
 const SignInSignUp = () => {
   const [open, setOpen] = useState(false);
@@ -16,8 +15,8 @@ const SignInSignUp = () => {
   const userCtx = useUserContext();
   const { state, dispatch: globalDispatch } = useGlobalContext();
   const promtToSignIn = state.signIn;
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const session = useSession();
 
   useEffect(() => {
     if (promtToSignIn) {
@@ -31,7 +30,6 @@ const SignInSignUp = () => {
       await formSignIn.validateFields();
       const email = formSignIn.getFieldValue("sign-in-email");
       const password = formSignIn.getFieldValue("sign-in-password");
-      await router.push("/dashboard/overview");
       await signIn(email, password);
     } catch (error) {
       const errorMessage: string = (error as any).message;
@@ -55,7 +53,7 @@ const SignInSignUp = () => {
     setOpen(true);
   };
 
-  return userCtx.state.userDetails ? (
+  return session ? (
     <AdminProfile userDetails={userCtx.state.userDetails} />
   ) : (
     <>

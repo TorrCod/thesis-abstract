@@ -21,6 +21,9 @@ import {
   Table,
 } from "antd";
 import { ColumnsType } from "antd/es/table";
+import { GetServerSideProps } from "next";
+import { getServerSession } from "next-auth";
+import { getCsrfToken } from "next-auth/react";
 import Link from "next/link";
 import { Router, useRouter } from "next/router";
 import { MenuProps } from "rc-menu";
@@ -38,6 +41,7 @@ import {
   Tooltip,
 } from "recharts";
 import { ResponsiveContainer } from "recharts";
+import { authOptions } from "../api/auth/[...nextauth]";
 
 const totalDataInit: { course: Course; count: number }[] = [
   { course: "Civil Engineer", count: 0 },
@@ -345,6 +349,22 @@ const RestoreThesis = (props: DataType & { id: string }) => {
       Restore
     </Button>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+  const session = await getServerSession(req, res, authOptions);
+  const csrfToken = await getCsrfToken({ req });
+  if (!session)
+    return {
+      redirect: { destination: "/?sign-in" },
+      props: { data: [] },
+    };
+  if (!csrfToken) return { notFound: true };
+  return {
+    props: {
+      data: [],
+    },
+  };
 };
 
 export default DashboardThesis;

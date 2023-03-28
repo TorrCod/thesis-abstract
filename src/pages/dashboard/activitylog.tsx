@@ -7,6 +7,10 @@ import Link from "next/link";
 import { BsBookmarkPlus, BsBookmarkX } from "react-icons/bs";
 import { RiMailAddLine } from "react-icons/ri";
 import { HiOutlineUser, HiOutlineUserMinus } from "react-icons/hi2";
+import { GetServerSideProps } from "next";
+import { getServerSession } from "next-auth";
+import { getCsrfToken } from "next-auth/react";
+import { authOptions } from "../api/auth/[...nextauth]";
 
 const ActivityLog = () => {
   return (
@@ -164,6 +168,22 @@ export const ActivityTimeline = ({ username }: { username?: string }) => {
   }, [activityLog, username]);
 
   return <Timeline reverse mode="left" items={log} />;
+};
+
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+  const session = await getServerSession(req, res, authOptions);
+  const csrfToken = await getCsrfToken({ req });
+  if (!session)
+    return {
+      redirect: { destination: "/?sign-in" },
+      props: { data: [] },
+    };
+  if (!csrfToken) return { notFound: true };
+  return {
+    props: {
+      data: [],
+    },
+  };
 };
 
 export default ActivityLog;

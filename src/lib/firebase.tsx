@@ -1,4 +1,6 @@
 import { UserDetails } from "@/context/types.d";
+import { userConfig } from "@/utils/account-utils";
+import axios from "axios";
 import { initializeApp } from "firebase/app";
 import {
   connectAuthEmulator,
@@ -13,6 +15,7 @@ import {
   ref,
   uploadString,
 } from "firebase/storage";
+import { signIn as nextSignIn } from "next-auth/react";
 
 export const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_API_KEY,
@@ -33,7 +36,13 @@ export const firebaseStorage = getStorage(app);
 // connectAuthEmulator(auth, "http://localhost:9099");
 
 export const signIn = async (email: string, password: string) => {
-  await signInWithEmailAndPassword(auth, email, password);
+  const userCredential = await signInWithEmailAndPassword(
+    auth,
+    email,
+    password
+  );
+  const tokenId = await userCredential.user.getIdToken();
+  await nextSignIn("credentials", { redirect: false }, { tokenId });
 };
 
 export const signUp = async (details: UserDetails) => {

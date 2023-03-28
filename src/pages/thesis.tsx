@@ -1,33 +1,34 @@
 import Search from "@/components/search";
-import { ThesisItems } from "@/context/types.d";
+import { Course, ThesisItems } from "@/context/types.d";
 import { Divider } from "antd";
 import Head from "next/head";
 import Link from "next/link";
 import { GetServerSideProps } from "next";
 import { getData } from "@/lib/mongo";
 import { parseQuery } from "@/utils/server-utils";
+import { useEffect, useState } from "react";
+import useGlobalContext from "@/context/globalContext";
+import { useRouter } from "next/router";
+import { getAllThesis } from "@/utils/thesis-item-utils";
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const query = ctx.query;
-  const parsedQuery = parseQuery(query);
-  const thesisItems = await getData(
-    "thesis-abstract",
-    "thesis-items",
-    parsedQuery,
-    {
-      limit: 20,
-    }
-  );
-  const response = thesisItems.map((item) => {
-    (item._id as unknown as string) = item._id.toString();
-    return item;
-  });
-  return {
-    props: { thesisItems: response },
-  };
-};
+const Thesis = () => {
+  const { state: globalState, loadingState } = useGlobalContext();
+  const [thesisItems, setThesisItems] = useState<ThesisItems[]>([]);
+  const router = useRouter();
 
-const Thesis = (props: { thesisItems: ThesisItems[] }) => {
+  useEffect(() => {
+    loadingState.add("/thesis");
+    const title = router.query.title as string | undefined;
+    const course =
+      router.query.course && JSON.parse(router.query.course as string);
+    const year = router.query.year && JSON.parse(router.query.year as string);
+    getAllThesis({ title, course, year })
+      .then((res) => {
+        setThesisItems(res);
+      })
+      .finally(() => loadingState.remove("/thesis"));
+  }, [router]);
+
   return (
     <>
       <Head>
@@ -39,19 +40,29 @@ const Thesis = (props: { thesisItems: ThesisItems[] }) => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <section>
-        <div className="md:pt-20 md:flex md:place-items-center md:flex-col">
+        <div className="md:pt-20 md:flex md:place-items-center md:flex-col mb-10">
           <div className="grid w-full relative">
             <Search
               showFilter={true}
               className="place-self-center my-5 w-full max-w-3xl z-10 absolute top-0"
             />
-            {/* <SelectedFilter /> */}
             <Divider className="bg-white/30 mt-32" />
           </div>
           <div className="grid gap-2 w-full place-items-center lg:grid-cols-2 relative md:px-5">
-            {props.thesisItems?.map((props) => {
-              return <Items key={props._id} {...props} />;
-            })}
+            {globalState.loading.includes("/thesis") ? (
+              <>
+                <ItemsLoading />
+                <ItemsLoading />
+                <ItemsLoading />
+                <ItemsLoading />
+                <ItemsLoading />
+                <ItemsLoading />
+              </>
+            ) : (
+              thesisItems?.map((thesisItem) => {
+                return <Items key={thesisItem._id} {...thesisItem} />;
+              })
+            )}
           </div>
         </div>
       </section>
@@ -71,8 +82,11 @@ const Items = ({
     <div className="thesis_items w-full bg-slate-100 max-w-[50em] shadow-md rounded-md p-5 gap-2 md:gap-5 grid h-full">
       <div className="div2 flex flex-col gap-2">
         <div>
-          <Link href={`/thesis/${_id}`}>
-            <span className="text-sm text-[#38649C]">Title</span>
+          <span className="text-sm text-[#38649C]">Title</span>
+          <Link
+            className="hover:text-sky-700 hover:underline hover:decoration-1"
+            href={`/thesis/${_id}`}
+          >
             <h2>{title}</h2>
           </Link>
         </div>
@@ -95,13 +109,61 @@ const Items = ({
           </ul>
         </div>
       </div>
-      <div className="div1 p-3 bg-white shadow-md rounded-sm h-52 overflow-h_idden text-[0.7em] relative text-justify justify-self-center leading-4 ">
+      <div className="div1 p-3 bg-white shadow-md rounded-sm h-52 overflow-h_idden text-[0.7em] relative text-justify justify-self-center leading-4 w-full">
         <Link href={`/thesis/${_id}`}>
           <div className="overflow-hidden w-full h-full">
             <h4 className="text-center">Abstract</h4>
             <p className="indent-3">{abstract}</p>
           </div>
         </Link>
+      </div>
+    </div>
+  );
+};
+
+const ItemsLoading = () => {
+  return (
+    <div className="thesis_items w-full bg-slate-100 max-w-[50em] shadow-md rounded-md p-5 grid h-full gap-5">
+      <div className="div2 flex flex-col gap-5">
+        <div className="grid gap-2 max-w-xs">
+          <div className="w-1/4 h-2 sk_bg"></div>
+          <h2 className="w-full h-3 sk_bg"></h2>
+          <h2 className="w-1/2 h-3 sk_bg"></h2>
+        </div>
+        <div className="grid gap-2 max-w-xs">
+          <div className="w-1/4 h-2 sk_bg"></div>
+          <h2 className="w-1/2 h-3 sk_bg"></h2>
+        </div>
+        <div className="grid gap-2 max-w-xs">
+          <div className="w-1/4 h-2 sk_bg"></div>
+          <h2 className="w-1/2 h-3 sk_bg"></h2>
+        </div>
+      </div>
+      <div className="div3 grid gap-2 max-w-xs">
+        <div className="w-1/4 h-2 sk_bg"></div>
+        <h2 className="w-full h-3 sk_bg"></h2>
+        <h2 className="w-full h-3 sk_bg"></h2>
+        <h2 className="w-full h-3 sk_bg"></h2>
+        <h2 className="w-full h-3 sk_bg"></h2>
+      </div>
+      <div className="div1 p-3 bg-white shadow-md rounded-sm h-52 relative w-full ">
+        <div className="overflow-hidden w-full grid gap-1 h-fit">
+          <div className="w-1/4 h-2 sk_bg m-auto"></div>
+          <div className="w-10/12 h-2 sk_bg place-self-end"></div>
+          <div className="w-full h-2 sk_bg"></div>
+          <div className="w-full h-2 sk_bg"></div>
+          <div className="w-full h-2 sk_bg"></div>
+          <div className="w-full h-2 sk_bg"></div>
+          <div className="w-full h-2 sk_bg"></div>
+          <div className="w-full h-2 sk_bg"></div>
+          <div className="w-full h-2 sk_bg"></div>
+          <div className="w-full h-2 sk_bg"></div>
+          <div className="w-full h-2 sk_bg"></div>
+          <div className="w-full h-2 sk_bg"></div>
+          <div className="w-full h-2 sk_bg"></div>
+          <div className="w-full h-2 sk_bg"></div>
+          <div className="w-full h-2 sk_bg"></div>
+        </div>
       </div>
     </div>
   );

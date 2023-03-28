@@ -14,6 +14,9 @@ import {
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import { ObjectId } from "mongodb";
 import { NextApiRequest, NextApiResponse } from "next";
+import { getServerSession } from "next-auth";
+import { getCsrfToken } from "next-auth/react";
+import { authOptions } from "./auth/[...nextauth]";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
@@ -60,7 +63,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         }
       }
     }
-    const isValidated = await validateAuth(req);
+    const isValidated = await validateAuth(req, res);
     if (isValidated.error) {
       return res.status(400).json(isValidated);
     }

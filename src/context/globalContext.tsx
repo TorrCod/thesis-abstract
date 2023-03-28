@@ -27,7 +27,7 @@ import {
 const globalStateInit: GlobalState = {
   thesisItems: [],
   dateOption: [],
-  loading: false,
+  loading: [],
   recyclebin: [],
   searchThesis: [],
   filterState: {
@@ -45,6 +45,10 @@ const globalCtxInit: GlobalValue = {
     clear: () => {},
   }),
   updateFilter: () => {},
+  loadingState: {
+    add(key) {},
+    remove(key) {},
+  },
 };
 
 const GlobalContext = createContext<GlobalValue>(globalCtxInit);
@@ -74,6 +78,9 @@ const globalReducer = (
       return { ...state, filterState: action.payload };
     case "update-default-years":
       return { ...state, dateOption: action.payload };
+    case "add-loading": {
+      return { ...state, loading: action.payload };
+    }
   }
 };
 
@@ -134,11 +141,31 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
     dispatch({ type: "update-filter", payload: payload });
   };
 
+  const loadingState = {
+    add(key: string) {
+      dispatch({ type: "add-loading", payload: [...state.loading, key] });
+    },
+    remove(key: string) {
+      const oldLoadingData = [...state.loading];
+      const newLoadingData = oldLoadingData.filter((name) => name !== key);
+      dispatch({ type: "add-loading", payload: newLoadingData });
+    },
+  };
+
   return (
     <GlobalContext.Provider
-      value={{ state, dispatch, loadThesisItems, recycledThesis, updateFilter }}
+      value={{
+        state,
+        dispatch,
+        loadThesisItems,
+        recycledThesis,
+        updateFilter,
+        loadingState,
+      }}
     >
-      <LoadingGlobal loading={state.loading}>{children}</LoadingGlobal>
+      <LoadingGlobal loading={state.loading.includes("global")}>
+        {children}
+      </LoadingGlobal>
     </GlobalContext.Provider>
   );
 };

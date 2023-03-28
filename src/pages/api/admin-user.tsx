@@ -1,22 +1,25 @@
 import { ThesisItems } from "@/context/types.d";
+import { createSessionCookies, verifyIdToken } from "@/lib/firebase-admin";
 import {
   addData,
   addDataWithExpiration,
   deleteData,
-  generateId,
   getData,
   updateData,
-  updateUser,
 } from "@/lib/mongo";
 import { ActivitylogReason, CollectionName } from "@/lib/types";
 import { updateActivityLog, validateAuth } from "@/utils/server-utils";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import { ObjectId } from "mongodb";
 import { NextApiRequest, NextApiResponse } from "next";
+import { serialize } from "cookie";
+import { getServerSession } from "next-auth";
+import { authOptions } from "./auth/[...nextauth]";
+import { getCsrfToken } from "next-auth/react";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
-    const isValidated = await validateAuth(req);
+    const isValidated = await validateAuth(req, res);
     if (isValidated.error) {
       return res.status(400).json(isValidated);
     }
@@ -98,6 +101,30 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               name
             );
             return res.status(200).json(insertedResult);
+          }
+          case "create-user-session": {
+            const token = req.body.token;
+            const csrfToken = req.body.csrfToken;
+            if (token !== csrfToken)
+              return res.status(401).send("ANAUTHORIZE REQUEST!");
+
+            const decodedToken = (await verifyIdToken(token)) as DecodedIdToken;
+            if (decodedToken.auth_time! < 5 * 60)
+              return res.status(401).send("Recent sign in required");
+            // Set session expiration to 5 days.
+            const expiresIn = 60 * 60 * 24 * 5 * 1000;
+            const session = await createSessionCookies(token, { expiresIn });
+            return res
+              .setHeader(
+                "set-cookie",
+                serialize("session", session, {
+                  maxAge: expiresIn,
+                  httpOnly: true,
+                  path: "/",
+                })
+              )
+              .status(200)
+              .send("sucess");
           }
           default:
             return res.status(400).send("syntax error");

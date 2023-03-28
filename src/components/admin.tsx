@@ -14,6 +14,7 @@ import { RiDashboardLine } from "react-icons/ri";
 import { PriButton } from "./button";
 import SignInSignUp from "./signin_signup";
 import { AdminProps } from "./types.d";
+import { signOut as nextSignOut } from "next-auth/react";
 
 function AdminProfile({ userDetails, size, src }: AdminProps) {
   return (
@@ -42,27 +43,26 @@ export const AdminMenu = ({
       label: <Link href={"/account-setting"}>Account Setting</Link>,
     },
     {
-      key: "/dashboard/overview",
+      key: "/dashboard",
       icon: (
-        <Link href={"/dashboard/overview"}>
+        <Link href={"/dashboard"}>
           <RiDashboardLine size={"1.25em"} />
         </Link>
       ),
-      label: <Link href={"/dashboard/overview"}>Dashboard</Link>,
+      label: <Link href={"/dashboard"}>Dashboard</Link>,
     },
     {
       key: "logout",
       icon: <BiLogOut />,
       label: "Logout",
-      onClick: () => {
-        auth.signOut();
-        router.push("/");
+      onClick: async () => {
+        await auth.signOut();
+        await nextSignOut({ callbackUrl: "/" });
       },
     },
   ];
   return (
     <Dropdown
-      // placement={(position as any) ?? "bottom"}
       trigger={["click"]}
       dropdownRender={() => (
         <div className="bg-white rounded-md pt-5 shadow-md">

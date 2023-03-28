@@ -8,7 +8,7 @@ export interface GlobalState {
   dateOption: string[];
   recyclebin: ThesisItems[];
   signIn?: boolean;
-  loading: boolean;
+  loading: string[];
   filterState: {
     years: { all: boolean; option: string[] };
     course: { all: boolean; option: Course[] };
@@ -72,6 +72,10 @@ export type GlobalAction =
   | {
       type: "update-default-years";
       payload: string[];
+    }
+  | {
+      type: "add-loading";
+      payload: string[];
     };
 
 export type GlobalValue = {
@@ -92,6 +96,10 @@ export type GlobalValue = {
       option: Course[];
     };
   }) => void;
+  loadingState: {
+    add(key: string): void;
+    remove(key: string): void;
+  };
 };
 
 export type AdminData = {

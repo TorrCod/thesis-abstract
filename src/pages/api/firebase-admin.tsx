@@ -5,7 +5,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
-    const isValidate = await validateAuth(req);
+    const isValidate = await validateAuth(req, res);
     if (isValidate.error) {
       return res.status(400).json(isValidate);
     }

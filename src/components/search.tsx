@@ -1,7 +1,6 @@
 import {
   Checkbox,
   Col,
-  Divider,
   Dropdown,
   Form,
   Input,
@@ -18,7 +17,6 @@ import { CheckboxChangeEvent } from "antd/es/checkbox";
 import { CheckboxValueType } from "antd/es/checkbox/Group";
 import {
   courseOption,
-  FilterCheckBox,
   SearchAction,
   SearchProps,
   SearchState,
@@ -424,8 +422,30 @@ const SearchItem = (
 ) => {
   const [menuItem, setMenuItem] = useState<MenuProps["items"]>([]);
   let searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const router = useRouter();
   useEffect(() => {
+    let data: MenuProps["items"] = [
+      {
+        key: 1,
+        label: <div className="sk_bg h-4 mt-3 w-full" />,
+      },
+      {
+        key: 2,
+        label: <div className="sk_bg h-4 mt-3 w-full" />,
+      },
+      {
+        key: 3,
+        label: <div className="sk_bg h-4 mt-3 w-full" />,
+      },
+      {
+        key: 4,
+        label: <div className="sk_bg h-4 mt-3 w-full" />,
+      },
+      {
+        key: 5,
+        label: <div className="sk_bg h-4 mt-3 w-full" />,
+      },
+    ];
+    setMenuItem(data);
     clearTimeout(searchTimeoutRef.current ?? 0);
     searchTimeoutRef.current = setTimeout(() => {
       getAllThesis(
@@ -474,7 +494,7 @@ const SearchItem = (
     }, 200);
     return () => clearTimeout(searchTimeoutRef.current ?? 0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.checkBox, props.searchTitle, props.filter, props.limit]);
+  }, [props.searchTitle, props.filter, props.limit]);
 
   const handleSelect: MenuProps["onSelect"] = (item) => {
     props.searchDispatch({ type: "onfocus", payload: false });

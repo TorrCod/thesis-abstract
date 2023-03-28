@@ -4,9 +4,19 @@ import { PriButton } from "@/components/button";
 import Search from "@/components/search";
 import { useEffect } from "react";
 import PdfDownloadLink from "@/components/pdfDocs";
+import { GetServerSideProps } from "next";
+import useGlobalContext from "@/context/globalContext";
 
-export default function Home() {
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  return { props: { query: context.query } };
+};
+
+export default function Home(props: { query: string }) {
+  const { dispatch } = useGlobalContext();
   useEffect(() => {
+    if (Object.keys(props.query).includes("sign-in")) {
+      dispatch({ type: "sign-in", payload: true });
+    }
     document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = "visible";

@@ -9,12 +9,19 @@ import { ThesisCharts } from "./thesis";
 import { GetServerSideProps } from "next";
 import { auth } from "firebase-admin";
 import { verifySessionCookie } from "@/lib/firebase-admin";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../api/auth/[...nextauth]";
+import { getCsrfToken } from "next-auth/react";
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  // const cookies = ctx.req.cookies;
-  // const sessionCookie = cookies["__session"] || "";
-  // const decodedClaims = await verifySessionCookie(sessionCookie);
-  // console.log(decodedClaims);
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+  const session = await getServerSession(req, res, authOptions);
+  const csrfToken = await getCsrfToken({ req });
+  if (!session)
+    return {
+      redirect: { destination: "/?sign-in" },
+      props: { data: [] },
+    };
+  if (!csrfToken) return { notFound: true };
   return {
     props: {
       data: [],

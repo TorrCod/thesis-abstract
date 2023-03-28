@@ -7,8 +7,6 @@ import { ActivityTimeline } from "./activitylog";
 import { AdminTable } from "./admins";
 import { ThesisCharts } from "./thesis";
 import { GetServerSideProps } from "next";
-import { auth } from "firebase-admin";
-import { verifySessionCookie } from "@/lib/firebase-admin";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]";
 import { getCsrfToken } from "next-auth/react";

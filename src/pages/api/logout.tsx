@@ -6,7 +6,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     serialize("next-auth.csrf-token", "", { maxAge: -1, path: "/" }),
     serialize("next-auth.callback-url", "", { maxAge: -1, path: "/" }),
   ]);
-
   return res.end();
 };
 

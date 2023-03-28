@@ -143,6 +143,7 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
 
   const loadingState = {
     add(key: string) {
+      if (state.loading.includes(key)) return;
       dispatch({ type: "add-loading", payload: [...state.loading, key] });
     },
     remove(key: string) {

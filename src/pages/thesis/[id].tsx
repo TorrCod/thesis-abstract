@@ -7,6 +7,9 @@ import dynamic from "next/dynamic";
 import Head from "next/head";
 import { GetServerSideProps } from "next";
 import { ObjectId } from "mongodb";
+import { useEffect } from "react";
+import { useRouter } from "next/router";
+import useGlobalContext from "@/context/globalContext";
 
 const PdfLink = dynamic(() => import("@/components/pdfDocs"), {
   ssr: false,
@@ -37,6 +40,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 const ThesisItemsView = (props: { data: ThesisItems; hasError: boolean }) => {
+  const router = useRouter();
+  const { loadingState } = useGlobalContext();
+
+  useEffect(() => {
+    loadingState.add("view-thesis");
+    loadingState.remove("view-thesis");
+  }, [router.query.title, router.query.course, router.query.year]);
+
   return (
     <>
       <Head>

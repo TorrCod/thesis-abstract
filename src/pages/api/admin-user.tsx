@@ -19,11 +19,7 @@ import { getCsrfToken } from "next-auth/react";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
-    const session = await getServerSession(req, res, authOptions);
-    const csrfToken = await getCsrfToken({ req });
-    const isValidated = await validateAuth(req);
-    if (!session && !csrfToken)
-      return res.status(401).send("UNAUTHORIZE ACCESS");
+    const isValidated = await validateAuth(req, res);
     if (isValidated.error) {
       return res.status(400).json(isValidated);
     }

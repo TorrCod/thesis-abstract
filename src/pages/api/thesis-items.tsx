@@ -63,12 +63,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         }
       }
     }
-    const csrfToken = await getCsrfToken({ req });
-    const session = await getServerSession(req, res, authOptions);
-    if (csrfToken && session) {
-      return res.status(401).send("NOT AUTHORIZE");
-    }
-    const isValidated = await validateAuth(req);
+    const isValidated = await validateAuth(req, res);
     if (isValidated.error) {
       return res.status(400).json(isValidated);
     }

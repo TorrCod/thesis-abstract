@@ -2,17 +2,26 @@ import { UserDetails } from "@/context/types.d";
 import { verifyIdToken } from "@/lib/firebase-admin";
 import { addData, getData } from "@/lib/mongo";
 import { ActivitylogReason } from "@/lib/types";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import { ObjectId } from "mongodb";
-import { NextApiRequest } from "next";
+import { NextApiRequest, NextApiResponse } from "next";
+import { getServerSession } from "next-auth";
+import { getCsrfToken } from "next-auth/react";
 
 export const validateAuth = async (
-  req: NextApiRequest
+  req: NextApiRequest,
+  res: NextApiResponse
 ): Promise<{
   error?: string;
   validated?: boolean;
   decodedToken?: DecodedIdToken | false;
 }> => {
+  const csrfToken = await getCsrfToken({ req });
+  const session = await getServerSession(req, res, authOptions);
+  if (!csrfToken && !session) {
+    return { error: "UNAUTHORIZE ACCESS" };
+  }
   if (!req.headers.authorization) return { error: "Insufficient Input" };
   const token = req.headers.authorization?.slice(7);
   const checkAuth = await verifyIdToken(token);

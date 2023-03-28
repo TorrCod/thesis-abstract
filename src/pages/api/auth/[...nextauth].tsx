@@ -1,11 +1,10 @@
-import { signIn } from "@/lib/firebase";
+import { UserDetails } from "@/context/types.d";
 import { verifyIdToken } from "@/lib/firebase-admin";
-import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
-import NextAuth, { User } from "next-auth";
+import { getData } from "@/lib/mongo";
+import NextAuth, { AuthOptions, User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
-export const authOptions = {
-  // Configure one or more authentication providers
+export const authOptions: AuthOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -14,32 +13,22 @@ export const authOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(_, req) {
-        const tokenId = req.query?.tokenId;
+        const tokenId = req.query?.tokenId as string;
         const decodedToken = await verifyIdToken(tokenId);
         if (!decodedToken) return null;
         return {
-          id: decodedToken.aud,
+          id: decodedToken.uid,
           email: decodedToken.email,
           image: decodedToken.picture,
         };
       },
     }),
   ],
-
-  jwt: { secret: process.env.NEXTAUTH_SECRET },
-
+  session: { strategy: "jwt" },
   pages: {
     signIn: "/",
     signOut: "/",
     error: "/page-not-found", // Error code passed in query string as ?error=
-  },
-
-  callbacks: {
-    async session({ session, token, user }: any) {
-      console.log(token);
-      console.log(user);
-      return session;
-    },
   },
 };
 

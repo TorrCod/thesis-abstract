@@ -15,6 +15,7 @@ import {
   ref,
   uploadString,
 } from "firebase/storage";
+import { signIn as nextSignIn } from "next-auth/react";
 
 export const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_API_KEY,
@@ -40,14 +41,8 @@ export const signIn = async (email: string, password: string) => {
     email,
     password
   );
-  // const token = await userCredential.user.getIdToken();
-  //   const csrfToken = {}
-  // await axios.request({
-  //   url: "/api/admin-user?objective=create-user-session",
-  //   method: "POST",
-  //   data: { token, csrfToken },
-  //   ...userConfig(token),
-  // });
+  const tokenId = await userCredential.user.getIdToken();
+  await nextSignIn("credentials", { callbackUrl: "/" }, { tokenId });
 };
 
 export const signUp = async (details: UserDetails) => {

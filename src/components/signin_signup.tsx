@@ -8,6 +8,7 @@ import useGlobalContext from "@/context/globalContext";
 import { useRouter } from "next/router";
 import { signIn } from "@/lib/firebase";
 import { useSession } from "next-auth/react";
+import Cookies from "universal-cookie";
 
 const SignInSignUp = () => {
   const [open, setOpen] = useState(false);
@@ -53,7 +54,7 @@ const SignInSignUp = () => {
     setOpen(true);
   };
 
-  return session ? (
+  return session.status === "authenticated" ? (
     <AdminProfile userDetails={userCtx.state.userDetails} />
   ) : (
     <>

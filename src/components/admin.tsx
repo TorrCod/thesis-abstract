@@ -15,6 +15,7 @@ import { PriButton } from "./button";
 import SignInSignUp from "./signin_signup";
 import { AdminProps } from "./types.d";
 import { signOut as nextSignOut } from "next-auth/react";
+import axios from "axios";
 
 function AdminProfile({ userDetails, size, src }: AdminProps) {
   return (
@@ -32,6 +33,13 @@ export const AdminMenu = ({
   position?: "bottomLeft" | "bottomRight" | "bottomCenter";
 }) => {
   const userCtxState = useUserContext().state;
+
+  const handleLogOut = async () => {
+    await auth.signOut();
+    await nextSignOut({ redirect: false });
+    await axios.get("/api/logout");
+  };
+
   const userMenu: MenuProps["items"] = [
     {
       key: "/account-setting",
@@ -55,10 +63,7 @@ export const AdminMenu = ({
       key: "logout",
       icon: <BiLogOut />,
       label: "Logout",
-      onClick: async () => {
-        await auth.signOut();
-        await nextSignOut({ callbackUrl: "/" });
-      },
+      onClick: handleLogOut,
     },
   ];
   return (

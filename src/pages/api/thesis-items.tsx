@@ -28,7 +28,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           )) as number[];
           distinctYears.sort((a, b) => b - a);
           const stringifyYears = distinctYears.map((item) => item.toString());
-          return res.status(200).json(stringifyYears);
+          return res.status(200).json([...new Set(stringifyYears)]);
         }
         case "get-one": {
           const _id = req.query._id as string | undefined;

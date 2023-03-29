@@ -42,9 +42,17 @@ import {
 import { ResponsiveContainer } from "recharts";
 import { authOptions } from "../api/auth/[...nextauth]";
 
+const menuItems: MenuProps["items"] = [
+  { key: "thesis-items", label: "Thesis Items" },
+  { key: "recyclebin", label: "Recycle Bin" },
+];
+
 const DashboardThesis = () => {
   const { state: globalStatate } = useGlobalContext();
   const router = useRouter();
+  const handleMenu: MenuProps["onSelect"] = (item) => {
+    router.push(`/dashboard/thesis?${`tab=${item.key}`}`);
+  };
   return (
     <DashboardLayout
       userSelectedMenu="/dashboard"
@@ -103,10 +111,25 @@ const DashboardThesis = () => {
           <p className="opacity-60 mb-5">Manage Thesis Abstracts</p>
           <QuerySearch
             onSearch={(query) => {
-              router.push(`/dashboard/thesis${query ? `?title=${query}` : ``}`);
+              router.push(`/dashboard/thesis?${query ? `title=${query}` : ``}`);
             }}
           />
-          <ThesisTable />
+          <div className="min-h-[20em]">
+            <Menu
+              onSelect={handleMenu}
+              mode="horizontal"
+              items={menuItems}
+              defaultSelectedKeys={[
+                (router.query.tab as string) ?? "thesis-items",
+              ]}
+            />
+
+            {router.query.tab === "recyclebin" ? (
+              <RecycledTable />
+            ) : (
+              <ThesisTable />
+            )}
+          </div>
         </div>
       </div>
     </DashboardLayout>
@@ -150,129 +173,105 @@ type DataType = {
   [key: string]: any;
 };
 
+const tableColumn: ColumnsType<DataType> = [
+  {
+    title: "Title",
+    dataIndex: "title",
+    key: "title",
+    render: (text, record) => (
+      <Link href={"/thesis/" + record.key}>{text}</Link>
+    ),
+  },
+  {
+    title: "Course",
+    dataIndex: "course",
+    key: "course",
+  },
+];
+
+const thesisTableColumn: ColumnsType<DataType> = [
+  ...tableColumn,
+  {
+    title: "Date Added",
+    dataIndex: "dateAdded",
+    key: "dateAdded",
+  },
+  {
+    title: "Action",
+    key: "action",
+    dataIndex: "action",
+    render: (_, record) => <RemoveThesis {...record} id={record.key} />,
+  },
+];
+
 export const ThesisTable = () => {
   const userDetails = useUserContext().state.userDetails;
-  const { state, recycledThesis, loadThesisItems, loadingState } =
-    useGlobalContext();
+  const { state, loadThesisItems } = useGlobalContext();
   const [thesisTableData, setThesisTableData] = useState<DataType[]>([]);
-  const [removedTableData, setRemovedTableData] = useState<DataType[]>([]);
-  const [selectedKeys, setSelectedKeys] = useState("thesis-items");
-  const router = useRouter();
 
   useEffect(() => {
-    if (router.query.tab) {
-      setRemovedTableData((oldState) => {
-        return oldState.filter((item) => item.key === router.query.id);
-      });
-      setSelectedKeys(router.query.tab as string);
-    } else if (router.query.title) {
-      const title = router.query.title as string;
-      getAllThesis({ title: title })
-        .then(async (thesisItems) => {
-          const tableData = thesisToDataType(thesisItems);
-          setThesisTableData(tableData);
-        })
-        .finally(() => loadingState.remove("all-thesis"));
-    } else {
-      if (userDetails && !state.thesisItems.length) {
-        const recycled = recycledThesis();
-        recycled.load();
-        loadThesisItems();
-      }
+    if (userDetails && !state.thesisItems.length) {
+      loadThesisItems();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router.query, userDetails, state.thesisItems]);
+  }, [userDetails, state.thesisItems.length]);
 
   useEffect(() => {
     const thesisItems = state.thesisItems;
     const toTableThesisItems = thesisToDataType(thesisItems);
     setThesisTableData(toTableThesisItems);
-    const recycleItems = state.recyclebin;
-    const toTableRecycle = thesisToDataType(recycleItems);
-    setRemovedTableData(toTableRecycle);
-  }, [state.thesisItems, state.recyclebin]);
-
-  const menuItems: MenuProps["items"] = [
-    { key: "thesis-items", label: "Thesis Items" },
-    { key: "recyclebin", label: "Recycle Bin" },
-  ];
-
-  const tableColumn: ColumnsType<DataType> = [
-    {
-      title: "Title",
-      dataIndex: "title",
-      key: "title",
-      render: (text, record) => (
-        <Link href={"/thesis/" + record.key}>{text}</Link>
-      ),
-    },
-    {
-      title: "Course",
-      dataIndex: "course",
-      key: "course",
-    },
-  ];
-
-  const thesisTableColumn: ColumnsType<DataType> = [
-    ...tableColumn,
-    {
-      title: "Date Added",
-      dataIndex: "dateAdded",
-      key: "dateAdded",
-    },
-    {
-      title: "Action",
-      key: "action",
-      dataIndex: "action",
-      render: (_, record) => <RemoveThesis {...record} id={record.key} />,
-    },
-  ];
-
-  const removeTableColumn: ColumnsType<DataType> = [
-    ...tableColumn,
-    {
-      title: "Expire At",
-      key: "expireAt",
-      dataIndex: "expireAt",
-    },
-    {
-      title: "Action",
-      key: "action",
-      dataIndex: "action",
-      render: (_, record) => <RestoreThesis {...record} id={record.key} />,
-    },
-  ];
+  }, [state.thesisItems]);
 
   return (
-    <div className="min-h-[20em]">
-      <Menu
-        onSelect={(item) => {
-          setSelectedKeys(item.key);
-          router.push("/dashboard/thesis");
-        }}
-        mode="horizontal"
-        items={menuItems}
-        defaultSelectedKeys={[(router.query.tab as string) ?? "thesis-items"]}
-      />
-      {selectedKeys === "thesis-items" && (
-        <Table
-          loading={state.loading.includes("all-thesis")}
-          className="min-w-[40em]"
-          columns={thesisTableColumn}
-          dataSource={thesisTableData}
-        />
-      )}
-      {selectedKeys === "recyclebin" && (
-        <Table
-          className="min-w-[40em]"
-          columns={removeTableColumn.map((item) => {
-            if (item.key === "title") item.render = undefined;
-            return item;
-          })}
-          dataSource={removedTableData}
-        />
-      )}
-    </div>
+    <Table
+      loading={state.loading.includes("all-thesis")}
+      className="min-w-[40em]"
+      columns={thesisTableColumn}
+      dataSource={thesisTableData}
+    />
+  );
+};
+
+const removeTableColumn: ColumnsType<DataType> = [
+  ...tableColumn,
+  {
+    title: "Expire At",
+    key: "expireAt",
+    dataIndex: "expireAt",
+  },
+  {
+    title: "Action",
+    key: "action",
+    dataIndex: "action",
+    render: (_, record) => <RestoreThesis {...record} id={record.key} />,
+  },
+];
+
+const RecycledTable = () => {
+  const [removedTableData, setRemovedTableData] = useState<DataType[]>([]);
+  const { state, recycledThesis } = useGlobalContext();
+  const { userDetails } = useUserContext().state;
+
+  useEffect(() => {
+    if (userDetails && !state.thesisItems.length) {
+      recycledThesis().load();
+    }
+  }, [userDetails, state.thesisItems.length]);
+
+  useEffect(() => {
+    const thesisItems = state.recyclebin;
+    const toTableThesisItems = thesisToDataType(thesisItems);
+    setRemovedTableData(toTableThesisItems);
+  }, [state.recyclebin]);
+
+  return (
+    <Table
+      className="min-w-[40em]"
+      columns={removeTableColumn.map((item) => {
+        if (item.key === "title") item.render = undefined;
+        return item;
+      })}
+      dataSource={removedTableData}
+    />
   );
 };
 

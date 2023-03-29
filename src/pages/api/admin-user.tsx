@@ -46,8 +46,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               return { ...item, userName: response?.userName };
             });
             const withUsername = await Promise.all(withUserName_promise);
-            console.log(withUsername);
-
             return res.status(200).json(withUsername);
           }
           default: {

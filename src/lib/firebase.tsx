@@ -42,7 +42,7 @@ export const signIn = async (email: string, password: string) => {
     password
   );
   const tokenId = await userCredential.user.getIdToken();
-  await nextSignIn("credentials", { redirect: false }, { tokenId });
+  await nextSignIn("credentials", { callbackUrl: "/dashboard" }, { tokenId });
 };
 
 export const signUp = async (details: UserDetails) => {

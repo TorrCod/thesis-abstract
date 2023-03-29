@@ -46,16 +46,9 @@ export const ActivityTimeline = ({ userId }: { userId?: string }) => {
 
   useEffect(() => {
     const load = async () => {
-      const newLog = activityLog.map(async (item) => {
-        const setData = async () => {
-          const token = await auth.currentUser?.getIdToken();
-          const response = await getUserDetails(token, item.userId, {
-            projection: { userName: 1 },
-          });
-          const readedItem = await readActivityLogReason(
-            item,
-            response.userName
-          );
+      const newLog = activityLog.map((item) => {
+        const setData = () => {
+          const readedItem = readActivityLogReason(item);
           return {
             label: new Date(item.date).toLocaleString(),
             children: <div>{readedItem?.reason}</div>,
@@ -63,13 +56,14 @@ export const ActivityTimeline = ({ userId }: { userId?: string }) => {
             color: readedItem?.color,
           };
         };
+
         if (!userId || userId === item.userId) {
-          return await setData();
+          return setData();
         }
+
         return null; // <-- Add a return statement outside the if statement to return a value in case the condition is not met
       });
-      const filteredLog = await Promise.all(newLog);
-      const newLogFiltered = filteredLog.filter(async (item) => item !== null);
+      const newLogFiltered = newLog.filter(async (item) => item !== null);
       setLog(newLogFiltered as any);
     };
     load();

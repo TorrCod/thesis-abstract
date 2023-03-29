@@ -1,10 +1,11 @@
-import { ThesisItems } from "@/context/types.d";
+import { ActivityLog, ThesisItems } from "@/context/types.d";
 import { createSessionCookies, verifyIdToken } from "@/lib/firebase-admin";
 import {
   addData,
   addDataWithExpiration,
   deleteData,
   getData,
+  getOneData,
   updateData,
 } from "@/lib/mongo";
 import { ActivitylogReason, CollectionName } from "@/lib/types";
@@ -26,18 +27,44 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
     switch (req.method) {
       case "GET": {
-        const collection = req.query.collection as CollectionName;
-        const uid = req.query.uid as string | undefined;
-        const query = uid
-          ? { uid: uid }
-          : req.query._id
-          ? { _id: new ObjectId(req.query._ud as string) }
-          : undefined;
-        const parse = parseQuery(req);
-        const userDetails = await getData("accounts", collection, query, {
-          ...parse.option,
-        });
-        return res.status(200).json(userDetails);
+        switch (req.query.objective) {
+          case "get-activitylog": {
+            const parse = parseQuery(req);
+            const activityLog = await getData(
+              "accounts",
+              "activity-log",
+              parse.query,
+              { ...parse.option }
+            );
+            const withUserName_promise = activityLog.map(async (item) => {
+              const response = await getOneData(
+                "accounts",
+                "user",
+                { uid: item.userId },
+                { projection: { userName: 1 } }
+              );
+              return { ...item, userName: response?.userName };
+            });
+            const withUsername = await Promise.all(withUserName_promise);
+            console.log(withUsername);
+
+            return res.status(200).json(withUsername);
+          }
+          default: {
+            const collection = req.query.collection as CollectionName;
+            const uid = req.query.uid as string | undefined;
+            const query = uid
+              ? { uid: uid }
+              : req.query._id
+              ? { _id: new ObjectId(req.query._ud as string) }
+              : undefined;
+            const parse = parseQuery(req);
+            const userDetails = await getData("accounts", collection, query, {
+              ...parse.option,
+            });
+            return res.status(200).json(userDetails);
+          }
+        }
       }
       case "DELETE": {
         const collection = req.query.collection as CollectionName;

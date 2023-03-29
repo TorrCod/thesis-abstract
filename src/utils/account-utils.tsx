@@ -154,7 +154,7 @@ export const getAllUsers = async (token: string | undefined) => {
 export const getActivityLog = async (token: string | undefined) => {
   if (token) {
     const activityLog = await axios.request({
-      url: `/api/admin-user?collection=activity-log`,
+      url: `/api/admin-user?objective=get-activitylog`,
       method: "GET",
       ...userConfig(token),
     });

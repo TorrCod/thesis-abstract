@@ -128,8 +128,8 @@ export type UserState = {
 
 export type ActivityLog = {
   userId: string;
+  userName: string;
   _id: string;
-  id: string;
   data: { itemId: string; name: string };
   date: string;
   reason: ActivitylogReason;

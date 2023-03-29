@@ -64,10 +64,7 @@ export const sleep = (ms: number) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
 };
 
-export const readActivityLogReason = async (
-  item: ActivityLog,
-  username: string
-) => {
+export const readActivityLogReason = (item: ActivityLog) => {
   let dot = undefined;
   let color = undefined;
   let reason = <></>;
@@ -81,7 +78,7 @@ export const readActivityLogReason = async (
       color = "white";
       reason = (
         <Link href={`/dashboard/admins?_id=${item.data.itemId}`}>
-          {username} {item.reason} ({item.data.name})
+          {item.userName} {item.reason} ({item.data.name})
         </Link>
       );
       break; // <-- Add break statements for each case
@@ -95,7 +92,7 @@ export const readActivityLogReason = async (
       color = "white";
       reason = (
         <Link href={`/dashboard/admins?_id=${item.data.itemId}`}>
-          {username} {item.reason} ({item.data.name})
+          {item.userName} {item.reason} ({item.data.name})
         </Link>
       );
       break;
@@ -109,7 +106,7 @@ export const readActivityLogReason = async (
       color = "white";
       reason = (
         <Link href={`/dashboard/admins?_id=${item.data.itemId}`}>
-          {username} {item.reason} ({item.data.name})
+          {item.userName} {item.reason} ({item.data.name})
         </Link>
       );
       break;
@@ -123,7 +120,7 @@ export const readActivityLogReason = async (
       color = "white";
       reason = (
         <div>
-          {username} {item.reason} ({item.data.name})
+          {item.userName} {item.reason} ({item.data.name})
         </div>
       );
       break;
@@ -137,7 +134,7 @@ export const readActivityLogReason = async (
       color = "white";
       reason = (
         <Link href={`/thesis/${item.data.itemId}`}>
-          {username} {item.reason} ({item.data.name})
+          {item.userName} {item.reason} ({item.data.name})
         </Link>
       );
       break;
@@ -151,7 +148,7 @@ export const readActivityLogReason = async (
       color = "white";
       reason = (
         <Link href={`/dashboard/thesis?tab=recyclebin&_id=${item.data.itemId}`}>
-          {username} {item.reason} ({item.data.name})
+          {item.userName} {item.reason} ({item.data.name})
         </Link>
       );
       break;
@@ -165,7 +162,7 @@ export const readActivityLogReason = async (
       color = "white";
       reason = (
         <Link href={`/thesis/${item.data.itemId}`}>
-          {username} {item.reason} ({item.data.name})
+          {item.userName} {item.reason} ({item.data.name})
         </Link>
       );
       break;

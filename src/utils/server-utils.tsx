@@ -49,8 +49,6 @@ export const updateActivityLog = async (
   });
   return insertedResult;
 };
-
-// export const parseQuery = (object: Object) => {
 //   const res = Object.fromEntries(
 //     Object.entries(object).filter(
 //       ([_, value]) => value !== undefined && value !== ""
@@ -101,4 +99,8 @@ export const parseQuery = (req: NextApiRequest) => {
     query: res,
     option,
   };
+};
+
+export const sleep = (ms: number) => {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 };

@@ -12,16 +12,16 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 export default function Home(props: { query: string }) {
-  const { dispatch } = useGlobalContext();
+  const { promptToSignIn } = useGlobalContext();
   useEffect(() => {
     if (Object.keys(props.query).includes("sign-in")) {
-      dispatch({ type: "sign-in", payload: true });
+      promptToSignIn();
     }
     document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = "visible";
     };
-  }, []);
+  }, [promptToSignIn]);
 
   return (
     <>

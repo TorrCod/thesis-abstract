@@ -25,7 +25,7 @@ export const getOneById = async (
   const res = await axios.get(
     `${
       process.env.NEXT_PUBLIC_DOMAIN
-    }/api/thesis-items?objective=get-one&_id=${_id}${
+    }/api/public/thesis?objective=get-one&_id=${_id}${
       projection
         ? `&projection=${encodeURIComponent(JSON.stringify(projection))}`
         : ``

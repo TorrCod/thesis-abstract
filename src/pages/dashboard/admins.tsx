@@ -252,10 +252,10 @@ export const AdminTable = ({ noAction }: { noAction?: boolean }) => {
   }, [noAction]);
 
   useEffect(() => {
-    if (state.userDetails) {
+    if (state.userDetails && !state.listOfAdmins.length) {
       loadAllUsers();
     }
-  }, [state.userDetails]);
+  }, [state.userDetails, state.listOfAdmins]);
 
   useEffect(() => {
     if (router.query.username) {

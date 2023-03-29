@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Timeline, TimelineItemProps } from "antd";
 import DashboardLayout from "@/components/dashboardLayout";
 import useUserContext from "@/context/userContext";
@@ -31,6 +31,15 @@ export const ActivityTimeline = ({ username }: { username?: string }) => {
   const [log, setLog] = useState<TimelineItemProps[]>([]);
   const userCtx = useUserContext();
   const { activityLog } = userCtx.state;
+  const { loadActivityLog } = userCtx;
+  const runOnece = useRef(false);
+
+  useEffect(() => {
+    if (userCtx.state.userDetails && !activityLog.length && !runOnece.current) {
+      loadActivityLog();
+      runOnece.current = true;
+    }
+  }, [userCtx.state.userDetails, activityLog]);
 
   useEffect(() => {
     const load = async () => {

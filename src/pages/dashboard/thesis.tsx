@@ -5,11 +5,7 @@ import { Course } from "@/context/types.d";
 import useUserContext from "@/context/userContext";
 import { auth } from "@/lib/firebase";
 import { thesisToDataType } from "@/utils/helper";
-import {
-  getAllThesis,
-  removeThesis,
-  restoreThesis,
-} from "@/utils/thesis-item-utils";
+import { removeThesis, restoreThesis } from "@/utils/thesis-item-utils";
 import {
   Button,
   Card,

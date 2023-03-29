@@ -48,8 +48,7 @@ const DashboardThesis = () => {
   const { state: globalStatate } = useGlobalContext();
   const router = useRouter();
   const handleMenu: MenuProps["onSelect"] = (item) => {
-    const newQuery = stringify({ ...router.query, tab: item.key });
-    router.push(`/dashboard/thesis?${newQuery}`);
+    router.push(`/dashboard/thesis?tab=${item.key}`);
   };
   return (
     <DashboardLayout

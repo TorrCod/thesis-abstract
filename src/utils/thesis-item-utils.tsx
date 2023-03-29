@@ -1,4 +1,9 @@
-import { SearchOption, SearchQuery, ThesisItems } from "@/context/types.d";
+import {
+  SearchOption,
+  SearchQuery,
+  ThesisCount,
+  ThesisItems,
+} from "@/context/types.d";
 import axios from "axios";
 import { userConfig } from "./account-utils";
 
@@ -40,6 +45,14 @@ export const getDistincYear = async () => {
     `${process.env.NEXT_PUBLIC_DOMAIN}/api/public/thesis?collection=thesis-items&objective=get-distinct-years`
   );
   const data = res.data as string[];
+  return data;
+};
+
+export const getThesisCount = async () => {
+  const res = await axios.get(
+    `${process.env.NEXT_PUBLIC_DOMAIN}/api/public/thesis?collection=thesis-items&objective=get-thesis-count`
+  );
+  const data = res.data as { thesisCount: ThesisCount; totalCount: number };
   return data;
 };
 

@@ -114,7 +114,10 @@ const DashboardThesis = () => {
 };
 
 export const ThesisCharts = () => {
-  const { state: globalStatate } = useGlobalContext();
+  const { state: globalStatate, loadThesisCount } = useGlobalContext();
+  useEffect(() => {
+    loadThesisCount();
+  }, []);
 
   return (
     <ResponsiveContainer width={"99%"} height="99%">

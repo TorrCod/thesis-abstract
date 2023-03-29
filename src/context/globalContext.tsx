@@ -5,6 +5,7 @@ import {
   getAllDeletedThesis,
   getAllThesis,
   getDistincYear,
+  getThesisCount,
 } from "@/utils/thesis-item-utils";
 import { useRouter } from "next/router";
 import React, {
@@ -59,6 +60,7 @@ const globalCtxInit: GlobalValue = {
     remove(key) {},
   },
   promptToSignIn() {},
+  async loadThesisCount() {},
 };
 
 const GlobalContext = createContext<GlobalValue>(globalCtxInit);
@@ -90,6 +92,9 @@ const globalReducer = (
       return { ...state, dateOption: action.payload };
     case "add-loading": {
       return { ...state, loading: action.payload };
+    }
+    case "load-thesis-count": {
+      return { ...state, totalThesisCount: action.payload };
     }
   }
 };
@@ -174,6 +179,15 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
     dispatch({ type: "sign-in", payload: true });
   };
 
+  const loadThesisCount = async () => {
+    try {
+      const countThesis = await getThesisCount();
+      dispatch({ type: "load-thesis-count", payload: countThesis });
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   return (
     <GlobalContext.Provider
       value={{
@@ -184,6 +198,7 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
         updateFilter,
         loadingState,
         promptToSignIn,
+        loadThesisCount,
       }}
     >
       <LoadingGlobal loading={state.loading.includes("global")}>

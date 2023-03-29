@@ -79,6 +79,10 @@ export type GlobalAction =
   | {
       type: "add-loading";
       payload: string[];
+    }
+  | {
+      type: "load-thesis-count";
+      payload: { thesisCount: ThesisCount; totalCount: number };
     };
 
 export type GlobalValue = {
@@ -104,6 +108,7 @@ export type GlobalValue = {
     remove(key: string): void;
   };
   promptToSignIn: () => void;
+  loadThesisCount: () => Promise<void>;
 };
 
 export type AdminData = {

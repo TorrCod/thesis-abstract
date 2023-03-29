@@ -49,20 +49,6 @@ export const updateActivityLog = async (
   });
   return insertedResult;
 };
-//   const res = Object.fromEntries(
-//     Object.entries(object).filter(
-//       ([_, value]) => value !== undefined && value !== ""
-//     )
-//   );
-//   if (res.course) (res.course as any) = { $in: JSON.parse(res.course) };
-//   if (res.year) {
-//     res.year = (JSON.parse(res.year) as string[]).map((item) => parseInt(item));
-//     res.year = { $in: res.year };
-//   }
-//   if (res.title)
-//     (res.title as any) = { $regex: new RegExp(`${res.title}`, "i") };
-//   return res;
-// };
 
 export const parseQuery = (req: NextApiRequest) => {
   const { year, course, title } = req.query as {

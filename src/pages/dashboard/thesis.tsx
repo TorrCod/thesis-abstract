@@ -37,6 +37,7 @@ import {
 } from "recharts";
 import { ResponsiveContainer } from "recharts";
 import { authOptions } from "../api/auth/[...nextauth]";
+import { stringify } from "querystring";
 
 const menuItems: MenuProps["items"] = [
   { key: "thesis-items", label: "Thesis Items" },
@@ -47,7 +48,8 @@ const DashboardThesis = () => {
   const { state: globalStatate } = useGlobalContext();
   const router = useRouter();
   const handleMenu: MenuProps["onSelect"] = (item) => {
-    router.push(`/dashboard/thesis?${`tab=${item.key}`}`);
+    const newQuery = stringify({ ...router.query, tab: item.key });
+    router.push(`/dashboard/thesis?${newQuery}`);
   };
   return (
     <DashboardLayout
@@ -106,8 +108,12 @@ const DashboardThesis = () => {
         <div className="mt-5 bg-white grid gap-1 rounded-md p-5 overflow-auto">
           <p className="opacity-60 mb-5">Manage Thesis Abstracts</p>
           <QuerySearch
-            onSearch={(query) => {
-              router.push(`/dashboard/thesis?${query ? `title=${query}` : ``}`);
+            onSearch={(searchText) => {
+              const newQuery = stringify({
+                ...router.query,
+                title: searchText,
+              });
+              router.push(`/dashboard/thesis?${newQuery}`);
             }}
           />
           <div className="min-h-[20em]">

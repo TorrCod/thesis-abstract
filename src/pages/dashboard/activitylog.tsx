@@ -22,9 +22,11 @@ const ActivityLog = () => {
       userSelectedSider="/dashboard/activitylog"
     >
       <div className="opacity-80 mb-3">Dashboard {">"} Activity Log</div>
-      <div className="bg-white rounded-md p-5 flex flex-col gap-2">
+      <div className="bg-white rounded-md p-5 grid gap-2 overflow-hidden">
         <p className="opacity-60 mb-5">History</p>
-        <ActivityTimeline />
+        <div className="md:-translate-x-40 lg:-translate-x-60">
+          <ActivityTimeline />
+        </div>
       </div>
     </DashboardLayout>
   );

@@ -150,7 +150,7 @@ export const ThesisCharts = () => {
 
   useEffect(() => {
     loadThesisItems();
-  }, []);
+  }, [loadThesisItems]);
 
   useEffect(() => {
     settotalData((oldTotalData) => {

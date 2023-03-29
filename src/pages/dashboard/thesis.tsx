@@ -42,31 +42,9 @@ import {
 import { ResponsiveContainer } from "recharts";
 import { authOptions } from "../api/auth/[...nextauth]";
 
-const totalDataInit: { course: Course; count: number }[] = [
-  { course: "Civil Engineer", count: 0 },
-  { course: "Computer Engineer", count: 0 },
-  { course: "Mechanical Engineer", count: 0 },
-  { course: "Electronics Engineer", count: 0 },
-  { course: "Electrical Engineer", count: 0 },
-];
-
 const DashboardThesis = () => {
-  const [totalData, settotalData] =
-    useState<{ course: Course; count: number }[]>(totalDataInit);
   const { state: globalStatate } = useGlobalContext();
   const router = useRouter();
-  useEffect(() => {
-    settotalData((oldTotalData) => {
-      const newTotalData = oldTotalData.map((item) => {
-        item.count = globalStatate.thesisItems.filter(
-          (_item) => _item.course === item.course
-        ).length;
-        return item;
-      });
-      return newTotalData;
-    });
-  }, [globalStatate.thesisItems]);
-
   return (
     <DashboardLayout
       userSelectedMenu="/dashboard"
@@ -79,7 +57,7 @@ const DashboardThesis = () => {
             <p className="ml-6 opacity-60">Total Thesis Abstracts</p>
             <Space className="ml-6" direction="horizontal">
               <BsBookFill size={"1.5em"} />
-              <h1>{globalStatate.thesisItems.length}</h1>
+              <h1>{globalStatate.totalThesisCount.totalCount}</h1>
             </Space>
             <div className="h-96 w-full relative overflow-auto">
               <div className="h-full w-full min-w-[32em]">
@@ -88,7 +66,7 @@ const DashboardThesis = () => {
             </div>
           </div>
           <div className="grid md:grid-cols-2 gap-2 grid-rows-6 md:grid-rows-3">
-            {totalData.map((child, index) => (
+            {globalStatate.totalThesisCount.thesisCount.map((child, index) => (
               <Card
                 className="cursor-pointer hover:scale-105 hover:z-10 transition duration-200 ease-out"
                 key={index}
@@ -136,37 +114,14 @@ const DashboardThesis = () => {
 };
 
 export const ThesisCharts = () => {
-  const [totalData, settotalData] = useState<
-    { course: Course; count: number }[]
-  >([
-    { course: "Civil Engineer", count: 0 },
-    { course: "Computer Engineer", count: 0 },
-    { course: "Mechanical Engineer", count: 0 },
-    { course: "Electronics Engineer", count: 0 },
-    { course: "Electrical Engineer", count: 0 },
-  ]);
-  const { state: globalStatate, loadThesisItems } = useGlobalContext();
-
-  useEffect(() => {
-    loadThesisItems();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    settotalData((oldTotalData) => {
-      const newTotalData = oldTotalData.map((item) => {
-        item.count = globalStatate.thesisItems.filter(
-          (_item) => _item.course === item.course
-        ).length;
-        return item;
-      });
-      return newTotalData;
-    });
-  }, [globalStatate.thesisItems]);
+  const { state: globalStatate } = useGlobalContext();
 
   return (
     <ResponsiveContainer width={"99%"} height="99%">
-      <RadarChart outerRadius={90} data={totalData}>
+      <RadarChart
+        outerRadius={90}
+        data={globalStatate.totalThesisCount.thesisCount}
+      >
         <PolarGrid />
         <PolarAngleAxis dataKey="course" />
         <Radar
@@ -206,7 +161,6 @@ export const ThesisTable = () => {
       });
       setSelectedKeys(router.query.tab as string);
     } else if (router.query.title) {
-      loadingState.add("all-thesis");
       const title = router.query.title as string;
       getAllThesis({ title: title })
         .then(async (thesisItems) => {

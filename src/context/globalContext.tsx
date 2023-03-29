@@ -24,6 +24,14 @@ import {
   ThesisItems,
 } from "./types.d";
 
+const totalDataInit: { course: Course; count: number }[] = [
+  { course: "Civil Engineer", count: 0 },
+  { course: "Computer Engineer", count: 0 },
+  { course: "Mechanical Engineer", count: 0 },
+  { course: "Electronics Engineer", count: 0 },
+  { course: "Electrical Engineer", count: 0 },
+];
+
 const globalStateInit: GlobalState = {
   thesisItems: [],
   dateOption: [],
@@ -34,6 +42,7 @@ const globalStateInit: GlobalState = {
     years: { all: true, option: [] },
     course: { all: true, option: courseOption as Course[] },
   },
+  totalThesisCount: { totalCount: 0, thesisCount: totalDataInit },
 };
 
 const globalCtxInit: GlobalValue = {

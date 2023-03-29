@@ -9,11 +9,14 @@ export interface GlobalState {
   recyclebin: ThesisItems[];
   signIn?: boolean;
   loading: string[];
+  totalThesisCount: { thesisCount: ThesisCount; totalCount: number };
   filterState: {
     years: { all: boolean; option: string[] };
     course: { all: boolean; option: Course[] };
   };
 }
+
+export type ThesisCount = { course: Course; count: number }[];
 
 export type Course =
   | "Computer Engineer"

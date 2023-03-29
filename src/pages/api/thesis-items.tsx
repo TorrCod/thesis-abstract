@@ -22,7 +22,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         console.log(parse);
         const payload = await getData(
           "thesis-abstract",
-          req.query.collection as CollectionName
+          req.query.collection as CollectionName,
+          parse.query,
+          parse.option
         );
         return res.status(200).json(payload);
       }

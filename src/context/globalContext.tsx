@@ -143,7 +143,12 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
         const token = await auth.currentUser?.getIdToken();
         const recycledThesis = await getAllDeletedThesis(token, query, {
           ...option,
-          projection: { title: 1, course: 1, dateAdded: 1 },
+          projection: {
+            title: 1,
+            course: 1,
+            createdAt: 1,
+            expireAfterSeconds: 1,
+          },
         });
         dispatch({ type: "load-recycle", payload: recycledThesis ?? [] });
       } catch (e) {

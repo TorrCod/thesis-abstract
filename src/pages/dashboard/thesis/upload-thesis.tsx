@@ -43,11 +43,11 @@ interface FormValues {
 }
 
 const courseOptions = [
-  { label: "Computer Engineer", value: "computer-engineer" },
-  { label: "Mechanical Engineer", value: "mechanical-engineer" },
-  { label: "Civil Engineer", value: "civil-engineer" },
-  { label: "Electronics Engineer", value: "electronics-engineer" },
-  { label: "Electrical Engineer", value: "electrical-engineer" },
+  { label: "Computer Engineer", value: "Computer Engineer" },
+  { label: "Mechanical Engineer", value: "Mechanical Engineer" },
+  { label: "Civil Engineer", value: "Civil Engineer" },
+  { label: "Electronics Engineer", value: "Electronics Engineer" },
+  { label: "Electrical Engineer", value: "Electrical Engineer" },
 ];
 
 const UploadThesis = () => {

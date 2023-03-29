@@ -1,11 +1,8 @@
 import Search from "@/components/search";
-import { Course, ThesisItems } from "@/context/types.d";
+import { ThesisItems } from "@/context/types.d";
 import { Divider } from "antd";
 import Head from "next/head";
 import Link from "next/link";
-import { GetServerSideProps } from "next";
-import { getData } from "@/lib/mongo";
-import { parseQuery } from "@/utils/server-utils";
 import { useEffect, useState } from "react";
 import useGlobalContext from "@/context/globalContext";
 import { useRouter } from "next/router";
@@ -26,7 +23,11 @@ const Thesis = () => {
       .then((res) => {
         setThesisItems(res);
       })
+      .catch((e) => {
+        console.error(e);
+      })
       .finally(() => loadingState.remove("/thesis"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router]);
 
   return (

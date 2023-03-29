@@ -47,7 +47,7 @@ const ThesisItemsView = (props: { _id: string }) => {
       setData(thesisItem);
     };
     fetchData();
-  }, [router]);
+  }, [router, props._id]);
 
   return !data ? (
     <Loading />

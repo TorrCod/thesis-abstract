@@ -100,6 +100,7 @@ export type GlobalValue = {
     add(key: string): void;
     remove(key: string): void;
   };
+  promptToSignIn: () => void;
 };
 
 export type AdminData = {

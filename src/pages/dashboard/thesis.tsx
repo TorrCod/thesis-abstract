@@ -146,7 +146,13 @@ export const ThesisCharts = () => {
     { course: "Electronics Engineer", count: 0 },
     { course: "Electrical Engineer", count: 0 },
   ]);
-  const { state: globalStatate } = useGlobalContext();
+  const { state: globalStatate, loadThesisItems } = useGlobalContext();
+
+  useEffect(() => {
+    loadThesisItems();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   useEffect(() => {
     settotalData((oldTotalData) => {
       const newTotalData = oldTotalData.map((item) => {
@@ -158,6 +164,7 @@ export const ThesisCharts = () => {
       return newTotalData;
     });
   }, [globalStatate.thesisItems]);
+
   return (
     <ResponsiveContainer width={"99%"} height="99%">
       <RadarChart outerRadius={90} data={totalData}>
@@ -185,6 +192,7 @@ type DataType = {
 };
 
 export const ThesisTable = () => {
+  const userDetails = useUserContext().state.userDetails;
   const { state, recycledThesis, loadThesisItems } = useGlobalContext();
   const [thesisTableData, setThesisTableData] = useState<DataType[]>([]);
   const [removedTableData, setRemovedTableData] = useState<DataType[]>([]);
@@ -204,12 +212,14 @@ export const ThesisTable = () => {
         setThesisTableData(tableData);
       });
     } else {
-      const recycled = recycledThesis();
-      recycled.load();
-      loadThesisItems();
+      if (userDetails) {
+        const recycled = recycledThesis();
+        recycled.load();
+        loadThesisItems();
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router.query]);
+  }, [router.query, userDetails]);
 
   useEffect(() => {
     const thesisItems = state.thesisItems;

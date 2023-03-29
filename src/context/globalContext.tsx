@@ -49,6 +49,7 @@ const globalCtxInit: GlobalValue = {
     add(key) {},
     remove(key) {},
   },
+  promptToSignIn() {},
 };
 
 const GlobalContext = createContext<GlobalValue>(globalCtxInit);
@@ -153,6 +154,10 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
     },
   };
 
+  const promptToSignIn = () => {
+    dispatch({ type: "sign-in", payload: true });
+  };
+
   return (
     <GlobalContext.Provider
       value={{
@@ -162,6 +167,7 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
         recycledThesis,
         updateFilter,
         loadingState,
+        promptToSignIn,
       }}
     >
       <LoadingGlobal loading={state.loading.includes("global")}>

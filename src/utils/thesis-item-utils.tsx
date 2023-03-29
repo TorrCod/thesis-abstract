@@ -1,9 +1,4 @@
-import {
-  Course,
-  SearchOption,
-  SearchQuery,
-  ThesisItems,
-} from "@/context/types.d";
+import { SearchOption, SearchQuery, ThesisItems } from "@/context/types.d";
 import axios from "axios";
 import { userConfig } from "./account-utils";
 
@@ -13,7 +8,7 @@ export const getAllThesis = async (
 ) => {
   const { title, year, course } = query || {};
   const res = await axios.get(
-    `${process.env.NEXT_PUBLIC_DOMAIN}/api/thesis-items?${
+    `${process.env.NEXT_PUBLIC_DOMAIN}/api/public/thesis?${
       title ? `&title=${title}` : ""
     }${course ? `&course=${encodeURIComponent(JSON.stringify(course))}` : ""}${
       year ? `&year=${encodeURIComponent(JSON.stringify(year))}` : ""
@@ -42,7 +37,7 @@ export const getOneById = async (
 
 export const getDistincYear = async () => {
   const res = await axios.get(
-    `${process.env.NEXT_PUBLIC_DOMAIN}/api/thesis-items?collection=thesis-items&objective=get-distinct-years`
+    `${process.env.NEXT_PUBLIC_DOMAIN}/api/public/thesis?collection=thesis-items&objective=get-distinct-years`
   );
   const data = res.data as string[];
   return data;

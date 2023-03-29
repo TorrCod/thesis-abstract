@@ -61,7 +61,7 @@ const ThesisItemsView = (props: { _id: string }) => {
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
-      <section className="flex flex-col gap-1 md:pt-20 items-center">
+      <section className="flex flex-col gap-1 md:pt-20 items-center mb-10">
         <div className="relative z-10 w-full">
           <Search className="w-screen max-w-lg absolute top-0 left-0 right-0 m-auto" />
         </div>

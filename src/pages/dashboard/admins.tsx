@@ -25,6 +25,7 @@ import { GetServerSideProps } from "next";
 import { getServerSession } from "next-auth";
 import { getCsrfToken } from "next-auth/react";
 import { authOptions } from "../api/auth/[...nextauth]";
+import useGlobalContext from "@/context/globalContext";
 
 const DashboardAdmin = () => {
   const router = useRouter();
@@ -147,14 +148,14 @@ const UserProfile = ({ userDetails }: { userDetails?: UserDetails }) => {
 };
 
 export const AdminTable = ({ noAction }: { noAction?: boolean }) => {
-  const useDetails = useUserContext().state.userDetails;
+  const { state, loadAllUsers } = useUserContext();
   const [dataCol, setDataCol] = useState<ColumnsType<AdminData>>([
     {
       title: "Username",
       dataIndex: "userName",
       key: "userName",
       render: (val, record) => {
-        const userId = useDetails?._id;
+        const userId = state.userDetails?._id;
         const isUser = Object.values(record).includes(userId);
         return (
           <Link href={`/dashboard/admins?_id=${record.key}`}>
@@ -238,9 +239,9 @@ export const AdminTable = ({ noAction }: { noAction?: boolean }) => {
     },
   ]);
   const [dataSourse, setDataSourse] = useState<AdminData[]>([]);
-  const { state } = useUserContext();
   const dataColRef = useRef(dataCol);
   const router = useRouter();
+  const { state: globalState } = useGlobalContext();
 
   useEffect(() => {
     if (noAction) {
@@ -249,6 +250,12 @@ export const AdminTable = ({ noAction }: { noAction?: boolean }) => {
       setDataCol(newDataCol);
     }
   }, [noAction]);
+
+  useEffect(() => {
+    if (state.userDetails) {
+      loadAllUsers();
+    }
+  }, [state.userDetails]);
 
   useEffect(() => {
     if (router.query.username) {
@@ -265,7 +272,14 @@ export const AdminTable = ({ noAction }: { noAction?: boolean }) => {
     }
   }, [router.query, state.listOfAdmins]);
 
-  return <Table columns={dataCol} dataSource={dataSourse} scroll={{ x: 50 }} />;
+  return (
+    <Table
+      loading={globalState.loading.includes("all-admin")}
+      columns={dataCol}
+      dataSource={dataSourse}
+      scroll={{ x: 50 }}
+    />
+  );
 };
 
 const RemoveAdmin = ({ record }: { record: AdminData }) => {

@@ -98,7 +98,11 @@ const userReducer = (state: UserState, action: UserAction): UserState => {
 export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(userReducer, userStateInit);
   const unsubscribeRef = useRef<Unsubscribe | null>(null);
-  const { dispatch: gloablDispatch, recycledThesis } = useGlobalContext();
+  const {
+    dispatch: gloablDispatch,
+    recycledThesis,
+    loadingState,
+  } = useGlobalContext();
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
@@ -134,12 +138,15 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
 
   const loadAllUsers = async () => {
     try {
+      loadingState.add("all-admin");
       const token = await auth.currentUser?.getIdToken();
       const allUsers = await getAllUsers(token);
       dispatch({ type: "load-all-users", payload: allUsers });
     } catch (e) {
       message.error("failed to load all users");
       console.error(e);
+    } finally {
+      loadingState.remove("all-admin");
     }
   };
 

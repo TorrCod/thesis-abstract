@@ -64,7 +64,7 @@ export const getAllDeletedThesis = async (
   const { title, year, course } = query || {};
   if (token) {
     const res = await axios.get(
-      `/api/thesis-items?collection=deleted-thesis?${
+      `/api/thesis-items?collection=deleted-thesis${
         title ? `&title=${title}` : ""
       }${
         course ? `&course=${encodeURIComponent(JSON.stringify(course))}` : ""

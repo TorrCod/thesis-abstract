@@ -210,14 +210,13 @@ export const ThesisTable = () => {
   const { state, loadThesisItems } = useGlobalContext();
   const [thesisTableData, setThesisTableData] = useState<DataType[]>([]);
   const router = useRouter();
-  const oneRender = useRef<boolean>(false);
 
   useEffect(() => {
-    if (userDetails && !state.thesisItems.length && !oneRender.current) {
+    if (userDetails && !state.thesisItems.length) {
       loadThesisItems();
-      oneRender.current = true;
     }
-  }, [userDetails, state.thesisItems.length]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userDetails]);
 
   useEffect(() => {
     if (router.query.title) {

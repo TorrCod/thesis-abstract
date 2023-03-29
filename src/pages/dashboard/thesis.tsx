@@ -91,7 +91,7 @@ const DashboardThesis = () => {
           <div className="grid md:grid-cols-2 gap-2 grid-rows-6 md:grid-rows-3">
             {totalData.map((child, index) => (
               <Card
-                className="cursor-pointer hover:scale-105 transition duration-200 ease-out"
+                className="cursor-pointer hover:scale-105 hover:z-10 transition duration-200 ease-out"
                 key={index}
                 bordered={false}
               >

@@ -111,7 +111,7 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
     try {
       loadingState.add("all-thesis");
       const thesisItems = await getAllThesis(query, {
-        limit,
+        limit: 10,
         projection: { title: 1, course: 1, dateAdded: 1 },
       });
       dispatch({

@@ -174,14 +174,14 @@ export const ThesisTable = () => {
         })
         .finally(() => loadingState.remove("all-thesis"));
     } else {
-      if (userDetails) {
+      if (userDetails && !state.thesisItems.length) {
         const recycled = recycledThesis();
         recycled.load();
         loadThesisItems();
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router.query, userDetails]);
+  }, [router.query, userDetails, state.thesisItems]);
 
   useEffect(() => {
     const thesisItems = state.thesisItems;

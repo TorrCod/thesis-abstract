@@ -42,7 +42,7 @@ export const getOneById = async (
 
 export const getDistincYear = async () => {
   const res = await axios.get(
-    `${process.env.NEXT_PUBLIC_DOMAIN}/api/public/thesis?collection=thesis-items&objective=get-distinct-years`
+    `${process.env.NEXT_PUBLIC_DOMAIN}/api/public/thesis?&objective=get-distinct-years`
   );
   const data = res.data as string[];
   return data;
@@ -50,7 +50,7 @@ export const getDistincYear = async () => {
 
 export const getThesisCount = async () => {
   const res = await axios.get(
-    `${process.env.NEXT_PUBLIC_DOMAIN}/api/public/thesis?collection=thesis-items&objective=get-thesis-count`
+    `${process.env.NEXT_PUBLIC_DOMAIN}/api/public/thesis?objective=get-thesis-count`
   );
   const data = res.data as { thesisCount: ThesisCount; totalCount: number };
   return data;

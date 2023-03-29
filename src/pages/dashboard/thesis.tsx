@@ -32,7 +32,6 @@ import { AiFillDelete, AiFillFileAdd } from "react-icons/ai";
 import { BsBookFill } from "react-icons/bs";
 import { MdRestoreFromTrash } from "react-icons/md";
 import {
-  Label,
   Legend,
   PolarAngleAxis,
   PolarGrid,

@@ -140,7 +140,7 @@ const UserProfile = ({ userDetails }: { userDetails?: UserDetails }) => {
       <div className="bg-white rounded-md p-3 row-span-2 grid relative gap-5 grid-rows-[_0.2fr_1.8fr]">
         <div className="opacity-80">History</div>
         <div className="w-full">
-          <ActivityTimeline username={userDetails?.userName ?? "none"} />
+          <ActivityTimeline userId={userDetails?.uid ?? "none"} />
         </div>
       </div>
     </div>

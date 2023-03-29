@@ -1,7 +1,12 @@
-import { ThesisItems } from "@/context/types.d";
-import { GeneratedTextRes, QueryPost } from "@/lib/types";
+import { ActivityLog, ThesisItems } from "@/context/types.d";
+import { ActivitylogReason, GeneratedTextRes, QueryPost } from "@/lib/types";
 import { RcFile } from "antd/es/upload";
 import axios from "axios";
+import Link from "next/link";
+import { BsBookmarkPlus, BsBookmarkX } from "react-icons/bs";
+import { HiOutlineUser, HiOutlineUserMinus } from "react-icons/hi2";
+import { MdRemove, MdRestore } from "react-icons/md";
+import { RiMailAddLine } from "react-icons/ri";
 
 export function isObjectIncluded(obj1: any, obj2: any) {
   return Object.entries(obj1).every(([key, value]) => obj2[key] === value);
@@ -57,4 +62,117 @@ export const getPdfText = (data: GeneratedTextRes) => {
 
 export const sleep = (ms: number) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
+};
+
+export const readActivityLogReason = async (
+  item: ActivityLog,
+  username: string
+) => {
+  let dot = undefined;
+  let color = undefined;
+  let reason = <></>;
+  switch (item.reason) {
+    case "invited an admin": {
+      dot = (
+        <div className="bg-[#f0c11a] rounded-full p-[3px]">
+          <RiMailAddLine />
+        </div>
+      );
+      color = "white";
+      reason = (
+        <Link href={`/dashboard/admins?_id=${item.data.itemId}`}>
+          {username} {item.reason} ({item.data.name})
+        </Link>
+      );
+      break; // <-- Add break statements for each case
+    }
+    case "accepted the invite": {
+      dot = (
+        <div className="bg-[#29de18] rounded-full p-[3px]">
+          <HiOutlineUser />
+        </div>
+      );
+      color = "white";
+      reason = (
+        <Link href={`/dashboard/admins?_id=${item.data.itemId}`}>
+          {username} {item.reason} ({item.data.name})
+        </Link>
+      );
+      break;
+    }
+    case "removed an admin": {
+      dot = (
+        <div className="bg-[#f54242] rounded-full p-[3px]">
+          <HiOutlineUserMinus />
+        </div>
+      );
+      color = "white";
+      reason = (
+        <Link href={`/dashboard/admins?_id=${item.data.itemId}`}>
+          {username} {item.reason} ({item.data.name})
+        </Link>
+      );
+      break;
+    }
+    case "removed an invite": {
+      dot = (
+        <div className="bg-[#f54242] rounded-full p-[3px]">
+          <MdRemove />
+        </div>
+      );
+      color = "white";
+      reason = (
+        <div>
+          {username} {item.reason} ({item.data.name})
+        </div>
+      );
+      break;
+    }
+    case "added a thesis": {
+      dot = (
+        <div className="bg-[#4287f5] rounded-full p-[3px]">
+          <BsBookmarkPlus />
+        </div>
+      );
+      color = "white";
+      reason = (
+        <Link href={`/thesis/${item.data.itemId}`}>
+          {username} {item.reason} ({item.data.name})
+        </Link>
+      );
+      break;
+    }
+    case "removed a thesis": {
+      dot = (
+        <div className="bg-[#f54242] rounded-full p-[3px]">
+          <BsBookmarkX />
+        </div>
+      );
+      color = "white";
+      reason = (
+        <Link href={`/dashboard/thesis?tab=recyclebin&_id=${item.data.itemId}`}>
+          {username} {item.reason} ({item.data.name})
+        </Link>
+      );
+      break;
+    }
+    case "restored a thesis": {
+      dot = (
+        <div className="bg-[#4287f5] rounded-full p-[3px]">
+          <MdRestore />
+        </div>
+      );
+      color = "white";
+      reason = (
+        <Link href={`/thesis/${item.data.itemId}`}>
+          {username} {item.reason} ({item.data.name})
+        </Link>
+      );
+      break;
+    }
+    default: {
+      return null; // <-- Add a default case that returns a default value
+    }
+  }
+  return { dot, color, reason };
 };

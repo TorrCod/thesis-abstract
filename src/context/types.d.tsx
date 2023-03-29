@@ -127,7 +127,7 @@ export type UserState = {
 };
 
 export type ActivityLog = {
-  userName: string;
+  userId: string;
   _id: string;
   id: string;
   data: { itemId: string; name: string };

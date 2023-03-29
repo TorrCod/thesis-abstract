@@ -37,12 +37,8 @@ export const updateActivityLog = async (
   name: string
 ) => {
   const userUid = decodedToken.uid;
-  const userDetailsList = (await getData("accounts", "user", {
-    uid: userUid,
-  })) as UserDetails[];
-  const userName = userDetailsList[0].userName;
   const insertedResult = await addData("accounts", "activity-log", {
-    userName: userName,
+    userId: userUid,
     reason: reason,
     data: { itemId: Itemid, name: name },
     date: date,

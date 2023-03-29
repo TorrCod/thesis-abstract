@@ -8,14 +8,15 @@ import {
   updateData,
 } from "@/lib/mongo";
 import { ActivitylogReason, CollectionName } from "@/lib/types";
-import { updateActivityLog, validateAuth } from "@/utils/server-utils";
+import {
+  parseQuery,
+  updateActivityLog,
+  validateAuth,
+} from "@/utils/server-utils";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import { ObjectId } from "mongodb";
 import { NextApiRequest, NextApiResponse } from "next";
 import { serialize } from "cookie";
-import { getServerSession } from "next-auth";
-import { authOptions } from "./auth/[...nextauth]";
-import { getCsrfToken } from "next-auth/react";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
@@ -32,7 +33,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           : req.query._id
           ? { _id: new ObjectId(req.query._ud as string) }
           : undefined;
-        const userDetails = await getData("accounts", collection, query);
+        const parse = parseQuery(req);
+        const userDetails = await getData("accounts", collection, query, {
+          ...parse.option,
+        });
         return res.status(200).json(userDetails);
       }
       case "DELETE": {

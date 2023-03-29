@@ -21,7 +21,7 @@ import { GetServerSideProps } from "next";
 import { getServerSession } from "next-auth";
 import { getCsrfToken } from "next-auth/react";
 import Link from "next/link";
-import { Router, useRouter } from "next/router";
+import { useRouter } from "next/router";
 import { MenuProps } from "rc-menu";
 import React, { useEffect, useRef, useState } from "react";
 import { AiFillDelete, AiFillFileAdd } from "react-icons/ai";
@@ -167,44 +167,6 @@ export const ThesisCharts = () => {
   );
 };
 
-type DataType = {
-  key: string;
-  title: string;
-  course: Course;
-  [key: string]: any;
-};
-
-const tableColumn: ColumnsType<DataType> = [
-  {
-    title: "Title",
-    dataIndex: "title",
-    key: "title",
-    render: (text, record) => (
-      <Link href={"/thesis/" + record.key}>{text}</Link>
-    ),
-  },
-  {
-    title: "Course",
-    dataIndex: "course",
-    key: "course",
-  },
-];
-
-const thesisTableColumn: ColumnsType<DataType> = [
-  ...tableColumn,
-  {
-    title: "Date Added",
-    dataIndex: "dateAdded",
-    key: "dateAdded",
-  },
-  {
-    title: "Action",
-    key: "action",
-    dataIndex: "action",
-    render: (_, record) => <RemoveThesis {...record} id={record.key} />,
-  },
-];
-
 export const ThesisTable = () => {
   const userDetails = useUserContext().state.userDetails;
   const { state, loadThesisItems } = useGlobalContext();
@@ -242,21 +204,6 @@ export const ThesisTable = () => {
     />
   );
 };
-
-const removeTableColumn: ColumnsType<DataType> = [
-  ...tableColumn,
-  {
-    title: "Expire At",
-    key: "expireAt",
-    dataIndex: "expireAt",
-  },
-  {
-    title: "Action",
-    key: "action",
-    dataIndex: "action",
-    render: (_, record) => <RestoreThesis {...record} id={record.key} />,
-  },
-];
 
 const RecycledTable = () => {
   const [removedTableData, setRemovedTableData] = useState<DataType[]>([]);
@@ -362,5 +309,63 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     },
   };
 };
+
+const removeTableColumn: ColumnsType<DataType> = [
+  {
+    title: "Title",
+    dataIndex: "title",
+    key: "title",
+  },
+  {
+    title: "Course",
+    dataIndex: "course",
+    key: "course",
+  },
+  {
+    title: "Expire At",
+    key: "expireAt",
+    dataIndex: "expireAt",
+  },
+  {
+    title: "Action",
+    key: "action",
+    dataIndex: "action",
+    render: (_, record) => <RestoreThesis {...record} id={record.key} />,
+  },
+];
+
+type DataType = {
+  key: string;
+  title: string;
+  course: Course;
+  [key: string]: any;
+};
+
+const thesisTableColumn: ColumnsType<DataType> = [
+  {
+    title: "Title",
+    dataIndex: "title",
+    key: "title",
+    render: (text, record) => (
+      <Link href={"/thesis/" + record.key}>{text}</Link>
+    ),
+  },
+  {
+    title: "Course",
+    dataIndex: "course",
+    key: "course",
+  },
+  {
+    title: "Date Added",
+    dataIndex: "dateAdded",
+    key: "dateAdded",
+  },
+  {
+    title: "Action",
+    key: "action",
+    dataIndex: "action",
+    render: (_, record) => <RemoveThesis {...record} id={record.key} />,
+  },
+];
 
 export default DashboardThesis;

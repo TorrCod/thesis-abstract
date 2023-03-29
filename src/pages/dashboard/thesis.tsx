@@ -215,7 +215,6 @@ const RecycledTable = () => {
     if (!userDetails) return;
     if (router.query.title) {
       const title = router.query.title as string;
-      console.log(title);
       recycledThesis().load({ title }, { limit: 10 });
     } else if (Object.keys(router.query).includes("title")) {
       recycledThesis().load();

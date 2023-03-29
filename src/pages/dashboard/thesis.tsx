@@ -294,6 +294,7 @@ export const ThesisTable = () => {
       />
       {selectedKeys === "thesis-items" && (
         <Table
+          loading={state.loading.includes("all-thesis")}
           className="min-w-[40em]"
           columns={thesisTableColumn}
           dataSource={thesisTableData}

@@ -27,7 +27,7 @@ import {
 const globalStateInit: GlobalState = {
   thesisItems: [],
   dateOption: [],
-  loading: ["all-admin"],
+  loading: ["all-admin", "all-thesis"],
   recyclebin: [],
   searchThesis: [],
   filterState: {
@@ -93,14 +93,21 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
   }, [state.thesisItems]);
 
   const loadThesisItems = async (query?: SearchQuery, limit?: number) => {
-    const thesisItems = await getAllThesis(query, {
-      limit,
-      projection: { title: 1, course: 1, dateAdded: 1 },
-    });
-    dispatch({
-      type: "load-thesis",
-      payload: thesisItems,
-    });
+    try {
+      loadingState.add("all-thesis");
+      const thesisItems = await getAllThesis(query, {
+        limit,
+        projection: { title: 1, course: 1, dateAdded: 1 },
+      });
+      dispatch({
+        type: "load-thesis",
+        payload: thesisItems,
+      });
+    } catch (e) {
+      console.error(e);
+    } finally {
+      loadingState.remove("all-thesis");
+    }
   };
 
   const loadYearsOpt = async () => {

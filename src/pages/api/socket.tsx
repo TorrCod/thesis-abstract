@@ -1,8 +1,13 @@
 import { watchThesisAbstract, watchUser } from "@/lib/mongo";
+import { validateAuth } from "@/utils/server-utils";
 import { NextApiRequest, NextApiResponse } from "next";
 import { Server, Socket } from "socket.io";
 
 const SocketHandler = async (req: NextApiRequest, res: NextApiResponse) => {
+  const isValidated = await validateAuth(req, res);
+  if (isValidated.error) {
+    return res.status(400).send("UNAUTHORIZE ACCESS");
+  }
   if ((res.socket as any).server.io) {
   } else {
     console.log("Socket Registered");

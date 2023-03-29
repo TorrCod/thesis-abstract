@@ -56,10 +56,21 @@ export const getThesisCount = async () => {
   return data;
 };
 
-export const getAllDeletedThesis = async (token: string | undefined) => {
+export const getAllDeletedThesis = async (
+  token: string | undefined,
+  query?: SearchQuery,
+  option?: SearchOption
+) => {
+  const { title, year, course } = query || {};
   if (token) {
     const res = await axios.get(
-      "/api/thesis-items?collection=deleted-thesis",
+      `/api/thesis-items?collection=deleted-thesis?${
+        title ? `&title=${title}` : ""
+      }${
+        course ? `&course=${encodeURIComponent(JSON.stringify(course))}` : ""
+      }${year ? `&year=${encodeURIComponent(JSON.stringify(year))}` : ""}${
+        option ? `&option=${encodeURIComponent(JSON.stringify(option))}` : ""
+      }`,
       userConfig(token)
     );
     return res.data;

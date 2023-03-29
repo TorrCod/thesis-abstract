@@ -1,7 +1,11 @@
 import { ThesisItems } from "@/context/types.d";
 import { addData, addDataWithExpiration, getData } from "@/lib/mongo";
 import { CollectionName } from "@/lib/types";
-import { updateActivityLog, validateAuth } from "@/utils/server-utils";
+import {
+  parseQuery,
+  updateActivityLog,
+  validateAuth,
+} from "@/utils/server-utils";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import { ObjectId } from "mongodb";
 import { NextApiRequest, NextApiResponse } from "next";
@@ -14,9 +18,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
     switch (req.method) {
       case "GET": {
+        const parse = parseQuery(req);
+        console.log(parse);
         const payload = await getData(
           "thesis-abstract",
-          req.query.collection as CollectionName
+          req.query.collection as CollectionName,
+          parse.query,
+          { ...parse.option }
         );
         return res.status(200).json(payload);
       }

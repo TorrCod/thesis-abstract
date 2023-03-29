@@ -264,6 +264,16 @@ const RecycledTable = () => {
   const [removedTableData, setRemovedTableData] = useState<DataType[]>([]);
   const { state, recycledThesis } = useGlobalContext();
   const { userDetails } = useUserContext().state;
+  const router = useRouter();
+
+  useEffect(() => {
+    if (router.query.title) {
+      const title = router.query.title as string;
+      recycledThesis().load({ title }, { limit: 10 });
+    } else if (Object.keys(router.query).includes("title")) {
+      recycledThesis().load();
+    }
+  }, [router.query.title]);
 
   useEffect(() => {
     if (userDetails && !state.thesisItems.length) {

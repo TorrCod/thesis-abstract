@@ -21,6 +21,7 @@ import {
   GlobalAction,
   GlobalState,
   GlobalValue,
+  SearchOption,
   SearchQuery,
   ThesisItems,
 } from "./types.d";
@@ -137,10 +138,13 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
   };
 
   const recycledThesis = () => ({
-    load: async () => {
+    load: async (query?: SearchQuery, option?: SearchOption) => {
       try {
         const token = await auth.currentUser?.getIdToken();
-        const recycledThesis = await getAllDeletedThesis(token);
+        const recycledThesis = await getAllDeletedThesis(token, query, {
+          ...option,
+          projection: { title: 1, course: 1, dateAdded: 1 },
+        });
         dispatch({ type: "load-recycle", payload: recycledThesis ?? [] });
       } catch (e) {
         console.error("failed to load deleted thesis");

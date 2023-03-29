@@ -90,7 +90,7 @@ export type GlobalValue = {
   dispatch: Dispatch<GlobalAction>;
   loadThesisItems: (query?: SearchQuery, limit?: number) => Promise<void>;
   recycledThesis: () => {
-    load: () => Promise<void>;
+    load: (query?: SearchQuery, option?: SearchOption) => Promise<void>;
     clear: () => void;
   };
   updateFilter: (payload: {

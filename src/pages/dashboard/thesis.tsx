@@ -23,7 +23,7 @@ import { getCsrfToken } from "next-auth/react";
 import Link from "next/link";
 import { Router, useRouter } from "next/router";
 import { MenuProps } from "rc-menu";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { AiFillDelete, AiFillFileAdd } from "react-icons/ai";
 import { BsBookFill } from "react-icons/bs";
 import { MdRestoreFromTrash } from "react-icons/md";
@@ -210,12 +210,24 @@ export const ThesisTable = () => {
   const userDetails = useUserContext().state.userDetails;
   const { state, loadThesisItems } = useGlobalContext();
   const [thesisTableData, setThesisTableData] = useState<DataType[]>([]);
+  const router = useRouter();
+  const oneRender = useRef<boolean>(false);
 
   useEffect(() => {
-    if (userDetails && !state.thesisItems.length) {
+    if (userDetails && !state.thesisItems.length && !oneRender.current) {
       loadThesisItems();
+      oneRender.current = true;
     }
   }, [userDetails, state.thesisItems.length]);
+
+  useEffect(() => {
+    if (router.query.title) {
+      const title = router.query.title as string;
+      loadThesisItems({ title });
+    } else if (Object.keys(router.query).includes("title")) {
+      loadThesisItems();
+    }
+  }, [router.query.title]);
 
   useEffect(() => {
     const thesisItems = state.thesisItems;

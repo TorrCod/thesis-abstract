@@ -36,7 +36,7 @@ const DashboardOverview = () => {
       >
         <div className="opacity-80 mb-3">Dashboard {">"} Overview</div>
 
-        <div className="dashboard-overview md:gap-2 w-full grid relative gap-2">
+        <div className="dashboard-overview md:gap-2 w-full grid relative gap-2 md:max-h-[58em]">
           <div className="bg-white rounded-md shadow-md thesis grid relative content-start">
             <div className="absolute top-0 left-0 z-10">
               <Link className="grid w-fit" href={"/dashboard/thesis"}>

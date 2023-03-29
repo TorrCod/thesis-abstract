@@ -108,8 +108,9 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
       if (user) {
         try {
           const token = await user.getIdToken();
-          const res = await getUserDetails(token, user.uid);
-          res.profilePic = user.photoURL;
+          const res: UserDetails = await getUserDetails(token, user.uid);
+          res.newToken = token;
+          res.profilePic = user.photoURL as any;
           dispatch({ type: "on-signin", payload: { userDetails: res } });
         } catch (e) {
           message.error("failed to fetch user details");

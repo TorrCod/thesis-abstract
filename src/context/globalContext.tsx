@@ -27,7 +27,7 @@ import {
 const globalStateInit: GlobalState = {
   thesisItems: [],
   dateOption: [],
-  loading: [],
+  loading: ["all-admin"],
   recyclebin: [],
   searchThesis: [],
   filterState: {

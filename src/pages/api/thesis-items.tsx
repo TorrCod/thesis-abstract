@@ -1,11 +1,7 @@
 import { ThesisItems } from "@/context/types.d";
 import { addData, addDataWithExpiration, getData } from "@/lib/mongo";
 import { CollectionName } from "@/lib/types";
-import {
-  parseQuery,
-  updateActivityLog,
-  validateAuth,
-} from "@/utils/server-utils";
+import { updateActivityLog, validateAuth } from "@/utils/server-utils";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import { ObjectId } from "mongodb";
 import { NextApiRequest, NextApiResponse } from "next";

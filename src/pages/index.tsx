@@ -21,7 +21,7 @@ export default function Home(props: { query: string }) {
     return () => {
       document.body.style.overflow = "visible";
     };
-  }, [promptToSignIn, props.query]);
+  }, [props.query]);
 
   return (
     <>

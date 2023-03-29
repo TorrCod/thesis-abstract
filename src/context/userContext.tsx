@@ -207,7 +207,9 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
 
   const loadActivityLog = async () => {
     const token = await auth.currentUser?.getIdToken();
-    const activityLog = (await getActivityLog(token)) as ActivityLog[];
+    const activityLog = (await getActivityLog(token, {
+      limit: 10,
+    })) as ActivityLog[];
     dispatch({ type: "load-activity-log", payload: activityLog });
     return activityLog;
   };

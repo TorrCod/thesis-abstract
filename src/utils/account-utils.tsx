@@ -151,10 +151,15 @@ export const getAllUsers = async (token: string | undefined) => {
   } else throw new Error("canont read user token");
 };
 
-export const getActivityLog = async (token: string | undefined) => {
+export const getActivityLog = async (
+  token: string | undefined,
+  option?: { limit?: number }
+) => {
   if (token) {
     const activityLog = await axios.request({
-      url: `/api/admin-user?objective=get-activitylog`,
+      url: `/api/admin-user?objective=get-activitylog${
+        option ? `&option=${encodeURIComponent(JSON.stringify(option))}` : ``
+      }`,
       method: "GET",
       ...userConfig(token),
     });

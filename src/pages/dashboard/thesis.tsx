@@ -192,7 +192,8 @@ type DataType = {
 
 export const ThesisTable = () => {
   const userDetails = useUserContext().state.userDetails;
-  const { state, recycledThesis, loadThesisItems } = useGlobalContext();
+  const { state, recycledThesis, loadThesisItems, loadingState } =
+    useGlobalContext();
   const [thesisTableData, setThesisTableData] = useState<DataType[]>([]);
   const [removedTableData, setRemovedTableData] = useState<DataType[]>([]);
   const [selectedKeys, setSelectedKeys] = useState("thesis-items");
@@ -205,11 +206,14 @@ export const ThesisTable = () => {
       });
       setSelectedKeys(router.query.tab as string);
     } else if (router.query.title) {
+      loadingState.add("all-thesis");
       const title = router.query.title as string;
-      getAllThesis({ title: title }).then((thesisItems) => {
-        const tableData = thesisToDataType(thesisItems);
-        setThesisTableData(tableData);
-      });
+      getAllThesis({ title: title })
+        .then(async (thesisItems) => {
+          const tableData = thesisToDataType(thesisItems);
+          setThesisTableData(tableData);
+        })
+        .finally(() => loadingState.remove("all-thesis"));
     } else {
       if (userDetails) {
         const recycled = recycledThesis();

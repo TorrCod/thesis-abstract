@@ -19,7 +19,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     switch (req.method) {
       case "GET": {
         const parse = parseQuery(req);
-        console.log(parse);
         const payload = await getData(
           "thesis-abstract",
           req.query.collection as CollectionName,

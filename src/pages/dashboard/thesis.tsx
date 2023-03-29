@@ -276,10 +276,10 @@ const RecycledTable = () => {
   }, [router.query.title, userDetails]);
 
   useEffect(() => {
-    if (userDetails && !state.thesisItems.length) {
+    if (userDetails && !state.recyclebin.length) {
       recycledThesis().load();
     }
-  }, [userDetails, state.thesisItems.length]);
+  }, [userDetails]);
 
   useEffect(() => {
     const thesisItems = state.recyclebin;

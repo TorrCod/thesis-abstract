@@ -146,7 +146,12 @@ export const ThesisCharts = () => {
     { course: "Electronics Engineer", count: 0 },
     { course: "Electrical Engineer", count: 0 },
   ]);
-  const { state: globalStatate } = useGlobalContext();
+  const { state: globalStatate, loadThesisItems } = useGlobalContext();
+
+  useEffect(() => {
+    loadThesisItems();
+  }, []);
+
   useEffect(() => {
     settotalData((oldTotalData) => {
       const newTotalData = oldTotalData.map((item) => {
@@ -158,6 +163,7 @@ export const ThesisCharts = () => {
       return newTotalData;
     });
   }, [globalStatate.thesisItems]);
+
   return (
     <ResponsiveContainer width={"99%"} height="99%">
       <RadarChart outerRadius={90} data={totalData}>

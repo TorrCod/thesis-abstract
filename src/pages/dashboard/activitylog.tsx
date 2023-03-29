@@ -2,18 +2,11 @@ import React, { useEffect, useRef, useState } from "react";
 import { Timeline, TimelineItemProps } from "antd";
 import DashboardLayout from "@/components/dashboardLayout";
 import useUserContext from "@/context/userContext";
-import { MdRemove, MdRestore } from "react-icons/md";
-import Link from "next/link";
-import { BsBookmarkPlus, BsBookmarkX } from "react-icons/bs";
-import { RiMailAddLine } from "react-icons/ri";
-import { HiOutlineUser, HiOutlineUserMinus } from "react-icons/hi2";
 import { GetServerSideProps } from "next";
 import { getServerSession } from "next-auth";
 import { getCsrfToken } from "next-auth/react";
 import { authOptions } from "../api/auth/[...nextauth]";
-import { getUserDetails } from "@/utils/account-utils";
 import { readActivityLogReason } from "@/utils/helper";
-import { auth } from "@/lib/firebase";
 
 const ActivityLog = () => {
   return (

@@ -49,19 +49,58 @@ export const updateActivityLog = async (
   });
   return insertedResult;
 };
+//   const res = Object.fromEntries(
+//     Object.entries(object).filter(
+//       ([_, value]) => value !== undefined && value !== ""
+//     )
+//   );
+//   if (res.course) (res.course as any) = { $in: JSON.parse(res.course) };
+//   if (res.year) {
+//     res.year = (JSON.parse(res.year) as string[]).map((item) => parseInt(item));
+//     res.year = { $in: res.year };
+//   }
+//   if (res.title)
+//     (res.title as any) = { $regex: new RegExp(`${res.title}`, "i") };
+//   return res;
+// };
 
-export const parseQuery = (object: Object) => {
+export const parseQuery = (req: NextApiRequest) => {
+  const { year, course, title } = req.query as {
+    year: string | undefined;
+    course: string | undefined;
+    title: string | undefined;
+  };
+  let option:
+    | {
+        projection: Record<string, 0 | 1> | undefined;
+        limit: number | undefined;
+      }
+    | undefined;
+
+  if (req.query.option) {
+    option = JSON.parse(req.query.option as string);
+  }
+  const rawQuery = { year, course, title };
   const res = Object.fromEntries(
-    Object.entries(object).filter(
+    Object.entries(rawQuery).filter(
       ([_, value]) => value !== undefined && value !== ""
     )
   );
   if (res.course) (res.course as any) = { $in: JSON.parse(res.course) };
   if (res.year) {
-    res.year = (JSON.parse(res.year) as string[]).map((item) => parseInt(item));
-    res.year = { $in: res.year };
+    (res.year as any) = (JSON.parse(res.year) as string[]).map((item) =>
+      parseInt(item)
+    );
+    (res.year as any) = { $in: res.year };
   }
   if (res.title)
     (res.title as any) = { $regex: new RegExp(`${res.title}`, "i") };
-  return res;
+  return {
+    query: res,
+    option,
+  };
+};
+
+export const sleep = (ms: number) => {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 };

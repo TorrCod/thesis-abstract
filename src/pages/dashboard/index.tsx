@@ -38,17 +38,19 @@ const DashboardOverview = () => {
 
         <div className="dashboard-overview md:gap-2 w-full grid relative gap-2">
           <div className="bg-white rounded-md shadow-md thesis grid relative content-start">
-            <Link className="grid w-fit" href={"/dashboard/thesis"}>
-              <h3 className="opacity-80 mb-3 mx-5 pt-5">Thesis</h3>
-              <div className="ml-6 opacity-60 flex items-center gap-2">
-                Manage Thesis Abstracts <GoLinkExternal />
-              </div>
-            </Link>
-            <Link href={"/dashboard/thesis/upload-thesis"}>
-              <PriButton className="w-fit bg-[#F8B49C] flex items-center gap-2 mx-5">
-                Upload <GoLinkExternal />
-              </PriButton>
-            </Link>
+            <div className="absolute top-0 left-0">
+              <Link className="grid w-fit" href={"/dashboard/thesis"}>
+                <h3 className="opacity-80 mb-3 mx-5 pt-5">Thesis</h3>
+                <div className="ml-6 opacity-60 flex items-center gap-2">
+                  Manage Thesis Abstracts <GoLinkExternal />
+                </div>
+              </Link>
+              <Link href={"/dashboard/thesis/upload-thesis"}>
+                <PriButton className="w-fit bg-[#F8B49C] flex items-center gap-2 mx-5">
+                  Upload <GoLinkExternal />
+                </PriButton>
+              </Link>
+            </div>
             <div className="overflow-auto">
               <div className="h-96 min-w-[32em]">
                 <ThesisCharts />

@@ -23,6 +23,10 @@ import { BsImage } from "react-icons/bs";
 import { useRouter } from "next/router";
 import { IoSettings } from "react-icons/io5";
 import { FirebaseError } from "firebase-admin";
+import { GetServerSideProps } from "next";
+import { authOptions } from "./api/auth/[...nextauth]";
+import { getServerSession } from "next-auth";
+import { getCsrfToken } from "next-auth/react";
 const courseOpt: { value: Course; label: Course }[] = [
   { value: "Civil Engineer", label: "Civil Engineer" },
   { value: "Computer Engineer", label: "Computer Engineer" },
@@ -416,6 +420,22 @@ const PasswordForm = () => {
       </PriButton>
     </>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+  const session = await getServerSession(req, res, authOptions);
+  const csrfToken = await getCsrfToken({ req });
+  if (!session)
+    return {
+      redirect: { destination: "/?sign-in" },
+      props: { data: [] },
+    };
+  if (!csrfToken) return { notFound: true };
+  return {
+    props: {
+      data: [],
+    },
+  };
 };
 
 export default AccountSetting;

@@ -13,15 +13,30 @@ export const getAllThesis = async (
 ) => {
   const { title, year, course } = query || {};
   const res = await axios.get(
-    `${
-      process.env.NEXT_PUBLIC_DOMAIN
-    }/api/thesis-items?collection=thesis-items${
+    `${process.env.NEXT_PUBLIC_DOMAIN}/api/thesis-items?${
       title ? `&title=${title}` : ""
     }${course ? `&course=${encodeURIComponent(JSON.stringify(course))}` : ""}${
       year ? `&year=${encodeURIComponent(JSON.stringify(year))}` : ""
     }${option ? `&option=${encodeURIComponent(JSON.stringify(option))}` : ""}`
   );
   const data = res.data as ThesisItems[];
+  return data;
+};
+
+export const getOneById = async (
+  _id: string,
+  projection?: Record<string, 1 | 0>
+) => {
+  const res = await axios.get(
+    `${
+      process.env.NEXT_PUBLIC_DOMAIN
+    }/api/thesis-items?objective=get-one&_id=${_id}${
+      projection
+        ? `&projection=${encodeURIComponent(JSON.stringify(projection))}`
+        : ``
+    }`
+  );
+  const data = res.data as ThesisItems;
   return data;
 };
 

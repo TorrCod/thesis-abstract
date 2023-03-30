@@ -31,6 +31,7 @@ export const validateAuth = async (
     return { validated: true, decodedToken: checkAuth };
   } catch (e) {
     clearNextAuthCookie(res);
+    res.setHeader("Location", req.headers.referer || "/");
     return { error: (e as Error).message };
   }
 };

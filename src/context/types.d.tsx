@@ -109,6 +109,8 @@ export type GlobalValue = {
   };
   promptToSignIn: () => void;
   loadThesisCount: () => Promise<void>;
+  addThesisItem: (document: ThesisItems) => void;
+  removeThesisItem: (_id: string) => void;
 };
 
 export type AdminData = {

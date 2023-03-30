@@ -62,6 +62,8 @@ const globalCtxInit: GlobalValue = {
   },
   promptToSignIn() {},
   async loadThesisCount() {},
+  addThesisItem(document) {},
+  removeThesisItem(_id) {},
 };
 
 const GlobalContext = createContext<GlobalValue>(globalCtxInit);
@@ -197,6 +199,19 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const addThesisItem = (document: ThesisItems) => {
+    dispatch({
+      type: "load-thesis",
+      payload: [document, ...state.thesisItems],
+    });
+  };
+
+  const removeThesisItem = (_id: string) => {
+    const oldThesisItems = [...state.thesisItems];
+    const newThesisItems = oldThesisItems.filter((item) => item._id !== _id);
+    dispatch({ type: "load-thesis", payload: newThesisItems });
+  };
+
   return (
     <GlobalContext.Provider
       value={{
@@ -208,6 +223,8 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
         loadingState,
         promptToSignIn,
         loadThesisCount,
+        addThesisItem,
+        removeThesisItem,
       }}
     >
       <LoadingGlobal loading={state.loading.includes("global")}>

@@ -37,7 +37,7 @@ const totalDataInit: { course: Course; count: number }[] = [
 const globalStateInit: GlobalState = {
   thesisItems: [],
   dateOption: [],
-  loading: ["all-admin", "all-thesis"],
+  loading: [],
   recyclebin: [],
   searchThesis: [],
   filterState: {

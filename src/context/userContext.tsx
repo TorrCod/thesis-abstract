@@ -156,6 +156,8 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
     auth.currentUser?.getIdToken().then((token) => {
       userSocketRef.current = readSocket(token, "account-update");
       userSocketRef.current.subscribe(() => {
+        console.log("triggered");
+
         loadAllUsers();
       });
     });

@@ -1,27 +1,47 @@
-import { watchThesisAbstract, watchUser } from "@/lib/mongo";
+import { watchChanges } from "@/lib/mongo";
+import { NextApiResponseWithSocket } from "@/lib/types";
 import { validateAuth } from "@/utils/server-utils";
-import { NextApiRequest, NextApiResponse } from "next";
-import { Server, Socket } from "socket.io";
+import { NextApiRequest } from "next";
+import { Server } from "socket.io";
 
-const SocketHandler = async (req: NextApiRequest, res: NextApiResponse) => {
+const SocketHandler = async (
+  req: NextApiRequest,
+  res: NextApiResponseWithSocket
+) => {
   const isValidated = await validateAuth(req, res);
   if (isValidated.error) {
     return res.status(400).send("UNAUTHORIZE ACCESS");
   }
-  if ((res.socket as any).server.io) {
+  if (res.socket.server.io) {
   } else {
-    console.log("Socket Registered");
     const io = new Server((res.socket as any).server);
-    (res.socket as any).server.io = io;
-    watchUser((changeStream) => {
-      io.emit("account-update", changeStream);
-    });
-    watchThesisAbstract((changeStream) => {
-      io.emit("thesis-abstract-update", changeStream);
-    });
+    res.socket.server.io = io;
+    io.on("connection", (socket) => {
+      console.log("New Client Connected: ", socket.id);
 
-    io.on("disconnect", (reason) => {
-      console.log(reason);
+      watchChanges("accounts", "activity-log", (changeStream) => {
+        console.log("activity log updated");
+      });
+
+      watchChanges("accounts", "user", (changeStream) => {
+        console.log("user updated");
+      });
+
+      watchChanges("accounts", "pending", (changeStream) => {
+        console.log("pending updated");
+      });
+
+      watchChanges("thesis-abstract", "thesis-items", (changeStream) => {
+        console.log("Thesis Items Updated");
+      });
+
+      watchChanges("thesis-abstract", "deleted-thesis", (changeStream) => {
+        console.log("deleted thesis updated");
+      });
+
+      socket.on("disconnect", () => {
+        console.log(socket.id, "Disconnected");
+      });
     });
   }
   res.end();

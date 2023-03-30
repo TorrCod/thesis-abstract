@@ -62,7 +62,7 @@ const DashboardAdmin = () => {
           </>
         ) : null}
       </div>
-      {router.query._id ? (
+      {userDetails ? (
         <UserProfile userDetails={userDetails} />
       ) : (
         <div className="bg-white rounded-md p-5 flex flex-col gap-2 md:min-h-[85vh]">
@@ -80,27 +80,34 @@ const DashboardAdmin = () => {
   );
 };
 
-const UserProfile = ({ userDetails }: { userDetails?: UserDetails }) => {
+const UserProfile = ({ userDetails }: { userDetails: UserDetails }) => {
   const [history, setHistory] = useState<TimelineProps["items"]>([]);
   const user = useUserContext().state.userDetails;
   useEffect(() => {
-    getActivityLog(user?.newToken, { userId: userDetails?.uid }, { limit: 7 })
-      .then((res: ActivityLog[]) => {
-        const data = res.map((item) => {
-          const readedData = readActivityLogReason(item);
-          return {
-            label: new Date(item.date).toLocaleString(),
-            children: <div>{readedData?.reason}</div>,
-            dot: readedData?.dot,
-            color: readedData?.color,
-          };
+    const fetchData = async () => {
+      const token = await auth.currentUser?.getIdToken();
+      console.log(userDetails);
+      getActivityLog(token, { userId: userDetails?.uid }, { limit: 7 })
+        .then((res: ActivityLog[]) => {
+          const data = res.map((item) => {
+            const readedData = readActivityLogReason(item);
+            return {
+              label: new Date(item.date).toLocaleString(),
+              children: <div>{readedData?.reason}</div>,
+              dot: readedData?.dot,
+              color: readedData?.color,
+            };
+          });
+          setHistory(data);
+        })
+        .catch((e) => {
+          console.error(e);
         });
-        setHistory(data);
-      })
-      .catch((e) => {
-        console.error(e);
-      });
-  }, []);
+    };
+    if (user) {
+      fetchData();
+    }
+  }, [user]);
 
   return !userDetails ? (
     <></>

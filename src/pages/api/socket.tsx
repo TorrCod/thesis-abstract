@@ -17,21 +17,21 @@ const SocketHandler = async (
     const io = new Server((res.socket as any).server);
     res.socket.server.io = io;
     io.on("connection", async (socket) => {
-      console.log("New Client Connected: ", socket.id);
+      console.log("Client Connected: ", socket.id);
 
       watchChanges().then((client) => {
         client.subscribe("accounts", "activity-log", (changeStream) => {
           console.log("activity log updated");
           switch (changeStream.operationType) {
             case "insert": {
-              socket.broadcast.emit(
-                "add-activity-log",
-                changeStream.fullDocument
-              );
+              io.emit("add-activity-log", changeStream.fullDocument);
               break;
             }
             case "delete": {
-              socket.broadcast.emit("remove-activity-log", changeStream._id);
+              io.emit(
+                "remove-activity-log",
+                changeStream.documentKey._id.toString()
+              );
               break;
             }
           }
@@ -41,15 +41,15 @@ const SocketHandler = async (
           console.log("user updated");
           switch (changeStream.operationType) {
             case "insert": {
-              socket.broadcast.emit("add-user", changeStream.fullDocument);
+              io.emit("add-user", changeStream.fullDocument);
               break;
             }
             case "delete": {
-              socket.broadcast.emit("remove-user", changeStream._id);
+              io.emit("remove-user", changeStream.documentKey._id.toString());
               break;
             }
             case "update": {
-              socket.broadcast.emit("update-user", changeStream.fullDocument);
+              io.emit("update-user", changeStream.fullDocument);
               break;
             }
           }
@@ -59,11 +59,14 @@ const SocketHandler = async (
           console.log("pending updated");
           switch (changeStream.operationType) {
             case "insert": {
-              socket.broadcast.emit("add-pending", changeStream.fullDocument);
+              io.emit("add-pending", changeStream.fullDocument);
               break;
             }
             case "delete": {
-              socket.broadcast.emit("remove-pending", changeStream._id);
+              io.emit(
+                "remove-pending",
+                changeStream.documentKey._id.toString()
+              );
               break;
             }
           }
@@ -73,11 +76,11 @@ const SocketHandler = async (
           console.log("Thesis Items Updated");
           switch (changeStream.operationType) {
             case "insert": {
-              socket.broadcast.emit("add-thesis", changeStream.fullDocument);
+              io.emit("add-thesis", changeStream.fullDocument);
               break;
             }
             case "delete": {
-              socket.broadcast.emit("remove-thesis", changeStream._id);
+              io.emit("remove-thesis", changeStream.documentKey._id.toString());
               break;
             }
           }
@@ -90,16 +93,13 @@ const SocketHandler = async (
             console.log("deleted thesis updated");
             switch (changeStream.operationType) {
               case "insert": {
-                socket.broadcast.emit(
-                  "add-deleted-thesis",
-                  changeStream.fullDocument
-                );
+                io.emit("add-deleted-thesis", changeStream.fullDocument);
                 break;
               }
               case "delete": {
-                socket.broadcast.emit(
+                io.emit(
                   "remove-deleted-thesis",
-                  changeStream._id
+                  changeStream.documentKey._id.toString()
                 );
                 break;
               }
@@ -108,7 +108,7 @@ const SocketHandler = async (
         );
 
         socket.on("disconnect", () => {
-          console.log(socket.id, "Disconnected");
+          console.log("Client Disconnected: ", socket.id);
           client.unsubscribe();
         });
       });

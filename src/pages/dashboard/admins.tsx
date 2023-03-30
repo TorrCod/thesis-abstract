@@ -163,8 +163,8 @@ export const AdminTable = ({ noAction }: { noAction?: boolean }) => {
       const read = readSocket(
         state.userDetails.newToken,
         "account-update",
-        (changeStream) => {
-          console.log(changeStream);
+        () => {
+          loadAllUsers();
         }
       );
       return () => {

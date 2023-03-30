@@ -5,7 +5,9 @@ import {
   MongoClient,
   MongoServerError,
   ObjectId,
+  Document,
 } from "mongodb";
+import { Worker } from "worker_threads";
 import { CollectionName, DatabaseName, QueryPost } from "./types";
 
 let CONNECTION = [
@@ -286,5 +288,23 @@ export const watchThesisAbstract = async (
   } catch (e) {
     console.log("watch thesis items failed");
     console.error(e);
+  }
+};
+
+export const dataAgregate = async (
+  dbName: DatabaseName,
+  colName: CollectionName,
+  pipeline?: Document[]
+) => {
+  try {
+    const client = await connectToDatabase();
+    const database = client.db(dbName);
+    const collection = database.collection(colName);
+    const res = await collection.aggregate(pipeline).toArray();
+    client.close();
+    return res;
+  } catch (e) {
+    console.error(e);
+    throw new Error(e as string).message;
   }
 };

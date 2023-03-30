@@ -14,7 +14,6 @@ import { useRouter } from "next/router";
 import { BsThreeDots } from "react-icons/bs";
 import { useLocation, useWindowSize } from "react-use";
 import Head from "next/head";
-import useSocket from "@/hook/useSocket";
 
 type SelectedMenu = "/dashboard" | "/account-setting";
 
@@ -33,7 +32,6 @@ function DashboardLayout({
   const [selectedSider, setSelectedSider] = useState(userSelectedSider);
   const [selectedMenu, setSelectedMenu] = useState(userSelectedMenu);
   const [isScreen, setIsScreen] = useState(false);
-  const { clearSocket } = useSocket();
   const { width } = useWindowSize();
   const { pathname } = useLocation();
   const router = useRouter();
@@ -60,7 +58,6 @@ function DashboardLayout({
       (
         document.getElementsByClassName("bg-circle")[0] as HTMLDivElement
       ).style.display = "grid";
-      clearSocket();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

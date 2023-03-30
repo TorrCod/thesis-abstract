@@ -1,4 +1,10 @@
-import { getDistinctData, getOneData, getData } from "@/lib/mongo";
+import { ThesisCount } from "@/context/types.d";
+import {
+  getDistinctData,
+  getOneData,
+  getData,
+  dataAgregate,
+} from "@/lib/mongo";
 import { parseQuery } from "@/utils/server-utils";
 import { ObjectId } from "mongodb";
 import { NextApiRequest, NextApiResponse } from "next";
@@ -23,6 +29,21 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       });
       if (!thesisItem) return res.status(404);
       return res.status(200).json(thesisItem);
+    }
+    case "get-thesis-count": {
+      const response = await dataAgregate("thesis-abstract", "thesis-items", [
+        { $group: { _id: "$course", count: { $sum: 1 } } },
+      ]);
+      const thesisCount: ThesisCount = response.map((item) => ({
+        course: item._id,
+        count: item.count,
+      }));
+      return res
+        .status(200)
+        .json({
+          thesisCount,
+          totalCount: thesisCount.reduce((acc, { count }) => acc + count, 0),
+        });
     }
     default: {
       const { query, option } = parseQuery(req);

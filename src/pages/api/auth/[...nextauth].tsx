@@ -25,9 +25,9 @@ export const authOptions: AuthOptions = {
     }),
   ],
   pages: {
-    signIn: "/",
+    signIn: "/?sign-in",
     signOut: "/",
-    error: "/page-not-found", // Error code passed in query string as ?error=
+    error: "/?sign-in", // Error code passed in query string as ?error=
   },
 };
 

@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Form, message, Modal, Space, Table } from "antd";
+import { Form, message, Modal, Space, Table, Timeline } from "antd";
 import DashboardLayout from "@/components/dashboardLayout";
 import QuerySearch from "@/components/QuerySearch";
 import { PriButton } from "@/components/button";
 import AdminProfile, { AddAdmin } from "@/components/admin";
 import useUserContext from "@/context/userContext";
-import { AdminData, PendingAdminList, UserDetails } from "@/context/types.d";
+import { AdminData, UserDetails } from "@/context/types.d";
 import { ColumnsType } from "antd/lib/table";
 import Password from "antd/lib/input/Password";
 import { useForm } from "antd/lib/form/Form";
@@ -19,12 +19,12 @@ import {
 } from "@/utils/account-utils";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { ActivityTimeline } from "./activitylog";
 import Fuse from "fuse.js";
 import { GetServerSideProps } from "next";
 import { getServerSession } from "next-auth";
 import { getCsrfToken } from "next-auth/react";
 import { authOptions } from "../api/auth/[...nextauth]";
+import useGlobalContext from "@/context/globalContext";
 
 const DashboardAdmin = () => {
   const router = useRouter();
@@ -71,6 +71,7 @@ const DashboardAdmin = () => {
 };
 
 const UserProfile = ({ userDetails }: { userDetails?: UserDetails }) => {
+  const [history, setHistory] = useState();
   return !userDetails ? (
     <></>
   ) : (
@@ -139,7 +140,7 @@ const UserProfile = ({ userDetails }: { userDetails?: UserDetails }) => {
       <div className="bg-white rounded-md p-3 row-span-2 grid relative gap-5 grid-rows-[_0.2fr_1.8fr]">
         <div className="opacity-80">History</div>
         <div className="w-full">
-          <ActivityTimeline username={userDetails?.userName ?? "none"} />
+          <Timeline reverse items={[]} />;
         </div>
       </div>
     </div>
@@ -147,101 +148,14 @@ const UserProfile = ({ userDetails }: { userDetails?: UserDetails }) => {
 };
 
 export const AdminTable = ({ noAction }: { noAction?: boolean }) => {
-  const useDetails = useUserContext().state.userDetails;
-  const [dataCol, setDataCol] = useState<ColumnsType<AdminData>>([
-    {
-      title: "Username",
-      dataIndex: "userName",
-      key: "userName",
-      render: (val, record) => {
-        const userId = useDetails?._id;
-        const isUser = Object.values(record).includes(userId);
-        return (
-          <Link href={`/dashboard/admins?_id=${record.key}`}>
-            {val ? (
-              <Space direction="horizontal">
-                <div>{val}</div>
-                {isUser && (
-                  <div className="bg-[#38649C] text-white px-3 rounded-md text-center">
-                    you
-                  </div>
-                )}
-              </Space>
-            ) : (
-              <div>------</div>
-            )}
-          </Link>
-        );
-      },
-    },
-    {
-      title: "Date Added",
-      dataIndex: "dateAdded",
-      key: "dateAdded",
-      render: (val, record) => {
-        const dateAdded = new Date(val as string);
-        const localString = dateAdded.toLocaleString();
-        return localString;
-      },
-    },
-    {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
-    },
-    {
-      title: "Course",
-      dataIndex: "course",
-      key: "course",
-      render: (val) => {
-        return val ?? "-------";
-      },
-    },
-    {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-      render: (value, record) => {
-        // Set the date the item was added
-        const addedDate = new Date(record.dateAdded);
-
-        // Calculate the expiration date
-        const expirationDate = new Date(
-          addedDate.getTime() + 7 * 24 * 60 * 60 * 1000
-        );
-
-        // Calculate the remaining days
-        const remainingDays = Math.ceil(
-          (expirationDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24)
-        );
-
-        return (
-          <>
-            <div
-              className={`grid ${
-                value === `Pending` ? `bg-yellow-500` : `bg-lime-500`
-              } place-items-center rounded-xl w-[6em] py-1 text-white`}
-            >
-              {value}
-            </div>
-            {value === "Pending" && (
-              <div className="text-sm">Expire in {remainingDays} days</div>
-            )}
-          </>
-        );
-      },
-    },
-    {
-      title: "Action",
-      key: "action",
-      render: (_, record) => <RemoveAdmin record={record} />,
-    },
-  ]);
+  const { state, loadAllUsers } = useUserContext();
+  const { state: globalState } = useGlobalContext();
+  const [dataCol, setDataCol] = useState<ColumnsType<AdminData>>(
+    dataColumnType(state.userDetails)
+  );
   const [dataSourse, setDataSourse] = useState<AdminData[]>([]);
-  const { state } = useUserContext();
   const dataColRef = useRef(dataCol);
   const router = useRouter();
-
   useEffect(() => {
     if (noAction) {
       const oldDataCol = [...dataColRef.current];
@@ -249,6 +163,12 @@ export const AdminTable = ({ noAction }: { noAction?: boolean }) => {
       setDataCol(newDataCol);
     }
   }, [noAction]);
+
+  useEffect(() => {
+    if (state.userDetails && !state.listOfAdmins.length) {
+      loadAllUsers();
+    }
+  }, [state.userDetails, state.listOfAdmins]);
 
   useEffect(() => {
     if (router.query.username) {
@@ -265,7 +185,14 @@ export const AdminTable = ({ noAction }: { noAction?: boolean }) => {
     }
   }, [router.query, state.listOfAdmins]);
 
-  return <Table columns={dataCol} dataSource={dataSourse} scroll={{ x: 50 }} />;
+  return (
+    <Table
+      loading={globalState.loading.includes("all-admin")}
+      columns={dataCol}
+      dataSource={dataSourse}
+      scroll={{ x: 50 }}
+    />
+  );
 };
 
 const RemoveAdmin = ({ record }: { record: AdminData }) => {
@@ -372,6 +299,99 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
       data: [],
     },
   };
+};
+
+const dataColumnType = (userDetails: UserDetails | undefined) => {
+  const tableColumn: ColumnsType<AdminData> = [
+    {
+      title: "Username",
+      dataIndex: "userName",
+      key: "userName",
+      render: (val, record) => {
+        const userId = userDetails?._id;
+        const isUser = Object.values(record).includes(userId);
+        return (
+          <Link href={`/dashboard/admins?_id=${record.key}`}>
+            {val ? (
+              <Space direction="horizontal">
+                <div>{val}</div>
+                {isUser && (
+                  <div className="bg-[#38649C] text-white px-3 rounded-md text-center">
+                    you
+                  </div>
+                )}
+              </Space>
+            ) : (
+              <div>------</div>
+            )}
+          </Link>
+        );
+      },
+    },
+    {
+      title: "Date Added",
+      dataIndex: "dateAdded",
+      key: "dateAdded",
+      render: (val, record) => {
+        const dateAdded = new Date(val as string);
+        const localString = dateAdded.toLocaleString();
+        return localString;
+      },
+    },
+    {
+      title: "Email",
+      dataIndex: "email",
+      key: "email",
+    },
+    {
+      title: "Course",
+      dataIndex: "course",
+      key: "course",
+      render: (val) => {
+        return val ?? "-------";
+      },
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      render: (value, record) => {
+        // Set the date the item was added
+        const addedDate = new Date(record.dateAdded);
+
+        // Calculate the expiration date
+        const expirationDate = new Date(
+          addedDate.getTime() + 7 * 24 * 60 * 60 * 1000
+        );
+
+        // Calculate the remaining days
+        const remainingDays = Math.ceil(
+          (expirationDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+        );
+
+        return (
+          <>
+            <div
+              className={`grid ${
+                value === `Pending` ? `bg-yellow-500` : `bg-lime-500`
+              } place-items-center rounded-xl w-[6em] py-1 text-white`}
+            >
+              {value}
+            </div>
+            {value === "Pending" && (
+              <div className="text-sm">Expire in {remainingDays} days</div>
+            )}
+          </>
+        );
+      },
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (_, record) => <RemoveAdmin record={record} />,
+    },
+  ];
+  return tableColumn;
 };
 
 export default DashboardAdmin;

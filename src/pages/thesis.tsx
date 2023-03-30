@@ -19,7 +19,7 @@ const Thesis = () => {
     const course =
       router.query.course && JSON.parse(router.query.course as string);
     const year = router.query.year && JSON.parse(router.query.year as string);
-    getAllThesis({ title, course, year })
+    getAllThesis({ title, course, year }, { limit: 10 })
       .then((res) => {
         setThesisItems(res);
       })

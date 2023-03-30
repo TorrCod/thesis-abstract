@@ -25,10 +25,16 @@ export const addUserAccount = async (token: string, data: any) => {
   } else throw new Error("canont read user token");
 };
 
-export const getUserDetails = async (token: string, uid: string) => {
+export const getUserDetails = async (
+  token: string | undefined,
+  uid: string,
+  option?: { projection: Record<string, 0 | 1> }
+) => {
   if (token) {
     const res = await axios.get(
-      `/api/admin-user?collection=user&uid=${uid}`,
+      `/api/admin-user?collection=user&uid=${uid}${
+        option ? `&option=${encodeURIComponent(JSON.stringify(option))}` : ``
+      }`,
       userConfig(token)
     );
     return res.data[0];
@@ -145,10 +151,15 @@ export const getAllUsers = async (token: string | undefined) => {
   } else throw new Error("canont read user token");
 };
 
-export const getActivityLog = async (token: string | undefined) => {
+export const getActivityLog = async (
+  token: string | undefined,
+  option?: { limit?: number }
+) => {
   if (token) {
     const activityLog = await axios.request({
-      url: `/api/admin-user?collection=activity-log`,
+      url: `/api/admin-user?objective=get-activitylog${
+        option ? `&option=${encodeURIComponent(JSON.stringify(option))}` : ``
+      }`,
       method: "GET",
       ...userConfig(token),
     });

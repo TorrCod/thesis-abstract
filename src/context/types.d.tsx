@@ -9,11 +9,14 @@ export interface GlobalState {
   recyclebin: ThesisItems[];
   signIn?: boolean;
   loading: string[];
+  totalThesisCount: { thesisCount: ThesisCount; totalCount: number };
   filterState: {
     years: { all: boolean; option: string[] };
     course: { all: boolean; option: Course[] };
   };
 }
+
+export type ThesisCount = { course: Course; count: number }[];
 
 export type Course =
   | "Computer Engineer"
@@ -76,6 +79,10 @@ export type GlobalAction =
   | {
       type: "add-loading";
       payload: string[];
+    }
+  | {
+      type: "load-thesis-count";
+      payload: { thesisCount: ThesisCount; totalCount: number };
     };
 
 export type GlobalValue = {
@@ -83,7 +90,7 @@ export type GlobalValue = {
   dispatch: Dispatch<GlobalAction>;
   loadThesisItems: (query?: SearchQuery, limit?: number) => Promise<void>;
   recycledThesis: () => {
-    load: () => Promise<void>;
+    load: (query?: SearchQuery, option?: SearchOption) => Promise<void>;
     clear: () => void;
   };
   updateFilter: (payload: {
@@ -101,6 +108,7 @@ export type GlobalValue = {
     remove(key: string): void;
   };
   promptToSignIn: () => void;
+  loadThesisCount: () => Promise<void>;
 };
 
 export type AdminData = {
@@ -119,9 +127,9 @@ export type UserState = {
 };
 
 export type ActivityLog = {
+  userId: string;
   userName: string;
   _id: string;
-  id: string;
   data: { itemId: string; name: string };
   date: string;
   reason: ActivitylogReason;
@@ -140,6 +148,7 @@ export type UserDetails = {
   password?: string;
   dateAdded?: string;
   status?: "Pending" | "Admin";
+  newToken?: string;
 };
 
 export type UserValue = {

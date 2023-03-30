@@ -5,6 +5,7 @@ import {
   getAllDeletedThesis,
   getAllThesis,
   getDistincYear,
+  getThesisCount,
 } from "@/utils/thesis-item-utils";
 import { useRouter } from "next/router";
 import React, {
@@ -20,20 +21,30 @@ import {
   GlobalAction,
   GlobalState,
   GlobalValue,
+  SearchOption,
   SearchQuery,
   ThesisItems,
 } from "./types.d";
 
+const totalDataInit: { course: Course; count: number }[] = [
+  { course: "Civil Engineer", count: 0 },
+  { course: "Computer Engineer", count: 0 },
+  { course: "Mechanical Engineer", count: 0 },
+  { course: "Electronics Engineer", count: 0 },
+  { course: "Electrical Engineer", count: 0 },
+];
+
 const globalStateInit: GlobalState = {
   thesisItems: [],
   dateOption: [],
-  loading: [],
+  loading: ["all-admin", "all-thesis"],
   recyclebin: [],
   searchThesis: [],
   filterState: {
     years: { all: true, option: [] },
     course: { all: true, option: courseOption as Course[] },
   },
+  totalThesisCount: { totalCount: 0, thesisCount: totalDataInit },
 };
 
 const globalCtxInit: GlobalValue = {
@@ -50,6 +61,7 @@ const globalCtxInit: GlobalValue = {
     remove(key) {},
   },
   promptToSignIn() {},
+  async loadThesisCount() {},
 };
 
 const GlobalContext = createContext<GlobalValue>(globalCtxInit);
@@ -82,6 +94,9 @@ const globalReducer = (
     case "add-loading": {
       return { ...state, loading: action.payload };
     }
+    case "load-thesis-count": {
+      return { ...state, totalThesisCount: action.payload };
+    }
   }
 };
 
@@ -93,14 +108,21 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
   }, [state.thesisItems]);
 
   const loadThesisItems = async (query?: SearchQuery, limit?: number) => {
-    const thesisItems = await getAllThesis(query, {
-      limit,
-      projection: { title: 1, course: 1, dateAdded: 1 },
-    });
-    dispatch({
-      type: "load-thesis",
-      payload: thesisItems,
-    });
+    try {
+      loadingState.add("all-thesis");
+      const thesisItems = await getAllThesis(query, {
+        limit: 10,
+        projection: { title: 1, course: 1, dateAdded: 1 },
+      });
+      dispatch({
+        type: "load-thesis",
+        payload: thesisItems,
+      });
+    } catch (e) {
+      console.error(e);
+    } finally {
+      loadingState.remove("all-thesis");
+    }
   };
 
   const loadYearsOpt = async () => {
@@ -116,10 +138,18 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
   };
 
   const recycledThesis = () => ({
-    load: async () => {
+    load: async (query?: SearchQuery, option?: SearchOption) => {
       try {
         const token = await auth.currentUser?.getIdToken();
-        const recycledThesis = await getAllDeletedThesis(token);
+        const recycledThesis = await getAllDeletedThesis(token, query, {
+          ...option,
+          projection: {
+            title: 1,
+            course: 1,
+            createdAt: 1,
+            expireAfterSeconds: 1,
+          },
+        });
         dispatch({ type: "load-recycle", payload: recycledThesis ?? [] });
       } catch (e) {
         console.error("failed to load deleted thesis");
@@ -158,6 +188,15 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
     dispatch({ type: "sign-in", payload: true });
   };
 
+  const loadThesisCount = async () => {
+    try {
+      const countThesis = await getThesisCount();
+      dispatch({ type: "load-thesis-count", payload: countThesis });
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   return (
     <GlobalContext.Provider
       value={{
@@ -168,6 +207,7 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
         updateFilter,
         loadingState,
         promptToSignIn,
+        loadThesisCount,
       }}
     >
       <LoadingGlobal loading={state.loading.includes("global")}>

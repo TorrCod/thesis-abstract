@@ -1,4 +1,5 @@
 import { auth, signUp } from "@/lib/firebase";
+import { _Socket } from "@/lib/types";
 import {
   addUserAccount,
   deleteAdmin,
@@ -7,16 +8,20 @@ import {
   getUserDetails,
   updateUser,
 } from "@/utils/account-utils";
+import { readSocket } from "@/utils/socket-utils";
 import { addThesis } from "@/utils/thesis-item-utils";
 import { message } from "antd";
+import axios from "axios";
 import {
   EmailAuthProvider,
   onAuthStateChanged,
   reauthenticateWithCredential,
+  signOut,
   Unsubscribe,
   updatePassword,
   updateProfile,
 } from "firebase/auth";
+import { signIn } from "next-auth/react";
 import {
   createContext,
   useContext,
@@ -34,6 +39,7 @@ import {
   UserState,
   UserValue,
 } from "./types.d";
+import { signOut as nextSignOut } from "next-auth/react";
 
 const userStateInit: UserState = {
   userDetails: undefined,
@@ -98,18 +104,28 @@ const userReducer = (state: UserState, action: UserAction): UserState => {
 export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(userReducer, userStateInit);
   const unsubscribeRef = useRef<Unsubscribe | null>(null);
-  const { dispatch: gloablDispatch, recycledThesis } = useGlobalContext();
+  const userSocketRef = useRef<_Socket | undefined>();
+  const {
+    dispatch: gloablDispatch,
+    recycledThesis,
+    loadingState,
+  } = useGlobalContext();
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         try {
           const token = await user.getIdToken();
-          const res = await getUserDetails(token, user.uid);
-          res.profilePic = user.photoURL;
+          const res: UserDetails = await getUserDetails(token, user.uid);
+          res.newToken = token;
+          res.profilePic = user.photoURL as any;
           dispatch({ type: "on-signin", payload: { userDetails: res } });
         } catch (e) {
+          console.log("testyarn");
           message.error("failed to fetch user details");
           console.error(e);
+          nextSignOut({ redirect: false });
+          axios.get("/api/logout");
+          await auth.signOut();
         }
       } else {
         dispatch({
@@ -125,21 +141,39 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
           payload: [],
         });
         gloablDispatch({ type: "load-thesis", payload: [] });
+        userSocketRef.current?.unsubscribe();
+        await axios.get("/api/logout");
       }
       unsubscribeRef.current = unsubscribe;
     });
-    return () => unsubscribe();
+    return () => {
+      unsubscribe();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    if (userSocketRef.current || !state.userDetails) return;
+    userSocketRef.current = readSocket(
+      state.userDetails.newToken,
+      "account-update"
+    );
+    userSocketRef.current.subscribe(() => {
+      loadAllUsers();
+    });
+  }, [state.userDetails]);
+
   const loadAllUsers = async () => {
     try {
+      loadingState.add("all-admin");
       const token = await auth.currentUser?.getIdToken();
       const allUsers = await getAllUsers(token);
       dispatch({ type: "load-all-users", payload: allUsers });
     } catch (e) {
       message.error("failed to load all users");
       console.error(e);
+    } finally {
+      loadingState.remove("all-admin");
     }
   };
 
@@ -149,8 +183,12 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
     delete userDetails.password;
     const token = await credential.user.getIdToken();
     userDetails.uid = credential.user.uid;
-    const res = await addUserAccount(token, userDetails);
-    dispatch({ type: "on-signin", payload: { userDetails: res } });
+    await addUserAccount(token, userDetails);
+    await signIn(
+      "credentials",
+      { callbackUrl: "/dashboard" },
+      { tokenId: token }
+    );
   };
 
   const userUpdateInfo = async (userDetails: UserDetails) => {
@@ -200,7 +238,9 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
 
   const loadActivityLog = async () => {
     const token = await auth.currentUser?.getIdToken();
-    const activityLog = (await getActivityLog(token)) as ActivityLog[];
+    const activityLog = (await getActivityLog(token, {
+      limit: 10,
+    })) as ActivityLog[];
     dispatch({ type: "load-activity-log", payload: activityLog });
     return activityLog;
   };

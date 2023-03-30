@@ -1,4 +1,9 @@
-import { SearchOption, SearchQuery, ThesisItems } from "@/context/types.d";
+import {
+  SearchOption,
+  SearchQuery,
+  ThesisCount,
+  ThesisItems,
+} from "@/context/types.d";
 import axios from "axios";
 import { userConfig } from "./account-utils";
 
@@ -37,16 +42,35 @@ export const getOneById = async (
 
 export const getDistincYear = async () => {
   const res = await axios.get(
-    `${process.env.NEXT_PUBLIC_DOMAIN}/api/public/thesis?collection=thesis-items&objective=get-distinct-years`
+    `${process.env.NEXT_PUBLIC_DOMAIN}/api/public/thesis?&objective=get-distinct-years`
   );
   const data = res.data as string[];
   return data;
 };
 
-export const getAllDeletedThesis = async (token: string | undefined) => {
+export const getThesisCount = async () => {
+  const res = await axios.get(
+    `${process.env.NEXT_PUBLIC_DOMAIN}/api/public/thesis?objective=get-thesis-count`
+  );
+  const data = res.data as { thesisCount: ThesisCount; totalCount: number };
+  return data;
+};
+
+export const getAllDeletedThesis = async (
+  token: string | undefined,
+  query?: SearchQuery,
+  option?: SearchOption
+) => {
+  const { title, year, course } = query || {};
   if (token) {
     const res = await axios.get(
-      "/api/thesis-items?collection=deleted-thesis",
+      `/api/thesis-items?collection=deleted-thesis${
+        title ? `&title=${title}` : ""
+      }${
+        course ? `&course=${encodeURIComponent(JSON.stringify(course))}` : ""
+      }${year ? `&year=${encodeURIComponent(JSON.stringify(year))}` : ""}${
+        option ? `&option=${encodeURIComponent(JSON.stringify(option))}` : ""
+      }`,
       userConfig(token)
     );
     return res.data;

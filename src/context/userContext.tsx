@@ -26,7 +26,6 @@ import {
   useEffect,
   useReducer,
   useRef,
-  useState,
 } from "react";
 import useGlobalContext from "./globalContext";
 import {

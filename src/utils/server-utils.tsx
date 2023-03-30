@@ -8,6 +8,7 @@ import { ObjectId } from "mongodb";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
 import { getCsrfToken } from "next-auth/react";
+import { serialize } from "cookie";
 
 export const validateAuth = async (
   req: NextApiRequest,
@@ -17,16 +18,29 @@ export const validateAuth = async (
   validated?: boolean;
   decodedToken?: DecodedIdToken | false;
 }> => {
-  const csrfToken = await getCsrfToken({ req });
-  const session = await getServerSession(req, res, authOptions);
-  if (!csrfToken && !session) {
-    return { error: "UNAUTHORIZE ACCESS" };
+  try {
+    const csrfToken = await getCsrfToken({ req });
+    const session = await getServerSession(req, res, authOptions);
+    if (!csrfToken && !session) {
+      throw new Error("UNAUTHORIZE ACCESS");
+    }
+    if (!req.headers.authorization) throw new Error("Insufficient Input");
+    const token = req.headers.authorization?.slice(7);
+    const checkAuth = await verifyIdToken(token);
+    if (!checkAuth) throw new Error("Invalid User");
+    return { validated: true, decodedToken: checkAuth };
+  } catch (e) {
+    clearNextAuthCookie(res);
+    return { error: (e as Error).message };
   }
-  if (!req.headers.authorization) return { error: "Insufficient Input" };
-  const token = req.headers.authorization?.slice(7);
-  const checkAuth = await verifyIdToken(token);
-  if (!checkAuth) return { error: "invalid user" };
-  return { validated: true, decodedToken: checkAuth };
+};
+
+export const clearNextAuthCookie = (res: NextApiResponse) => {
+  res.setHeader("Set-Cookie", [
+    serialize("next-auth.csrf-token", "", { maxAge: -1, path: "/" }),
+    serialize("next-auth.callback-url", "", { maxAge: -1, path: "/" }),
+    serialize("next-auth.session-token", "", { maxAge: -1, path: "/" }),
+  ]);
 };
 
 export const updateActivityLog = async (

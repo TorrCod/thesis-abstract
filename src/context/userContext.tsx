@@ -11,10 +11,12 @@ import {
 import { readSocket } from "@/utils/socket-utils";
 import { addThesis } from "@/utils/thesis-item-utils";
 import { message } from "antd";
+import axios from "axios";
 import {
   EmailAuthProvider,
   onAuthStateChanged,
   reauthenticateWithCredential,
+  signOut,
   Unsubscribe,
   updatePassword,
   updateProfile,
@@ -37,6 +39,7 @@ import {
   UserState,
   UserValue,
 } from "./types.d";
+import { signOut as nextSignOut } from "next-auth/react";
 
 const userStateInit: UserState = {
   userDetails: undefined,
@@ -119,6 +122,8 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
         } catch (e) {
           message.error("failed to fetch user details");
           console.error(e);
+          await signOut(auth);
+          await nextSignOut({ callbackUrl: "/" });
         }
       } else {
         dispatch({
@@ -135,6 +140,7 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
         });
         gloablDispatch({ type: "load-thesis", payload: [] });
         userSocketRef.current?.unsubscribe();
+        await axios.get("/api/logout");
       }
       unsubscribeRef.current = unsubscribe;
     });

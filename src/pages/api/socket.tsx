@@ -108,7 +108,7 @@ const SocketHandler = async (
         // );
 
         client.subscribe("accounts", "user", () => {
-          io.emit("user-changes", "detected");
+          io.emit("user-changes", "change detected");
         });
 
         client.subscribe("accounts", "pending", () => {
@@ -116,7 +116,7 @@ const SocketHandler = async (
         });
 
         client.subscribe("accounts", "activity-log", () => {
-          io.emit("activity-log-changes", "achange detected");
+          io.emit("activity-log-changes", "change detected");
         });
 
         client.subscribe("thesis-abstract", "thesis-items", (changeStream) => {

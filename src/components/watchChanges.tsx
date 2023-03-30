@@ -5,10 +5,13 @@ import React, { useEffect, useRef } from "react";
 import { io, Socket } from "socket.io-client";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
 import useGlobalContext from "@/context/globalContext";
+import useUserContext from "@/context/userContext";
 
 const WatchChanges = ({ children }: { children: React.ReactNode }) => {
-  const userDetails = userContext().state.userDetails;
-  const socketRef = useRef<Socket<DefaultEventsMap, DefaultEventsMap>>();
+  const { state, loadAllUsers } = userContext();
+  const userDetails = state.userDetails;
+  const thesisSocket = useRef<Socket<DefaultEventsMap, DefaultEventsMap>>();
+  const userSocketRef = useRef<Socket<DefaultEventsMap, DefaultEventsMap>>();
   const {
     state: globalState,
     removeThesisItem,
@@ -16,15 +19,15 @@ const WatchChanges = ({ children }: { children: React.ReactNode }) => {
   } = useGlobalContext();
   useEffect(() => {
     const closeConnection = () => {
-      if (socketRef.current) {
-        socketRef.current.close();
-        socketRef.current = undefined;
+      if (thesisSocket.current) {
+        thesisSocket.current.close();
+        thesisSocket.current = undefined;
       }
     };
     if (userDetails) {
       closeConnection();
       const socket = io();
-      socketRef.current = socket;
+      thesisSocket.current = socket;
       auth.currentUser
         ?.getIdToken()
         .then((token) => readSocket(token))
@@ -36,7 +39,7 @@ const WatchChanges = ({ children }: { children: React.ReactNode }) => {
                 break;
               }
               case "insert": {
-                // addThesisItem(changeStream.document);
+                addThesisItem(changeStream.document);
                 break;
               }
             }
@@ -45,6 +48,29 @@ const WatchChanges = ({ children }: { children: React.ReactNode }) => {
     }
     return () => closeConnection();
   }, [userDetails, globalState.thesisItems]);
+
+  useEffect(() => {
+    const closeConnection = () => {
+      if (userSocketRef.current) {
+        userSocketRef.current.close();
+        userSocketRef.current = undefined;
+      }
+    };
+    if (userDetails) {
+      closeConnection();
+      const socket = io();
+      userSocketRef.current = socket;
+      auth.currentUser
+        ?.getIdToken()
+        .then((token) => readSocket(token))
+        .then(() => {
+          socket.on("user-changes", () => {
+            loadAllUsers();
+          });
+        });
+    }
+    return () => closeConnection();
+  }, []);
 
   return <>{children}</>;
 };

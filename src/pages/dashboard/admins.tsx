@@ -158,23 +158,6 @@ export const AdminTable = ({ noAction }: { noAction?: boolean }) => {
   const dataColRef = useRef(dataCol);
   const router = useRouter();
   useEffect(() => {
-    if (!state.userDetails) return;
-    else {
-      const read = readSocket(
-        state.userDetails.newToken,
-        "account-update",
-        () => {
-          loadAllUsers();
-        }
-      );
-      return () => {
-        console.log("trigger");
-        read.unsubscribe();
-      };
-    }
-  }, [state.userDetails]);
-
-  useEffect(() => {
     if (noAction) {
       const oldDataCol = [...dataColRef.current];
       const newDataCol = oldDataCol.filter((item) => item.key !== "action");

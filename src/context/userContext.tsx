@@ -1,4 +1,5 @@
 import { auth, signUp } from "@/lib/firebase";
+import { _Socket } from "@/lib/types";
 import {
   addUserAccount,
   deleteAdmin,
@@ -7,6 +8,7 @@ import {
   getUserDetails,
   updateUser,
 } from "@/utils/account-utils";
+import { readSocket } from "@/utils/socket-utils";
 import { addThesis } from "@/utils/thesis-item-utils";
 import { message } from "antd";
 import {
@@ -98,6 +100,7 @@ const userReducer = (state: UserState, action: UserAction): UserState => {
 export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(userReducer, userStateInit);
   const unsubscribeRef = useRef<Unsubscribe | null>(null);
+  const userSocketRef = useRef<_Socket | undefined>();
   const {
     dispatch: gloablDispatch,
     recycledThesis,
@@ -112,6 +115,10 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
           res.newToken = token;
           res.profilePic = user.photoURL as any;
           dispatch({ type: "on-signin", payload: { userDetails: res } });
+          userSocketRef.current = readSocket(token, "account-update");
+          userSocketRef.current.subscribe(() => {
+            loadAllUsers();
+          });
         } catch (e) {
           message.error("failed to fetch user details");
           console.error(e);
@@ -130,10 +137,15 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
           payload: [],
         });
         gloablDispatch({ type: "load-thesis", payload: [] });
+        userSocketRef.current?.unsubscribe();
       }
       unsubscribeRef.current = unsubscribe;
     });
-    return () => unsubscribe();
+    return () => {
+      console.log("trigger");
+
+      unsubscribe();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

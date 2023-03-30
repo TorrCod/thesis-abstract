@@ -76,6 +76,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         switch (req.query.objective) {
           case "invite-user": {
             const collection = req.query.collection as CollectionName;
+            const checkEmail = await getOneData("accounts", "user", {
+              email: req.body.email,
+            });
+            if (checkEmail)
+              return res
+                .status(400)
+                .send("email is exist please use another one");
             const { insertedResult, dateNow } = await addDataWithExpiration(
               "accounts",
               collection,

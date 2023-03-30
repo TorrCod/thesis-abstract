@@ -48,6 +48,22 @@ export const getUserDetails = async (
   } else throw new Error("canont read user token");
 };
 
+export const checkEmail = async (
+  token: string | undefined,
+  email: string,
+  option?: { projection: Record<string, 0 | 1> }
+) => {
+  if (token) {
+    const res = await axios.get(
+      `/api/admin-user?objective=check-email&email=${email}${
+        option ? `&option=${encodeURIComponent(JSON.stringify(option))}` : ``
+      }`,
+      userConfig(token)
+    );
+    return res.data;
+  } else throw new Error("canont read user token");
+};
+
 export const inviteUser = async (token: string | undefined, data: any) => {
   if (token) {
     const insertResult = await axios.request({

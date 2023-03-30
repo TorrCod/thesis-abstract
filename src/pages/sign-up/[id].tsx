@@ -2,44 +2,11 @@ import { PriButton } from "@/components/button";
 import { LoadingGlobal } from "@/context/globalContext";
 import { Course, UserDetails } from "@/context/types.d";
 import useUserContext from "@/context/userContext";
-import { getData, generateId } from "@/lib/mongo";
+import { auth } from "@/lib/firebase";
+import { addUserAccount } from "@/utils/account-utils";
 import { Form, Input, message, Select } from "antd";
-import { ObjectId } from "mongodb";
-import { GetStaticProps, GetStaticPaths } from "next";
+import { isSignInWithEmailLink, signInWithEmailLink } from "firebase/auth";
 import { useRouter } from "next/router";
-
-export const getStaticProps: GetStaticProps = async (context) => {
-  try {
-    const res = await getData("accounts", "pending");
-    const emailId = generateId(res);
-    const itemId = context.params?.id;
-    const foundItem = emailId.find((item) => itemId === item["id"]);
-    foundItem.createdAt = null;
-    return {
-      props: { data: foundItem },
-    };
-  } catch (e) {
-    console.error(e);
-    return {
-      props: { hasError: true },
-    };
-  }
-};
-
-export const getStaticPaths: GetStaticPaths = async () => {
-  try {
-    const thesisItems: any[] = await getData("accounts", "pending");
-    const pathWithParams = thesisItems.map((item) => ({
-      params: { id: new ObjectId(item._id).toString() },
-    }));
-    return {
-      paths: pathWithParams,
-      fallback: true,
-    };
-  } catch {
-    return { paths: [], fallback: true };
-  }
-};
 
 const courseOpt: { value: Course; label: Course }[] = [
   { value: "Civil Engineer", label: "Civil Engineer" },
@@ -48,21 +15,39 @@ const courseOpt: { value: Course; label: Course }[] = [
   { value: "Mechanical Engineer", label: "Mechanical Engineer" },
   { value: "Electronics Engineer", label: "Electronics Engineer" },
 ];
+import { GetServerSideProps } from "next";
+import { getOneData } from "@/lib/mongo";
+import { ObjectId } from "mongodb";
+import { signIn } from "next-auth/react";
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  try {
+    const id = (ctx.params as any).id;
+    const response = await getOneData("accounts", "pending", {
+      _id: new ObjectId(id),
+    });
+    if (!response) throw new Error("no response");
+    return {
+      props: {
+        data: {
+          email: response.email,
+          _id: response._id.toString(),
+          approove: response.approove,
+        },
+      },
+    };
+  } catch (e) {
+    console.error(e);
+    return { notFound: true };
+  }
+};
 
 const HandleInviteLink = (props: {
   data: { email: string; _id: string; approove: string };
   hasError: boolean;
 }) => {
   const [formSignUp] = Form.useForm();
-  const userCtx = useUserContext();
-  const router = useRouter();
-  if (typeof window !== "undefined" && props.hasError) {
-    router.push("/link-expired");
-    return <></>;
-  }
-  if (router.isFallback) {
-    return <LoadingGlobal loading />;
-  }
+  const { unsubscribeRef, userSignUp } = useUserContext();
   const handleSignUp = async () => {
     try {
       await formSignUp.validateFields();
@@ -79,13 +64,12 @@ const HandleInviteLink = (props: {
         approove: props.data.approove,
         _id: props.data._id,
       };
-      await userCtx.userSignUp?.(userDetails);
+      unsubscribeRef.current?.();
+      await userSignUp?.(userDetails);
       message.success({
         type: "success",
         content: "Initialized Successfully",
       });
-      formSignUp.resetFields();
-      router.push("/dashboard/overview");
     } catch (error) {
       const errmessage = (error as any).message;
       if (errmessage) {

@@ -19,6 +19,7 @@ import {
   updatePassword,
   updateProfile,
 } from "firebase/auth";
+import { signIn } from "next-auth/react";
 import {
   createContext,
   useContext,
@@ -174,8 +175,12 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
     delete userDetails.password;
     const token = await credential.user.getIdToken();
     userDetails.uid = credential.user.uid;
-    const res = await addUserAccount(token, userDetails);
-    dispatch({ type: "on-signin", payload: { userDetails: res } });
+    await addUserAccount(token, userDetails);
+    await signIn(
+      "credentials",
+      { callbackUrl: "/dashboard" },
+      { tokenId: token }
+    );
   };
 
   const userUpdateInfo = async (userDetails: UserDetails) => {

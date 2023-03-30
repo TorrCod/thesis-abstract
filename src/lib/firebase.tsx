@@ -1,6 +1,4 @@
 import { UserDetails } from "@/context/types.d";
-import { userConfig } from "@/utils/account-utils";
-import axios from "axios";
 import { initializeApp } from "firebase/app";
 import {
   connectAuthEmulator,

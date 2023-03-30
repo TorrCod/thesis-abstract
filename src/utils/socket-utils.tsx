@@ -1,24 +1,30 @@
 import axios from "axios";
-import { io } from "socket.io-client";
+import { io, Socket } from "socket.io-client";
+import { DefaultEventsMap } from "socket.io/dist/typed-events";
 import { userConfig } from "./account-utils";
 
 export const readSocket = (
   token: string | undefined,
   name: string,
-  callback: (changeStream: any) => Promise<void> | ((changeStream: any) => void)
+  callback: (changeStream: any) => Promise<void> | void
 ) => {
   if (!token) {
     throw new Error("Cannot read user token");
   }
-  const socket = io();
+  let socket: Socket<DefaultEventsMap, DefaultEventsMap> | undefined;
   const unsubscribe = () => {
-    socket.off(name);
-    socket.close();
+    if (socket && socket.connected) {
+      console.log("unsubscribe");
+      socket.off(name);
+      socket.close();
+    }
   };
   axios.get("/api/socket", userConfig(token)).then(() => {
+    console.log("subscribe");
+    socket = io();
     socket.on(name, async (changeStream) => {
       callback(changeStream);
     });
   });
-  return unsubscribe;
+  return { socket, unsubscribe };
 };

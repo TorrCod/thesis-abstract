@@ -1,5 +1,4 @@
 import { auth, signUp } from "@/lib/firebase";
-import { _Socket } from "@/lib/types";
 import {
   addUserAccount,
   deleteAdmin,
@@ -8,7 +7,6 @@ import {
   getUserDetails,
   updateUser,
 } from "@/utils/account-utils";
-import { readSocket } from "@/utils/socket-utils";
 import { addThesis } from "@/utils/thesis-item-utils";
 import { message } from "antd";
 import axios from "axios";
@@ -28,6 +26,7 @@ import {
   useEffect,
   useReducer,
   useRef,
+  useState,
 } from "react";
 import useGlobalContext from "./globalContext";
 import {
@@ -104,7 +103,6 @@ const userReducer = (state: UserState, action: UserAction): UserState => {
 export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(userReducer, userStateInit);
   const unsubscribeRef = useRef<Unsubscribe | null>(null);
-  const userSocketRef = useRef<_Socket | undefined>();
   const {
     dispatch: gloablDispatch,
     recycledThesis,
@@ -140,7 +138,6 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
           payload: [],
         });
         gloablDispatch({ type: "load-thesis", payload: [] });
-        userSocketRef.current?.unsubscribe();
         await axios.get("/api/logout");
       }
       unsubscribeRef.current = unsubscribe;
@@ -150,18 +147,6 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    if (userSocketRef.current || !state.userDetails) return;
-    auth.currentUser?.getIdToken().then((token) => {
-      userSocketRef.current = readSocket(token, "account-update");
-      userSocketRef.current.subscribe(() => {
-        console.log("triggered");
-
-        loadAllUsers();
-      });
-    });
-  }, [state.userDetails]);
 
   const loadAllUsers = async () => {
     try {

@@ -1,4 +1,4 @@
-import { ActivitylogReason } from "@/lib/types";
+import { ActivitylogReason, _Socket } from "@/lib/types";
 import { Unsubscribe } from "firebase/auth";
 import { Dispatch, MutableRefObject } from "react";
 

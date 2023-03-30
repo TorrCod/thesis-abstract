@@ -168,7 +168,8 @@ export const ThesisCharts = () => {
 };
 
 export const ThesisTable = () => {
-  const userDetails = useUserContext().state.userDetails;
+  const { state: userState } = useUserContext();
+  const userDetails = userState.userDetails;
   const { state, loadThesisItems } = useGlobalContext();
   const [thesisTableData, setThesisTableData] = useState<DataType[]>([]);
   const router = useRouter();

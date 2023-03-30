@@ -208,7 +208,7 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
 
   const removeThesisItem = (_id: string) => {
     const oldThesisItems = [...state.thesisItems];
-    const newThesisItems = oldThesisItems.filter((item) => item._id !== _id);
+    const newThesisItems = oldThesisItems.filter((item) => item._id === _id);
     dispatch({ type: "load-thesis", payload: newThesisItems });
   };
 

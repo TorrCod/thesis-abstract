@@ -111,6 +111,7 @@ export type GlobalValue = {
   loadThesisCount: () => Promise<void>;
   addThesisItem: (document: ThesisItems) => void;
   removeThesisItem: (_id: string) => void;
+  restoreThesis: (_id: string) => void;
 };
 
 export type AdminData = {

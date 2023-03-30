@@ -20,92 +20,112 @@ const SocketHandler = async (
       console.log("Client Connected: ", socket.id);
 
       watchChanges().then((client) => {
-        client.subscribe("accounts", "activity-log", (changeStream) => {
-          console.log("activity log updated");
-          switch (changeStream.operationType) {
-            case "insert": {
-              io.emit("add-activity-log", changeStream.fullDocument);
-              break;
-            }
-            case "delete": {
-              io.emit(
-                "remove-activity-log",
-                changeStream.documentKey._id.toString()
-              );
-              break;
-            }
-          }
+        // client.subscribe("accounts", "activity-log", (changeStream) => {
+        //   console.log("activity log updated");
+        //   switch (changeStream.operationType) {
+        //     case "insert": {
+        //       io.emit("add-activity-log", changeStream.fullDocument);
+        //       break;
+        //     }
+        //     case "delete": {
+        //       io.emit(
+        //         "remove-activity-log",
+        //         changeStream.documentKey._id.toString()
+        //       );
+        //       break;
+        //     }
+        //   }
+        // });
+
+        // client.subscribe("accounts", "user", (changeStream) => {
+        //   console.log("user updated");
+        //   switch (changeStream.operationType) {
+        //     case "insert": {
+        //       io.emit("add-user", changeStream.fullDocument);
+        //       break;
+        //     }
+        //     case "delete": {
+        //       io.emit("remove-user", changeStream.documentKey._id.toString());
+        //       break;
+        //     }
+        //     case "update": {
+        //       io.emit("update-user", changeStream.fullDocument);
+        //       break;
+        //     }
+        //   }
+        // });
+
+        // client.subscribe("accounts", "pending", (changeStream) => {
+        //   console.log("pending updated");
+        //   switch (changeStream.operationType) {
+        //     case "insert": {
+        //       io.emit("add-pending", changeStream.fullDocument);
+        //       break;
+        //     }
+        //     case "delete": {
+        //       io.emit(
+        //         "remove-pending",
+        //         changeStream.documentKey._id.toString()
+        //       );
+        //       break;
+        //     }
+        //   }
+        // });
+
+        // client.subscribe("thesis-abstract", "thesis-items", (changeStream) => {
+        //   console.log("Thesis Items Updated");
+        //   switch (changeStream.operationType) {
+        //     case "insert": {
+        //       io.emit("add-thesis", changeStream.fullDocument);
+        //       break;
+        //     }
+        //     case "delete": {
+        //       io.emit("remove-thesis", changeStream.documentKey._id.toString());
+        //       break;
+        //     }
+        //   }
+        // });
+
+        // client.subscribe(
+        //   "thesis-abstract",
+        //   "deleted-thesis",
+        //   (changeStream) => {
+        //     console.log("deleted thesis updated");
+        //     switch (changeStream.operationType) {
+        //       case "insert": {
+        //         io.emit("add-deleted-thesis", changeStream.fullDocument);
+        //         break;
+        //       }
+        //       case "delete": {
+        //         io.emit(
+        //           "remove-deleted-thesis",
+        //           changeStream.documentKey._id.toString()
+        //         );
+        //         break;
+        //       }
+        //     }
+        //   }
+        // );
+
+        client.subscribe("accounts", "user", () => {
+          io.emit("user-changes", "detected");
         });
 
-        client.subscribe("accounts", "user", (changeStream) => {
-          console.log("user updated");
-          switch (changeStream.operationType) {
-            case "insert": {
-              io.emit("add-user", changeStream.fullDocument);
-              break;
-            }
-            case "delete": {
-              io.emit("remove-user", changeStream.documentKey._id.toString());
-              break;
-            }
-            case "update": {
-              io.emit("update-user", changeStream.fullDocument);
-              break;
-            }
-          }
+        client.subscribe("accounts", "pending", () => {
+          io.emit("pending-changes", "change detected");
         });
 
-        client.subscribe("accounts", "pending", (changeStream) => {
-          console.log("pending updated");
-          switch (changeStream.operationType) {
-            case "insert": {
-              io.emit("add-pending", changeStream.fullDocument);
-              break;
-            }
-            case "delete": {
-              io.emit(
-                "remove-pending",
-                changeStream.documentKey._id.toString()
-              );
-              break;
-            }
-          }
+        client.subscribe("accounts", "activity-log", () => {
+          io.emit("activity-log-changes", "achange detected");
         });
 
-        client.subscribe("thesis-abstract", "thesis-items", (changeStream) => {
-          console.log("Thesis Items Updated");
-          switch (changeStream.operationType) {
-            case "insert": {
-              io.emit("add-thesis", changeStream.fullDocument);
-              break;
-            }
-            case "delete": {
-              io.emit("remove-thesis", changeStream.documentKey._id.toString());
-              break;
-            }
-          }
+        client.subscribe("thesis-abstract", "thesis-items", () => {
+          io.emit("thesis-changes", "change detected");
         });
 
-        client.subscribe(
-          "thesis-abstract",
-          "deleted-thesis",
-          (changeStream) => {
-            console.log("deleted thesis updated");
-            switch (changeStream.operationType) {
-              case "insert": {
-                io.emit("add-deleted-thesis", changeStream.fullDocument);
-                break;
-              }
-              case "delete": {
-                io.emit(
-                  "remove-deleted-thesis",
-                  changeStream.documentKey._id.toString()
-                );
-                break;
-              }
-            }
-          }
-        );
+        client.subscribe("thesis-abstract", "deleted-thesis", () => {
+          io.emit("deleted-thesis-changes", "change detected");
+        });
 
         socket.on("disconnect", () => {
           console.log("Client Disconnected: ", socket.id);

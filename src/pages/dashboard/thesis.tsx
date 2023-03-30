@@ -38,6 +38,9 @@ import {
 import { ResponsiveContainer } from "recharts";
 import { authOptions } from "../api/auth/[...nextauth]";
 import { stringify } from "querystring";
+import { io, Socket } from "socket.io-client";
+import { DefaultEventsMap } from "socket.io/dist/typed-events";
+import { readSocket } from "@/utils/socket-utils";
 
 const menuItems: MenuProps["items"] = [
   { key: "thesis-items", label: "Thesis Items" },
@@ -173,9 +176,12 @@ export const ThesisTable = () => {
   const { state, loadThesisItems } = useGlobalContext();
   const [thesisTableData, setThesisTableData] = useState<DataType[]>([]);
   const router = useRouter();
+  const socketRef = useRef<
+    Socket<DefaultEventsMap, DefaultEventsMap> | undefined
+  >();
 
   useEffect(() => {
-    if (userDetails && !state.thesisItems.length) {
+    if (userDetails) {
       loadThesisItems();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -194,7 +200,29 @@ export const ThesisTable = () => {
     const thesisItems = state.thesisItems;
     const toTableThesisItems = thesisToDataType(thesisItems);
     setThesisTableData(toTableThesisItems);
-  }, [state.thesisItems]);
+    if (userDetails) {
+      if (socketRef.current) {
+        socketRef.current.close();
+        socketRef.current = undefined;
+      }
+      const socket = io();
+      socketRef.current = socket;
+      auth.currentUser
+        ?.getIdToken()
+        .then((token) => readSocket(token))
+        .then(() => {
+          socket.on("thesis-changes", () => {
+            console.log("thesis-change detected");
+          });
+        });
+    }
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.close();
+        socketRef.current = undefined;
+      }
+    };
+  }, [state.thesisItems, userDetails]);
 
   return (
     <Table
@@ -247,10 +275,12 @@ const RecycledTable = () => {
 };
 
 const RemoveThesis = (props: DataType & { id: string }) => {
+  const { removeThesisItem } = useGlobalContext();
   const handleClick = async () => {
     try {
       const token = await auth.currentUser?.getIdToken();
       await removeThesis({ token: token, thesisId: props.id });
+      removeThesisItem(props.id);
       message.success("Removed Success");
     } catch (e) {
       message.error("remove failed");
@@ -271,10 +301,12 @@ const RemoveThesis = (props: DataType & { id: string }) => {
 };
 
 const RestoreThesis = (props: DataType & { id: string }) => {
+  const { restoreThesis: restore } = useGlobalContext();
   const handleClick = async () => {
     try {
       const token = await auth.currentUser?.getIdToken();
       await restoreThesis({ token: token, thesisId: props.id });
+      restore(props.id);
       message.success("Restore Success");
     } catch (e) {
       message.error("Restore failed");

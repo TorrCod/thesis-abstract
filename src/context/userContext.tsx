@@ -116,7 +116,6 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
           res.profilePic = user.photoURL as any;
           dispatch({ type: "on-signin", payload: { userDetails: res } });
         } catch (e) {
-          console.log("testyarn");
           message.error("failed to fetch user details");
           console.error(e);
           nextSignOut({ redirect: false });

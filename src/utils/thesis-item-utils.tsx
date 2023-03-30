@@ -6,18 +6,17 @@ import {
 } from "@/context/types.d";
 import axios from "axios";
 import { userConfig } from "./account-utils";
+import { stringifyURI } from "./helper";
 
 export const getAllThesis = async (
   query?: SearchQuery,
   option?: SearchOption
 ) => {
-  const { title, year, course } = query || {};
   const res = await axios.get(
-    `${process.env.NEXT_PUBLIC_DOMAIN}/api/public/thesis?${
-      title ? `&title=${title}` : ""
-    }${course ? `&course=${encodeURIComponent(JSON.stringify(course))}` : ""}${
-      year ? `&year=${encodeURIComponent(JSON.stringify(year))}` : ""
-    }${option ? `&option=${encodeURIComponent(JSON.stringify(option))}` : ""}`
+    `${process.env.NEXT_PUBLIC_DOMAIN}/api/public/thesis?${stringifyURI(
+      query,
+      option
+    )}`
   );
   const data = res.data as ThesisItems[];
   return data;

@@ -1,4 +1,10 @@
-import { PendingAdminList, ThesisItems, UserDetails } from "@/context/types.d";
+import {
+  PendingAdminList,
+  SearchOption,
+  SearchQuery,
+  ThesisItems,
+  UserDetails,
+} from "@/context/types.d";
 import {
   ActivitylogReason,
   AddPost,
@@ -6,6 +12,7 @@ import {
   QueryPost,
 } from "@/lib/types";
 import axios, { AxiosError } from "axios";
+import { stringifyURI } from "./helper";
 
 export const userConfig = (token: string) => ({
   headers: { authorization: `Bearer ${token}` },
@@ -117,20 +124,6 @@ export const firebase_admin_delete_user = async (
   } else throw new Error("canont read user token");
 };
 
-export const getUserActivitylog = async (
-  token: string | undefined,
-  id: string
-) => {
-  if (token) {
-    const deleteResult = await axios.request({
-      url: `/api/admin-user?collection=activity-log&_id=${id}`,
-      method: "GET",
-      ...userConfig(token),
-    });
-    return deleteResult.data;
-  } else throw new Error("canont read user token");
-};
-
 export const getAllUsers = async (token: string | undefined) => {
   if (token) {
     const response: {
@@ -153,13 +146,15 @@ export const getAllUsers = async (token: string | undefined) => {
 
 export const getActivityLog = async (
   token: string | undefined,
-  option?: { limit?: number }
+  query?: SearchQuery,
+  option?: SearchOption
 ) => {
   if (token) {
     const activityLog = await axios.request({
-      url: `/api/admin-user?objective=get-activitylog${
-        option ? `&option=${encodeURIComponent(JSON.stringify(option))}` : ``
-      }`,
+      url: `/api/admin-user?objective=get-activitylog${stringifyURI(
+        query,
+        option
+      )}`,
       method: "GET",
       ...userConfig(token),
     });

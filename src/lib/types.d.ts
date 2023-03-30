@@ -48,11 +48,10 @@ export interface GeneratedTextRes {
 
 export type ActivitylogReason = | "added a thesis" | "removed a thesis"| "restored a thesis" | "invited an admin" | "accepted the invite" | "removed an admin" | "removed an invite"
 
-export type _Socket = {
-  subscribe: (callback: (changeStream: any) => void | Promise<void>) => void;
+export type _Socket =Promise< {
+  subscribe: (name: string, callback: (changeStream: any) => Promise<void> | void) => void;
   unsubscribe: () => void;
-}
-
+}>
 
 import type { Server as HTTPServer } from 'http'
 import type { NextApiRequest, NextApiResponse } from 'next'

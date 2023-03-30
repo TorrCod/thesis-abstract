@@ -6,6 +6,7 @@ import {
   MongoServerError,
   ObjectId,
   Document,
+  ChangeStream,
 } from "mongodb";
 import { Worker } from "worker_threads";
 import { CollectionName, DatabaseName, QueryPost } from "./types";
@@ -257,18 +258,33 @@ export const addDataWithExpiration = async (
   }
 };
 
-export const watchChanges = async (
-  dbName: DatabaseName,
-  collName: CollectionName,
-  onChange: (changeStream: ChangeStreamDocument) => Promise<void> | void
-) => {
+export const watchChanges = async () => {
   const client = await connectToDatabase();
-  const collection = client.db(dbName).collection(collName);
-  const change = collection.watch();
-  change.on("change", (changeStream) => {
-    onChange(changeStream);
-  });
-  return client;
+  const changeStreams: ChangeStream<
+    Document,
+    ChangeStreamDocument<Document>
+  >[] = [];
+
+  const unsubscribe = () => {
+    changeStreams.forEach((change) => change.close());
+    client.close();
+  };
+
+  const subscribe = (
+    dbName: DatabaseName,
+    collName: CollectionName,
+    onChange: (changeStream: ChangeStreamDocument) => Promise<void> | void
+  ) => {
+    const collection = client.db(dbName).collection(collName);
+    const changeStream = collection.watch();
+    changeStreams.push(changeStream);
+
+    changeStream.on("change", (changeStream) => {
+      onChange(changeStream);
+    });
+  };
+
+  return { subscribe, unsubscribe };
 };
 
 export const dataAgregate = async (

@@ -5,7 +5,7 @@ import QuerySearch from "@/components/QuerySearch";
 import { PriButton } from "@/components/button";
 import AdminProfile, { AddAdmin } from "@/components/admin";
 import useUserContext from "@/context/userContext";
-import { AdminData, PendingAdminList, UserDetails } from "@/context/types.d";
+import { AdminData, UserDetails } from "@/context/types.d";
 import { ColumnsType } from "antd/lib/table";
 import Password from "antd/lib/input/Password";
 import { useForm } from "antd/lib/form/Form";
@@ -19,14 +19,12 @@ import {
 } from "@/utils/account-utils";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { ActivityTimeline } from "./activitylog";
 import Fuse from "fuse.js";
 import { GetServerSideProps } from "next";
 import { getServerSession } from "next-auth";
 import { getCsrfToken } from "next-auth/react";
 import { authOptions } from "../api/auth/[...nextauth]";
 import useGlobalContext from "@/context/globalContext";
-import { readSocket } from "@/utils/socket-utils";
 
 const DashboardAdmin = () => {
   const router = useRouter();

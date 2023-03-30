@@ -115,10 +115,6 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
           res.newToken = token;
           res.profilePic = user.photoURL as any;
           dispatch({ type: "on-signin", payload: { userDetails: res } });
-          userSocketRef.current = readSocket(token, "account-update");
-          userSocketRef.current.subscribe(() => {
-            loadAllUsers();
-          });
         } catch (e) {
           message.error("failed to fetch user details");
           console.error(e);
@@ -142,12 +138,21 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
       unsubscribeRef.current = unsubscribe;
     });
     return () => {
-      console.log("trigger");
-
       unsubscribe();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (userSocketRef.current || !state.userDetails) return;
+    userSocketRef.current = readSocket(
+      state.userDetails.newToken,
+      "account-update"
+    );
+    userSocketRef.current.subscribe(() => {
+      loadAllUsers();
+    });
+  }, [state.userDetails]);
 
   const loadAllUsers = async () => {
     try {

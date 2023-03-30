@@ -25,7 +25,7 @@ const ActivityLog = () => {
   );
 };
 
-export const ActivityTimeline = ({ userId }: { userId?: string }) => {
+export const ActivityTimeline = () => {
   const [log, setLog] = useState<TimelineItemProps[]>([]);
   const userCtx = useUserContext();
   const { activityLog } = userCtx.state;
@@ -42,28 +42,20 @@ export const ActivityTimeline = ({ userId }: { userId?: string }) => {
   useEffect(() => {
     const load = async () => {
       const newLog = activityLog.map((item) => {
-        const setData = () => {
-          const readedItem = readActivityLogReason(item);
-          return {
-            label: new Date(item.date).toLocaleString(),
-            children: <div>{readedItem?.reason}</div>,
-            dot: readedItem?.dot,
-            color: readedItem?.color,
-          };
+        const readedItem = readActivityLogReason(item);
+        return {
+          label: new Date(item.date).toLocaleString(),
+          children: <div>{readedItem?.reason}</div>,
+          dot: readedItem?.dot,
+          color: readedItem?.color,
         };
-
-        if (!userId || userId === item.userId) {
-          return setData();
-        }
-
-        return null; // <-- Add a return statement outside the if statement to return a value in case the condition is not met
       });
       const newLogFiltered = newLog.filter(async (item) => item !== null);
       setLog(newLogFiltered as any);
     };
     load();
     return () => setLog([]);
-  }, [activityLog, userId]);
+  }, [activityLog]);
 
   return <Timeline reverse mode="left" items={log} />;
 };

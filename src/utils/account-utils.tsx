@@ -146,12 +146,12 @@ export const getAllUsers = async (token: string | undefined) => {
 
 export const getActivityLog = async (
   token: string | undefined,
-  query?: SearchQuery,
+  query?: { userId?: string; _id?: string },
   option?: SearchOption
 ) => {
   if (token) {
     const activityLog = await axios.request({
-      url: `/api/admin-user?objective=get-activitylog${stringifyURI(
+      url: `/api/admin-user?objective=get-activitylog${stringifyUserUri(
         query,
         option
       )}`,
@@ -179,6 +179,16 @@ export const customUpdateActivityLog = async (
     data: option,
   });
   return updateResult.data;
+};
+
+const stringifyUserUri = (
+  query?: { userId?: string; _id?: string },
+  option?: SearchOption
+) => {
+  const { userId, _id } = query || {};
+  return `${userId ? `&userId=${userId}` : ``}${_id ? `&_id=${_id}` : ``}${
+    option ? `&option=${encodeURIComponent(JSON.stringify(option))}` : ``
+  }`;
 };
 
 // -----------------------------

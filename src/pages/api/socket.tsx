@@ -119,8 +119,8 @@ const SocketHandler = async (
           io.emit("activity-log-changes", "achange detected");
         });
 
-        client.subscribe("thesis-abstract", "thesis-items", () => {
-          io.emit("thesis-changes", "change detected");
+        client.subscribe("thesis-abstract", "thesis-items", (changeStream) => {
+          socket.broadcast.emit("thesis-changes", changeStream);
         });
 
         client.subscribe("thesis-abstract", "deleted-thesis", () => {

@@ -38,9 +38,6 @@ import {
 import { ResponsiveContainer } from "recharts";
 import { authOptions } from "../api/auth/[...nextauth]";
 import { stringify } from "querystring";
-import { io, Socket } from "socket.io-client";
-import { DefaultEventsMap } from "socket.io/dist/typed-events";
-import { readSocket } from "@/utils/socket-utils";
 
 const menuItems: MenuProps["items"] = [
   { key: "thesis-items", label: "Thesis Items" },
@@ -118,7 +115,7 @@ const DashboardThesis = () => {
               router.push(`/dashboard/thesis?${newQuery}`);
             }}
           />
-          <div className="min-h-[20em]">
+          <div className="h-[50em]">
             <Menu
               onSelect={handleMenu}
               mode="horizontal"
@@ -176,15 +173,11 @@ export const ThesisTable = () => {
   const { state, loadThesisItems } = useGlobalContext();
   const [thesisTableData, setThesisTableData] = useState<DataType[]>([]);
   const router = useRouter();
-  const socketRef = useRef<
-    Socket<DefaultEventsMap, DefaultEventsMap> | undefined
-  >();
 
   useEffect(() => {
     if (userDetails) {
       loadThesisItems();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userDetails]);
 
   useEffect(() => {
@@ -200,29 +193,7 @@ export const ThesisTable = () => {
     const thesisItems = state.thesisItems;
     const toTableThesisItems = thesisToDataType(thesisItems);
     setThesisTableData(toTableThesisItems);
-    if (userDetails) {
-      if (socketRef.current) {
-        socketRef.current.close();
-        socketRef.current = undefined;
-      }
-      const socket = io();
-      socketRef.current = socket;
-      auth.currentUser
-        ?.getIdToken()
-        .then((token) => readSocket(token))
-        .then(() => {
-          socket.on("thesis-changes", () => {
-            console.log("thesis-change detected");
-          });
-        });
-    }
-    return () => {
-      if (socketRef.current) {
-        socketRef.current.close();
-        socketRef.current = undefined;
-      }
-    };
-  }, [state.thesisItems, userDetails]);
+  }, [state.thesisItems]);
 
   return (
     <Table
@@ -251,7 +222,7 @@ const RecycledTable = () => {
   }, [router.query.title, userDetails]);
 
   useEffect(() => {
-    if (userDetails && !state.recyclebin.length) {
+    if (userDetails) {
       recycledThesis().load();
     }
   }, [userDetails]);

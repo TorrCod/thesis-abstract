@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Form, message, Modal, Space, Table } from "antd";
+import { Form, message, Modal, Space, Table, Timeline } from "antd";
 import DashboardLayout from "@/components/dashboardLayout";
 import QuerySearch from "@/components/QuerySearch";
 import { PriButton } from "@/components/button";
@@ -73,6 +73,7 @@ const DashboardAdmin = () => {
 };
 
 const UserProfile = ({ userDetails }: { userDetails?: UserDetails }) => {
+  const [history, setHistory] = useState();
   return !userDetails ? (
     <></>
   ) : (
@@ -141,7 +142,7 @@ const UserProfile = ({ userDetails }: { userDetails?: UserDetails }) => {
       <div className="bg-white rounded-md p-3 row-span-2 grid relative gap-5 grid-rows-[_0.2fr_1.8fr]">
         <div className="opacity-80">History</div>
         <div className="w-full">
-          <ActivityTimeline userId={userDetails?.uid ?? "none"} />
+          <Timeline reverse items={[]} />;
         </div>
       </div>
     </div>

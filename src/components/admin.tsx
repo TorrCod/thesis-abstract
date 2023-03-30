@@ -96,7 +96,8 @@ export const AdminMenu = ({
 };
 
 export const AddAdmin = () => {
-  const userDetails = useUserContext().state.userDetails;
+  const { state, loadAllUsers } = useUserContext();
+  const userDetails = state.userDetails;
   const [form] = useForm();
   const onFinish = async ({ email }: any) => {
     let id: string = "";
@@ -112,6 +113,7 @@ export const AddAdmin = () => {
         handleCodeInApp: true,
       };
       await sendSignInLinkToEmail(auth, email, actionCodeSettings);
+      loadAllUsers();
       message.success("Invite Sent");
       form.resetFields();
     } catch (e) {

@@ -236,8 +236,8 @@ const RemoveAdmin = ({ record }: { record: AdminData }) => {
   const [form] = useForm();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const userCtxState = useUserContext();
-  const userEmail = userCtxState.state.userDetails;
+  const { state, loadAllUsers } = useUserContext();
+  const userEmail = state.userDetails;
 
   const handleFinish = async () => {
     try {
@@ -268,6 +268,8 @@ const RemoveAdmin = ({ record }: { record: AdminData }) => {
           name: record.email,
         });
       }
+      loadAllUsers();
+      message.success("Remove Success");
       setOpen(false);
     } catch (e) {
       console.error(e);

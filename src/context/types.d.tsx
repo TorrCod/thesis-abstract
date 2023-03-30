@@ -148,7 +148,6 @@ export type UserDetails = {
   password?: string;
   dateAdded?: string;
   status?: "Pending" | "Admin";
-  newToken?: string;
 };
 
 export type UserValue = {

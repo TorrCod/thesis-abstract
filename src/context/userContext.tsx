@@ -116,7 +116,6 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
         try {
           const token = await user.getIdToken();
           const res: UserDetails = await getUserDetails(token, user.uid);
-          res.newToken = token;
           res.profilePic = user.photoURL as any;
           dispatch({ type: "on-signin", payload: { userDetails: res } });
         } catch (e) {
@@ -154,12 +153,11 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     if (userSocketRef.current || !state.userDetails) return;
-    userSocketRef.current = readSocket(
-      state.userDetails.newToken,
-      "account-update"
-    );
-    userSocketRef.current.subscribe(() => {
-      loadAllUsers();
+    auth.currentUser?.getIdToken().then((token) => {
+      userSocketRef.current = readSocket(token, "account-update");
+      userSocketRef.current.subscribe(() => {
+        loadAllUsers();
+      });
     });
   }, [state.userDetails]);
 
@@ -212,6 +210,8 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
       photoURL: userDetails.profilePic,
     });
     await auth.updateCurrentUser(auth.currentUser);
+    const token = await auth.currentUser?.getIdToken();
+    await updateUser(token, userDetails._id, userDetails);
     dispatch({ type: "on-signin", payload: { userDetails: userDetails } });
   };
 

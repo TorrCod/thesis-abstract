@@ -27,6 +27,7 @@ import { GetServerSideProps } from "next";
 import { authOptions } from "./api/auth/[...nextauth]";
 import { getServerSession } from "next-auth";
 import { getCsrfToken } from "next-auth/react";
+import { updateUser } from "@/utils/account-utils";
 const courseOpt: { value: Course; label: Course }[] = [
   { value: "Civil Engineer", label: "Civil Engineer" },
   { value: "Computer Engineer", label: "Computer Engineer" },
@@ -64,12 +65,15 @@ const AccountSetting = () => {
   const handleProfSave = () => {
     setLoading({ status: true, name: "prof" });
     uploadProfile(newProfile!, userDetails?.uid!)
-      .then((url) => {
+      .then(async (url) => {
         const newProf: UserDetails = { ...userDetails!, profilePic: url };
-        setNewProfile(url!);
-        userCtx.updateProfileUrl!(newProf);
+        setNewProfile(url);
+        await userCtx.updateProfileUrl!(newProf);
         setChngProfSave(true);
         message.success("profile saved");
+      })
+      .then((e) => {
+        console.error(e);
       })
       .finally(() => setLoading({ status: false, name: "prof" }));
   };

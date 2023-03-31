@@ -278,11 +278,13 @@ const RemoveThesis = (props: DataType & { id: string }) => {
 
 const RestoreThesis = (props: DataType & { id: string }) => {
   const { restoreThesis: restore } = useGlobalContext();
+  const { triggerSocket } = useSocketContext();
   const handleClick = async () => {
     try {
       const token = await auth.currentUser?.getIdToken();
       await restoreThesis({ token: token, thesisId: props.id });
       restore(props.id);
+      triggerSocket("account-update", "account-update");
       message.success("Restore Success");
     } catch (e) {
       message.error("Restore failed");

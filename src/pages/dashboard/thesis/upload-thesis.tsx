@@ -33,6 +33,7 @@ import { ThesisItems } from "@/context/types.d";
 import moment from "moment";
 import { MdSubtitles } from "react-icons/md";
 import { useRouter } from "next/router";
+import useSocketContext from "@/context/socketContext";
 
 interface FormValues {
   title: string;
@@ -57,6 +58,7 @@ const UploadThesis = () => {
   const uid = userCtx.state.userDetails?.uid;
   const [form] = Form.useForm();
   const router = useRouter();
+  const { triggerSocket } = useSocketContext();
 
   const onFinish = async (values: FormValues) => {
     try {
@@ -71,6 +73,7 @@ const UploadThesis = () => {
         researchers: researchers,
       };
       await userCtx.saveUploadThesis(payload);
+      triggerSocket("thesis-update", "thesis-update");
       message.success("Success");
       router.push("/dashboard/thesis/success");
     } catch (e) {

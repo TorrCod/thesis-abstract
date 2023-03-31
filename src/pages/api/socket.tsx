@@ -133,6 +133,7 @@ const SocketHandler = async (
 
         socket.on("account-update", (payload) => {
           socket.broadcast.emit("change/account-update", payload);
+          socket.emit("acknowledged");
         });
 
         socket.on("thesis-update", (payload) => {
@@ -142,6 +143,7 @@ const SocketHandler = async (
 
         socket.on("activitylog-update", (payload) => {
           socket.broadcast.emit("change/activitylog-update", payload);
+          socket.emit("acknowledged");
         });
 
         socket.on("disconnect", () => {

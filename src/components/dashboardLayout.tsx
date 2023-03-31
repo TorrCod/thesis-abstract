@@ -15,22 +15,35 @@ import { BsThreeDots } from "react-icons/bs";
 import { useLocation, useWindowSize } from "react-use";
 import Head from "next/head";
 
-type SelectedMenu = "/dashboard" | "/account-setting";
-
 type DashboardProps = {
   children?: React.ReactNode;
-  userSelectedMenu?: SelectedMenu;
-  userSelectedSider?: SelectedDashboardSider;
-  title?: React.ReactNode;
 };
 
-function DashboardLayout({
-  children,
-  userSelectedMenu,
-  userSelectedSider,
-}: DashboardProps) {
-  const [selectedSider, setSelectedSider] = useState(userSelectedSider);
-  const [selectedMenu, setSelectedMenu] = useState(userSelectedMenu);
+const siderMenu: MenuProps["items"] = [
+  {
+    key: "/dashboard",
+    label: <Link href={"/dashboard"}>Overview</Link>,
+    icon: <RiDashboardFill size={"1.1em"} />,
+  },
+  {
+    key: "/dashboard/thesis",
+    label: <Link href={"/dashboard/thesis"}>Thesis</Link>,
+    icon: <FaSwatchbook size={"1.1em"} />,
+  },
+  {
+    key: "/dashboard/admins",
+    label: <Link href={"/dashboard/admins"}>Admins</Link>,
+    icon: <ImUserCheck size={"1.1em"} />,
+  },
+  {
+    key: "/dashboard/activitylog",
+    label: <Link href={"/dashboard/activitylog"}>Activity Log</Link>,
+    icon: <MdWorkHistory size={"1.1em"} />,
+  },
+];
+
+function DashboardLayout({ children }: DashboardProps) {
+  const [selectedSider, setSelectedSider] = useState("/dashboard");
   const [isScreen, setIsScreen] = useState(false);
   const { width } = useWindowSize();
   const { pathname } = useLocation();
@@ -62,28 +75,13 @@ function DashboardLayout({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const siderMenu: MenuProps["items"] = [
-    {
-      key: "/dashboard/overview",
-      label: <Link href={"/dashboard"}>Overview</Link>,
-      icon: <RiDashboardFill size={"1.1em"} />,
-    },
-    {
-      key: "/dashboard/thesis",
-      label: <Link href={"/dashboard/thesis"}>Thesis</Link>,
-      icon: <FaSwatchbook size={"1.1em"} />,
-    },
-    {
-      key: "/dashboard/admins",
-      label: <Link href={"/dashboard/admins"}>Admins</Link>,
-      icon: <ImUserCheck size={"1.1em"} />,
-    },
-    {
-      key: "/dashboard/activitylog",
-      label: <Link href={"/dashboard/activitylog"}>Activity Log</Link>,
-      icon: <MdWorkHistory size={"1.1em"} />,
-    },
-  ];
+  useEffect(() => {
+    setSelectedSider(router.pathname);
+  }, [router]);
+
+  const handleSeletect: MenuProps["onSelect"] = (item) => {
+    setSelectedSider(item.key);
+  };
 
   return (
     <>
@@ -110,9 +108,10 @@ function DashboardLayout({
               width={"15vw"}
             >
               <Menu
+                selectedKeys={[selectedSider]}
                 className="min-h-full text-[0.9vw]"
                 items={siderMenu}
-                onSelect={(info) => setSelectedSider(info.key as any)}
+                onSelect={handleSeletect}
               />
             </Sider>
             <div

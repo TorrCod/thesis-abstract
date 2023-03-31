@@ -39,7 +39,6 @@ const WatchChanges = ({ children }: { children: React.ReactNode }) => {
 
       socket.current.on("account-update", (changeStream) => {
         console.log("user changess");
-
         loadAllUsers();
       });
 
@@ -61,6 +60,8 @@ const WatchChanges = ({ children }: { children: React.ReactNode }) => {
     globalState.thesisItems,
     globalState.recyclebin,
     socket.current?.connected,
+    globalState.loading.includes("all-thesis"),
+    globalState.loading.includes("all-admin"),
   ]);
 
   return <>{children}</>;

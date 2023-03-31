@@ -7,13 +7,11 @@ import {
   getDistincYear,
   getThesisCount,
 } from "@/utils/thesis-item-utils";
-import { useRouter } from "next/router";
 import React, {
   createContext,
   useContext,
   useEffect,
   useReducer,
-  useRef,
   useState,
 } from "react";
 import { io } from "socket.io-client";
@@ -22,8 +20,6 @@ import {
   GlobalAction,
   GlobalState,
   GlobalValue,
-  SearchOption,
-  SearchQuery,
   ThesisItems,
 } from "./types.d";
 

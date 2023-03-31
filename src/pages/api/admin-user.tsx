@@ -30,6 +30,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         switch (req.query.objective) {
           case "get-activitylog": {
             const parse = parseQuery(req);
+            const userId = req.query.userId as string | undefined;
+            if (userId) parse.query = { userId };
             const activityLog = await getData(
               "accounts",
               "activity-log",

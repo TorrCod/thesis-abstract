@@ -22,6 +22,7 @@ import {
   GlobalValue,
   ThesisItems,
 } from "./types.d";
+import Router from "next/router";
 
 const totalDataInit: { course: Course; count: number }[] = [
   { course: "Civil Engineer", count: 0 },
@@ -254,51 +255,38 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
         updateSearchTitle,
       }}
     >
-      <LoadingGlobal loading={state.loading.includes("global")}>
-        {children}
-      </LoadingGlobal>
+      <LoadingGlobal>{children}</LoadingGlobal>
     </GlobalContext.Provider>
   );
 };
 
-export const LoadingGlobal = ({
-  children,
-  loading,
-  backgroundColor,
-}: {
-  children?: React.ReactNode;
-  loading: boolean;
-  backgroundColor?: string;
-}) => {
-  const [noLoading, setNoLoading] = useState(loading);
-  const [slide, setSlide] = useState(loading);
+export const LoadingGlobal = ({ children }: { children?: React.ReactNode }) => {
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    setSlide(!loading);
-    const timeOut = setTimeout(() => setNoLoading(loading), 300);
-    return () => clearTimeout(timeOut);
-  }, [loading]);
+    const start = () => setLoading(true);
+    const end = () => setLoading(false);
+    Router.events.on("routeChangeStart", start);
+    Router.events.on("routeChangeComplete", end);
+    Router.events.on("routeChangeError", end);
+    return () => {
+      Router.events.off("routeChangeStart", start);
+      Router.events.off("routeChangeComplete", end);
+      Router.events.off("routeChangeError", end);
+    };
+  }, []);
 
   return (
-    <div
-      className={noLoading ? "w-full h-screen overflow-hidden relative" : ""}
-    >
-      {noLoading ? (
-        <div
-          className={`absolute w-full h-screen bg-[${
-            backgroundColor ?? "#38649C"
-          }] z-[60] flex flex-col justify-center items-center text-white transition-transform duration-200 ease-out ${
-            slide ? `-translate-x-full` : `translate-x-0`
-          } `}
-        >
-          <h1>Loading</h1>
-          <LoadingIcon />
-        </div>
-      ) : (
-        <></>
-      )}
-      {children}
-    </div>
+    <>
+      <div
+        className={`absolute left-5 transition-all duration-200 ease-in-out z-50 ${
+          loading ? `top-0` : `-top-24`
+        }`}
+      >
+        <LoadingIcon />
+      </div>
+      <div>{children}</div>
+    </>
   );
 };
 

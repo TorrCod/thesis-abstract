@@ -17,7 +17,7 @@ const SocketHandler = async (
     const io = new Server((res.socket as any).server);
     res.socket.server.io = io;
     io.on("connection", async (socket) => {
-      console.log("Client Connected: ", socket.id);
+      console.log(socket.id, "Connected");
 
       watchChanges().then((client) => {
         // client.subscribe("accounts", "activity-log", (changeStream) => {
@@ -108,11 +108,11 @@ const SocketHandler = async (
         // );
 
         client.subscribe("accounts", "user", () => {
-          io.emit("user-changes", "change detected");
+          socket.broadcast.emit("account-update", "change detected");
         });
 
         client.subscribe("accounts", "pending", () => {
-          io.emit("pending-changes", "change detected");
+          socket.broadcast.emit("account-update", "change detected");
         });
 
         client.subscribe("accounts", "activity-log", () => {
@@ -124,11 +124,11 @@ const SocketHandler = async (
         });
 
         client.subscribe("thesis-abstract", "deleted-thesis", () => {
-          io.emit("deleted-thesis-changes", "change detected");
+          socket.broadcast.emit("deleted-thesis-changes", "change detected");
         });
 
         socket.on("disconnect", () => {
-          console.log("Client Disconnected: ", socket.id);
+          console.log(socket.id, "Disconnected");
           client.unsubscribe();
         });
       });

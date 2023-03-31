@@ -172,28 +172,6 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
     });
   };
 
-  const recycledThesis = () => ({
-    load: async (query?: SearchQuery, option?: SearchOption) => {
-      try {
-        const token = await auth.currentUser?.getIdToken();
-        const recycledThesis = await getAllDeletedThesis(token, query, {
-          ...option,
-          projection: {
-            title: 1,
-            course: 1,
-            createdAt: 1,
-            expireAfterSeconds: 1,
-          },
-        });
-        dispatch({ type: "load-recycle", payload: recycledThesis ?? [] });
-      } catch (e) {
-        console.error("failed to load deleted thesis");
-        console.error(e);
-      }
-    },
-    clear: () => dispatch({ type: "load-recycle", payload: [] }),
-  });
-
   const updateFilter = (payload: {
     years: {
       all: boolean;

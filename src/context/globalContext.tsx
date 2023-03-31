@@ -234,7 +234,10 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
 
   const triggerSocket = (event: string, payload: any) => {
     const socket = io();
-    socket.emit(event, payload ?? "update", () => {
+
+    socket.emit(event, payload ?? "update");
+
+    socket.once("acknowledged", () => {
       socket.close();
     });
   };

@@ -6,6 +6,7 @@ import {
   deleteData,
   getData,
   getOneData,
+  getRawData,
   updateData,
 } from "@/lib/mongo";
 import { ActivitylogReason, CollectionName } from "@/lib/types";
@@ -32,12 +33,19 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             const parse = parseQuery(req);
             const userId = req.query.userId as string | undefined;
             if (userId) parse.query = { userId };
-            const activityLog = await getData(
+            let activityLog: any[] = [];
+            await getRawData(
               "accounts",
               "activity-log",
-              parse.query,
-              { ...parse.option }
+              async (payload) => {
+                activityLog = await payload
+                  .sort({ date: -1 })
+                  .limit(parse.option?.limit ?? 10)
+                  .toArray();
+              },
+              parse.query
             );
+
             const withUserName_promise = activityLog.map(async (item) => {
               const response = await getOneData(
                 "accounts",
@@ -47,7 +55,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               );
               return { ...item, userName: response?.userName };
             });
+
             const withUsername = await Promise.all(withUserName_promise);
+
             return res.status(200).json(withUsername);
           }
           default: {

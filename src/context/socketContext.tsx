@@ -51,21 +51,16 @@ export const SocketWrapper = ({ children }: { children: ReactNode }) => {
       if (!socketRef.current.connected) socketRef.current.connect();
 
       socketRef.current.on("change/account-update", () => {
-        console.log("account update");
         loadAllUsers();
       });
 
       socketRef.current.on("change/thesis-update", async () => {
-        console.log("thesis update");
-        console.log(globalState.searchTitle);
-
         loadThesisItems();
         loadThesisCount();
         loadRecycle();
       });
 
       socketRef.current.on("change/activitylog-update", () => {
-        console.log("activity log update");
         loadActivityLog();
       });
     }

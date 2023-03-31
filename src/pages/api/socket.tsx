@@ -137,6 +137,7 @@ const SocketHandler = async (
 
         socket.on("thesis-update", (payload) => {
           socket.broadcast.emit("change/thesis-update", payload);
+          socket.emit("acknowledged");
         });
 
         socket.on("activitylog-update", (payload) => {

@@ -10,7 +10,6 @@ import { ObjectId } from "mongodb";
 import { NextApiRequest, NextApiResponse } from "next";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  await sleep(2000);
   switch (req.query.objective) {
     case "get-distinct-years": {
       const distinctYears = (await getDistinctData(

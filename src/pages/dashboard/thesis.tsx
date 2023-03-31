@@ -284,7 +284,7 @@ const RestoreThesis = (props: DataType & { id: string }) => {
       const token = await auth.currentUser?.getIdToken();
       await restoreThesis({ token: token, thesisId: props.id });
       restore(props.id);
-      triggerSocket("account-update", "account-update");
+      triggerSocket("thesis-update", "thesis-update");
       message.success("Restore Success");
     } catch (e) {
       message.error("Restore failed");

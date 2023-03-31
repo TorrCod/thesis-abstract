@@ -15,7 +15,8 @@ import { PriButton } from "./button";
 import SignInSignUp from "./signin_signup";
 import { AdminProps } from "./types.d";
 import { signOut as nextSignOut } from "next-auth/react";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
+import useSocketContext from "@/context/socketContext";
 
 function AdminProfile({ userDetails, size, src }: AdminProps) {
   return (
@@ -96,12 +97,15 @@ export const AdminMenu = ({
 };
 
 export const AddAdmin = () => {
-  const userDetails = useUserContext().state.userDetails;
+  const { state, loadAllUsers } = useUserContext();
+  const userDetails = state.userDetails;
   const [form] = useForm();
+  const { triggerSocket } = useSocketContext();
   const onFinish = async ({ email }: any) => {
     let id: string = "";
     try {
       const token = await auth.currentUser?.getIdToken();
+
       const inserResult = await inviteUser(token, {
         email: email,
         approove: `${userDetails?.userName}`,
@@ -112,10 +116,12 @@ export const AddAdmin = () => {
         handleCodeInApp: true,
       };
       await sendSignInLinkToEmail(auth, email, actionCodeSettings);
+      loadAllUsers();
+      triggerSocket("account-update");
       message.success("Invite Sent");
       form.resetFields();
     } catch (e) {
-      message.error("Invite failed");
+      message.error((e as AxiosError).response?.data as string);
       console.log(e);
     }
   };

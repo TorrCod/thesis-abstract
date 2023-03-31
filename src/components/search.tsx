@@ -166,10 +166,6 @@ const Search = ({ className, limit, onSearch, showFilter }: SearchProps) => {
       <div className={`w-fulls rounded-md overflow-hidden relative z-20`}>
         {searchState.focus && (
           <SearchItem
-            // filter={{
-            //   course: !courseOpt.all ? courseOpt.option : undefined,
-            //   years: !yearsOpt.all ? yearsOpt.option : undefined,
-            // }}
             searchDispatch={searchDispatch}
             {...searchState}
             limit={limit}

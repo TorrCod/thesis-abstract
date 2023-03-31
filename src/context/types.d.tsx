@@ -1,4 +1,4 @@
-import { ActivitylogReason } from "@/lib/types";
+import { ActivitylogReason, SocketEmitEvent, _Socket } from "@/lib/types";
 import { Unsubscribe } from "firebase/auth";
 import { Dispatch, MutableRefObject } from "react";
 
@@ -14,6 +14,7 @@ export interface GlobalState {
     years: { all: boolean; option: string[] };
     course: { all: boolean; option: Course[] };
   };
+  searchTitle?: string;
 }
 
 export type ThesisCount = { course: Course; count: number }[];
@@ -83,16 +84,18 @@ export type GlobalAction =
   | {
       type: "load-thesis-count";
       payload: { thesisCount: ThesisCount; totalCount: number };
+    }
+  | {
+      type: "update-search";
+      payload?: string;
     };
 
 export type GlobalValue = {
   state: GlobalState;
   dispatch: Dispatch<GlobalAction>;
-  loadThesisItems: (query?: SearchQuery, limit?: number) => Promise<void>;
-  recycledThesis: () => {
-    load: (query?: SearchQuery, option?: SearchOption) => Promise<void>;
-    clear: () => void;
-  };
+  loadThesisItems: () => Promise<void>;
+  loadRecycle: () => Promise<void>;
+  loadThesisCount: () => Promise<void>;
   updateFilter: (payload: {
     years: {
       all: boolean;
@@ -108,7 +111,11 @@ export type GlobalValue = {
     remove(key: string): void;
   };
   promptToSignIn: () => void;
-  loadThesisCount: () => Promise<void>;
+  addThesisItem: (document: ThesisItems) => void;
+  removeThesisItem: (_id: string) => void;
+  restoreThesis: (_id: string) => void;
+  recycleThesis: (thesis: ThesisItems) => void;
+  updateSearchTitle: (title: string | undefined) => void;
 };
 
 export type AdminData = {
@@ -148,7 +155,6 @@ export type UserDetails = {
   password?: string;
   dateAdded?: string;
   status?: "Pending" | "Admin";
-  newToken?: string;
 };
 
 export type UserValue = {
@@ -199,3 +205,7 @@ export type UserAction =
       type: "load-activity-log";
       payload: ActivityLog[];
     };
+
+export type SocketValue = {
+  triggerSocket: (event: SocketEmitEvent) => void;
+};

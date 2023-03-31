@@ -1,4 +1,9 @@
-import { ActivityLog, ThesisItems } from "@/context/types.d";
+import {
+  ActivityLog,
+  SearchOption,
+  SearchQuery,
+  ThesisItems,
+} from "@/context/types.d";
 import { ActivitylogReason, GeneratedTextRes, QueryPost } from "@/lib/types";
 import { RcFile } from "antd/es/upload";
 import axios from "axios";
@@ -172,4 +177,16 @@ export const readActivityLogReason = (item: ActivityLog) => {
     }
   }
   return { dot, color, reason };
+};
+
+export const stringifyURI = (
+  query: SearchQuery | undefined,
+  option: SearchOption | undefined
+) => {
+  const { title, year, course } = query || {};
+  return `${title ? `&title=${title}` : ""}${
+    course ? `&course=${encodeURIComponent(JSON.stringify(course))}` : ""
+  }${year ? `&year=${encodeURIComponent(JSON.stringify(year))}` : ""}${
+    option ? `&option=${encodeURIComponent(JSON.stringify(option))}` : ""
+  }`;
 };

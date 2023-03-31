@@ -38,6 +38,7 @@ import {
 import { ResponsiveContainer } from "recharts";
 import { authOptions } from "../api/auth/[...nextauth]";
 import { stringify } from "querystring";
+import useSocketContext from "@/context/socketContext";
 
 const menuItems: MenuProps["items"] = [
   { key: "thesis-items", label: "Thesis Items" },
@@ -45,10 +46,16 @@ const menuItems: MenuProps["items"] = [
 ];
 
 const DashboardThesis = () => {
-  const { state: globalStatate } = useGlobalContext();
+  const { state: globalStatate, updateSearchTitle } = useGlobalContext();
   const router = useRouter();
+
   const handleMenu: MenuProps["onSelect"] = (item) => {
     router.push(`/dashboard/thesis?tab=${item.key}`);
+  };
+
+  const handleSearch = (searchText: string) => {
+    if (searchText === "") updateSearchTitle(undefined);
+    else updateSearchTitle(searchText);
   };
   return (
     <DashboardLayout
@@ -106,16 +113,8 @@ const DashboardThesis = () => {
         <Divider />
         <div className="mt-5 bg-white grid gap-1 rounded-md p-5 overflow-auto">
           <p className="opacity-60 mb-5">Manage Thesis Abstracts</p>
-          <QuerySearch
-            onSearch={(searchText) => {
-              const newQuery = stringify({
-                ...router.query,
-                title: searchText,
-              });
-              router.push(`/dashboard/thesis?${newQuery}`);
-            }}
-          />
-          <div className="min-h-[20em]">
+          <QuerySearch onSearch={handleSearch} />
+          <div className="h-[50em]">
             <Menu
               onSelect={handleMenu}
               mode="horizontal"
@@ -168,26 +167,18 @@ export const ThesisCharts = () => {
 };
 
 export const ThesisTable = () => {
-  const userDetails = useUserContext().state.userDetails;
-  const { state, loadThesisItems } = useGlobalContext();
+  const { state: userState } = useUserContext();
+  const userDetails = userState.userDetails;
+  const { state, loadThesisItems, updateSearchTitle } = useGlobalContext();
   const [thesisTableData, setThesisTableData] = useState<DataType[]>([]);
-  const router = useRouter();
+
+  useEffect(() => updateSearchTitle(undefined), []);
 
   useEffect(() => {
-    if (userDetails && !state.thesisItems.length) {
+    if (userDetails) {
       loadThesisItems();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userDetails]);
-
-  useEffect(() => {
-    if (router.query.title) {
-      const title = router.query.title as string;
-      loadThesisItems({ title });
-    } else if (Object.keys(router.query).includes("title")) {
-      loadThesisItems();
-    }
-  }, [router.query.title]);
+  }, [userDetails, state.searchTitle]);
 
   useEffect(() => {
     const thesisItems = state.thesisItems;
@@ -207,25 +198,16 @@ export const ThesisTable = () => {
 
 const RecycledTable = () => {
   const [removedTableData, setRemovedTableData] = useState<DataType[]>([]);
-  const { state, recycledThesis } = useGlobalContext();
+  const { state, loadRecycle, updateSearchTitle } = useGlobalContext();
   const { userDetails } = useUserContext().state;
-  const router = useRouter();
+
+  useEffect(() => updateSearchTitle(undefined), []);
 
   useEffect(() => {
-    if (!userDetails) return;
-    if (router.query.title) {
-      const title = router.query.title as string;
-      recycledThesis().load({ title }, { limit: 10 });
-    } else if (Object.keys(router.query).includes("title")) {
-      recycledThesis().load();
+    if (userDetails) {
+      loadRecycle();
     }
-  }, [router.query.title, userDetails]);
-
-  useEffect(() => {
-    if (userDetails && !state.recyclebin.length) {
-      recycledThesis().load();
-    }
-  }, [userDetails]);
+  }, [userDetails, state.searchTitle]);
 
   useEffect(() => {
     const thesisItems = state.recyclebin;
@@ -246,10 +228,15 @@ const RecycledTable = () => {
 };
 
 const RemoveThesis = (props: DataType & { id: string }) => {
+  const { removeThesisItem } = useGlobalContext();
+  const { triggerSocket } = useSocketContext();
+
   const handleClick = async () => {
     try {
       const token = await auth.currentUser?.getIdToken();
       await removeThesis({ token: token, thesisId: props.id });
+      removeThesisItem(props.id);
+      triggerSocket("thesis-update");
       message.success("Removed Success");
     } catch (e) {
       message.error("remove failed");
@@ -270,10 +257,14 @@ const RemoveThesis = (props: DataType & { id: string }) => {
 };
 
 const RestoreThesis = (props: DataType & { id: string }) => {
+  const { restoreThesis: restore } = useGlobalContext();
+  const { triggerSocket } = useSocketContext();
   const handleClick = async () => {
     try {
       const token = await auth.currentUser?.getIdToken();
       await restoreThesis({ token: token, thesisId: props.id });
+      restore(props.id);
+      triggerSocket("thesis-update");
       message.success("Restore Success");
     } catch (e) {
       message.error("Restore failed");

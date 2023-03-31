@@ -56,16 +56,8 @@ export const signUp = async (details: UserDetails) => {
 };
 
 export const uploadProfile = async (dataUrl: string, uid: string) => {
-  try {
-    const storageRef = ref(firebaseStorage, "profile-pictures/" + uid);
-    const { ref: fileRef } = await uploadString(
-      storageRef,
-      dataUrl,
-      "data_url"
-    );
-    const url = await getDownloadURL(fileRef);
-    return url;
-  } catch (e) {
-    console.error(e);
-  }
+  const storageRef = ref(firebaseStorage, "profile-pictures/" + uid);
+  const { ref: fileRef } = await uploadString(storageRef, dataUrl, "data_url");
+  const url = await getDownloadURL(fileRef);
+  return url;
 };

@@ -6,6 +6,7 @@ import {
   MongoServerError,
   ObjectId,
   Document,
+  ChangeStream,
 } from "mongodb";
 import { Worker } from "worker_threads";
 import { CollectionName, DatabaseName, QueryPost } from "./types";
@@ -257,38 +258,33 @@ export const addDataWithExpiration = async (
   }
 };
 
-export const watchUser = async (
-  onChange: (changeStream: ChangeStreamDocument) => void
-) => {
-  try {
-    const dbName: DatabaseName = "accounts";
-    const client = await connectToDatabase();
-    const database = client.db(dbName);
-    const changeStream = database.watch();
-    changeStream.on("change", (change) => {
-      onChange(change);
-    });
-  } catch (e) {
-    console.log("watch user failed");
-    console.error(e);
-  }
-};
+export const watchChanges = async () => {
+  const client = await connectToDatabase();
+  const changeStreams: ChangeStream<
+    Document,
+    ChangeStreamDocument<Document>
+  >[] = [];
 
-export const watchThesisAbstract = async (
-  onChange: (changeStream: ChangeStreamDocument) => void
-) => {
-  try {
-    const dbName: DatabaseName = "thesis-abstract";
-    const client = await connectToDatabase();
-    const database = client.db(dbName);
-    const changeStream = database.watch();
-    changeStream.on("change", (change) => {
-      onChange(change);
+  const unsubscribe = () => {
+    changeStreams.forEach((change) => change.close());
+    client.close();
+  };
+
+  const subscribe = (
+    dbName: DatabaseName,
+    collName: CollectionName,
+    onChange: (changeStream: ChangeStreamDocument) => Promise<void> | void
+  ) => {
+    const collection = client.db(dbName).collection(collName);
+    const changeStream = collection.watch();
+    changeStreams.push(changeStream);
+
+    changeStream.on("change", (changeStream) => {
+      onChange(changeStream);
     });
-  } catch (e) {
-    console.log("watch thesis items failed");
-    console.error(e);
-  }
+  };
+
+  return { subscribe, unsubscribe };
 };
 
 export const dataAgregate = async (

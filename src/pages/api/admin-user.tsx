@@ -30,6 +30,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         switch (req.query.objective) {
           case "get-activitylog": {
             const parse = parseQuery(req);
+            const userId = req.query.userId as string | undefined;
+            if (userId) parse.query = { userId };
             const activityLog = await getData(
               "accounts",
               "activity-log",
@@ -76,6 +78,16 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         switch (req.query.objective) {
           case "invite-user": {
             const collection = req.query.collection as CollectionName;
+            const checkEmailUser = await getOneData("accounts", "user", {
+              email: req.body.email,
+            });
+            const checkEmailPending = await getOneData("accounts", "pending", {
+              email: req.body.email,
+            });
+            if (checkEmailUser || checkEmailPending)
+              return res
+                .status(400)
+                .send("email is exist please use another one");
             const { insertedResult, dateNow } = await addDataWithExpiration(
               "accounts",
               collection,

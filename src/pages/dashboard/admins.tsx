@@ -1,11 +1,19 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Form, message, Modal, Space, Table, Timeline } from "antd";
+import {
+  Form,
+  message,
+  Modal,
+  Space,
+  Table,
+  Timeline,
+  TimelineProps,
+} from "antd";
 import DashboardLayout from "@/components/dashboardLayout";
 import QuerySearch from "@/components/QuerySearch";
 import { PriButton } from "@/components/button";
 import AdminProfile, { AddAdmin } from "@/components/admin";
 import useUserContext from "@/context/userContext";
-import { AdminData, UserDetails } from "@/context/types.d";
+import { ActivityLog, AdminData, UserDetails } from "@/context/types.d";
 import { ColumnsType } from "antd/lib/table";
 import Password from "antd/lib/input/Password";
 import { useForm } from "antd/lib/form/Form";
@@ -15,6 +23,7 @@ import {
   customUpdateActivityLog,
   deleteAdmin,
   firebase_admin_delete_user,
+  getActivityLog,
   removePending,
 } from "@/utils/account-utils";
 import { useRouter } from "next/router";
@@ -25,6 +34,8 @@ import { getServerSession } from "next-auth";
 import { getCsrfToken } from "next-auth/react";
 import { authOptions } from "../api/auth/[...nextauth]";
 import useGlobalContext from "@/context/globalContext";
+import { readActivityLogReason } from "@/utils/helper";
+import useSocketContext from "@/context/socketContext";
 
 const DashboardAdmin = () => {
   const router = useRouter();
@@ -52,7 +63,7 @@ const DashboardAdmin = () => {
           </>
         ) : null}
       </div>
-      {router.query._id ? (
+      {userDetails ? (
         <UserProfile userDetails={userDetails} />
       ) : (
         <div className="bg-white rounded-md p-5 flex flex-col gap-2 md:min-h-[85vh]">
@@ -70,8 +81,35 @@ const DashboardAdmin = () => {
   );
 };
 
-const UserProfile = ({ userDetails }: { userDetails?: UserDetails }) => {
-  const [history, setHistory] = useState();
+const UserProfile = ({ userDetails }: { userDetails: UserDetails }) => {
+  const [history, setHistory] = useState<TimelineProps["items"]>([]);
+  const user = useUserContext().state.userDetails;
+  useEffect(() => {
+    const fetchData = async () => {
+      const token = await auth.currentUser?.getIdToken();
+      console.log(userDetails);
+      getActivityLog(token, { userId: userDetails?.uid }, { limit: 7 })
+        .then((res: ActivityLog[]) => {
+          const data = res.map((item) => {
+            const readedData = readActivityLogReason(item);
+            return {
+              label: new Date(item.date).toLocaleString(),
+              children: <div>{readedData?.reason}</div>,
+              dot: readedData?.dot,
+              color: readedData?.color,
+            };
+          });
+          setHistory(data);
+        })
+        .catch((e) => {
+          console.error(e);
+        });
+    };
+    if (user) {
+      fetchData();
+    }
+  }, [user]);
+
   return !userDetails ? (
     <></>
   ) : (
@@ -140,7 +178,7 @@ const UserProfile = ({ userDetails }: { userDetails?: UserDetails }) => {
       <div className="bg-white rounded-md p-3 row-span-2 grid relative gap-5 grid-rows-[_0.2fr_1.8fr]">
         <div className="opacity-80">History</div>
         <div className="w-full">
-          <Timeline reverse items={[]} />;
+          <Timeline mode="left" reverse items={history} />;
         </div>
       </div>
     </div>
@@ -199,8 +237,9 @@ const RemoveAdmin = ({ record }: { record: AdminData }) => {
   const [form] = useForm();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const userCtxState = useUserContext();
-  const userEmail = userCtxState.state.userDetails;
+  const { state, loadAllUsers } = useUserContext();
+  const userEmail = state.userDetails;
+  const { triggerSocket } = useSocketContext();
 
   const handleFinish = async () => {
     try {
@@ -231,6 +270,9 @@ const RemoveAdmin = ({ record }: { record: AdminData }) => {
           name: record.email,
         });
       }
+      triggerSocket("account-update");
+      loadAllUsers();
+      message.success("Remove Success");
       setOpen(false);
     } catch (e) {
       console.error(e);

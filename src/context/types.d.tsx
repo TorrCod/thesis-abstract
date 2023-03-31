@@ -1,4 +1,4 @@
-import { ActivitylogReason, _Socket } from "@/lib/types";
+import { ActivitylogReason, SocketEmitEvent, _Socket } from "@/lib/types";
 import { Unsubscribe } from "firebase/auth";
 import { Dispatch, MutableRefObject } from "react";
 
@@ -204,16 +204,5 @@ export type UserAction =
     };
 
 export type SocketValue = {
-  triggerSocket: (event: SocketEmitEven, payload: any) => void;
+  triggerSocket: (event: SocketEmitEvent, payload: any) => void;
 };
-
-export type SocketOnEvent =
-  | "acknowledged"
-  | "change/account-update"
-  | "change/thesis-update"
-  | "change/activitylog-update";
-
-export type SocketEmitEven =
-  | "account-update"
-  | "thesis-update"
-  | "activitylog-update";

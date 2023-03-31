@@ -69,3 +69,32 @@ interface SocketWithIO extends NetSocket {
 interface NextApiResponseWithSocket extends NextApiResponse {
   socket: SocketWithIO
 }
+
+
+export type SocketOnEvent =
+  | "acknowledged"
+  | "change/account-update"
+  | "change/thesis-update"
+  | "change/activitylog-update";
+
+export type SocketEmitEvent =
+  | "account-update"
+  | "thesis-update"
+  | "activitylog-update";
+
+  interface ServerToClientEvents {
+    'change/thesis-update':() => void
+    'change/account-update':() => void
+    'change/activitylog-update':() => void
+    'acknowledged':() => void
+  }
+
+  interface ClientToServerEvents {
+    'thesis-update':() => void
+    'account-update':() => void
+    'activitylog-update':() => void
+  }
+  
+  interface ClientToServerEvents {
+    hello: () => void;
+  }

@@ -1,5 +1,9 @@
 import { watchChanges } from "@/lib/mongo";
-import { NextApiResponseWithSocket } from "@/lib/types";
+import {
+  ClientToServerEvents,
+  NextApiResponseWithSocket,
+  ServerToClientEvents,
+} from "@/lib/types";
 import { validateAuth } from "@/utils/server-utils";
 import { NextApiRequest } from "next";
 import { Server } from "socket.io";
@@ -14,7 +18,9 @@ const SocketHandler = async (
   }
   if (res.socket.server.io) {
   } else {
-    const io = new Server((res.socket as any).server);
+    const io = new Server<ClientToServerEvents, ServerToClientEvents>(
+      res.socket.server
+    );
     res.socket.server.io = io;
     io.on("connection", async (socket) => {
       console.log(socket.id, "Connected");
@@ -131,18 +137,18 @@ const SocketHandler = async (
         //   }
         // );
 
-        socket.on("account-update", (payload) => {
-          socket.broadcast.emit("change/account-update", payload);
+        socket.on("account-update", () => {
+          socket.broadcast.emit("change/account-update");
           socket.emit("acknowledged");
         });
 
-        socket.on("thesis-update", (payload) => {
-          socket.broadcast.emit("change/thesis-update", payload);
+        socket.on("thesis-update", () => {
+          socket.broadcast.emit("change/thesis-update");
           socket.emit("acknowledged");
         });
 
-        socket.on("activitylog-update", (payload) => {
-          socket.broadcast.emit("change/activitylog-update", payload);
+        socket.on("activitylog-update", () => {
+          socket.broadcast.emit("change/activitylog-update");
           socket.emit("acknowledged");
         });
 

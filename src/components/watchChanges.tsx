@@ -24,7 +24,7 @@ const WatchChanges = ({ children }: { children: React.ReactNode }) => {
       await readSocket(token);
       socket.current = io();
     };
-    if (userDetails) subscribe();
+    if (userDetails && auth.currentUser) subscribe();
     else {
       socket.current?.removeAllListeners();
       socket.current?.close();
@@ -33,9 +33,13 @@ const WatchChanges = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     if (socket.current) {
-      socket.current.connect();
+      console.log(socket.current.connected);
+
+      if (!socket.current.connected) socket.current.connect();
 
       socket.current.on("account-update", (changeStream) => {
+        console.log("user changess");
+
         loadAllUsers();
       });
 
@@ -53,7 +57,11 @@ const WatchChanges = ({ children }: { children: React.ReactNode }) => {
         socket.current.removeAllListeners();
       }
     };
-  }, [globalState.thesisItems, globalState.recyclebin]);
+  }, [
+    globalState.thesisItems,
+    globalState.recyclebin,
+    socket.current?.connected,
+  ]);
 
   return <>{children}</>;
 };

@@ -107,12 +107,12 @@ const SocketHandler = async (
         //   }
         // );
 
-        client.subscribe("accounts", "user", () => {
-          socket.broadcast.emit("account-update", "change detected");
+        client.subscribe("accounts", "user", (changestream) => {
+          io.emit("account-update", changestream);
         });
 
-        client.subscribe("accounts", "pending", () => {
-          socket.broadcast.emit("account-update", "change detected");
+        client.subscribe("accounts", "pending", (changestream) => {
+          io.emit("account-update", changestream);
         });
 
         client.subscribe("accounts", "activity-log", () => {
@@ -120,11 +120,11 @@ const SocketHandler = async (
         });
 
         client.subscribe("thesis-abstract", "thesis-items", (changeStream) => {
-          socket.broadcast.emit("thesis-changes", changeStream);
+          io.emit("thesis-changes", changeStream);
         });
 
         client.subscribe("thesis-abstract", "deleted-thesis", () => {
-          socket.broadcast.emit("deleted-thesis-changes", "change detected");
+          io.emit("deleted-thesis-changes", "change detected");
         });
 
         socket.on("disconnect", () => {

@@ -202,3 +202,13 @@ export type UserAction =
       type: "load-activity-log";
       payload: ActivityLog[];
     };
+
+export type SocketValue = {
+  triggerSocket: (event: SocketOnEvent, payload: any) => void;
+};
+
+export type SocketOnEvent =
+  | "acknowledged"
+  | "change/account-update"
+  | "change/thesis-update"
+  | "change/activitylog-update";

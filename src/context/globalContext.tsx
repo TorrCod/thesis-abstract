@@ -203,7 +203,6 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
   };
 
   const addThesisItem = (document: ThesisItems) => {
-    triggerSocket("thesis-update", "add-thesis");
     dispatch({
       type: "load-thesis",
       payload: [document, ...state.thesisItems],
@@ -211,7 +210,6 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
   };
 
   const removeThesisItem = (_id: string) => {
-    triggerSocket("thesis-update", "remove-thesis");
     const oldThesisItems = [...state.thesisItems];
     const newThesisItems = oldThesisItems.filter((item) => item._id !== _id);
     dispatch({ type: "load-thesis", payload: newThesisItems });
@@ -219,27 +217,15 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
   };
 
   const recycleThesis = (thesis: ThesisItems) => {
-    triggerSocket("thesis-update", "recycle-thesis");
     const oldRecyleThesis = [...state.recyclebin];
     if (oldRecyleThesis.length >= 10) oldRecyleThesis.pop();
     dispatch({ type: "load-recycle", payload: [thesis, ...oldRecyleThesis] });
   };
 
   const restoreThesis = (_id: string) => {
-    triggerSocket("thesis-update", "restore-thesis");
     const oldRecyle = [...state.recyclebin];
     const newRecyle = oldRecyle.filter((item) => item._id !== _id);
     dispatch({ type: "load-recycle", payload: newRecyle });
-  };
-
-  const triggerSocket = (event: string, payload: any) => {
-    const socket = io();
-
-    socket.emit(event, payload ?? "update");
-
-    socket.once("acknowledged", () => {
-      socket.close();
-    });
   };
 
   return (

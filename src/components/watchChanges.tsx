@@ -35,8 +35,6 @@ const WatchChanges = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     if (socket.current) {
-      console.log(socket.current.connected);
-
       if (!socket.current.connected) socket.current.connect();
 
       socket.current.on("change/account-update", (changeStream) => {
@@ -50,10 +48,7 @@ const WatchChanges = ({ children }: { children: React.ReactNode }) => {
       socket.current.on("change/activitylog-update", (changeStream) => {
         console.log("activity log update");
       });
-
-      console.log(socket.current.listeners("change/account-update"));
     }
-
     return () => {
       if (socket.current?.connected) {
         socket.current.removeAllListeners();

@@ -7,7 +7,6 @@ import {
 import { readSocket } from "@/utils/socket-utils";
 import { createContext, ReactNode, useContext, useEffect, useRef } from "react";
 import { io, Socket } from "socket.io-client";
-import { DefaultEventsMap } from "socket.io/dist/typed-events";
 import useGlobalContext from "./globalContext";
 import { SocketValue } from "./types.d";
 import userContext from "./userContext";

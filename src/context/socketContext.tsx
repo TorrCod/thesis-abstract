@@ -21,7 +21,8 @@ const SocketContext = createContext<SocketValue>(socketValueInit);
 export const SocketWrapper = ({ children }: { children: ReactNode }) => {
   const { state, loadAllUsers } = userContext();
   const userDetails = state.userDetails;
-  const socket = useRef<Socket<ServerToClientEvents, ClientToServerEvents>>();
+  const socketRef =
+    useRef<Socket<ServerToClientEvents, ClientToServerEvents>>();
 
   const {
     state: globalState,
@@ -35,47 +36,50 @@ export const SocketWrapper = ({ children }: { children: ReactNode }) => {
     const subscribe = async () => {
       const token = await auth.currentUser?.getIdToken();
       await readSocket(token);
-      socket.current = io();
+      const socket = io();
+      socket.on("connect", () => {
+        socketRef.current = socket;
+      });
     };
     if (userDetails && auth.currentUser) subscribe();
     else {
-      socket.current?.removeAllListeners();
-      socket.current?.close();
+      socketRef.current?.removeAllListeners();
+      socketRef.current?.close();
     }
   }, [userDetails]);
 
   useEffect(() => {
-    if (socket.current) {
-      if (!socket.current.connected) socket.current.connect();
+    if (socketRef.current) {
+      if (!socketRef.current.connected) socketRef.current.connect();
 
-      socket.current.on("change/account-update", () => {
+      socketRef.current.on("change/account-update", () => {
         console.log("account update");
       });
 
-      socket.current.on("change/thesis-update", () => {
+      socketRef.current.on("change/thesis-update", () => {
         console.log("thesis-items update");
       });
 
-      socket.current.on("change/activitylog-update", () => {
+      socketRef.current.on("change/activitylog-update", () => {
         console.log("activity log update");
       });
     }
     return () => {
-      if (socket.current?.connected) {
-        socket.current.removeAllListeners();
+      if (socketRef.current?.connected) {
+        socketRef.current.removeAllListeners();
       }
     };
   }, [
     globalState.thesisItems,
     globalState.recyclebin,
-    socket.current?.connected,
+    socketRef.current?.connected,
     state.activityLog,
     globalState.loading.includes("all-thesis"),
     globalState.loading.includes("all-admin"),
   ]);
 
   const triggerSocket = (event: SocketEmitEvent) => {
-    if (socket.current) socket.current.emit(event);
+    if (socketRef.current) socketRef.current.emit(event);
   };
 
   return (

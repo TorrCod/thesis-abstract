@@ -51,7 +51,6 @@ const HandleInviteLink = (props: {
 }) => {
   const [formSignUp] = Form.useForm();
   const { unsubscribeRef, userSignUp } = useUserContext();
-  const { triggerSocket } = useSocketContext();
   const handleSignUp = async () => {
     try {
       await formSignUp.validateFields();

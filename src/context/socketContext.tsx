@@ -28,6 +28,7 @@ export const SocketWrapper = ({ children }: { children: ReactNode }) => {
     state: globalState,
     loadThesisItems,
     loadThesisCount,
+    loadRecycle,
   } = useGlobalContext();
 
   useEffect(() => {
@@ -60,6 +61,7 @@ export const SocketWrapper = ({ children }: { children: ReactNode }) => {
 
         loadThesisItems();
         loadThesisCount();
+        loadRecycle();
       });
 
       socketRef.current.on("change/activitylog-update", () => {

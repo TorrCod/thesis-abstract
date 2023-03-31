@@ -53,10 +53,7 @@ const globalCtxInit: GlobalValue = {
   state: globalStateInit,
   dispatch: () => {},
   async loadThesisItems() {},
-  recycledThesis: () => ({
-    load: async () => {},
-    clear: () => {},
-  }),
+  async loadRecycle() {},
   updateFilter: () => {},
   loadingState: {
     add(key) {},
@@ -131,6 +128,31 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
         type: "load-thesis",
         payload: thesisItems,
       });
+    } catch (e) {
+      console.error(e);
+    } finally {
+      loadingState.remove("all-thesis");
+    }
+  };
+
+  const loadRecycle = async () => {
+    try {
+      loadingState.add("all-thesis");
+      const token = await auth.currentUser?.getIdToken();
+      const recycledThesis = await getAllDeletedThesis(
+        token,
+        { title: state.searchTitle },
+        {
+          limit: 10,
+          projection: {
+            title: 1,
+            course: 1,
+            createdAt: 1,
+            expireAfterSeconds: 1,
+          },
+        }
+      );
+      dispatch({ type: "load-recycle", payload: recycledThesis ?? [] });
     } catch (e) {
       console.error(e);
     } finally {
@@ -248,7 +270,7 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
         restoreThesis,
         dispatch,
         loadThesisItems,
-        recycledThesis,
+        loadRecycle,
         updateFilter,
         loadingState,
         promptToSignIn,

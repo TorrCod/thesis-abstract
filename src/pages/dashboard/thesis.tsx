@@ -198,26 +198,16 @@ export const ThesisTable = () => {
 
 const RecycledTable = () => {
   const [removedTableData, setRemovedTableData] = useState<DataType[]>([]);
-  const { state, recycledThesis } = useGlobalContext();
+  const { state, loadRecycle, updateSearchTitle } = useGlobalContext();
   const { userDetails } = useUserContext().state;
-  const router = useRouter();
 
-  useEffect(() => {
-    if (!userDetails) return;
-    if (router.query.title) {
-      const title = router.query.title as string;
-      recycledThesis().load({ title }, { limit: 10 });
-    } else if (Object.keys(router.query).includes("title")) {
-      recycledThesis().load();
-    }
-  }, [router.query.title, userDetails]);
+  useEffect(() => updateSearchTitle(undefined), []);
 
   useEffect(() => {
     if (userDetails) {
-      console.log("reload");
-      recycledThesis().load(undefined, { limit: 10 });
+      loadRecycle();
     }
-  }, [userDetails]);
+  }, [userDetails, state.searchTitle]);
 
   useEffect(() => {
     const thesisItems = state.recyclebin;

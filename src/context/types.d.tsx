@@ -93,11 +93,9 @@ export type GlobalAction =
 export type GlobalValue = {
   state: GlobalState;
   dispatch: Dispatch<GlobalAction>;
-  loadThesisItems: (query?: SearchQuery, limit?: number) => Promise<void>;
-  recycledThesis: () => {
-    load: (query?: SearchQuery, option?: SearchOption) => Promise<void>;
-    clear: () => void;
-  };
+  loadThesisItems: () => Promise<void>;
+  loadRecycle: () => Promise<void>;
+  loadThesisCount: () => Promise<void>;
   updateFilter: (payload: {
     years: {
       all: boolean;
@@ -113,7 +111,6 @@ export type GlobalValue = {
     remove(key: string): void;
   };
   promptToSignIn: () => void;
-  loadThesisCount: () => Promise<void>;
   addThesisItem: (document: ThesisItems) => void;
   removeThesisItem: (_id: string) => void;
   restoreThesis: (_id: string) => void;

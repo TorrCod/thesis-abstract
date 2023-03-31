@@ -107,29 +107,41 @@ const SocketHandler = async (
         //   }
         // );
 
-        client.subscribe("accounts", "user", (changestream) => {
-          io.emit("account-update", changestream);
+        // client.subscribe("accounts", "user", (changestream) => {
+        //   io.emit("change/account-update", changestream);
+        // });
+
+        // client.subscribe("accounts", "pending", (changestream) => {
+        //   io.emit("change/account-update", changestream);
+        // });
+
+        // client.subscribe("accounts", "activity-log", (changestream) => {
+        //   io.emit("change/activity-log", changestream);
+        // });
+
+        // client.subscribe("thesis-abstract", "thesis-items", (changeStream) => {
+        //   io.emit("change/thesis-items", changeStream);
+        // });
+
+        // client.subscribe(
+        //   "thesis-abstract",
+        //   "deleted-thesis",
+        //   (changeStream) => {
+        //     io.emit("change/thesis-items", changeStream);
+        //   }
+        // );
+
+        socket.on("account-update", (payload) => {
+          socket.broadcast.emit("change/account-update", payload);
         });
 
-        client.subscribe("accounts", "pending", (changestream) => {
-          io.emit("account-update", changestream);
+        socket.on("thesis-update", (payload) => {
+          socket.broadcast.emit("change/thesis-update", payload);
         });
 
-        client.subscribe("accounts", "activity-log", () => {
-          io.emit("activity-log-changes", "change detected");
+        socket.on("activitylog-update", (payload) => {
+          socket.broadcast.emit("change/activitylog-update", payload);
         });
-
-        client.subscribe("thesis-abstract", "thesis-items", (changeStream) => {
-          io.emit("thesis-changes", changeStream);
-        });
-
-        client.subscribe(
-          "thesis-abstract",
-          "deleted-thesis",
-          (changeStream) => {
-            io.emit("recycle-thesis-change", changeStream);
-          }
-        );
 
         socket.on("disconnect", () => {
           console.log(socket.id, "Disconnected");

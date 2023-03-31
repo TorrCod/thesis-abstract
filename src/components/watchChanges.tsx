@@ -39,32 +39,21 @@ const WatchChanges = ({ children }: { children: React.ReactNode }) => {
 
       if (!socket.current.connected) socket.current.connect();
 
-      socket.current.on("account-update", (changeStream) => {
-        console.log("user changess");
-        loadAllUsers();
+      socket.current.on("change/account-update", (changeStream) => {
+        console.log("account update");
       });
 
-      socket.current.on("recycle-thesis-change", (changeStream) => {
-        switch (changeStream.operationType) {
-          case "delete": {
-            restoreThesis(changeStream.documentKey._id);
-            break;
-          }
-          case "insert": {
-            recycleThesis(changeStream.fullDocument);
-          }
-        }
+      socket.current.on("change/thesis-update", (changeStream) => {
+        console.log("thesis-items update");
       });
 
-      socket.current.on("thesis-changes", (changeStream) => {
-        switch (changeStream.operationType) {
-          case "delete": {
-            removeThesisItem(changeStream.documentKey._id);
-            break;
-          }
-        }
+      socket.current.on("change/activitylog-update", (changeStream) => {
+        console.log("activity log update");
       });
+
+      console.log(socket.current.listeners("change/account-update"));
     }
+
     return () => {
       if (socket.current?.connected) {
         socket.current.removeAllListeners();
@@ -74,6 +63,7 @@ const WatchChanges = ({ children }: { children: React.ReactNode }) => {
     globalState.thesisItems,
     globalState.recyclebin,
     socket.current?.connected,
+    state.activityLog,
     globalState.loading.includes("all-thesis"),
     globalState.loading.includes("all-admin"),
   ]);

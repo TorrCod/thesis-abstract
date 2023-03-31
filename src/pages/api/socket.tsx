@@ -139,15 +139,12 @@ const SocketHandler = async (
 
         socket.on("account-update", () => {
           socket.broadcast.emit("change/account-update");
+          socket.broadcast.emit("change/activitylog-update");
           socket.emit("acknowledged");
         });
 
         socket.on("thesis-update", () => {
           socket.broadcast.emit("change/thesis-update");
-          socket.emit("acknowledged");
-        });
-
-        socket.on("activitylog-update", () => {
           socket.broadcast.emit("change/activitylog-update");
           socket.emit("acknowledged");
         });

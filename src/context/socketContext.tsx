@@ -26,10 +26,8 @@ export const SocketWrapper = ({ children }: { children: ReactNode }) => {
 
   const {
     state: globalState,
-    removeThesisItem,
-    addThesisItem,
-    restoreThesis,
-    recycleThesis,
+    loadThesisItems,
+    loadThesisCount,
   } = useGlobalContext();
 
   useEffect(() => {
@@ -56,8 +54,12 @@ export const SocketWrapper = ({ children }: { children: ReactNode }) => {
         console.log("account update");
       });
 
-      socketRef.current.on("change/thesis-update", () => {
-        console.log("thesis-items update");
+      socketRef.current.on("change/thesis-update", async () => {
+        console.log("thesis update");
+        console.log(globalState.searchTitle);
+
+        loadThesisItems();
+        loadThesisCount();
       });
 
       socketRef.current.on("change/activitylog-update", () => {
@@ -76,6 +78,7 @@ export const SocketWrapper = ({ children }: { children: ReactNode }) => {
     state.activityLog,
     globalState.loading.includes("all-thesis"),
     globalState.loading.includes("all-admin"),
+    globalState.searchTitle,
   ]);
 
   const triggerSocket = (event: SocketEmitEvent) => {

@@ -7,6 +7,8 @@ import {
   ObjectId,
   Document,
   ChangeStream,
+  FindCursor,
+  WithId,
 } from "mongodb";
 import { Worker } from "worker_threads";
 import { CollectionName, DatabaseName, QueryPost } from "./types";
@@ -112,6 +114,25 @@ export const addData = async (
     const res = await collection.insertOne(payload);
     client.close();
     return res;
+  } catch (e) {
+    console.error(e);
+    throw new Error(e as string).message;
+  }
+};
+
+export const getRawData = async (
+  dbName: DatabaseName,
+  colName: CollectionName,
+  callback: (arg: FindCursor<WithId<Document>>) => Promise<void>,
+  query?: Filter<Document | {}>
+) => {
+  try {
+    const client = await connectToDatabase();
+    const database = client.db(dbName);
+    const collection = database.collection(colName);
+    const res = collection.find(query ?? {});
+    await callback(res);
+    client.close();
   } catch (e) {
     console.error(e);
     throw new Error(e as string).message;

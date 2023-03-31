@@ -6,6 +6,7 @@ import {
   deleteData,
   getData,
   getOneData,
+  getRawData,
   updateData,
 } from "@/lib/mongo";
 import { ActivitylogReason, CollectionName } from "@/lib/types";
@@ -32,12 +33,19 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             const parse = parseQuery(req);
             const userId = req.query.userId as string | undefined;
             if (userId) parse.query = { userId };
-            const activityLog = await getData(
+            let activityLog: any[] = [];
+            await getRawData(
               "accounts",
               "activity-log",
-              parse.query,
-              { ...parse.option }
+              async (payload) => {
+                activityLog = await payload
+                  .sort({ date: -1 })
+                  .limit(parse.option?.limit ?? 10)
+                  .toArray();
+              },
+              parse.query
             );
+
             const withUserName_promise = activityLog.map(async (item) => {
               const response = await getOneData(
                 "accounts",
@@ -47,7 +55,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               );
               return { ...item, userName: response?.userName };
             });
+
             const withUsername = await Promise.all(withUserName_promise);
+
             return res.status(200).json(withUsername);
           }
           default: {
@@ -130,15 +140,17 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             return res.status(200).json(req.body);
           }
           case "update-activity-log": {
-            const reason = req.body.reason as ActivitylogReason;
-            const itemId = req.body.itemId as string;
-            const date = req.body.date as Date;
-            const name = req.body.name as string;
+            const reason = req.body.reason as ActivitylogReason | undefined;
+            const itemId = req.body.itemId as string | undefined;
+            const date = req.body.date as string | undefined;
+            const name = req.body.name as string | undefined;
+            if (!(reason && itemId && date && name))
+              return res.status(400).send("Insufficient Input");
             const insertedResult = await updateActivityLog(
               isValidated.decodedToken as DecodedIdToken,
               reason,
               new ObjectId(itemId),
-              date,
+              new Date(date),
               name
             );
             return res.status(200).json(insertedResult);

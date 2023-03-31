@@ -15,23 +15,30 @@ const PdfLink = dynamic(() => import("@/components/pdfDocs"), {
   ssr: false,
 });
 
-const ThesisItemsView = (props: { _id: string }) => {
+const ThesisItemsView = () => {
   const router = useRouter();
   const [data, setData] = useState<ThesisItems>();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        if (router.query.id) {
-          const thesisItem = await getOneById(router.query.id as string);
-          setData(thesisItem);
-        }
+        const thesisItem = await getOneById(router.query.id as string);
+        setData(thesisItem);
+        localStorage.setItem(
+          `thabs-${router.query.id}`,
+          JSON.stringify(thesisItem)
+        );
       } catch (e) {
         router.push("/404");
       }
     };
-    fetchData();
-  }, [router, props._id]);
+    const cachedData = localStorage.getItem(`thabs-${router.query.id}`);
+    if (router.query.id && !cachedData) {
+      fetchData();
+    } else if (cachedData) {
+      setData(JSON.parse(cachedData));
+    }
+  }, [router]);
 
   return !data ? (
     <Loading />

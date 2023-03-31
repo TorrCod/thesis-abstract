@@ -5,11 +5,12 @@ import {
   getData,
   dataAgregate,
 } from "@/lib/mongo";
-import { parseQuery } from "@/utils/server-utils";
+import { parseQuery, sleep } from "@/utils/server-utils";
 import { ObjectId } from "mongodb";
 import { NextApiRequest, NextApiResponse } from "next";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+  await sleep(2000);
   switch (req.query.objective) {
     case "get-distinct-years": {
       const distinctYears = (await getDistinctData(
@@ -38,12 +39,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         course: item._id,
         count: item.count,
       }));
-      return res
-        .status(200)
-        .json({
-          thesisCount,
-          totalCount: thesisCount.reduce((acc, { count }) => acc + count, 0),
-        });
+      return res.status(200).json({
+        thesisCount,
+        totalCount: thesisCount.reduce((acc, { count }) => acc + count, 0),
+      });
     }
     default: {
       const { query, option } = parseQuery(req);

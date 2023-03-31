@@ -76,14 +76,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         switch (req.query.objective) {
           case "invite-user": {
             const collection = req.query.collection as CollectionName;
-            let checkEmail;
-            checkEmail = await getOneData("accounts", "user", {
+            const checkEmailUser = await getOneData("accounts", "user", {
               email: req.body.email,
             });
-            checkEmail = await getOneData("accounts", "pending", {
+            const checkEmailPending = await getOneData("accounts", "pending", {
               email: req.body.email,
             });
-            if (checkEmail)
+            if (checkEmailUser || checkEmailPending)
               return res
                 .status(400)
                 .send("email is exist please use another one");

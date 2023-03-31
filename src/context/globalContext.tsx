@@ -170,7 +170,9 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
   };
 
   const recycleThesis = (thesis: ThesisItems) => {
-    dispatch({ type: "load-recycle", payload: [thesis, ...state.recyclebin] });
+    const oldRecyleThesis = [...state.recyclebin];
+    if (oldRecyleThesis.length >= 10) oldRecyleThesis.pop();
+    dispatch({ type: "load-recycle", payload: [thesis, ...oldRecyleThesis] });
   };
 
   const updateFilter = (payload: {

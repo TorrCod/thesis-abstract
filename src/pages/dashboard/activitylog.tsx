@@ -57,7 +57,7 @@ export const ActivityTimeline = () => {
     return () => setLog([]);
   }, [activityLog]);
 
-  return <Timeline reverse mode="left" items={log} />;
+  return <Timeline mode="left" items={log} />;
 };
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { ReactElement, useEffect, useRef, useState } from "react";
 import { Timeline, TimelineItemProps } from "antd";
 import DashboardLayout from "@/components/dashboardLayout";
 import useUserContext from "@/context/userContext";
@@ -7,13 +7,11 @@ import { getServerSession } from "next-auth";
 import { getCsrfToken } from "next-auth/react";
 import { authOptions } from "../api/auth/[...nextauth]";
 import { readActivityLogReason } from "@/utils/helper";
+import { NextPageWithLayout } from "../_app";
 
-const ActivityLog = () => {
+const Page: NextPageWithLayout = () => {
   return (
-    <DashboardLayout
-      userSelectedMenu="/dashboard"
-      userSelectedSider="/dashboard/activitylog"
-    >
+    <>
       <div className="opacity-80 mb-3">Dashboard {">"} Activity Log</div>
       <div className="bg-white rounded-md p-5 grid gap-2 overflow-hidden">
         <p className="opacity-60 mb-5">History</p>
@@ -21,9 +19,15 @@ const ActivityLog = () => {
           <ActivityTimeline />
         </div>
       </div>
-    </DashboardLayout>
+    </>
   );
 };
+
+Page.getLayout = function getLayout(page: ReactElement) {
+  return <DashboardLayout>{page}</DashboardLayout>;
+};
+
+export default Page;
 
 export const ActivityTimeline = () => {
   const [log, setLog] = useState<TimelineItemProps[]>([]);
@@ -75,5 +79,3 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     },
   };
 };
-
-export default ActivityLog;

@@ -8,8 +8,9 @@ import { RiDashboardFill } from "react-icons/ri";
 import { BottomMenuProps, SelectedDashboardSider } from "./types.d";
 
 export const BotomMenu = ({ defaultSelected }: BottomMenuProps) => {
-  const [selectedKeys, setSelectedKeys] =
-    useState<SelectedDashboardSider>(defaultSelected);
+  const [selectedKeys, setSelectedKeys] = useState<SelectedDashboardSider>(
+    defaultSelected ?? "/dashboard/overview"
+  );
   const router = useRouter();
 
   return (

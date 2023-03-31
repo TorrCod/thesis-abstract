@@ -1,4 +1,5 @@
 import { Course, UserDetails } from "@/context/types.d";
+import { ReactElement, ReactNode } from "react";
 
 export type NavItemProps = {
   text: string;
@@ -80,7 +81,7 @@ export type AdminProps = {
 
 export type BottomMenuProps = {
   onchange: (selected: SelectedDashboardSider) => void;
-  defaultSelected: SelectedDashboardSider;
+  defaultSelected?: SelectedDashboardSider;
 };
 
 export type SelectedDashboardSider =

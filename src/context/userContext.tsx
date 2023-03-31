@@ -102,11 +102,7 @@ const userReducer = (state: UserState, action: UserAction): UserState => {
 export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(userReducer, userStateInit);
   const unsubscribeRef = useRef<Unsubscribe | null>(null);
-  const {
-    dispatch: gloablDispatch,
-    recycledThesis,
-    loadingState,
-  } = useGlobalContext();
+  const { dispatch: gloablDispatch, loadingState } = useGlobalContext();
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
@@ -126,7 +122,6 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
         dispatch({
           type: "on-logout",
         });
-        recycledThesis().clear();
         dispatch({
           type: "load-all-users",
           payload: { adminList: [], pendingAdminList: [] },
@@ -136,6 +131,7 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
           payload: [],
         });
         gloablDispatch({ type: "load-thesis", payload: [] });
+        gloablDispatch({ type: "load-recycle", payload: [] });
         await axios.get("/api/logout");
       }
       unsubscribeRef.current = unsubscribe;

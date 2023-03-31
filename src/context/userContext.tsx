@@ -163,11 +163,7 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
     const token = await credential.user.getIdToken();
     userDetails.uid = credential.user.uid;
     await addUserAccount(token, userDetails);
-    await signIn(
-      "credentials",
-      { callbackUrl: "/dashboard" },
-      { tokenId: token }
-    );
+    signIn("credentials", { callbackUrl: "/dashboard" }, { tokenId: token });
   };
 
   const userUpdateInfo = async (userDetails: UserDetails) => {

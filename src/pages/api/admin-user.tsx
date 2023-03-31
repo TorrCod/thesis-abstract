@@ -134,7 +134,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               isValidated.decodedToken as DecodedIdToken,
               "accepted the invite",
               insertResult.insertedId,
-              req.body.dateAdded,
+              new Date(),
               req.body.email
             );
             return res.status(200).json(req.body);

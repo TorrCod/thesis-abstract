@@ -65,6 +65,7 @@ const globalCtxInit: GlobalValue = {
   addThesisItem(document) {},
   removeThesisItem(_id) {},
   restoreThesis(_id) {},
+  recycleThesis(thesis) {},
 };
 
 const GlobalContext = createContext<GlobalValue>(globalCtxInit);
@@ -168,6 +169,10 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
     dispatch({ type: "load-recycle", payload: newRecyle });
   };
 
+  const recycleThesis = (thesis: ThesisItems) => {
+    dispatch({ type: "load-recycle", payload: [thesis, ...state.recyclebin] });
+  };
+
   const updateFilter = (payload: {
     years: {
       all: boolean;
@@ -224,6 +229,7 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
     <GlobalContext.Provider
       value={{
         state,
+        recycleThesis,
         restoreThesis,
         dispatch,
         loadThesisItems,

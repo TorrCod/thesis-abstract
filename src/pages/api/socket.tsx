@@ -123,9 +123,13 @@ const SocketHandler = async (
           io.emit("thesis-changes", changeStream);
         });
 
-        client.subscribe("thesis-abstract", "deleted-thesis", () => {
-          io.emit("deleted-thesis-changes", "change detected");
-        });
+        client.subscribe(
+          "thesis-abstract",
+          "deleted-thesis",
+          (changeStream) => {
+            io.emit("recycle-thesis-change", changeStream);
+          }
+        );
 
         socket.on("disconnect", () => {
           console.log(socket.id, "Disconnected");

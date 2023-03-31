@@ -223,7 +223,7 @@ const RecycledTable = () => {
 
   useEffect(() => {
     if (userDetails) {
-      recycledThesis().load();
+      recycledThesis().load(undefined, { limit: 10 });
     }
   }, [userDetails]);
 

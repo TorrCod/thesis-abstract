@@ -112,6 +112,7 @@ export type GlobalValue = {
   addThesisItem: (document: ThesisItems) => void;
   removeThesisItem: (_id: string) => void;
   restoreThesis: (_id: string) => void;
+  recycleThesis: (thesis: ThesisItems) => void;
 };
 
 export type AdminData = {

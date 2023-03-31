@@ -16,6 +16,8 @@ const WatchChanges = ({ children }: { children: React.ReactNode }) => {
     state: globalState,
     removeThesisItem,
     addThesisItem,
+    restoreThesis,
+    recycleThesis,
   } = useGlobalContext();
 
   useEffect(() => {
@@ -40,6 +42,18 @@ const WatchChanges = ({ children }: { children: React.ReactNode }) => {
       socket.current.on("account-update", (changeStream) => {
         console.log("user changess");
         loadAllUsers();
+      });
+
+      socket.current.on("recycle-thesis-change", (changeStream) => {
+        switch (changeStream.operationType) {
+          case "delete": {
+            restoreThesis(changeStream.documentKey._id);
+            break;
+          }
+          case "insert": {
+            recycleThesis(changeStream.fullDocument);
+          }
+        }
       });
 
       socket.current.on("thesis-changes", (changeStream) => {

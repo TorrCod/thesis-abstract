@@ -19,7 +19,7 @@ const socketValueInit: SocketValue = {
 const SocketContext = createContext<SocketValue>(socketValueInit);
 
 export const SocketWrapper = ({ children }: { children: ReactNode }) => {
-  const { state, loadAllUsers } = userContext();
+  const { state, loadAllUsers, loadActivityLog } = userContext();
   const userDetails = state.userDetails;
   const socketRef =
     useRef<Socket<ServerToClientEvents, ClientToServerEvents>>();
@@ -66,6 +66,7 @@ export const SocketWrapper = ({ children }: { children: ReactNode }) => {
 
       socketRef.current.on("change/activitylog-update", () => {
         console.log("activity log update");
+        loadActivityLog();
       });
     }
     return () => {

@@ -46,10 +46,16 @@ const menuItems: MenuProps["items"] = [
 ];
 
 const DashboardThesis = () => {
-  const { state: globalStatate } = useGlobalContext();
+  const { state: globalStatate, updateSearchTitle } = useGlobalContext();
   const router = useRouter();
+
   const handleMenu: MenuProps["onSelect"] = (item) => {
     router.push(`/dashboard/thesis?tab=${item.key}`);
+  };
+
+  const handleSearch = (searchText: string) => {
+    if (searchText === "") updateSearchTitle(undefined);
+    else updateSearchTitle(searchText);
   };
   return (
     <DashboardLayout
@@ -107,15 +113,7 @@ const DashboardThesis = () => {
         <Divider />
         <div className="mt-5 bg-white grid gap-1 rounded-md p-5 overflow-auto">
           <p className="opacity-60 mb-5">Manage Thesis Abstracts</p>
-          <QuerySearch
-            onSearch={(searchText) => {
-              const newQuery = stringify({
-                ...router.query,
-                title: searchText,
-              });
-              router.push(`/dashboard/thesis?${newQuery}`);
-            }}
-          />
+          <QuerySearch onSearch={handleSearch} />
           <div className="h-[50em]">
             <Menu
               onSelect={handleMenu}
@@ -171,24 +169,16 @@ export const ThesisCharts = () => {
 export const ThesisTable = () => {
   const { state: userState } = useUserContext();
   const userDetails = userState.userDetails;
-  const { state, loadThesisItems } = useGlobalContext();
+  const { state, loadThesisItems, updateSearchTitle } = useGlobalContext();
   const [thesisTableData, setThesisTableData] = useState<DataType[]>([]);
-  const router = useRouter();
+
+  useEffect(() => updateSearchTitle(undefined), []);
 
   useEffect(() => {
     if (userDetails) {
       loadThesisItems();
     }
-  }, [userDetails]);
-
-  useEffect(() => {
-    if (router.query.title) {
-      const title = router.query.title as string;
-      loadThesisItems({ title });
-    } else if (Object.keys(router.query).includes("title")) {
-      loadThesisItems();
-    }
-  }, [router.query.title]);
+  }, [userDetails, state.searchTitle]);
 
   useEffect(() => {
     const thesisItems = state.thesisItems;

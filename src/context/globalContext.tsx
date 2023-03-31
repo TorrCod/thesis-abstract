@@ -46,6 +46,7 @@ const globalStateInit: GlobalState = {
     course: { all: true, option: courseOption as Course[] },
   },
   totalThesisCount: { totalCount: 0, thesisCount: totalDataInit },
+  searchTitle: "",
 };
 
 const globalCtxInit: GlobalValue = {
@@ -67,6 +68,7 @@ const globalCtxInit: GlobalValue = {
   removeThesisItem(_id) {},
   restoreThesis(_id) {},
   recycleThesis(thesis) {},
+  updateSearchTitle(title) {},
 };
 
 const GlobalContext = createContext<GlobalValue>(globalCtxInit);
@@ -102,6 +104,9 @@ const globalReducer = (
     case "load-thesis-count": {
       return { ...state, totalThesisCount: action.payload };
     }
+    case "update-search": {
+      return { ...state, searchTitle: action.payload };
+    }
   }
 };
 
@@ -112,13 +117,16 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.thesisItems]);
 
-  const loadThesisItems = async (query?: SearchQuery, limit?: number) => {
+  const loadThesisItems = async () => {
     try {
       loadingState.add("all-thesis");
-      const thesisItems = await getAllThesis(query, {
-        limit: 10,
-        projection: { title: 1, course: 1, dateAdded: 1 },
-      });
+      const thesisItems = await getAllThesis(
+        { title: state.searchTitle },
+        {
+          limit: 10,
+          projection: { title: 1, course: 1, dateAdded: 1 },
+        }
+      );
       dispatch({
         type: "load-thesis",
         payload: thesisItems,
@@ -228,6 +236,10 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
     dispatch({ type: "load-recycle", payload: newRecyle });
   };
 
+  const updateSearchTitle = (title: string | undefined) => {
+    dispatch({ type: "update-search", payload: title });
+  };
+
   return (
     <GlobalContext.Provider
       value={{
@@ -243,6 +255,7 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
         loadThesisCount,
         addThesisItem,
         removeThesisItem,
+        updateSearchTitle,
       }}
     >
       <LoadingGlobal loading={state.loading.includes("global")}>

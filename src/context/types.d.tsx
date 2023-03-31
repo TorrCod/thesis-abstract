@@ -14,6 +14,7 @@ export interface GlobalState {
     years: { all: boolean; option: string[] };
     course: { all: boolean; option: Course[] };
   };
+  searchTitle?: string;
 }
 
 export type ThesisCount = { course: Course; count: number }[];
@@ -83,6 +84,10 @@ export type GlobalAction =
   | {
       type: "load-thesis-count";
       payload: { thesisCount: ThesisCount; totalCount: number };
+    }
+  | {
+      type: "update-search";
+      payload?: string;
     };
 
 export type GlobalValue = {
@@ -113,6 +118,7 @@ export type GlobalValue = {
   removeThesisItem: (_id: string) => void;
   restoreThesis: (_id: string) => void;
   recycleThesis: (thesis: ThesisItems) => void;
+  updateSearchTitle: (title: string | undefined) => void;
 };
 
 export type AdminData = {

@@ -204,7 +204,7 @@ export type UserAction =
     };
 
 export type SocketValue = {
-  triggerSocket: (event: SocketOnEvent, payload: any) => void;
+  triggerSocket: (event: SocketEmitEven, payload: any) => void;
 };
 
 export type SocketOnEvent =
@@ -212,3 +212,8 @@ export type SocketOnEvent =
   | "change/account-update"
   | "change/thesis-update"
   | "change/activitylog-update";
+
+export type SocketEmitEven =
+  | "account-update"
+  | "thesis-update"
+  | "activitylog-update";

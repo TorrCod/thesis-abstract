@@ -38,6 +38,7 @@ import {
 import { ResponsiveContainer } from "recharts";
 import { authOptions } from "../api/auth/[...nextauth]";
 import { stringify } from "querystring";
+import useSocketContext from "@/context/socketContext";
 
 const menuItems: MenuProps["items"] = [
   { key: "thesis-items", label: "Thesis Items" },
@@ -248,13 +249,14 @@ const RecycledTable = () => {
 
 const RemoveThesis = (props: DataType & { id: string }) => {
   const { removeThesisItem } = useGlobalContext();
+  const { triggerSocket } = useSocketContext();
 
   const handleClick = async () => {
     try {
       const token = await auth.currentUser?.getIdToken();
       await removeThesis({ token: token, thesisId: props.id });
       removeThesisItem(props.id);
-
+      triggerSocket("thesis-update", "thesis-update");
       message.success("Removed Success");
     } catch (e) {
       message.error("remove failed");

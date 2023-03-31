@@ -4,7 +4,7 @@ import { createContext, ReactNode, useContext, useEffect, useRef } from "react";
 import { io, Socket } from "socket.io-client";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
 import useGlobalContext from "./globalContext";
-import { SocketOnEvent, SocketValue } from "./types.d";
+import { SocketEmitEven, SocketValue } from "./types.d";
 import userContext from "./userContext";
 
 const socketValueInit: SocketValue = {
@@ -69,7 +69,7 @@ export const SocketWrapper = ({ children }: { children: ReactNode }) => {
     globalState.loading.includes("all-admin"),
   ]);
 
-  const triggerSocket = (event: SocketOnEvent, payload: any) => {
+  const triggerSocket = (event: SocketEmitEven, payload: any) => {
     if (socket.current) socket.current.emit(event, payload ?? "update");
   };
 

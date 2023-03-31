@@ -35,6 +35,7 @@ import { getCsrfToken } from "next-auth/react";
 import { authOptions } from "../api/auth/[...nextauth]";
 import useGlobalContext from "@/context/globalContext";
 import { readActivityLogReason } from "@/utils/helper";
+import useSocketContext from "@/context/socketContext";
 
 const DashboardAdmin = () => {
   const router = useRouter();
@@ -238,6 +239,7 @@ const RemoveAdmin = ({ record }: { record: AdminData }) => {
   const [loading, setLoading] = useState(false);
   const { state, loadAllUsers } = useUserContext();
   const userEmail = state.userDetails;
+  const { triggerSocket } = useSocketContext();
 
   const handleFinish = async () => {
     try {
@@ -268,6 +270,7 @@ const RemoveAdmin = ({ record }: { record: AdminData }) => {
           name: record.email,
         });
       }
+      triggerSocket("account-update");
       loadAllUsers();
       message.success("Remove Success");
       setOpen(false);

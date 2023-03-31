@@ -73,7 +73,7 @@ const UploadThesis = () => {
         researchers: researchers,
       };
       await userCtx.saveUploadThesis(payload);
-      triggerSocket("thesis-update", "thesis-update");
+      triggerSocket("thesis-update");
       message.success("Success");
       router.push("/dashboard/thesis/success");
     } catch (e) {

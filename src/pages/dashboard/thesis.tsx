@@ -256,7 +256,7 @@ const RemoveThesis = (props: DataType & { id: string }) => {
       const token = await auth.currentUser?.getIdToken();
       await removeThesis({ token: token, thesisId: props.id });
       removeThesisItem(props.id);
-      triggerSocket("thesis-update", "thesis-update");
+      triggerSocket("thesis-update");
       message.success("Removed Success");
     } catch (e) {
       message.error("remove failed");
@@ -284,7 +284,7 @@ const RestoreThesis = (props: DataType & { id: string }) => {
       const token = await auth.currentUser?.getIdToken();
       await restoreThesis({ token: token, thesisId: props.id });
       restore(props.id);
-      triggerSocket("thesis-update", "thesis-update");
+      triggerSocket("thesis-update");
       message.success("Restore Success");
     } catch (e) {
       message.error("Restore failed");

@@ -13,7 +13,7 @@ import { SocketValue } from "./types.d";
 import userContext from "./userContext";
 
 const socketValueInit: SocketValue = {
-  triggerSocket(event, payload) {},
+  triggerSocket(event) {},
 };
 
 const SocketContext = createContext<SocketValue>(socketValueInit);
@@ -74,7 +74,7 @@ export const SocketWrapper = ({ children }: { children: ReactNode }) => {
     globalState.loading.includes("all-admin"),
   ]);
 
-  const triggerSocket = (event: SocketEmitEvent, payload: any) => {
+  const triggerSocket = (event: SocketEmitEvent) => {
     if (socket.current) socket.current.emit(event);
   };
 

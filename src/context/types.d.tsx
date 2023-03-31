@@ -204,5 +204,5 @@ export type UserAction =
     };
 
 export type SocketValue = {
-  triggerSocket: (event: SocketEmitEvent, payload: any) => void;
+  triggerSocket: (event: SocketEmitEvent) => void;
 };

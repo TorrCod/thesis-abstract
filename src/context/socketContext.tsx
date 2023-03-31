@@ -1,10 +1,15 @@
 import { auth } from "@/lib/firebase";
+import {
+  ClientToServerEvents,
+  ServerToClientEvents,
+  SocketEmitEvent,
+} from "@/lib/types";
 import { readSocket } from "@/utils/socket-utils";
 import { createContext, ReactNode, useContext, useEffect, useRef } from "react";
 import { io, Socket } from "socket.io-client";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
 import useGlobalContext from "./globalContext";
-import { SocketEmitEven, SocketValue } from "./types.d";
+import { SocketValue } from "./types.d";
 import userContext from "./userContext";
 
 const socketValueInit: SocketValue = {
@@ -16,7 +21,7 @@ const SocketContext = createContext<SocketValue>(socketValueInit);
 export const SocketWrapper = ({ children }: { children: ReactNode }) => {
   const { state, loadAllUsers } = userContext();
   const userDetails = state.userDetails;
-  const socket = useRef<Socket<DefaultEventsMap, DefaultEventsMap>>();
+  const socket = useRef<Socket<ServerToClientEvents, ClientToServerEvents>>();
 
   const {
     state: globalState,
@@ -43,15 +48,15 @@ export const SocketWrapper = ({ children }: { children: ReactNode }) => {
     if (socket.current) {
       if (!socket.current.connected) socket.current.connect();
 
-      socket.current.on("change/account-update", (changeStream) => {
+      socket.current.on("change/account-update", () => {
         console.log("account update");
       });
 
-      socket.current.on("change/thesis-update", (changeStream) => {
+      socket.current.on("change/thesis-update", () => {
         console.log("thesis-items update");
       });
 
-      socket.current.on("change/activitylog-update", (changeStream) => {
+      socket.current.on("change/activitylog-update", () => {
         console.log("activity log update");
       });
     }
@@ -69,8 +74,8 @@ export const SocketWrapper = ({ children }: { children: ReactNode }) => {
     globalState.loading.includes("all-admin"),
   ]);
 
-  const triggerSocket = (event: SocketEmitEven, payload: any) => {
-    if (socket.current) socket.current.emit(event, payload ?? "update");
+  const triggerSocket = (event: SocketEmitEvent, payload: any) => {
+    if (socket.current) socket.current.emit(event);
   };
 
   return (

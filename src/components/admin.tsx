@@ -16,6 +16,7 @@ import SignInSignUp from "./signin_signup";
 import { AdminProps } from "./types.d";
 import { signOut as nextSignOut } from "next-auth/react";
 import axios, { AxiosError } from "axios";
+import useSocketContext from "@/context/socketContext";
 
 function AdminProfile({ userDetails, size, src }: AdminProps) {
   return (
@@ -99,6 +100,7 @@ export const AddAdmin = () => {
   const { state, loadAllUsers } = useUserContext();
   const userDetails = state.userDetails;
   const [form] = useForm();
+  const { triggerSocket } = useSocketContext();
   const onFinish = async ({ email }: any) => {
     let id: string = "";
     try {
@@ -115,6 +117,7 @@ export const AddAdmin = () => {
       };
       await sendSignInLinkToEmail(auth, email, actionCodeSettings);
       loadAllUsers();
+      triggerSocket("account-update");
       message.success("Invite Sent");
       form.resetFields();
     } catch (e) {

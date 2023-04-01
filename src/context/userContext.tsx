@@ -131,8 +131,14 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
           type: "load-activity-log",
           payload: [],
         });
-        gloablDispatch({ type: "load-thesis", payload: [] });
-        gloablDispatch({ type: "load-recycle", payload: [] });
+        gloablDispatch({
+          type: "load-thesis",
+          payload: { currentPage: 1, document: [], totalCount: 0 },
+        });
+        gloablDispatch({
+          type: "load-recycle",
+          payload: { currentPage: 1, document: [], totalCount: 0 },
+        });
         await axios.get("/api/logout");
       }
       unsubscribeRef.current = unsubscribe;

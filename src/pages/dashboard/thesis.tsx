@@ -58,7 +58,7 @@ const Page: NextPageWithLayout = () => {
     else updateSearchTitle(searchText);
   };
   return (
-    <div className="m-auto relative">
+    <div className="m-auto relative w-full">
       <div className="opacity-80 mb-3">Dashboard {">"} Thesis</div>
       <div className="md:grid gap-2 lg:grid-cols-2 relative w-full">
         <div className="bg-white rounded-md shadow-md pt-7 mb-2 md:mb-0">
@@ -105,10 +105,11 @@ const Page: NextPageWithLayout = () => {
         </div>
       </div>
       <Divider />
-      <div className="mt-5 bg-white grid gap-1 rounded-md p-5 relative">
+      <div className="mt-5 bg-white gap-1 rounded-md p-5 relative w-full min-h-[60em]">
         <p className="opacity-60 mb-5">Manage Thesis Abstracts</p>
         <QuerySearch onSearch={handleSearch} />
-        {/* <Menu
+        <Divider />
+        <Menu
           onSelect={handleMenu}
           mode="horizontal"
           items={menuItems}
@@ -119,7 +120,7 @@ const Page: NextPageWithLayout = () => {
           <RecycledTable />
         ) : (
           <ThesisTable />
-        )} */}
+        )}
       </div>
     </div>
   );
@@ -184,9 +185,10 @@ export const ThesisTable = () => {
   return (
     <Table
       loading={state.loading.includes("all-thesis")}
-      className="min-w-[40em]"
+      // className="min-w-[40em]"
       columns={thesisTableColumn}
       dataSource={thesisTableData}
+      scroll={{ x: 50 }}
     />
   );
 };

@@ -16,7 +16,7 @@ import { auth } from "@/lib/firebase";
 import { useRouter } from "next/router";
 import { AdminMenu } from "./admin";
 import axios from "axios";
-import { signOut as nextSignOut } from "next-auth/react";
+import { signOut as nextSignOut, useSession } from "next-auth/react";
 
 const MENU_LIST = [
   { text: "Home", href: "/", icon: <AiOutlineHome /> },
@@ -73,6 +73,7 @@ const NavBar = () => {
   const { pathname } = useLocation();
   const { state, logOut } = useUserContext();
   const userCtxState = state;
+  const { status } = useSession();
 
   useEffect(() => {
     if (pathname) {
@@ -143,7 +144,7 @@ const NavBar = () => {
           </div>
         ))}
 
-        {userCtxState.userDetails ? (
+        {status === "authenticated" ? (
           <div className="flex gap-1 items-center justify-center">
             <AdminMenu />
           </div>

@@ -80,13 +80,13 @@ const NavBar = () => {
 
   const userMenu: MenuProps["items"] = [
     {
-      key: "/account-setting",
+      key: "/dashboard/account-setting",
       icon: (
-        <Link href={"/account-setting"}>
+        <Link href={"/dashboard/account-setting"}>
           <GrUserSettings size={"1.25em"} />
         </Link>
       ),
-      label: <Link href={"/account-setting"}>Account Setting</Link>,
+      label: <Link href={"/dashboard/account-setting"}>Account Setting</Link>,
     },
     {
       key: "/dashboard",

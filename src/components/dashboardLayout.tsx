@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Divider, Dropdown, Layout, Menu } from "antd";
+import { Button, Divider, Drawer, Dropdown, Layout, Menu } from "antd";
 const { Header, Sider } = Layout;
 import Link from "next/link";
 import { HomeButton } from "@/components/button";
 import { MenuProps } from "antd";
-import { FaSwatchbook } from "react-icons/fa";
+import { FaBars, FaSwatchbook } from "react-icons/fa";
 import { MdWorkHistory } from "react-icons/md";
 import { ImUserCheck } from "react-icons/im";
 import { BotomMenu } from "@/components/botomMenu";
@@ -12,11 +12,13 @@ import { RiDashboardFill, RiUserSettingsFill } from "react-icons/ri";
 import { useRouter } from "next/router";
 import { useLocation, useWindowSize } from "react-use";
 import Head from "next/head";
-import AdminProfile, { AdminDetails } from "./admin";
+import AdminProfile, { AdminDetails, AdminMenu } from "./admin";
 import { GrUserSettings } from "react-icons/gr";
 import { BiLogOut } from "react-icons/bi";
 import useUserContext from "@/context/userContext";
 import SignInSignUp from "./signin_signup";
+import { AiFillHome } from "react-icons/ai";
+import { IoHomeOutline } from "react-icons/io5";
 
 type DashboardProps = {
   children?: React.ReactNode;
@@ -46,24 +48,10 @@ const siderMenu: MenuProps["items"] = [
 ];
 
 function DashboardLayout({ children }: DashboardProps) {
-  const { logOut, state } = useUserContext();
   const [selectedSider, setSelectedSider] = useState("/dashboard");
   const { pathname } = useLocation();
+  const { logOut } = useUserContext();
   const router = useRouter();
-
-  const accountMenu: MenuProps["items"] = [
-    {
-      key: "/dashboard/account-setting",
-      label: <Link href={"/dashboard/account-setting"}>Account Setting</Link>,
-      icon: <GrUserSettings />,
-    },
-    {
-      key: "logout",
-      label: "Logout",
-      icon: <BiLogOut />,
-      onClick: logOut,
-    },
-  ];
 
   useEffect(() => {
     (
@@ -91,6 +79,25 @@ function DashboardLayout({ children }: DashboardProps) {
     setSelectedSider(item.key);
   };
 
+  const accountMenu: MenuProps["items"] = [
+    {
+      key: "/",
+      label: <Link href={"/"}>Home</Link>,
+      icon: <IoHomeOutline />,
+    },
+    {
+      key: "/dashboard/account-setting",
+      label: <Link href={"/dashboard/account-setting"}>Account Setting</Link>,
+      icon: <GrUserSettings />,
+    },
+    {
+      key: "logout",
+      label: "Logout",
+      icon: <BiLogOut />,
+      onClick: logOut,
+    },
+  ];
+
   return (
     <>
       <Head>
@@ -104,7 +111,10 @@ function DashboardLayout({ children }: DashboardProps) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <div className="bg-[#D9D9D9] relative md:h-screen">
-        <Header className="header fixed top-0 w-full md:relative z-20 flex gap-10 items-center">
+        <Header className="header fixed top-0 w-full md:relative z-20 flex gap-10 items-center justify-center md:justify-start">
+          <div className="absolute left-5 md:hidden">
+            <AdminMenu />
+          </div>
           <Link className="self-center" href="/">
             <HomeButton>Home</HomeButton>
           </Link>
@@ -123,21 +133,14 @@ function DashboardLayout({ children }: DashboardProps) {
                   onSelect={handleSeletect}
                 />
                 <Divider />
-                {/* <div className="flex gap-2 items-center mx-5 pb-3 border-b-[1px]">
-                  <SignInSignUp />
-                  <div className={` ${!state.userDetails && "hidden"}`}>
-                    <p>{`${state.userDetails?.firstName} ${state.userDetails?.lastName}`}</p>
-                    <p className="text-[0.8em] opacity-80">
-                      {state.userDetails?.course}
-                    </p>
-                  </div>
-                </div>
+                <AdminDetails selectedMenu={selectedSider} />
+
                 <Menu
-                  className="text-[0.9vw] place-self-start"
+                  className="place-self-start"
                   items={accountMenu}
                   selectedKeys={[selectedSider]}
-                /> */}
-                <AdminDetails selectedMenu={selectedSider} />
+                  onSelect={(item) => setSelectedSider(item.key)}
+                />
               </div>
             </Sider>
             <div

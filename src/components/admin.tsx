@@ -37,13 +37,13 @@ export const AdminMenu = ({
   const userCtxState = state;
   const userMenu: MenuProps["items"] = [
     {
-      key: "/account-setting",
+      key: "/dashboard/account-setting",
       icon: (
-        <Link href={"/account-setting"}>
+        <Link href={"/dashboard/account-setting"}>
           <GrUserSettings size={"1.25em"} />
         </Link>
       ),
-      label: <Link href={"/account-setting"}>Account Setting</Link>,
+      label: <Link href={"/dashboard/account-setting"}>Account Setting</Link>,
     },
     {
       key: "/dashboard",
@@ -148,25 +148,14 @@ export const AddAdmin = () => {
   );
 };
 
-export const AdminDetails = ({ selectedMenu }: { selectedMenu: string }) => {
-  const { state, logOut } = useUserContext();
-  const [selectedKey, setSelectedKey] = useState(selectedMenu);
-
-  useEffect(() => setSelectedKey(selectedMenu), [selectedMenu]);
-
-  const accountMenu: MenuProps["items"] = [
-    {
-      key: "/dashboard/account-setting",
-      label: <Link href={"/dashboard/account-setting"}>Account Setting</Link>,
-      icon: <GrUserSettings />,
-    },
-    {
-      key: "logout",
-      label: "Logout",
-      icon: <BiLogOut />,
-      onClick: logOut,
-    },
-  ];
+export const AdminDetails = ({
+  selectedMenu,
+  onSelect,
+}: {
+  selectedMenu: string;
+  onSelect?: MenuProps["onSelect"];
+}) => {
+  const { state } = useUserContext();
 
   return (
     <>
@@ -177,12 +166,6 @@ export const AdminDetails = ({ selectedMenu }: { selectedMenu: string }) => {
           <p className="text-[0.8em] opacity-80">{state.userDetails?.course}</p>
         </div>
       </div>
-      <Menu
-        className="text-[0.9vw] place-self-start"
-        items={accountMenu}
-        selectedKeys={[selectedKey]}
-        onSelect={(item) => setSelectedKey(item.key)}
-      />
     </>
   );
 };

@@ -13,6 +13,11 @@ export const BotomMenu = ({ defaultSelected }: BottomMenuProps) => {
   );
   const router = useRouter();
 
+  useEffect(
+    () => setSelectedKeys(router.pathname as SelectedDashboardSider),
+    [router]
+  );
+
   return (
     <div className="md:hidden fixed bottom-0 w-full h-[4.5em] bg-[#001529] text-white grid grid-flow-col place-items-center grid-col-4">
       <div

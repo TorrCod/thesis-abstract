@@ -35,7 +35,6 @@ export const AdminMenu = ({
 }) => {
   const { state, logOut } = useUserContext();
   const userCtxState = state;
-
   const userMenu: MenuProps["items"] = [
     {
       key: "/account-setting",

@@ -1,16 +1,18 @@
 import { PriButton } from "@/components/button";
 import DashboardLayout from "@/components/dashboardLayout";
+import { NextPageWithLayout } from "@/pages/_app";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { Space } from "antd";
+import { GetServerSideProps } from "next";
+import { getServerSession } from "next-auth";
+import { getCsrfToken } from "next-auth/react";
 import Link from "next/link";
-import React from "react";
+import React, { ReactElement } from "react";
 import { BsFillSendCheckFill } from "react-icons/bs";
 
-const Success = () => {
+const Page: NextPageWithLayout = () => {
   return (
-    <DashboardLayout
-      userSelectedMenu="/dashboard"
-      userSelectedSider="/dashboard/thesis"
-    >
+    <>
       <div className="opacity-80 mb-3">
         <Link href="/dashboard/overview">Dashboard</Link> {">"}
         <Link href="/dashboard/thesis">Thesis</Link> {">"} Upload
@@ -27,8 +29,28 @@ const Success = () => {
           </Link>
         </Space>
       </div>
-    </DashboardLayout>
+    </>
   );
 };
 
-export default Success;
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+  const session = await getServerSession(req, res, authOptions);
+  const csrfToken = await getCsrfToken({ req });
+  if (!session)
+    return {
+      redirect: { destination: "/?sign-in" },
+      props: { data: [] },
+    };
+  if (!csrfToken) return { notFound: true };
+  return {
+    props: {
+      data: [],
+    },
+  };
+};
+
+Page.getLayout = function getLayout(page: ReactElement) {
+  return <DashboardLayout>{page}</DashboardLayout>;
+};
+
+export default Page;

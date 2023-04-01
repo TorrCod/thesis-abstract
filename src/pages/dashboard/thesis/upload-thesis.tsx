@@ -12,7 +12,7 @@ import {
   UploadProps,
 } from "antd";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React, { ReactElement, useEffect, useState } from "react";
 import {
   AiFillFileImage,
   AiOutlineUpload,
@@ -34,6 +34,11 @@ import moment from "moment";
 import { MdSubtitles } from "react-icons/md";
 import { useRouter } from "next/router";
 import useSocketContext from "@/context/socketContext";
+import { NextPageWithLayout } from "@/pages/_app";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import { GetServerSideProps } from "next";
+import { getServerSession } from "next-auth";
+import { getCsrfToken } from "next-auth/react";
 
 interface FormValues {
   title: string;
@@ -51,7 +56,7 @@ const courseOptions = [
   { label: "Electrical Engineer", value: "Electrical Engineer" },
 ];
 
-const UploadThesis = () => {
+const Page: NextPageWithLayout = () => {
   const [researchers, setResearchers] = useState<string[]>(["", ""]);
   const [loadingText, setLoadingText] = useState(false);
   const userCtx = useUserContext();
@@ -139,10 +144,7 @@ const UploadThesis = () => {
   };
 
   return (
-    <DashboardLayout
-      userSelectedMenu="/dashboard"
-      userSelectedSider="/dashboard/thesis"
-    >
+    <>
       <div className="opacity-80 mb-3">
         <Link href="/dashboard/overview">Dashboard</Link> {">"}
         <Link href="/dashboard/thesis">Thesis</Link> {">"} Upload
@@ -232,8 +234,28 @@ const UploadThesis = () => {
           </PriButton>
         </Form.Item>
       </Form>
-    </DashboardLayout>
+    </>
   );
 };
 
-export default UploadThesis;
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+  const session = await getServerSession(req, res, authOptions);
+  const csrfToken = await getCsrfToken({ req });
+  if (!session)
+    return {
+      redirect: { destination: "/?sign-in" },
+      props: { data: [] },
+    };
+  if (!csrfToken) return { notFound: true };
+  return {
+    props: {
+      data: [],
+    },
+  };
+};
+
+Page.getLayout = function getLayout(page: ReactElement) {
+  return <DashboardLayout>{page}</DashboardLayout>;
+};
+
+export default Page;

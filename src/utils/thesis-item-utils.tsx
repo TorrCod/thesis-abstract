@@ -3,6 +3,7 @@ import {
   SearchQuery,
   ThesisCount,
   ThesisItems,
+  ThesisState,
 } from "@/context/types.d";
 import axios from "axios";
 import { userConfig } from "./account-utils";
@@ -18,7 +19,7 @@ export const getAllThesis = async (
       option
     )}`
   );
-  const data = res.data as ThesisItems[];
+  const data = res.data as ThesisState;
   return data;
 };
 

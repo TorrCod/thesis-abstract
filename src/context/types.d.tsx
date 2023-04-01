@@ -3,7 +3,7 @@ import { Unsubscribe } from "firebase/auth";
 import { Dispatch, MutableRefObject } from "react";
 
 export interface GlobalState {
-  thesisItems: ThesisItems[];
+  thesisItems: ThesisState;
   searchThesis: ThesisItems[];
   dateOption: string[];
   recyclebin: ThesisItems[];
@@ -18,6 +18,12 @@ export interface GlobalState {
 }
 
 export type ThesisCount = { course: Course; count: number }[];
+
+export type ThesisState = {
+  currentPage: number;
+  totalPage: number;
+  document: ThesisItems[];
+};
 
 export type Course =
   | "Computer Engineer"
@@ -56,7 +62,7 @@ export type GlobalAction =
     }
   | {
       type: "load-thesis";
-      payload: ThesisItems[];
+      payload: ThesisState;
     }
   | {
       type: "sign-in";

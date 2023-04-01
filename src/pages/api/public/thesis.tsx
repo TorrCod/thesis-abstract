@@ -1,9 +1,10 @@
-import { ThesisCount } from "@/context/types.d";
+import { ThesisCount, ThesisState } from "@/context/types.d";
 import {
   getDistinctData,
   getOneData,
   getData,
   dataAgregate,
+  getDataWithPaging,
 } from "@/lib/mongo";
 import { parseQuery, sleep } from "@/utils/server-utils";
 import { ObjectId } from "mongodb";
@@ -45,15 +46,18 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
     default: {
       const { query, option } = parseQuery(req);
-      const thesisItems = await getData(
+      const pageSize = option?.limit;
+      const pageNo = req.body.pageNo;
+      const thesisItems = (await getDataWithPaging(
         "thesis-abstract",
         "thesis-items",
+        { pageNo, pageSize },
         query,
         {
           limit: option?.limit,
           projection: option?.projection,
         }
-      );
+      )) as unknown as ThesisState;
       return res.status(200).json(thesisItems);
     }
   }

@@ -33,7 +33,7 @@ const totalDataInit: { course: Course; count: number }[] = [
 ];
 
 const globalStateInit: GlobalState = {
-  thesisItems: [],
+  thesisItems: { totalPage: 0, currentPage: 1, document: [] },
   dateOption: [],
   loading: ["all-thesis", "all-admin"],
   recyclebin: [],
@@ -74,7 +74,7 @@ const globalReducer = (
   switch (action.type) {
     case "add-thesis": {
       const newState = { ...state };
-      newState.thesisItems.push(action.payload);
+      newState.thesisItems.document.push(action.payload);
       return newState;
     }
     case "load-thesis": {
@@ -210,14 +210,20 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
   const addThesisItem = (document: ThesisItems) => {
     dispatch({
       type: "load-thesis",
-      payload: [document, ...state.thesisItems],
+      payload: {
+        ...state.thesisItems,
+        document: [document, ...state.thesisItems.document],
+      },
     });
   };
 
   const removeThesisItem = (_id: string) => {
-    const oldThesisItems = [...state.thesisItems];
-    const newThesisItems = oldThesisItems.filter((item) => item._id !== _id);
-    dispatch({ type: "load-thesis", payload: newThesisItems });
+    const oldDoc = [...state.thesisItems.document];
+    const newDoc = oldDoc.filter((item) => item._id !== _id);
+    dispatch({
+      type: "load-thesis",
+      payload: { ...state.thesisItems, document: newDoc },
+    });
     loadThesisItems();
   };
 

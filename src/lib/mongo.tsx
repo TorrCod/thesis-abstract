@@ -75,6 +75,44 @@ export const getData = async (
   }
 };
 
+export const getDataWithPaging = async (
+  dbName: DatabaseName,
+  colName: CollectionName,
+  page?: { pageNo?: number; pageSize?: number },
+  query?: Filter<Document | {}>,
+  option?: {
+    limit?: number;
+    projection?: Record<string, 0 | 1>;
+  }
+) => {
+  try {
+    const client = await connectToDatabase();
+    const database = client.db(dbName);
+    const collection = database.collection(colName);
+
+    const countDocuments = await collection.countDocuments(query ?? undefined);
+    const skipDocuments = (page?.pageNo ?? 1 - 1) * (page?.pageSize ?? 10);
+
+    const document = await collection
+      .find(query ?? {}, {
+        projection: option?.projection,
+      })
+      .skip(skipDocuments)
+      .limit(page?.pageSize ?? 10)
+      .toArray();
+
+    client.close();
+    return {
+      totalPage: Math.ceil(countDocuments / (page?.pageSize ?? 10)),
+      document,
+      currentPage: page?.pageNo ?? 1,
+    };
+  } catch (e) {
+    console.error(e);
+    throw new Error(e as string).message;
+  }
+};
+
 export const getOneData = async (
   dbName: DatabaseName,
   colName: CollectionName,

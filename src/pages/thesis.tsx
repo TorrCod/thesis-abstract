@@ -1,5 +1,5 @@
 import Search from "@/components/search";
-import { ThesisItems } from "@/context/types.d";
+import { ThesisItems, ThesisState } from "@/context/types.d";
 import { Divider } from "antd";
 import Head from "next/head";
 import Link from "next/link";
@@ -10,7 +10,11 @@ import { getAllThesis } from "@/utils/thesis-item-utils";
 
 const Thesis = () => {
   const { state: globalState, loadingState } = useGlobalContext();
-  const [thesisItems, setThesisItems] = useState<ThesisItems[]>([]);
+  const [thesisItems, setThesisItems] = useState<ThesisState>({
+    document: [],
+    totalPage: 1,
+    currentPage: 1,
+  });
   const router = useRouter();
 
   useEffect(() => {
@@ -60,7 +64,7 @@ const Thesis = () => {
                 <ItemsLoading />
               </>
             ) : (
-              thesisItems?.map((thesisItem) => {
+              thesisItems.document?.map((thesisItem) => {
                 return <Items key={thesisItem._id} {...thesisItem} />;
               })
             )}

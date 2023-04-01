@@ -183,7 +183,7 @@ export const ThesisTable = () => {
 
   useEffect(() => {
     const thesisItems = state.thesisItems;
-    const toTableThesisItems = thesisToDataType(thesisItems);
+    const toTableThesisItems = thesisToDataType(thesisItems.document);
     setThesisTableData(toTableThesisItems);
   }, [state.thesisItems]);
 

@@ -12,11 +12,8 @@ import Login from "./signin_signup";
 import useUserContext from "@/context/userContext";
 import { RiDashboardLine } from "react-icons/ri";
 import { GrUserSettings } from "react-icons/gr";
-import { auth } from "@/lib/firebase";
-import { useRouter } from "next/router";
 import { AdminMenu } from "./admin";
-import axios from "axios";
-import { signOut as nextSignOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 
 const MENU_LIST = [
   { text: "Home", href: "/", icon: <AiOutlineHome /> },

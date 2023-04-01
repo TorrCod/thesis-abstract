@@ -12,6 +12,7 @@ import {
   Divider,
   Menu,
   message,
+  Pagination,
   Space,
   Statistic,
   Table,
@@ -188,13 +189,21 @@ export const ThesisTable = () => {
   }, [state.thesisItems]);
 
   return (
-    <Table
-      loading={state.loading.includes("all-thesis")}
-      // className="min-w-[40em]"
-      columns={thesisTableColumn}
-      dataSource={thesisTableData}
-      scroll={{ x: 50 }}
-    />
+    <div>
+      <Table
+        loading={state.loading.includes("all-thesis")}
+        // className="min-w-[40em]"
+        columns={thesisTableColumn}
+        dataSource={thesisTableData}
+        scroll={{ x: 50 }}
+        pagination={false}
+      />
+      <Pagination
+        showSizeChanger
+        defaultCurrent={3}
+        total={state.thesisItems.totalCount}
+      />
+    </div>
   );
 };
 

@@ -103,7 +103,7 @@ export const getDataWithPaging = async (
 
     client.close();
     return {
-      totalPage: Math.ceil(countDocuments / (page?.pageSize ?? 10)),
+      totalCount: countDocuments,
       document,
       currentPage: page?.pageNo ?? 1,
     };

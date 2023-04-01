@@ -21,7 +21,7 @@ export type ThesisCount = { course: Course; count: number }[];
 
 export type ThesisState = {
   currentPage: number;
-  totalPage: number;
+  totalCount: number;
   document: ThesisItems[];
 };
 

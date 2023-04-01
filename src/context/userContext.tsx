@@ -54,6 +54,7 @@ const userValueInit: UserValue = {
   loadActivityLog: async () => {
     return [];
   },
+  async logOut() {},
 };
 
 const UserContext = createContext<UserValue>(userValueInit);
@@ -222,6 +223,12 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
     return activityLog;
   };
 
+  const logOut = async () => {
+    await auth.signOut();
+    await nextSignOut({ callbackUrl: "/?signin" });
+    await axios.get("/api/logout");
+  };
+
   return (
     <UserContext.Provider
       value={{
@@ -236,6 +243,7 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
         saveUploadThesis,
         unsubscribeRef,
         loadActivityLog,
+        logOut,
       }}
     >
       {children}

@@ -169,6 +169,7 @@ export type UserValue = {
   loadAllUsers: () => Promise<void>;
   unsubscribeRef: MutableRefObject<Unsubscribe | null>;
   loadActivityLog: () => Promise<ActivityLog[]>;
+  logOut: () => Promise<void>;
 };
 
 export type PendingAdminList = {

@@ -18,16 +18,15 @@ import {
 } from "antd";
 import { useForm } from "antd/lib/form/Form";
 import { RcFile } from "antd/lib/upload";
-import React, { useEffect, useState } from "react";
+import React, { ReactElement, useEffect, useState } from "react";
 import { BsImage } from "react-icons/bs";
 import { useRouter } from "next/router";
-import { IoSettings } from "react-icons/io5";
 import { FirebaseError } from "firebase-admin";
 import { GetServerSideProps } from "next";
-import { authOptions } from "./api/auth/[...nextauth]";
 import { getServerSession } from "next-auth";
 import { getCsrfToken } from "next-auth/react";
-import { updateUser } from "@/utils/account-utils";
+import { NextPageWithLayout } from "../_app";
+import { authOptions } from "../api/auth/[...nextauth]";
 const courseOpt: { value: Course; label: Course }[] = [
   { value: "Civil Engineer", label: "Civil Engineer" },
   { value: "Computer Engineer", label: "Computer Engineer" },
@@ -35,7 +34,7 @@ const courseOpt: { value: Course; label: Course }[] = [
   { value: "Mechanical Engineer", label: "Mechanical Engineer" },
 ];
 
-const AccountSetting = () => {
+const Page: NextPageWithLayout = () => {
   const userCtx = useUserContext();
   const userDetails = userCtx.state.userDetails;
   const [chngProfSave, setChngProfSave] = useState(true);
@@ -124,82 +123,72 @@ const AccountSetting = () => {
 
   return (
     <>
-      <DashboardLayout
-        title={
-          <div className="flex items-center gap-1 text-white">
-            <IoSettings />{" "}
-            <h3 className="whitespace-nowrap">Account Setting</h3>
+      <div className="pb-10 w-full p-3 md:mt-0 mt-16 md:mb-20">
+        <div className="grid gap-2 relative max-w-6xl m-auto ">
+          <h3 className="text-black/90">Account Setting</h3>
+          <div className="bg-white p-5 rounded-md shadow-md">
+            <p>Information</p>
+            <Divider />
+            <InformationForm />
           </div>
-        }
-        userSelectedMenu="/account-setting"
-      >
-        <div className="pb-10 w-full p-3 md:mt-5 mt-16 md:mb-20">
-          <div className="grid gap-2 relative max-w-6xl m-auto ">
-            <h3 className="text-black/90">Account Setting</h3>
+          <div className="grid md:grid-cols-2 gap-2">
             <div className="bg-white p-5 rounded-md shadow-md">
-              <p>Information</p>
+              <p>Change Password</p>
               <Divider />
-              <InformationForm />
+              <PasswordForm />
             </div>
-            <div className="grid md:grid-cols-2 gap-2">
-              <div className="bg-white p-5 rounded-md shadow-md">
-                <p>Change Password</p>
-                <Divider />
-                <PasswordForm />
-              </div>
-              <div className="bg-white p-5 rounded-md shadow-md w-full">
-                <p>Profile Picture</p>
-                <Divider />
-                <Upload
-                  {...uploadProps}
-                  className="grid place-items-center relative"
-                >
-                  <div className="absolute w-[16.8em] rounded-full h-full bg-black/30 z-10 grid place-items-center cursor-pointer">
-                    <BsImage size={"2em"} color="white" />
-                  </div>
-                  <AdminProfile
-                    src={newProfile ?? undefined}
-                    size={{ height: "16.8em", width: "16.8em" }}
-                    userDetails={userDetails!}
-                  />
-                </Upload>
-                <Divider />
-                <Space>
-                  <SecButton onClick={handleProfCancel} disabled={chngProfSave}>
-                    cancel
-                  </SecButton>
-                  <PriButton
-                    loading={loading.status && loading.name === "prof"}
-                    onClick={handleProfSave}
-                    disabled={chngProfSave}
-                  >
-                    Save
-                  </PriButton>
-                </Space>
-              </div>
-            </div>
-            <div className="bg-white p-5 rounded-md shadow-md">
-              <p>Delete Account</p>
+            <div className="bg-white p-5 rounded-md shadow-md w-full">
+              <p>Profile Picture</p>
               <Divider />
-              <div className="px-10">
-                <p className="mb-5 opacity-80">
-                  Would you like to delete your account?
-                </p>
-                <p className="mb-5 opacity-80">
-                  This will wipe all your data including your saved thesis but
-                  not approoved thesis abstract.
-                </p>
-                <p
-                  onClick={() => warning()}
-                  className="text-red-600 decoration-red-600 decoration-1 underline cursor-pointer"
+              <Upload
+                {...uploadProps}
+                className="grid place-items-center relative"
+              >
+                <div className="absolute w-[16.8em] rounded-full h-full bg-black/30 z-10 grid place-items-center cursor-pointer">
+                  <BsImage size={"2em"} color="white" />
+                </div>
+                <AdminProfile
+                  src={newProfile ?? undefined}
+                  size={{ height: "16.8em", width: "16.8em" }}
+                  userDetails={userDetails!}
+                />
+              </Upload>
+              <Divider />
+              <Space>
+                <SecButton onClick={handleProfCancel} disabled={chngProfSave}>
+                  cancel
+                </SecButton>
+                <PriButton
+                  loading={loading.status && loading.name === "prof"}
+                  onClick={handleProfSave}
+                  disabled={chngProfSave}
                 >
-                  I want to delete my account
-                </p>
-              </div>
+                  Save
+                </PriButton>
+              </Space>
+            </div>
+          </div>
+          <div className="bg-white p-5 rounded-md shadow-md">
+            <p>Delete Account</p>
+            <Divider />
+            <div className="px-10">
+              <p className="mb-5 opacity-80">
+                Would you like to delete your account?
+              </p>
+              <p className="mb-5 opacity-80">
+                This will wipe all your data including your saved thesis but not
+                approoved thesis abstract.
+              </p>
+              <p
+                onClick={() => warning()}
+                className="text-red-600 decoration-red-600 decoration-1 underline cursor-pointer"
+              >
+                I want to delete my account
+              </p>
             </div>
           </div>
         </div>
-      </DashboardLayout>
+      </div>
     </>
   );
 };
@@ -442,4 +431,8 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   };
 };
 
-export default AccountSetting;
+Page.getLayout = function getLayout(page: ReactElement) {
+  return <DashboardLayout>{page}</DashboardLayout>;
+};
+
+export default Page;

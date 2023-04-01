@@ -15,6 +15,8 @@ import { GrUserSettings } from "react-icons/gr";
 import { auth } from "@/lib/firebase";
 import { useRouter } from "next/router";
 import { AdminMenu } from "./admin";
+import axios from "axios";
+import { signOut as nextSignOut } from "next-auth/react";
 
 const MENU_LIST = [
   { text: "Home", href: "/", icon: <AiOutlineHome /> },
@@ -69,9 +71,8 @@ const NavBar = () => {
   const { y } = useWindowScroll();
   const [active, setActive] = useState("/");
   const { pathname } = useLocation();
-  const userCtx = useUserContext();
-  const userCtxState = userCtx.state;
-  const router = useRouter();
+  const { state, logOut } = useUserContext();
+  const userCtxState = state;
 
   useEffect(() => {
     if (pathname) {
@@ -102,10 +103,7 @@ const NavBar = () => {
       key: "logout",
       icon: <BiLogOut />,
       label: "Logout",
-      onClick: () => {
-        auth.signOut();
-        router.push("/");
-      },
+      onClick: logOut,
     },
   ];
 

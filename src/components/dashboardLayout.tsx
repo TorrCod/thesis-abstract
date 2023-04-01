@@ -14,6 +14,10 @@ import { useRouter } from "next/router";
 import { BsThreeDots } from "react-icons/bs";
 import { useLocation, useWindowSize } from "react-use";
 import Head from "next/head";
+import AdminProfile from "./admin";
+import { GrUserSettings } from "react-icons/gr";
+import { BiLogOut } from "react-icons/bi";
+import useUserContext from "@/context/userContext";
 
 type DashboardProps = {
   children?: React.ReactNode;
@@ -43,11 +47,26 @@ const siderMenu: MenuProps["items"] = [
 ];
 
 function DashboardLayout({ children }: DashboardProps) {
+  const { logOut } = useUserContext();
   const [selectedSider, setSelectedSider] = useState("/dashboard");
   const [isScreen, setIsScreen] = useState(false);
   const { width } = useWindowSize();
   const { pathname } = useLocation();
   const router = useRouter();
+
+  const accountMenu: MenuProps["items"] = [
+    {
+      key: "/dashboard/account-setting",
+      label: <Link href={"/dashboard/account-setting"}>Account Setting</Link>,
+      icon: <GrUserSettings />,
+    },
+    {
+      key: "logout",
+      label: "Logout",
+      icon: <BiLogOut />,
+      onClick: logOut,
+    },
+  ];
 
   useEffect(() => {
     if (width >= 768) {
@@ -104,15 +123,25 @@ function DashboardLayout({ children }: DashboardProps) {
         <div className="h-full">
           <div className="flex md:h-full">
             <Sider
-              className="md:bg-white z-10 hidden md:block opacity-80"
+              className="md:bg-white z-10 hidden md:block opacity-80 relative"
               width={"15vw"}
             >
-              <Menu
-                selectedKeys={[selectedSider]}
-                className="min-h-full text-[0.9vw]"
-                items={siderMenu}
-                onSelect={handleSeletect}
-              />
+              <div className="">
+                <Menu
+                  selectedKeys={[selectedSider]}
+                  className="text-[0.9vw] place-self-start"
+                  items={siderMenu}
+                  onSelect={handleSeletect}
+                />
+                <div className="grid place-content-center mt-10">
+                  <AdminProfile />
+                </div>
+                <Menu
+                  className="text-[0.9vw] place-self-start"
+                  items={accountMenu}
+                  selectedKeys={[selectedSider]}
+                />
+              </div>
             </Sider>
             <div
               className="overflow-auto h-screen w-screen md:w-full

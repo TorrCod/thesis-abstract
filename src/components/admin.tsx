@@ -33,13 +33,8 @@ export const AdminMenu = ({
 }: {
   position?: "bottomLeft" | "bottomRight" | "bottomCenter";
 }) => {
-  const userCtxState = useUserContext().state;
-
-  const handleLogOut = async () => {
-    await auth.signOut();
-    await nextSignOut({ redirect: false });
-    await axios.get("/api/logout");
-  };
+  const { state, logOut } = useUserContext();
+  const userCtxState = state;
 
   const userMenu: MenuProps["items"] = [
     {
@@ -64,7 +59,7 @@ export const AdminMenu = ({
       key: "logout",
       icon: <BiLogOut />,
       label: "Logout",
-      onClick: handleLogOut,
+      onClick: logOut,
     },
   ];
   return (

@@ -198,11 +198,13 @@ export const ThesisTable = () => {
         scroll={{ x: 50 }}
         pagination={false}
       />
-      <Pagination
-        showSizeChanger
-        defaultCurrent={3}
-        total={state.thesisItems.totalCount}
-      />
+      <div className="mx-auto mt-5 w-fit md:absolute md:bottom-0 md:right-0 md:m-5">
+        <Pagination
+          showSizeChanger
+          defaultCurrent={3}
+          total={state.thesisItems.totalCount}
+        />
+      </div>
     </div>
   );
 };

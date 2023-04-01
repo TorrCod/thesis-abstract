@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Dropdown, Layout, Menu } from "antd";
+import { Divider, Dropdown, Layout, Menu } from "antd";
 const { Header, Sider } = Layout;
 import Link from "next/link";
 import { HomeButton } from "@/components/button";
@@ -16,6 +16,7 @@ import AdminProfile from "./admin";
 import { GrUserSettings } from "react-icons/gr";
 import { BiLogOut } from "react-icons/bi";
 import useUserContext from "@/context/userContext";
+import SignInSignUp from "./signin_signup";
 
 type DashboardProps = {
   children?: React.ReactNode;
@@ -45,9 +46,8 @@ const siderMenu: MenuProps["items"] = [
 ];
 
 function DashboardLayout({ children }: DashboardProps) {
-  const { logOut } = useUserContext();
+  const { logOut, state } = useUserContext();
   const [selectedSider, setSelectedSider] = useState("/dashboard");
-  const { width } = useWindowSize();
   const { pathname } = useLocation();
   const router = useRouter();
 
@@ -122,8 +122,15 @@ function DashboardLayout({ children }: DashboardProps) {
                   items={siderMenu}
                   onSelect={handleSeletect}
                 />
-                <div className="grid place-content-center mt-10">
-                  <AdminProfile />
+                <Divider />
+                <div className="flex gap-2 items-center mx-5 pb-3 border-b-[1px]">
+                  <SignInSignUp />
+                  <div className={` ${!state.userDetails && "hidden"}`}>
+                    <p>{`${state.userDetails?.firstName} ${state.userDetails?.lastName}`}</p>
+                    <p className="text-[0.8em] opacity-80">
+                      {state.userDetails?.course}
+                    </p>
+                  </div>
                 </div>
                 <Menu
                   className="text-[0.9vw] place-self-start"

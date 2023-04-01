@@ -174,15 +174,13 @@ const NavBar = () => {
             </p>
           </div>
         </div>
-        {userCtxState.userDetails ? (
+        {status === "authenticated" && (
           <Menu
             selectedKeys={[active]}
             className="opacity-80 md:text-lg"
             items={userMenu}
             onClick={() => setOpen(!open)}
           />
-        ) : (
-          ""
         )}
       </Drawer>
     </div>

@@ -37,7 +37,7 @@ const globalStateInit: GlobalState = {
   thesisItems: { totalCount: 0, currentPage: 1, document: [] },
   dateOption: [],
   loading: ["all-thesis", "all-admin"],
-  recyclebin: [],
+  recyclebin: { totalCount: 0, currentPage: 1, document: [] },
   searchThesis: [],
   totalThesisCount: { totalCount: 0, thesisCount: totalDataInit },
   searchingAction: {
@@ -106,6 +106,10 @@ const globalReducer = (
 
 export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(globalReducer, globalStateInit);
+
+  useEffect(() => {
+    loadYearsOpt();
+  }, []);
 
   const updateSearchAction = () => {
     const update = (payload: SearchAction) => {
@@ -229,15 +233,21 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
   };
 
   const recycleThesis = (thesis: ThesisItems) => {
-    const oldRecyleThesis = [...state.recyclebin];
+    const oldRecyleThesis = [...state.recyclebin.document];
     if (oldRecyleThesis.length >= 10) oldRecyleThesis.pop();
-    dispatch({ type: "load-recycle", payload: [thesis, ...oldRecyleThesis] });
+    dispatch({
+      type: "load-recycle",
+      payload: { ...state.recyclebin, document: [thesis, ...oldRecyleThesis] },
+    });
   };
 
   const restoreThesis = (_id: string) => {
-    const oldRecyle = [...state.recyclebin];
+    const oldRecyle = [...state.recyclebin.document];
     const newRecyle = oldRecyle.filter((item) => item._id !== _id);
-    dispatch({ type: "load-recycle", payload: newRecyle });
+    dispatch({
+      type: "load-recycle",
+      payload: { ...state.recyclebin, document: newRecyle },
+    });
   };
 
   return (

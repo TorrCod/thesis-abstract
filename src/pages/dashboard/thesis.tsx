@@ -201,7 +201,7 @@ export const ThesisTable = () => {
   };
 
   return (
-    <div>
+    <>
       <Table
         loading={state.loading.includes("all-thesis")}
         // className="min-w-[40em]"
@@ -218,7 +218,7 @@ export const ThesisTable = () => {
           onChange={handlePageChange}
         />
       </div>
-    </div>
+    </>
   );
 };
 
@@ -226,29 +226,46 @@ const RecycledTable = () => {
   const [removedTableData, setRemovedTableData] = useState<DataType[]>([]);
   const { state, loadRecycle } = useGlobalContext();
   const { userDetails } = useUserContext().state;
+  const { updateSearchAction, state: globalState } = useGlobalContext();
+
+  useEffect(updateSearchAction().clear, []);
 
   useEffect(() => {
     if (userDetails) {
       loadRecycle();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userDetails]);
+  }, [userDetails, globalState.searchingAction]);
 
   useEffect(() => {
-    const thesisItems = state.recyclebin;
+    const thesisItems = state.recyclebin.document;
     const toTableThesisItems = thesisToDataType(thesisItems);
     setRemovedTableData(toTableThesisItems);
   }, [state.recyclebin]);
 
+  const handlePageChange: PaginationProps["onChange"] = (pageNo) => {
+    updateSearchAction().update({ ...state.searchingAction, pageNo });
+  };
+
   return (
-    <Table
-      className="min-w-[40em]"
-      columns={removeTableColumn.map((item) => {
-        if (item.key === "title") item.render = undefined;
-        return item;
-      })}
-      dataSource={removedTableData}
-    />
+    <>
+      <Table
+        className="min-w-[40em]"
+        columns={removeTableColumn.map((item) => {
+          if (item.key === "title") item.render = undefined;
+          return item;
+        })}
+        dataSource={removedTableData}
+      />
+      <div className="mx-auto mt-5 w-fit md:absolute md:bottom-0 md:right-0 md:m-5">
+        <Pagination
+          current={state.recyclebin.currentPage}
+          defaultCurrent={state.recyclebin.currentPage ?? 1}
+          total={state.recyclebin.totalCount}
+          onChange={handlePageChange}
+        />
+      </div>
+    </>
   );
 };
 

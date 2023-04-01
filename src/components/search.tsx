@@ -66,7 +66,8 @@ const Search = ({ className, limit, onSearch, showFilter }: SearchProps) => {
     searchState_init
   );
   const globalCtx = useGlobalContext();
-  const { course: courseOpt, years: yearsOpt } = globalCtx.state.filterState;
+  const { course: courseOpt, years: yearsOpt } =
+    globalCtx.state.searchingAction.filterState;
   const searchRef = useRef<HTMLDivElement>(null);
   const onSearchRef = useRef<HTMLAnchorElement>(null);
   useClickAway(searchRef, () => {
@@ -75,16 +76,27 @@ const Search = ({ className, limit, onSearch, showFilter }: SearchProps) => {
 
   useEffect(() => {
     if (!yearsOpt.option.length) {
-      globalCtx.updateFilter({
-        ...globalCtx.state.filterState,
-        years: { all: true, option: globalCtx.state.dateOption },
-      });
+      const newFilterState = { ...globalCtx.state.searchingAction.filterState };
+      newFilterState["years"] = {
+        all: true,
+        option: globalCtx.state.dateOption,
+      };
+      globalCtx
+        .updateSearchAction()
+        .update({
+          ...globalCtx.state.searchingAction,
+          filterState: newFilterState,
+        });
     }
     if (!courseOpt.option.length) {
-      globalCtx.updateFilter({
-        ...globalCtx.state.filterState,
-        course: { all: true, option: courseOption },
-      });
+      const newFilterState = { ...globalCtx.state.searchingAction.filterState };
+      newFilterState["course"] = { all: true, option: courseOption };
+      globalCtx
+        .updateSearchAction()
+        .update({
+          ...globalCtx.state.searchingAction,
+          filterState: newFilterState,
+        });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [yearsOpt.option.length, courseOpt.option.length]);
@@ -186,13 +198,16 @@ const FilterItems = ({
   noAction?: boolean;
   type: "course" | "years";
 }) => {
-  const { updateFilter, state } = useGlobalContext();
+  const { state, updateSearchAction } = useGlobalContext();
   const handleRemove = (item: string) => {
-    const searchFilter = { ...state.filterState };
+    const searchFilter = { ...state.searchingAction.filterState };
     searchFilter[type].option = (searchFilter[type].option as string[]).filter(
       (oldItem) => oldItem !== item
     );
-    updateFilter(searchFilter);
+    updateSearchAction().update({
+      ...state.searchingAction,
+      filterState: searchFilter,
+    });
   };
 
   return (
@@ -220,32 +235,36 @@ const DropDownCourse = ({
   searchState: SearchState;
 }) => {
   const globalCtx = useGlobalContext();
-  const { updateFilter } = globalCtx;
-  const { course: courseOpt } = globalCtx.state.filterState;
+  const { updateSearchAction } = globalCtx;
+  const { course: courseOpt } = globalCtx.state.searchingAction.filterState;
 
   const handleCheckBxAllCourse = (e: CheckboxChangeEvent) => {
     const isChecked = e.target.checked;
-    updateFilter({
-      ...globalCtx.state.filterState,
-      course: {
-        all: isChecked,
-        option: isChecked ? (courseOption as Course[]) : ["Computer Engineer"],
-      },
+    const newFilterState = { ...globalCtx.state.searchingAction.filterState };
+    newFilterState.course = {
+      all: isChecked,
+      option: isChecked ? (courseOption as Course[]) : ["Computer Engineer"],
+    };
+    updateSearchAction().update({
+      ...globalCtx.state.searchingAction,
+      filterState: newFilterState,
     });
   };
   const handleCheckBxCourse = (valueType: CheckboxValueType[]) => {
     const isCheckAll = valueType.length === courseOption.length;
     const item = valueType as Course[];
-    updateFilter({
-      ...globalCtx.state.filterState,
-      course: {
-        all: isCheckAll,
-        option: isCheckAll
-          ? (courseOption as Course[])
-          : item.length
-          ? item
-          : ["Computer Engineer"],
-      },
+    const newFilterState = { ...globalCtx.state.searchingAction.filterState };
+    newFilterState.course = {
+      all: isCheckAll,
+      option: isCheckAll
+        ? (courseOption as Course[])
+        : item.length
+        ? item
+        : ["Computer Engineer"],
+    };
+    updateSearchAction().update({
+      ...globalCtx.state.searchingAction,
+      filterState: newFilterState,
     });
   };
 
@@ -313,34 +332,39 @@ const DropdownYear = ({
   searchState: SearchState;
 }) => {
   const globalCtx = useGlobalContext();
-  const { updateFilter } = globalCtx;
-  const { years: yearsOpt } = globalCtx.state.filterState;
+  const { updateSearchAction } = globalCtx;
+  const { years: yearsOpt } = globalCtx.state.searchingAction.filterState;
 
   const handleCheckBxDate = (valueType: CheckboxValueType[]) => {
     const isCheckAll = valueType.length === globalCtx.state.dateOption.length;
     const item = valueType as string[];
-    updateFilter({
-      ...globalCtx.state.filterState,
-      years: {
-        all: isCheckAll,
-        option: isCheckAll
-          ? globalCtx.state.dateOption
-          : item.length
-          ? item
-          : [globalCtx.state.dateOption[0]],
-      },
+
+    const newFilterState = { ...globalCtx.state.searchingAction.filterState };
+    newFilterState.years = {
+      all: isCheckAll,
+      option: isCheckAll
+        ? globalCtx.state.dateOption
+        : item.length
+        ? item
+        : [globalCtx.state.dateOption[0]],
+    };
+    updateSearchAction().update({
+      ...globalCtx.state.searchingAction,
+      filterState: newFilterState,
     });
   };
   const handleCheckBxAllDate = (e: CheckboxChangeEvent) => {
     const isChecked = e.target.checked;
-    updateFilter({
-      ...globalCtx.state.filterState,
-      years: {
-        all: isChecked,
-        option: isChecked
-          ? globalCtx.state.dateOption
-          : [globalCtx.state.dateOption[0].toString()],
-      },
+    const newFilterState = { ...globalCtx.state.searchingAction.filterState };
+    newFilterState.years = {
+      all: isChecked,
+      option: isChecked
+        ? globalCtx.state.dateOption
+        : [globalCtx.state.dateOption[0].toString()],
+    };
+    updateSearchAction().update({
+      ...globalCtx.state.searchingAction,
+      filterState: newFilterState,
     });
   };
   const dropdownContentDate = () => (
@@ -418,8 +442,8 @@ const SearchItem = (
       getAllThesis(
         {
           title: props.searchTitle,
-          course: state.filterState.course.option,
-          year: state.filterState.years.option,
+          course: state.searchingAction.filterState.course.option,
+          year: state.searchingAction.filterState.years.option,
         },
         {
           limit: props.limit ?? 10,
@@ -427,7 +451,7 @@ const SearchItem = (
         }
       )
         .then((res) => {
-          const myMenu: MenuProps["items"] = res.map((item) => {
+          const myMenu: MenuProps["items"] = res.document.map((item) => {
             return {
               key: item._id!,
               label: <Link href={`/thesis/${item._id}`}>{item.title}</Link>,
@@ -462,7 +486,7 @@ const SearchItem = (
     }, 200);
     return () => clearTimeout(searchTimeoutRef.current ?? 0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.searchTitle, props.limit, state.filterState]);
+  }, [props.searchTitle, props.limit, state.searchingAction.filterState]);
 
   const handleSelect: MenuProps["onSelect"] = (item) => {
     props.searchDispatch({ type: "onfocus", payload: false });

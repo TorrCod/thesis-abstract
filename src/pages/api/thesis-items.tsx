@@ -1,5 +1,10 @@
 import { ThesisItems } from "@/context/types.d";
-import { addData, addDataWithExpiration, getData } from "@/lib/mongo";
+import {
+  addData,
+  addDataWithExpiration,
+  getData,
+  getDataWithPaging,
+} from "@/lib/mongo";
 import { CollectionName } from "@/lib/types";
 import {
   parseQuery,
@@ -18,12 +23,19 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
     switch (req.method) {
       case "GET": {
-        const parse = parseQuery(req);
-        const payload = await getData(
+        const { query, option } = parseQuery(req);
+        const pageSize = option?.limit;
+        const pageNo = (req.query.pageNo &&
+          parseInt(req.query.pageNo as string)) as number;
+        const payload = await getDataWithPaging(
           "thesis-abstract",
           req.query.collection as CollectionName,
-          parse.query,
-          parse.option
+          { pageNo: pageNo, pageSize },
+          query,
+          {
+            limit: option?.limit,
+            projection: option?.projection,
+          }
         );
         return res.status(200).json(payload);
       }

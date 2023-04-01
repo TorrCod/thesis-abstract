@@ -6,7 +6,7 @@ export interface GlobalState {
   thesisItems: ThesisState;
   searchThesis: ThesisItems[];
   dateOption: string[];
-  recyclebin: ThesisItems[];
+  recyclebin: ThesisState;
   signIn?: boolean;
   loading: string[];
   totalThesisCount: { thesisCount: ThesisCount; totalCount: number };
@@ -85,7 +85,7 @@ export type GlobalAction =
     }
   | {
       type: "load-recycle";
-      payload: ThesisItems[];
+      payload: ThesisState;
     }
   | {
       type: "update-default-years";

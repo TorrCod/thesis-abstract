@@ -73,7 +73,7 @@ export const getAllDeletedThesis = async (
       }`,
       userConfig(token)
     );
-    return res.data;
+    return res.data as ThesisState;
   } else throw new Error("canont read user token");
 };
 

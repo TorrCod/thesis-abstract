@@ -105,25 +105,21 @@ const Page: NextPageWithLayout = () => {
         </div>
       </div>
       <Divider />
-      <div className="mt-5 bg-white grid gap-1 rounded-md p-5 overflow-auto">
+      <div className="mt-5 bg-white grid gap-1 rounded-md p-5 relative">
         <p className="opacity-60 mb-5">Manage Thesis Abstracts</p>
         <QuerySearch onSearch={handleSearch} />
-        <div className="h-[50em]">
-          <Menu
-            onSelect={handleMenu}
-            mode="horizontal"
-            items={menuItems}
-            defaultSelectedKeys={[
-              (router.query.tab as string) ?? "thesis-items",
-            ]}
-          />
+        {/* <Menu
+          onSelect={handleMenu}
+          mode="horizontal"
+          items={menuItems}
+          defaultSelectedKeys={[(router.query.tab as string) ?? "thesis-items"]}
+        />
 
-          {router.query.tab === "recyclebin" ? (
-            <RecycledTable />
-          ) : (
-            <ThesisTable />
-          )}
-        </div>
+        {router.query.tab === "recyclebin" ? (
+          <RecycledTable />
+        ) : (
+          <ThesisTable />
+        )} */}
       </div>
     </div>
   );

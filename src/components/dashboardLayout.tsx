@@ -8,10 +8,8 @@ import { FaSwatchbook } from "react-icons/fa";
 import { MdWorkHistory } from "react-icons/md";
 import { ImUserCheck } from "react-icons/im";
 import { BotomMenu } from "@/components/botomMenu";
-import { SelectedDashboardSider } from "@/components/types.d";
 import { RiDashboardFill, RiUserSettingsFill } from "react-icons/ri";
 import { useRouter } from "next/router";
-import { BsThreeDots } from "react-icons/bs";
 import { useLocation, useWindowSize } from "react-use";
 import Head from "next/head";
 import AdminProfile from "./admin";
@@ -49,7 +47,6 @@ const siderMenu: MenuProps["items"] = [
 function DashboardLayout({ children }: DashboardProps) {
   const { logOut } = useUserContext();
   const [selectedSider, setSelectedSider] = useState("/dashboard");
-  const [isScreen, setIsScreen] = useState(false);
   const { width } = useWindowSize();
   const { pathname } = useLocation();
   const router = useRouter();
@@ -67,14 +64,6 @@ function DashboardLayout({ children }: DashboardProps) {
       onClick: logOut,
     },
   ];
-
-  useEffect(() => {
-    if (width >= 768) {
-      setIsScreen(true);
-    } else {
-      setIsScreen(false);
-    }
-  }, [width]);
 
   useEffect(() => {
     (

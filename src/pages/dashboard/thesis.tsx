@@ -138,6 +138,7 @@ export const ThesisCharts = () => {
     if (!globalStatate.totalThesisCount.totalCount) {
       loadThesisCount();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [globalStatate.totalThesisCount.totalCount]);
 
   return (
@@ -168,12 +169,16 @@ export const ThesisTable = () => {
   const { state, loadThesisItems, updateSearchTitle } = useGlobalContext();
   const [thesisTableData, setThesisTableData] = useState<DataType[]>([]);
 
-  useEffect(() => updateSearchTitle(undefined), []);
+  useEffect(() => {
+    updateSearchTitle(undefined);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (userDetails) {
       loadThesisItems();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userDetails, state.searchTitle]);
 
   useEffect(() => {
@@ -198,12 +203,16 @@ const RecycledTable = () => {
   const { state, loadRecycle, updateSearchTitle } = useGlobalContext();
   const { userDetails } = useUserContext().state;
 
-  useEffect(() => updateSearchTitle(undefined), []);
+  useEffect(() => {
+    updateSearchTitle(undefined);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (userDetails) {
       loadRecycle();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userDetails, state.searchTitle]);
 
   useEffect(() => {

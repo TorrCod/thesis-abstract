@@ -91,7 +91,6 @@ const UserProfile = ({ userDetails }: { userDetails: UserDetails }) => {
   useEffect(() => {
     const fetchData = async () => {
       const token = await auth.currentUser?.getIdToken();
-      console.log(userDetails);
       getActivityLog(token, { userId: userDetails?.uid }, { limit: 7 })
         .then((res: ActivityLog[]) => {
           const data = res.map((item) => {
@@ -112,7 +111,7 @@ const UserProfile = ({ userDetails }: { userDetails: UserDetails }) => {
     if (user) {
       fetchData();
     }
-  }, [user]);
+  }, [user, userDetails]);
 
   return !userDetails ? (
     <></>
@@ -210,6 +209,7 @@ export const AdminTable = ({ noAction }: { noAction?: boolean }) => {
     if (state.userDetails) {
       loadAllUsers();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.userDetails]);
 
   useEffect(() => {

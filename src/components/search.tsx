@@ -137,7 +137,7 @@ const Search = ({ className, limit, onSearch, showFilter }: SearchProps) => {
           </PriButton>
         </Link>
       </Form>
-      <div className={`mt-2 ${(!searchState.focus || showFilter) && `hidden`}`}>
+      <div className={`mt-2 ${!searchState.focus && !showFilter && `hidden`}`}>
         <div className="flex gap-5" id="filter-component">
           <div>
             <DropDownCourse

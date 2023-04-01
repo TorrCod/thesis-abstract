@@ -12,7 +12,7 @@ import { RiDashboardFill, RiUserSettingsFill } from "react-icons/ri";
 import { useRouter } from "next/router";
 import { useLocation, useWindowSize } from "react-use";
 import Head from "next/head";
-import AdminProfile from "./admin";
+import AdminProfile, { AdminDetails } from "./admin";
 import { GrUserSettings } from "react-icons/gr";
 import { BiLogOut } from "react-icons/bi";
 import useUserContext from "@/context/userContext";
@@ -123,7 +123,7 @@ function DashboardLayout({ children }: DashboardProps) {
                   onSelect={handleSeletect}
                 />
                 <Divider />
-                <div className="flex gap-2 items-center mx-5 pb-3 border-b-[1px]">
+                {/* <div className="flex gap-2 items-center mx-5 pb-3 border-b-[1px]">
                   <SignInSignUp />
                   <div className={` ${!state.userDetails && "hidden"}`}>
                     <p>{`${state.userDetails?.firstName} ${state.userDetails?.lastName}`}</p>
@@ -136,7 +136,8 @@ function DashboardLayout({ children }: DashboardProps) {
                   className="text-[0.9vw] place-self-start"
                   items={accountMenu}
                   selectedKeys={[selectedSider]}
-                />
+                /> */}
+                <AdminDetails selectedMenu={selectedSider} />
               </div>
             </Sider>
             <div

@@ -6,7 +6,7 @@ import { useForm } from "antd/lib/form/Form";
 import { sendSignInLinkToEmail } from "firebase/auth";
 import Link from "next/link";
 import router from "next/router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BiLogOut } from "react-icons/bi";
 import { BsPersonFillAdd } from "react-icons/bs";
 import { GrUserSettings } from "react-icons/gr";
@@ -146,6 +146,45 @@ export const AddAdmin = () => {
         </Form.Item>
       </Form>
     </div>
+  );
+};
+
+export const AdminDetails = ({ selectedMenu }: { selectedMenu: string }) => {
+  const { state, logOut } = useUserContext();
+  const [selectedKey, setSelectedKey] = useState(selectedMenu);
+
+  useEffect(() => setSelectedKey(selectedMenu), [selectedMenu]);
+
+  const accountMenu: MenuProps["items"] = [
+    {
+      key: "/dashboard/account-setting",
+      label: <Link href={"/dashboard/account-setting"}>Account Setting</Link>,
+      icon: <GrUserSettings />,
+    },
+    {
+      key: "logout",
+      label: "Logout",
+      icon: <BiLogOut />,
+      onClick: logOut,
+    },
+  ];
+
+  return (
+    <>
+      <div className="flex gap-2 items-center mx-5 pb-3 border-b-[1px]">
+        <SignInSignUp />
+        <div className={` ${!state.userDetails && "hidden"}`}>
+          <p>{`${state.userDetails?.firstName} ${state.userDetails?.lastName}`}</p>
+          <p className="text-[0.8em] opacity-80">{state.userDetails?.course}</p>
+        </div>
+      </div>
+      <Menu
+        className="text-[0.9vw] place-self-start"
+        items={accountMenu}
+        selectedKeys={[selectedKey]}
+        onSelect={(item) => setSelectedKey(item.key)}
+      />
+    </>
   );
 };
 

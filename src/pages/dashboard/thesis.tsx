@@ -23,7 +23,7 @@ import { getCsrfToken } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { MenuProps } from "rc-menu";
-import React, { useEffect, useRef, useState } from "react";
+import React, { ReactElement, useEffect, useRef, useState } from "react";
 import { AiFillDelete, AiFillFileAdd } from "react-icons/ai";
 import { BsBookFill } from "react-icons/bs";
 import { MdRestoreFromTrash } from "react-icons/md";
@@ -37,15 +37,15 @@ import {
 } from "recharts";
 import { ResponsiveContainer } from "recharts";
 import { authOptions } from "../api/auth/[...nextauth]";
-import { stringify } from "querystring";
 import useSocketContext from "@/context/socketContext";
+import { NextPageWithLayout } from "../_app";
 
 const menuItems: MenuProps["items"] = [
   { key: "thesis-items", label: "Thesis Items" },
   { key: "recyclebin", label: "Recycle Bin" },
 ];
 
-const DashboardThesis = () => {
+const Page: NextPageWithLayout = () => {
   const { state: globalStatate, updateSearchTitle } = useGlobalContext();
   const router = useRouter();
 
@@ -58,83 +58,79 @@ const DashboardThesis = () => {
     else updateSearchTitle(searchText);
   };
   return (
-    <DashboardLayout
-      userSelectedMenu="/dashboard"
-      userSelectedSider="/dashboard/thesis"
-    >
-      <div className="m-auto relative">
-        <div className="opacity-80 mb-3">Dashboard {">"} Thesis</div>
-        <div className="md:grid gap-2 lg:grid-cols-2 relative w-full">
-          <div className="bg-white rounded-md shadow-md pt-7 mb-2 md:mb-0">
-            <p className="ml-6 opacity-60">Total Thesis Abstracts</p>
-            <Space className="ml-6" direction="horizontal">
-              <BsBookFill size={"1.5em"} />
-              <h1>{globalStatate.totalThesisCount.totalCount}</h1>
-            </Space>
-            <div className="h-96 w-full relative overflow-auto">
-              <div className="h-full w-full min-w-[32em]">
-                <ThesisCharts />
-              </div>
+    <div className="m-auto relative w-full">
+      <div className="opacity-80 mb-3">Dashboard {">"} Thesis</div>
+      <div className="md:grid gap-2 lg:grid-cols-2 relative w-full">
+        <div className="bg-white rounded-md shadow-md pt-7 mb-2 md:mb-0">
+          <p className="ml-6 opacity-60">Total Thesis Abstracts</p>
+          <Space className="ml-6" direction="horizontal">
+            <BsBookFill size={"1.5em"} />
+            <h1>{globalStatate.totalThesisCount.totalCount}</h1>
+          </Space>
+          <div className="h-96 w-full relative overflow-auto">
+            <div className="h-full w-full min-w-[32em]">
+              <ThesisCharts />
             </div>
           </div>
-          <div className="grid md:grid-cols-2 gap-2 grid-rows-6 md:grid-rows-3">
-            {globalStatate.totalThesisCount.thesisCount.map((child, index) => (
-              <Card
-                className="cursor-pointer hover:scale-105 hover:z-10 transition duration-200 ease-out"
-                key={index}
-                bordered={false}
-              >
-                <Statistic
-                  title={child.course}
-                  prefix={<BsBookFill size={"0.9em"} />}
-                  value={child.count}
-                />
-              </Card>
-            ))}
-            <Link
-              href="/dashboard/thesis/upload-thesis"
-              className="cursor-pointer relative"
-            >
-              <Card
-                bordered={false}
-                className="h-full  hover:scale-105 transition duration-200 ease-out"
-              >
-                <div className="opacity-[.50] text-sm ">
-                  Add Thesis Abstracts
-                </div>
-                <AiFillFileAdd
-                  className="m-auto absolute top-0 bottom-0 left-0 right-0"
-                  size={"2em"}
-                />
-              </Card>
-            </Link>
-          </div>
         </div>
-        <Divider />
-        <div className="mt-5 bg-white grid gap-1 rounded-md p-5 overflow-auto">
-          <p className="opacity-60 mb-5">Manage Thesis Abstracts</p>
-          <QuerySearch onSearch={handleSearch} />
-          <div className="h-[50em]">
-            <Menu
-              onSelect={handleMenu}
-              mode="horizontal"
-              items={menuItems}
-              defaultSelectedKeys={[
-                (router.query.tab as string) ?? "thesis-items",
-              ]}
-            />
-
-            {router.query.tab === "recyclebin" ? (
-              <RecycledTable />
-            ) : (
-              <ThesisTable />
-            )}
-          </div>
+        <div className="grid md:grid-cols-2 gap-2 grid-rows-6 md:grid-rows-3">
+          {globalStatate.totalThesisCount.thesisCount.map((child, index) => (
+            <Card
+              className="cursor-pointer hover:scale-105 hover:z-10 transition duration-200 ease-out"
+              key={index}
+              bordered={false}
+            >
+              <Statistic
+                title={child.course}
+                prefix={<BsBookFill size={"0.9em"} />}
+                value={child.count}
+              />
+            </Card>
+          ))}
+          <Link
+            href="/dashboard/thesis/upload-thesis"
+            className="cursor-pointer relative"
+          >
+            <Card
+              bordered={false}
+              className="h-full  hover:scale-105 transition duration-200 ease-out"
+            >
+              <div className="opacity-[.50] text-sm ">Add Thesis Abstracts</div>
+              <AiFillFileAdd
+                className="m-auto absolute top-0 bottom-0 left-0 right-0"
+                size={"2em"}
+              />
+            </Card>
+          </Link>
         </div>
       </div>
-    </DashboardLayout>
+      <Divider />
+      <div className="mt-5 bg-white gap-1 rounded-md p-5 relative w-full min-h-[60em]">
+        <p className="opacity-60 mb-5">Manage Thesis Abstracts</p>
+        <QuerySearch onSearch={handleSearch} />
+        <Divider />
+        <Menu
+          onSelect={handleMenu}
+          mode="horizontal"
+          items={menuItems}
+          defaultSelectedKeys={[(router.query.tab as string) ?? "thesis-items"]}
+        />
+
+        {router.query.tab === "recyclebin" ? (
+          <RecycledTable />
+        ) : (
+          <ThesisTable />
+        )}
+      </div>
+    </div>
   );
 };
+
+Page.getLayout = function getLayout(page: ReactElement) {
+  return <DashboardLayout>{page}</DashboardLayout>;
+};
+
+export default Page;
 
 export const ThesisCharts = () => {
   const { state: globalStatate, loadThesisCount } = useGlobalContext();
@@ -142,6 +138,7 @@ export const ThesisCharts = () => {
     if (!globalStatate.totalThesisCount.totalCount) {
       loadThesisCount();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [globalStatate.totalThesisCount.totalCount]);
 
   return (
@@ -172,12 +169,16 @@ export const ThesisTable = () => {
   const { state, loadThesisItems, updateSearchTitle } = useGlobalContext();
   const [thesisTableData, setThesisTableData] = useState<DataType[]>([]);
 
-  useEffect(() => updateSearchTitle(undefined), []);
+  useEffect(() => {
+    updateSearchTitle(undefined);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (userDetails) {
       loadThesisItems();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userDetails, state.searchTitle]);
 
   useEffect(() => {
@@ -189,9 +190,10 @@ export const ThesisTable = () => {
   return (
     <Table
       loading={state.loading.includes("all-thesis")}
-      className="min-w-[40em]"
+      // className="min-w-[40em]"
       columns={thesisTableColumn}
       dataSource={thesisTableData}
+      scroll={{ x: 50 }}
     />
   );
 };
@@ -201,12 +203,16 @@ const RecycledTable = () => {
   const { state, loadRecycle, updateSearchTitle } = useGlobalContext();
   const { userDetails } = useUserContext().state;
 
-  useEffect(() => updateSearchTitle(undefined), []);
+  useEffect(() => {
+    updateSearchTitle(undefined);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (userDetails) {
       loadRecycle();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userDetails, state.searchTitle]);
 
   useEffect(() => {
@@ -357,5 +363,3 @@ const thesisTableColumn: ColumnsType<DataType> = [
     render: (_, record) => <RemoveThesis {...record} id={record.key} />,
   },
 ];
-
-export default DashboardThesis;

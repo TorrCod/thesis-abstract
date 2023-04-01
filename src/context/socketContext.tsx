@@ -69,13 +69,13 @@ export const SocketWrapper = ({ children }: { children: ReactNode }) => {
         socketRef.current.removeAllListeners();
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     globalState.thesisItems,
     globalState.recyclebin,
     socketRef.current?.connected,
     state.activityLog,
-    globalState.loading.includes("all-thesis"),
-    globalState.loading.includes("all-admin"),
+    globalState.loading,
     globalState.searchTitle,
   ]);
 

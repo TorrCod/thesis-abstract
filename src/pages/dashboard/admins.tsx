@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { ReactElement, useEffect, useRef, useState } from "react";
 import {
   Form,
   message,
@@ -36,8 +36,9 @@ import { authOptions } from "../api/auth/[...nextauth]";
 import useGlobalContext from "@/context/globalContext";
 import { readActivityLogReason } from "@/utils/helper";
 import useSocketContext from "@/context/socketContext";
+import { NextPageWithLayout } from "../_app";
 
-const DashboardAdmin = () => {
+const Page: NextPageWithLayout = () => {
   const router = useRouter();
   const allUsers = useUserContext().state.listOfAdmins;
   const [userDetails, setUserDetails] = useState<UserDetails | undefined>();
@@ -51,10 +52,7 @@ const DashboardAdmin = () => {
   }, [router.query._id, allUsers]);
 
   return (
-    <DashboardLayout
-      userSelectedMenu="/dashboard"
-      userSelectedSider="/dashboard/admins"
-    >
+    <>
       <div className="opacity-80 mb-3">
         Dashboard {">"} <Link href={"/dashboard/admins"}>Admin</Link>
         {userDetails ? (
@@ -77,9 +75,15 @@ const DashboardAdmin = () => {
           <AdminTable />
         </div>
       )}
-    </DashboardLayout>
+    </>
   );
 };
+
+Page.getLayout = function getLayout(page: ReactElement) {
+  return <DashboardLayout>{page}</DashboardLayout>;
+};
+
+export default Page;
 
 const UserProfile = ({ userDetails }: { userDetails: UserDetails }) => {
   const [history, setHistory] = useState<TimelineProps["items"]>([]);
@@ -87,7 +91,6 @@ const UserProfile = ({ userDetails }: { userDetails: UserDetails }) => {
   useEffect(() => {
     const fetchData = async () => {
       const token = await auth.currentUser?.getIdToken();
-      console.log(userDetails);
       getActivityLog(token, { userId: userDetails?.uid }, { limit: 7 })
         .then((res: ActivityLog[]) => {
           const data = res.map((item) => {
@@ -108,7 +111,7 @@ const UserProfile = ({ userDetails }: { userDetails: UserDetails }) => {
     if (user) {
       fetchData();
     }
-  }, [user]);
+  }, [user, userDetails]);
 
   return !userDetails ? (
     <></>
@@ -206,6 +209,7 @@ export const AdminTable = ({ noAction }: { noAction?: boolean }) => {
     if (state.userDetails) {
       loadAllUsers();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.userDetails]);
 
   useEffect(() => {
@@ -435,5 +439,3 @@ const dataColumnType = (userDetails: UserDetails | undefined) => {
   ];
   return tableColumn;
 };
-
-export default DashboardAdmin;

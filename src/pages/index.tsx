@@ -21,6 +21,7 @@ export default function Home(props: { query: string }) {
     return () => {
       document.body.style.overflow = "visible";
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.query]);
 
   return (

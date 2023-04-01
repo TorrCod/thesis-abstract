@@ -6,7 +6,7 @@ import { useForm } from "antd/lib/form/Form";
 import { sendSignInLinkToEmail } from "firebase/auth";
 import Link from "next/link";
 import router from "next/router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BiLogOut } from "react-icons/bi";
 import { BsPersonFillAdd } from "react-icons/bs";
 import { GrUserSettings } from "react-icons/gr";
@@ -33,23 +33,17 @@ export const AdminMenu = ({
 }: {
   position?: "bottomLeft" | "bottomRight" | "bottomCenter";
 }) => {
-  const userCtxState = useUserContext().state;
-
-  const handleLogOut = async () => {
-    await auth.signOut();
-    await nextSignOut({ redirect: false });
-    await axios.get("/api/logout");
-  };
-
+  const { state, logOut } = useUserContext();
+  const userCtxState = state;
   const userMenu: MenuProps["items"] = [
     {
-      key: "/account-setting",
+      key: "/dashboard/account-setting",
       icon: (
-        <Link href={"/account-setting"}>
+        <Link href={"/dashboard/account-setting"}>
           <GrUserSettings size={"1.25em"} />
         </Link>
       ),
-      label: <Link href={"/account-setting"}>Account Setting</Link>,
+      label: <Link href={"/dashboard/account-setting"}>Account Setting</Link>,
     },
     {
       key: "/dashboard",
@@ -64,7 +58,7 @@ export const AdminMenu = ({
       key: "logout",
       icon: <BiLogOut />,
       label: "Logout",
-      onClick: handleLogOut,
+      onClick: logOut,
     },
   ];
   return (
@@ -151,6 +145,28 @@ export const AddAdmin = () => {
         </Form.Item>
       </Form>
     </div>
+  );
+};
+
+export const AdminDetails = ({
+  selectedMenu,
+  onSelect,
+}: {
+  selectedMenu: string;
+  onSelect?: MenuProps["onSelect"];
+}) => {
+  const { state } = useUserContext();
+
+  return (
+    <>
+      <div className="flex gap-2 items-center mx-5 pb-3 border-b-[1px]">
+        <SignInSignUp />
+        <div className={` ${!state.userDetails && "hidden"}`}>
+          <p>{`${state.userDetails?.firstName} ${state.userDetails?.lastName}`}</p>
+          <p className="text-[0.8em] opacity-80">{state.userDetails?.course}</p>
+        </div>
+      </div>
+    </>
   );
 };
 

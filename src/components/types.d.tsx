@@ -85,7 +85,7 @@ export type BottomMenuProps = {
 };
 
 export type SelectedDashboardSider =
-  | "/dashboard/overview"
+  | "/dashboard"
   | "/dashboard/users"
   | "/dashboard/admins"
   | "/dashboard/activitylog"

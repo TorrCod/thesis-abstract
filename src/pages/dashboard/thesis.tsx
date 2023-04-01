@@ -13,6 +13,7 @@ import {
   Menu,
   message,
   Pagination,
+  PaginationProps,
   Space,
   Statistic,
   Table,
@@ -47,7 +48,7 @@ const menuItems: MenuProps["items"] = [
 ];
 
 const Page: NextPageWithLayout = () => {
-  const { state: globalStatate, updateSearchTitle } = useGlobalContext();
+  const { state: globalState, updateSearchAction } = useGlobalContext();
   const router = useRouter();
 
   const handleMenu: MenuProps["onSelect"] = (item) => {
@@ -55,8 +56,16 @@ const Page: NextPageWithLayout = () => {
   };
 
   const handleSearch = (searchText: string) => {
-    if (searchText === "") updateSearchTitle(undefined);
-    else updateSearchTitle(searchText);
+    if (searchText === "")
+      updateSearchAction().update({
+        ...globalState.searchingAction,
+        searchTitle: undefined,
+      });
+    else
+      updateSearchAction().update({
+        ...globalState.searchingAction,
+        searchTitle: searchText,
+      });
   };
   return (
     <div className="m-auto relative w-full">
@@ -66,7 +75,7 @@ const Page: NextPageWithLayout = () => {
           <p className="ml-6 opacity-60">Total Thesis Abstracts</p>
           <Space className="ml-6" direction="horizontal">
             <BsBookFill size={"1.5em"} />
-            <h1>{globalStatate.totalThesisCount.totalCount}</h1>
+            <h1>{globalState.totalThesisCount.totalCount}</h1>
           </Space>
           <div className="h-96 w-full relative overflow-auto">
             <div className="h-full w-full min-w-[32em]">
@@ -75,7 +84,7 @@ const Page: NextPageWithLayout = () => {
           </div>
         </div>
         <div className="grid md:grid-cols-2 gap-2 grid-rows-6 md:grid-rows-3">
-          {globalStatate.totalThesisCount.thesisCount.map((child, index) => (
+          {globalState.totalThesisCount.thesisCount.map((child, index) => (
             <Card
               className="cursor-pointer hover:scale-105 hover:z-10 transition duration-200 ease-out"
               key={index}
@@ -167,26 +176,29 @@ export const ThesisCharts = () => {
 export const ThesisTable = () => {
   const { state: userState } = useUserContext();
   const userDetails = userState.userDetails;
-  const { state, loadThesisItems, updateSearchTitle } = useGlobalContext();
+  const { state, loadThesisItems, updateSearchAction } = useGlobalContext();
   const [thesisTableData, setThesisTableData] = useState<DataType[]>([]);
+  const updated = useRef(false);
 
-  useEffect(() => {
-    updateSearchTitle(undefined);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  useEffect(() => updateSearchAction().clear(), []);
 
   useEffect(() => {
     if (userDetails) {
       loadThesisItems();
+      updated.current = true;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userDetails, state.searchTitle]);
+  }, [userDetails, state.searchingAction]);
 
   useEffect(() => {
     const thesisItems = state.thesisItems;
     const toTableThesisItems = thesisToDataType(thesisItems.document);
     setThesisTableData(toTableThesisItems);
   }, [state.thesisItems]);
+
+  const handlePageChange: PaginationProps["onChange"] = (pageNo) => {
+    updateSearchAction().update({ ...state.searchingAction, pageNo });
+  };
 
   return (
     <div>
@@ -200,9 +212,10 @@ export const ThesisTable = () => {
       />
       <div className="mx-auto mt-5 w-fit md:absolute md:bottom-0 md:right-0 md:m-5">
         <Pagination
-          showSizeChanger
-          defaultCurrent={3}
+          current={state.thesisItems.currentPage}
+          defaultCurrent={state.thesisItems.currentPage ?? 1}
           total={state.thesisItems.totalCount}
+          onChange={handlePageChange}
         />
       </div>
     </div>
@@ -211,20 +224,15 @@ export const ThesisTable = () => {
 
 const RecycledTable = () => {
   const [removedTableData, setRemovedTableData] = useState<DataType[]>([]);
-  const { state, loadRecycle, updateSearchTitle } = useGlobalContext();
+  const { state, loadRecycle } = useGlobalContext();
   const { userDetails } = useUserContext().state;
-
-  useEffect(() => {
-    updateSearchTitle(undefined);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   useEffect(() => {
     if (userDetails) {
       loadRecycle();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userDetails, state.searchTitle]);
+  }, [userDetails]);
 
   useEffect(() => {
     const thesisItems = state.recyclebin;

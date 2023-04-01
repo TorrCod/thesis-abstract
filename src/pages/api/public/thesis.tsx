@@ -47,11 +47,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     default: {
       const { query, option } = parseQuery(req);
       const pageSize = option?.limit;
-      const pageNo = req.body.pageNo;
+      const pageNo = (req.query.pageNo &&
+        parseInt(req.query.pageNo as string)) as number;
       const thesisItems = (await getDataWithPaging(
         "thesis-abstract",
         "thesis-items",
-        { pageNo, pageSize },
+        { pageNo: pageNo, pageSize },
         query,
         {
           limit: option?.limit,

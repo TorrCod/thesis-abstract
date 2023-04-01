@@ -91,8 +91,7 @@ export const getDataWithPaging = async (
     const collection = database.collection(colName);
 
     const countDocuments = await collection.countDocuments(query ?? undefined);
-    const skipDocuments = (page?.pageNo ?? 1 - 1) * (page?.pageSize ?? 10);
-
+    const skipDocuments = ((page?.pageNo ?? 1) - 1) * (page?.pageSize ?? 10);
     const document = await collection
       .find(query ?? {}, {
         projection: option?.projection,
@@ -100,7 +99,6 @@ export const getDataWithPaging = async (
       .skip(skipDocuments)
       .limit(page?.pageSize ?? 10)
       .toArray();
-
     client.close();
     return {
       totalCount: countDocuments,

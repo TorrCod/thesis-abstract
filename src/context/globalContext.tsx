@@ -20,6 +20,7 @@ import {
   GlobalAction,
   GlobalState,
   GlobalValue,
+  SearchAction,
   ThesisItems,
 } from "./types.d";
 import Router from "next/router";
@@ -38,12 +39,13 @@ const globalStateInit: GlobalState = {
   loading: ["all-thesis", "all-admin"],
   recyclebin: [],
   searchThesis: [],
-  filterState: {
-    years: { all: true, option: [] },
-    course: { all: true, option: courseOption as Course[] },
-  },
   totalThesisCount: { totalCount: 0, thesisCount: totalDataInit },
-  searchTitle: "",
+  searchingAction: {
+    filterState: {
+      years: { all: true, option: [] },
+      course: { all: true, option: courseOption as Course[] },
+    },
+  },
 };
 
 const globalCtxInit: GlobalValue = {
@@ -51,7 +53,6 @@ const globalCtxInit: GlobalValue = {
   dispatch: () => {},
   async loadThesisItems() {},
   async loadRecycle() {},
-  updateFilter: () => {},
   loadingState: {
     add(key) {},
     remove(key) {},
@@ -62,7 +63,9 @@ const globalCtxInit: GlobalValue = {
   removeThesisItem(_id) {},
   restoreThesis(_id) {},
   recycleThesis(thesis) {},
-  updateSearchTitle(title) {},
+  updateSearchAction() {
+    return { update(payload) {}, clear() {} };
+  },
 };
 
 const GlobalContext = createContext<GlobalValue>(globalCtxInit);
@@ -87,9 +90,6 @@ const globalReducer = (
 
     case "load-recycle":
       return { ...state, recyclebin: action.payload };
-
-    case "update-filter":
-      return { ...state, filterState: action.payload };
     case "update-default-years":
       return { ...state, dateOption: action.payload };
     case "add-loading": {
@@ -98,28 +98,38 @@ const globalReducer = (
     case "load-thesis-count": {
       return { ...state, totalThesisCount: action.payload };
     }
-    case "update-search": {
-      return { ...state, searchTitle: action.payload };
+    case "on-search-action": {
+      return { ...state, searchingAction: action.payload };
     }
   }
 };
 
 export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(globalReducer, globalStateInit);
-  useEffect(() => {
-    loadYearsOpt();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.thesisItems]);
+
+  const updateSearchAction = () => {
+    const update = (payload: SearchAction) => {
+      dispatch({ type: "on-search-action", payload: payload });
+    };
+    const clear = () => {
+      dispatch({
+        type: "on-search-action",
+        payload: globalStateInit.searchingAction,
+      });
+    };
+    return { update, clear };
+  };
 
   const loadThesisItems = async () => {
     try {
       loadingState.add("all-thesis");
       const thesisItems = await getAllThesis(
-        { title: state.searchTitle },
+        { title: state.searchingAction.searchTitle },
         {
           limit: 10,
           projection: { title: 1, course: 1, dateAdded: 1 },
-        }
+        },
+        state.searchingAction.pageNo
       );
       dispatch({
         type: "load-thesis",
@@ -138,7 +148,7 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
       const token = await auth.currentUser?.getIdToken();
       const recycledThesis = await getAllDeletedThesis(
         token,
-        { title: state.searchTitle },
+        { title: state.searchingAction.searchTitle },
         {
           limit: 10,
           projection: {
@@ -161,25 +171,16 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
     const distinctYear = await getDistincYear();
     dispatch({ type: "update-default-years", payload: distinctYear });
     dispatch({
-      type: "update-filter",
+      type: "on-search-action",
       payload: {
-        ...state.filterState,
-        years: { all: true, option: distinctYear },
+        ...state.searchingAction,
+        filterState: {
+          ...state.searchingAction.filterState,
+
+          years: { all: true, option: distinctYear },
+        },
       },
     });
-  };
-
-  const updateFilter = (payload: {
-    years: {
-      all: boolean;
-      option: string[];
-    };
-    course: {
-      all: boolean;
-      option: Course[];
-    };
-  }) => {
-    dispatch({ type: "update-filter", payload: payload });
   };
 
   const loadingState = {
@@ -239,10 +240,6 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
     dispatch({ type: "load-recycle", payload: newRecyle });
   };
 
-  const updateSearchTitle = (title: string | undefined) => {
-    dispatch({ type: "update-search", payload: title });
-  };
-
   return (
     <GlobalContext.Provider
       value={{
@@ -252,13 +249,12 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
         dispatch,
         loadThesisItems,
         loadRecycle,
-        updateFilter,
         loadingState,
         promptToSignIn,
         loadThesisCount,
         addThesisItem,
         removeThesisItem,
-        updateSearchTitle,
+        updateSearchAction,
       }}
     >
       <LoadingGlobal>{children}</LoadingGlobal>

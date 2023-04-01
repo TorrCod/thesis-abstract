@@ -10,12 +10,19 @@ export interface GlobalState {
   signIn?: boolean;
   loading: string[];
   totalThesisCount: { thesisCount: ThesisCount; totalCount: number };
-  filterState: {
-    years: { all: boolean; option: string[] };
-    course: { all: boolean; option: Course[] };
-  };
-  searchTitle?: string;
+  searchingAction: SearchAction;
 }
+
+export type SearchAction = {
+  searchTitle?: string;
+  pageNo?: number;
+  filterState: FilterState;
+};
+
+export type FilterState = {
+  years: { all: boolean; option: string[] };
+  course: { all: boolean; option: Course[] };
+};
 
 export type ThesisCount = { course: Course; count: number }[];
 
@@ -57,6 +64,14 @@ export type SearchOption = {
 
 export type GlobalAction =
   | {
+      type: "on-search-action";
+      payload: {
+        searchTitle?: string;
+        thesisPageNo?: number;
+        filterState: FilterState;
+      };
+    }
+  | {
       type: "add-thesis";
       payload: ThesisItems;
     }
@@ -73,13 +88,6 @@ export type GlobalAction =
       payload: ThesisItems[];
     }
   | {
-      type: "update-filter";
-      payload: {
-        years: { all: boolean; option: string[] };
-        course: { all: boolean; option: Course[] };
-      };
-    }
-  | {
       type: "update-default-years";
       payload: string[];
     }
@@ -90,10 +98,6 @@ export type GlobalAction =
   | {
       type: "load-thesis-count";
       payload: { thesisCount: ThesisCount; totalCount: number };
-    }
-  | {
-      type: "update-search";
-      payload?: string;
     };
 
 export type GlobalValue = {
@@ -102,16 +106,6 @@ export type GlobalValue = {
   loadThesisItems: () => Promise<void>;
   loadRecycle: () => Promise<void>;
   loadThesisCount: () => Promise<void>;
-  updateFilter: (payload: {
-    years: {
-      all: boolean;
-      option: string[];
-    };
-    course: {
-      all: boolean;
-      option: Course[];
-    };
-  }) => void;
   loadingState: {
     add(key: string): void;
     remove(key: string): void;
@@ -121,7 +115,10 @@ export type GlobalValue = {
   removeThesisItem: (_id: string) => void;
   restoreThesis: (_id: string) => void;
   recycleThesis: (thesis: ThesisItems) => void;
-  updateSearchTitle: (title: string | undefined) => void;
+  updateSearchAction: () => {
+    update: (payload: SearchAction) => void;
+    clear: () => void;
+  };
 };
 
 export type AdminData = {

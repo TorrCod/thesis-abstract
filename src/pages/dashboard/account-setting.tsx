@@ -123,9 +123,10 @@ const Page: NextPageWithLayout = () => {
 
   return (
     <>
-      <div className="pb-10 w-full p-3 md:mb-20">
+      <div className="opacity-80 mb-3">Account Setting </div>
+      <div className="w-full">
         <div className="grid gap-2 relative max-w-6xl m-auto ">
-          <h3 className="text-black/90">Account Setting</h3>
+          {/* <h3 className="text-black/90">Account Setting</h3> */}
           <div className="bg-white p-5 rounded-md shadow-md">
             <p>Information</p>
             <Divider />

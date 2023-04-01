@@ -113,7 +113,25 @@ function DashboardLayout({ children }: DashboardProps) {
       <div className="bg-[#D9D9D9] relative md:h-screen">
         <Header className="header fixed top-0 w-full md:relative z-20 flex gap-10 items-center justify-center md:justify-start">
           <div className="absolute left-5 md:hidden">
-            <AdminMenu />
+            <Dropdown
+              trigger={["click"]}
+              dropdownRender={() => (
+                <div className="bg-white rounded-md pt-5 shadow-md">
+                  <AdminDetails selectedMenu={selectedSider} />
+                  <Menu
+                    className="opacity-80"
+                    style={{ boxShadow: "none" }}
+                    items={accountMenu}
+                    selectedKeys={[selectedSider]}
+                    onSelect={(item) => setSelectedSider(item.key)}
+                  />
+                </div>
+              )}
+            >
+              <div>
+                <SignInSignUp />
+              </div>
+            </Dropdown>
           </div>
           <Link className="self-center" href="/">
             <HomeButton>Home</HomeButton>
@@ -133,6 +151,7 @@ function DashboardLayout({ children }: DashboardProps) {
                   onSelect={handleSeletect}
                 />
                 <Divider />
+
                 <AdminDetails selectedMenu={selectedSider} />
 
                 <Menu

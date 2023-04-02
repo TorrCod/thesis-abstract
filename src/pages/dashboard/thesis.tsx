@@ -227,8 +227,16 @@ const RecycledTable = () => {
   const { state, loadRecycle } = useGlobalContext();
   const { userDetails } = useUserContext().state;
   const { updateSearchAction, state: globalState } = useGlobalContext();
+  const router = useRouter();
 
   useEffect(updateSearchAction().clear, []);
+
+  const highlightRow = (record: any) => {
+    // Add your logic to determine if the row should be highlighted here
+    return record.key === router.query._id
+      ? "bg-red-500/30 border-2 border-blue-200 rounded-md !important"
+      : "";
+  };
 
   useEffect(() => {
     if (userDetails) {
@@ -257,6 +265,7 @@ const RecycledTable = () => {
         })}
         dataSource={removedTableData}
         pagination={false}
+        rowClassName={highlightRow}
       />
       <div className="mx-auto mt-5 w-fit md:absolute md:bottom-0 md:right-0 md:m-5">
         <Pagination

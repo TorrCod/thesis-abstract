@@ -104,7 +104,6 @@ export const updateUser = async (
   data: UserDetails
 ) => {
   if (token) {
-    delete data._id;
     const deleteResult = await axios.request({
       url: `/api/admin-user?collection=user&_id=${id}`,
       method: "PUT",

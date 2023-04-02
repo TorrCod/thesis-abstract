@@ -1,6 +1,6 @@
 import Search from "@/components/search";
 import { SearchQuery, ThesisItems, ThesisState } from "@/context/types.d";
-import { Divider } from "antd";
+import { ConfigProvider, Divider, Pagination } from "antd";
 import Head from "next/head";
 import Link from "next/link";
 import { useEffect } from "react";
@@ -48,8 +48,26 @@ const Thesis = () => {
               showFilter={true}
               className="place-self-center my-5 w-full max-w-3xl z-10 absolute top-0"
             />
-            <Divider className="bg-white/30 mt-32" />
+            <Divider className="bg-white/30 mt-40" />
           </div>
+          <ConfigProvider
+            theme={{
+              token: {
+                colorText: "white",
+                colorPrimary: "white",
+                colorBgContainer: "#38649C",
+                colorTextDisabled: "rgba(255,255,255,0.5)",
+              },
+            }}
+          >
+            <Pagination
+              className="mb-5"
+              total={globalState.thesisItems.totalCount}
+              current={globalState.thesisItems.currentPage}
+              onChange={() => {}}
+              hideOnSinglePage
+            />
+          </ConfigProvider>
           <div className="grid gap-2 w-full place-items-center lg:grid-cols-2 relative md:px-5">
             {globalState.loading.includes("/thesis") ? (
               <>

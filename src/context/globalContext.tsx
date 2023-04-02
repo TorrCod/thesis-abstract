@@ -142,9 +142,9 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
       const { option: year } = state.searchingAction.filterState.years;
       const thesisItems = await getAllThesis(
         {
-          title: query?.title ?? title,
+          title: query?.title ?? title?.length ? title : undefined,
           course: query?.course ?? course,
-          year: query?.year ?? year,
+          year: query?.year ?? year?.length ? year : undefined,
         },
         {
           limit: option?.limit ?? 10,

@@ -315,8 +315,15 @@ export const LoadingGlobal = ({ children }: { children?: React.ReactNode }) => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const start = () => setLoading(true);
-    const end = () => setLoading(false);
+    let timeOut: NodeJS.Timeout;
+    const start = () => {
+      clearTimeout(timeOut);
+      timeOut = setTimeout(() => setLoading(true), 500);
+    };
+    const end = () => {
+      setLoading(false);
+      clearTimeout(timeOut);
+    };
     Router.events.on("routeChangeStart", start);
     Router.events.on("routeChangeComplete", end);
     Router.events.on("routeChangeError", end);
@@ -324,6 +331,7 @@ export const LoadingGlobal = ({ children }: { children?: React.ReactNode }) => {
       Router.events.off("routeChangeStart", start);
       Router.events.off("routeChangeComplete", end);
       Router.events.off("routeChangeError", end);
+      clearTimeout(timeOut);
     };
   }, []);
 

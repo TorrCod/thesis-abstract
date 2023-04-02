@@ -395,7 +395,12 @@ const thesisTableColumn: ColumnsType<DataType> = [
     dataIndex: "title",
     key: "title",
     render: (text, record) => (
-      <Link href={"/thesis/" + record.key}>{text}</Link>
+      <Link
+        className="hover:underline hover:decoration-1 hover:text-blue-800"
+        href={"/thesis/" + record.key}
+      >
+        {text}
+      </Link>
     ),
   },
   {

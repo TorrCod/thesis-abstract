@@ -40,7 +40,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             let activityLog = await getDataWithPaging(
               "accounts",
               "activity-log",
-              { pageSize, pageNo, sort: { date: -1 } }
+              { pageSize, pageNo, sort: { date: -1 } },
+              parse.query
             );
             const withUserName_promise = activityLog.document.map(
               async (item) => {

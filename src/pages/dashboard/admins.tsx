@@ -3,6 +3,7 @@ import {
   Form,
   message,
   Modal,
+  Pagination,
   Space,
   Table,
   Timeline,
@@ -87,6 +88,7 @@ export default Page;
 
 const UserProfile = ({ userDetails }: { userDetails: UserDetails }) => {
   const [history, setHistory] = useState<TimelineProps["items"]>([]);
+  const [detail, setDetail] = useState({ pageNo: 1, totalCount: 0 });
   const user = useUserContext().state.userDetails;
   useEffect(() => {
     const fetchData = async () => {
@@ -103,6 +105,7 @@ const UserProfile = ({ userDetails }: { userDetails: UserDetails }) => {
             };
           });
           setHistory(data);
+          setDetail({ pageNo: res.currentPage, totalCount: res.totalCount });
         })
         .catch((e) => {
           console.error(e);
@@ -181,7 +184,13 @@ const UserProfile = ({ userDetails }: { userDetails: UserDetails }) => {
       <div className="bg-white rounded-md p-3 row-span-2 grid relative gap-5 grid-rows-[_0.2fr_1.8fr]">
         <div className="opacity-80">History</div>
         <div className="w-full">
-          <Timeline mode="left" reverse items={history} />;
+          <Timeline mode="left" reverse items={history} />
+          <Pagination
+            current={detail.pageNo}
+            total={detail.totalCount}
+            showSizeChanger={false}
+            onChange={() => {}}
+          />
         </div>
       </div>
     </div>

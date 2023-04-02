@@ -146,7 +146,7 @@ function DashboardLayout({ children }: DashboardProps) {
               <div className="">
                 <Menu
                   selectedKeys={[selectedSider]}
-                  className="text-[0.9vw] place-self-start"
+                  className="place-self-start"
                   items={siderMenu}
                   onSelect={handleSeletect}
                 />

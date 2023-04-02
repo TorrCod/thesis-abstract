@@ -112,6 +112,7 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     loadYearsOpt();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const updateSearchAction = () => {

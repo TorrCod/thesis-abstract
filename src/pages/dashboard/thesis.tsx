@@ -180,7 +180,10 @@ export const ThesisTable = () => {
   const [thesisTableData, setThesisTableData] = useState<DataType[]>([]);
   const updated = useRef(false);
 
-  useEffect(() => updateSearchAction().clear(), []);
+  useEffect(() => {
+    return () => updateSearchAction().clear();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (userDetails) {
@@ -229,7 +232,10 @@ const RecycledTable = () => {
   const { updateSearchAction, state: globalState } = useGlobalContext();
   const router = useRouter();
 
-  useEffect(updateSearchAction().clear, []);
+  useEffect(() => {
+    return () => updateSearchAction().clear();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const highlightRow = (record: any) => {
     // Add your logic to determine if the row should be highlighted here

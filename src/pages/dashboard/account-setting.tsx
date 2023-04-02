@@ -210,6 +210,7 @@ const InformationForm = () => {
       setInfoSave(isInclude);
       form.setFieldsValue({ ...userDetails });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [newData, userDetails]);
 
   const handleInfoChange = () => {

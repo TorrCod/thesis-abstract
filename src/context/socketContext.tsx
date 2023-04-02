@@ -76,7 +76,7 @@ export const SocketWrapper = ({ children }: { children: ReactNode }) => {
     socketRef.current?.connected,
     state.activityLog,
     globalState.loading,
-    globalState.searchTitle,
+    globalState.searchingAction.searchTitle,
   ]);
 
   const triggerSocket = (event: SocketEmitEvent) => {

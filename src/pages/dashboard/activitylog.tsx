@@ -14,7 +14,10 @@ const Page: NextPageWithLayout = () => {
   const { state: userState } = useUserContext();
   const { updateSearchAction, state: globalState } = useGlobalContext();
 
-  useEffect(() => updateSearchAction().clear, []);
+  useEffect(() => {
+    return () => updateSearchAction().clear();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handlePageChange: PaginationProps["onChange"] = async (pageNo) => {
     updateSearchAction().update({ ...globalState.searchingAction, pageNo });

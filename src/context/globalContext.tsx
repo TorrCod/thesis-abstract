@@ -44,8 +44,8 @@ const globalStateInit: GlobalState = {
   totalThesisCount: { totalCount: 0, thesisCount: totalDataInit },
   searchingAction: {
     filterState: {
-      years: { all: true },
-      course: { all: true, option: courseOption },
+      years: { all: true, default: [] },
+      course: { all: true, option: courseOption, default: courseOption },
     },
   },
 };
@@ -118,9 +118,14 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
       dispatch({ type: "on-search-action", payload: payload });
     };
     const clear = () => {
+      const newFilterState = { ...state.searchingAction.filterState };
+      newFilterState.years.option = newFilterState.years.default;
       dispatch({
         type: "on-search-action",
-        payload: globalStateInit.searchingAction,
+        payload: {
+          ...globalStateInit.searchingAction,
+          filterState: newFilterState,
+        },
       });
     };
     return { update, clear };
@@ -198,7 +203,7 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
         filterState: {
           ...state.searchingAction.filterState,
 
-          years: { all: true, option: distinctYear },
+          years: { all: true, option: distinctYear, default: distinctYear },
         },
       },
     });

@@ -190,7 +190,10 @@ const FilterItems = ({
     searchFilter[type].option = (searchFilter[type].option as string[]).filter(
       (oldItem) => oldItem !== item
     );
-    if (!searchFilter[type].option?.length) searchFilter[type].all = true;
+    if (!searchFilter[type].option?.length) {
+      searchFilter[type].all = true;
+      searchFilter[type].option = searchFilter[type].default;
+    }
     updateSearchAction().update({
       ...state.searchingAction,
       filterState: searchFilter,
@@ -228,27 +231,25 @@ const DropDownCourse = ({
   const handleCheckBxAllCourse = (e: CheckboxChangeEvent) => {
     const isChecked = e.target.checked;
     const newFilterState = { ...globalCtx.state.searchingAction.filterState };
-    newFilterState.course = {
-      all: isChecked,
-      option: isChecked ? (courseOption as Course[]) : ["Computer Engineer"],
-    };
-    updateSearchAction().update({
-      ...globalCtx.state.searchingAction,
-      filterState: newFilterState,
-    });
+    newFilterState.course.all = isChecked;
+    (newFilterState.course.option = isChecked
+      ? (courseOption as Course[])
+      : ["Computer Engineer"]),
+      updateSearchAction().update({
+        ...globalCtx.state.searchingAction,
+        filterState: newFilterState,
+      });
   };
   const handleCheckBxCourse = (valueType: CheckboxValueType[]) => {
     const isCheckAll = valueType.length === courseOption.length;
     const item = valueType as Course[];
     const newFilterState = { ...globalCtx.state.searchingAction.filterState };
-    newFilterState.course = {
-      all: isCheckAll,
-      option: isCheckAll
-        ? (courseOption as Course[])
-        : item.length
-        ? item
-        : ["Computer Engineer"],
-    };
+    newFilterState.course.all = isCheckAll;
+    newFilterState.course.option = isCheckAll
+      ? (courseOption as Course[])
+      : item.length
+      ? item
+      : ["Computer Engineer"];
     updateSearchAction().update({
       ...globalCtx.state.searchingAction,
       filterState: newFilterState,
@@ -326,14 +327,12 @@ const DropdownYear = ({
     const item = valueType as string[];
 
     const newFilterState = { ...globalCtx.state.searchingAction.filterState };
-    newFilterState.years = {
-      all: isCheckAll,
-      option: isCheckAll
-        ? globalCtx.state.dateOption
-        : item.length
-        ? item
-        : [globalCtx.state.dateOption[0]],
-    };
+    newFilterState.years.all = isCheckAll;
+    newFilterState.years.option = isCheckAll
+      ? globalCtx.state.dateOption
+      : item.length
+      ? item
+      : [globalCtx.state.dateOption[0]];
     updateSearchAction().update({
       ...globalCtx.state.searchingAction,
       filterState: newFilterState,
@@ -342,16 +341,14 @@ const DropdownYear = ({
   const handleCheckBxAllDate = (e: CheckboxChangeEvent) => {
     const isChecked = e.target.checked;
     const newFilterState = { ...globalCtx.state.searchingAction.filterState };
-    newFilterState.years = {
-      all: isChecked,
-      option: isChecked
-        ? globalCtx.state.dateOption
-        : [globalCtx.state.dateOption[0].toString()],
-    };
-    updateSearchAction().update({
-      ...globalCtx.state.searchingAction,
-      filterState: newFilterState,
-    });
+    newFilterState.years.all = isChecked;
+    (newFilterState.years.option = isChecked
+      ? globalCtx.state.dateOption
+      : [globalCtx.state.dateOption[0].toString()]),
+      updateSearchAction().update({
+        ...globalCtx.state.searchingAction,
+        filterState: newFilterState,
+      });
   };
   const dropdownContentDate = () => (
     <div className="bg-white shadow-lg relative rounded-md p-2 grid">

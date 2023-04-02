@@ -20,8 +20,8 @@ export type SearchAction = {
 };
 
 export type FilterState = {
-  years: { all: boolean; option?: string[] };
-  course: { all: boolean; option?: Course[] };
+  years: { all: boolean; option?: string[]; default: string[] };
+  course: { all: boolean; option?: Course[]; default: Course[] };
 };
 
 export type ThesisCount = { course: Course; count: number }[];

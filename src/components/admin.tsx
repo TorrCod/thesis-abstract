@@ -33,8 +33,7 @@ export const AdminMenu = ({
 }: {
   position?: "bottomLeft" | "bottomRight" | "bottomCenter";
 }) => {
-  const { state, logOut } = useUserContext();
-  const userCtxState = state;
+  const { logOut } = useUserContext();
   const userMenu: MenuProps["items"] = [
     {
       key: "/dashboard/account-setting",
@@ -140,12 +139,17 @@ export const AddAdmin = () => {
   );
 };
 
-export const AdminDetails = () => {
+export const AdminDetails = ({
+  onClick,
+}: {
+  onClick?: () => void | Promise<void>;
+}) => {
   const { state } = useUserContext();
 
   return (
     <>
       <Link
+        onClick={onClick}
         className="flex gap-2 items-center mx-5 pb-3 border-b-[1px]"
         href={`/dashboard/admins?_id=${state.userDetails?._id}`}
       >

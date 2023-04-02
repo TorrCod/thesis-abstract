@@ -92,8 +92,8 @@ const UserProfile = ({ userDetails }: { userDetails: UserDetails }) => {
     const fetchData = async () => {
       const token = await auth.currentUser?.getIdToken();
       getActivityLog(token, { userId: userDetails?.uid }, { limit: 7 })
-        .then((res: ActivityLog[]) => {
-          const data = res.map((item) => {
+        .then((res) => {
+          const data = res.document.map((item) => {
             const readedData = readActivityLogReason(item);
             return {
               label: new Date(item.date).toLocaleString(),

@@ -190,6 +190,7 @@ const FilterItems = ({
     searchFilter[type].option = (searchFilter[type].option as string[]).filter(
       (oldItem) => oldItem !== item
     );
+    if (!searchFilter[type].option?.length) searchFilter[type].all = true;
     updateSearchAction().update({
       ...state.searchingAction,
       filterState: searchFilter,

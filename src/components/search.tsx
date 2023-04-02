@@ -79,6 +79,7 @@ const Search = ({ className, limit, onSearch, showFilter }: SearchProps) => {
     const course: Course[] = courseOpt.option as any;
     const year = yearsOpt.option;
     onSearch?.({ title, course, year });
+    searchDispatch({ type: "onfocus", payload: false });
   };
 
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {

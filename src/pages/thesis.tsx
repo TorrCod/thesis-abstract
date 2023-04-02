@@ -29,7 +29,11 @@ const Thesis = () => {
       projection: { title: 1, course: 1, year: 1, researchers: 1 },
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router.query]);
+  }, [router.query, globalState.searchingAction.pageNo]);
+
+  const handlePageChange = (pageNo: number) => {
+    updateSearchAction().update({ ...globalState.searchingAction, pageNo });
+  };
 
   return (
     <>
@@ -63,8 +67,8 @@ const Thesis = () => {
             <Pagination
               className="mb-5"
               total={globalState.thesisItems.totalCount}
-              current={globalState.thesisItems.currentPage}
-              onChange={() => {}}
+              current={globalState.searchingAction.pageNo ?? 1}
+              onChange={handlePageChange}
               hideOnSinglePage
             />
           </ConfigProvider>

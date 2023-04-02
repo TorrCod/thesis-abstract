@@ -138,13 +138,23 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
     try {
       loadingState.add("all-thesis");
       const { searchTitle: title } = state.searchingAction;
-      const { option: course } = state.searchingAction.filterState.course;
-      const { option: year } = state.searchingAction.filterState.years;
+      const { option: course, default: courseDefault } =
+        state.searchingAction.filterState.course;
+      const { option: year, default: yearDefault } =
+        state.searchingAction.filterState.years;
       const thesisItems = await getAllThesis(
         {
-          title: query?.title ?? title?.length ? title : undefined,
-          course: query?.course ?? course,
-          year: query?.year ?? year?.length ? year : undefined,
+          title: title,
+          course:
+            query?.course ??
+            (year?.length && course?.length !== courseDefault.length
+              ? course
+              : undefined),
+          year:
+            query?.year ??
+            (year?.length && year?.length !== yearDefault.length
+              ? year
+              : undefined),
         },
         {
           limit: option?.limit ?? 10,

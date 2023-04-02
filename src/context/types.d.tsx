@@ -32,6 +32,12 @@ export type ThesisState = {
   document: ThesisItems[];
 };
 
+export type ActivitylogState = {
+  currentPage: number;
+  totalCount: number;
+  document: ActivityLog[];
+};
+
 export type Course =
   | "Computer Engineer"
   | "Mechanical Engineer"
@@ -133,7 +139,7 @@ export type AdminData = {
 export type UserState = {
   userDetails: UserDetails | undefined;
   listOfAdmins: AdminData[];
-  activityLog: ActivityLog[];
+  activityLog: ActivitylogState;
 };
 
 export type ActivityLog = {
@@ -171,7 +177,7 @@ export type UserValue = {
   saveUploadThesis: (data: ThesisItems) => Promise<void>;
   loadAllUsers: () => Promise<void>;
   unsubscribeRef: MutableRefObject<Unsubscribe | null>;
-  loadActivityLog: () => Promise<ActivityLog[]>;
+  loadActivityLog: () => Promise<void>;
   logOut: () => Promise<void>;
 };
 
@@ -207,7 +213,7 @@ export type UserAction =
     }
   | {
       type: "load-activity-log";
-      payload: ActivityLog[];
+      payload: ActivitylogState;
     };
 
 export type SocketValue = {

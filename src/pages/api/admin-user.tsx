@@ -5,6 +5,7 @@ import {
   addDataWithExpiration,
   deleteData,
   getData,
+  getDataWithPaging,
   getOneData,
   getRawData,
   updateData,
@@ -32,33 +33,29 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           case "get-activitylog": {
             const parse = parseQuery(req);
             const userId = req.query.userId as string | undefined;
+            const pageSize = parse.option?.limit;
+            const pageNo = (req.query.pageNo &&
+              parseInt(req.query.pageNo as string)) as number;
             if (userId) (parse.query as any) = { userId };
-            let activityLog: any[] = [];
-            await getRawData(
+            let activityLog = await getDataWithPaging(
               "accounts",
               "activity-log",
-              async (payload) => {
-                activityLog = await payload
-                  .sort({ date: -1 })
-                  .limit(parse.option?.limit ?? 10)
-                  .toArray();
-              },
-              parse.query
+              { pageSize, pageNo, sort: { date: -1 } }
             );
-
-            const withUserName_promise = activityLog.map(async (item) => {
-              const response = await getOneData(
-                "accounts",
-                "user",
-                { uid: item.userId },
-                { projection: { userName: 1 } }
-              );
-              return { ...item, userName: response?.userName };
-            });
-
+            const withUserName_promise = activityLog.document.map(
+              async (item) => {
+                const response = await getOneData(
+                  "accounts",
+                  "user",
+                  { uid: item.userId },
+                  { projection: { userName: 1 } }
+                );
+                return { ...item, userName: response?.userName };
+              }
+            );
             const withUsername = await Promise.all(withUserName_promise);
-
-            return res.status(200).json(withUsername);
+            activityLog.document = withUsername;
+            return res.status(200).json(activityLog);
           }
           default: {
             const collection = req.query.collection as CollectionName;

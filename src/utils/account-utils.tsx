@@ -1,4 +1,5 @@
 import {
+  ActivitylogState,
   PendingAdminList,
   SearchOption,
   SearchQuery,
@@ -173,7 +174,7 @@ export const getActivityLog = async (
       method: "GET",
       ...userConfig(token),
     });
-    return activityLog.data;
+    return activityLog.data as ActivitylogState;
   } else throw new Error("canont read user token");
 };
 

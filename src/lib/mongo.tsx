@@ -9,6 +9,7 @@ import {
   ChangeStream,
   FindCursor,
   WithId,
+  Sort,
 } from "mongodb";
 import { Worker } from "worker_threads";
 import { CollectionName, DatabaseName, QueryPost } from "./types";
@@ -78,7 +79,7 @@ export const getData = async (
 export const getDataWithPaging = async (
   dbName: DatabaseName,
   colName: CollectionName,
-  page?: { pageNo?: number; pageSize?: number },
+  page?: { pageNo?: number; pageSize?: number; sort?: Sort },
   query?: Filter<Document | {}>,
   option?: {
     limit?: number;
@@ -92,17 +93,21 @@ export const getDataWithPaging = async (
 
     const countDocuments = await collection.countDocuments(query ?? undefined);
     const skipDocuments = ((page?.pageNo ?? 1) - 1) * (page?.pageSize ?? 10);
-    const document = await collection
+
+    let document = collection
       .find(query ?? {}, {
         projection: option?.projection,
       })
       .skip(skipDocuments)
-      .limit(page?.pageSize ?? 10)
-      .toArray();
+      .limit(page?.pageSize ?? 10);
+
+    if (page?.sort) document = document.sort(page.sort);
+
+    const response = await document.toArray();
     client.close();
     return {
       totalCount: countDocuments,
-      document,
+      document: response,
       currentPage: page?.pageNo ?? 1,
     };
   } catch (e) {

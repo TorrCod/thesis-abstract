@@ -42,7 +42,7 @@ import { signOut as nextSignOut } from "next-auth/react";
 const userStateInit: UserState = {
   userDetails: undefined,
   listOfAdmins: [],
-  activityLog: [],
+  activityLog: { currentPage: 1, totalCount: 0, document: [] },
 };
 
 const userValueInit: UserValue = {
@@ -51,9 +51,7 @@ const userValueInit: UserValue = {
   saveUploadThesis: async () => {},
   loadAllUsers: async () => {},
   unsubscribeRef: { current: null },
-  loadActivityLog: async () => {
-    return [];
-  },
+  async loadActivityLog() {},
   async logOut() {},
 };
 
@@ -129,7 +127,7 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
         });
         dispatch({
           type: "load-activity-log",
-          payload: [],
+          payload: userStateInit.activityLog,
         });
         gloablDispatch({
           type: "load-thesis",
@@ -222,11 +220,10 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
 
   const loadActivityLog = async () => {
     const token = await auth.currentUser?.getIdToken();
-    const activityLog = (await getActivityLog(token, undefined, {
+    const activityLog = await getActivityLog(token, undefined, {
       limit: 10,
-    })) as ActivityLog[];
+    });
     dispatch({ type: "load-activity-log", payload: activityLog });
-    return activityLog;
   };
 
   const logOut = async () => {

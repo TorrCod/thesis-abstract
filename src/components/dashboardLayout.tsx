@@ -117,7 +117,7 @@ function DashboardLayout({ children }: DashboardProps) {
               trigger={["click"]}
               dropdownRender={() => (
                 <div className="bg-white rounded-md pt-5 shadow-md">
-                  <AdminDetails selectedMenu={selectedSider} />
+                  <AdminDetails />
                   <Menu
                     className="opacity-80"
                     style={{ boxShadow: "none" }}
@@ -152,7 +152,7 @@ function DashboardLayout({ children }: DashboardProps) {
                 />
                 <Divider />
 
-                <AdminDetails selectedMenu={selectedSider} />
+                <AdminDetails />
 
                 <Menu
                   className="place-self-start"

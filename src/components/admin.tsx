@@ -148,24 +148,21 @@ export const AddAdmin = () => {
   );
 };
 
-export const AdminDetails = ({
-  selectedMenu,
-  onSelect,
-}: {
-  selectedMenu: string;
-  onSelect?: MenuProps["onSelect"];
-}) => {
+export const AdminDetails = () => {
   const { state } = useUserContext();
 
   return (
     <>
-      <div className="flex gap-2 items-center mx-5 pb-3 border-b-[1px]">
+      <Link
+        className="flex gap-2 items-center mx-5 pb-3 border-b-[1px]"
+        href={`/dashboard/admins?_id=${state.userDetails?._id}`}
+      >
         <SignInSignUp />
         <div className={` ${!state.userDetails && "hidden"}`}>
           <p>{`${state.userDetails?.firstName} ${state.userDetails?.lastName}`}</p>
           <p className="text-[0.8em] opacity-80">{state.userDetails?.course}</p>
         </div>
-      </div>
+      </Link>
     </>
   );
 };

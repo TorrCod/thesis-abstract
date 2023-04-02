@@ -119,7 +119,7 @@ const Page: NextPageWithLayout = () => {
       setCfrmDltAcc("");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [onConfirm]);
+  }, [onConfirm, userDetails]);
 
   return (
     <>
@@ -208,7 +208,9 @@ const InformationForm = () => {
     if (userDetails && newData) {
       const isInclude = isObjectIncluded(newData, userDetails);
       setInfoSave(isInclude);
+      form.setFieldsValue({ ...userDetails });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [newData, userDetails]);
 
   const handleInfoChange = () => {

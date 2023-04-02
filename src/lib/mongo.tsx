@@ -9,6 +9,7 @@ import {
   ChangeStream,
   FindCursor,
   WithId,
+  Sort,
 } from "mongodb";
 import { Worker } from "worker_threads";
 import { CollectionName, DatabaseName, QueryPost } from "./types";
@@ -69,6 +70,46 @@ export const getData = async (
     }
     client.close();
     return res;
+  } catch (e) {
+    console.error(e);
+    throw new Error(e as string).message;
+  }
+};
+
+export const getDataWithPaging = async (
+  dbName: DatabaseName,
+  colName: CollectionName,
+  page?: { pageNo?: number; pageSize?: number; sort?: Sort },
+  query?: Filter<Document | {}>,
+  option?: {
+    limit?: number;
+    projection?: Record<string, 0 | 1>;
+  }
+) => {
+  try {
+    const client = await connectToDatabase();
+    const database = client.db(dbName);
+    const collection = database.collection(colName);
+
+    const countDocuments = await collection.countDocuments(query ?? undefined);
+    const skipDocuments = ((page?.pageNo ?? 1) - 1) * (page?.pageSize ?? 10);
+
+    let document = collection
+      .find(query ?? {}, {
+        projection: option?.projection,
+      })
+      .skip(skipDocuments)
+      .limit(page?.pageSize ?? 10);
+
+    if (page?.sort) document = document.sort(page.sort);
+
+    const response = await document.toArray();
+    client.close();
+    return {
+      totalCount: countDocuments,
+      document: response,
+      currentPage: page?.pageNo ?? 1,
+    };
   } catch (e) {
     console.error(e);
     throw new Error(e as string).message;

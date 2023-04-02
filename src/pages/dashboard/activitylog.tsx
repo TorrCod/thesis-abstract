@@ -1,5 +1,5 @@
 import React, { ReactElement, useEffect, useRef, useState } from "react";
-import { Timeline, TimelineItemProps } from "antd";
+import { Pagination, PaginationProps, Timeline, TimelineItemProps } from "antd";
 import DashboardLayout from "@/components/dashboardLayout";
 import useUserContext from "@/context/userContext";
 import { GetServerSideProps } from "next";
@@ -8,8 +8,22 @@ import { getCsrfToken } from "next-auth/react";
 import { authOptions } from "../api/auth/[...nextauth]";
 import { readActivityLogReason } from "@/utils/helper";
 import { NextPageWithLayout } from "../_app";
+import useGlobalContext from "@/context/globalContext";
+import { useEffectOnce } from "react-use";
 
 const Page: NextPageWithLayout = () => {
+  const { state: userState } = useUserContext();
+  const { updateSearchAction, state: globalState } = useGlobalContext();
+
+  useEffect(() => {
+    return () => updateSearchAction().clear();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handlePageChange: PaginationProps["onChange"] = async (pageNo) => {
+    updateSearchAction().update({ ...globalState.searchingAction, pageNo });
+  };
+
   return (
     <>
       <div className="opacity-80 mb-3">Dashboard {">"} Activity Log</div>
@@ -18,6 +32,12 @@ const Page: NextPageWithLayout = () => {
         <div className="md:-translate-x-40 lg:-translate-x-60">
           <ActivityTimeline />
         </div>
+        <Pagination
+          className="place-self-end"
+          current={globalState.searchingAction.pageNo ?? 1}
+          total={userState.activityLog.totalCount}
+          onChange={handlePageChange}
+        />
       </div>
     </>
   );
@@ -34,32 +54,27 @@ export const ActivityTimeline = () => {
   const userCtx = useUserContext();
   const { activityLog } = userCtx.state;
   const { loadActivityLog } = userCtx;
-  const runOnece = useRef(false);
+  const { state: globalState } = useGlobalContext();
 
   useEffect(() => {
-    if (userCtx.state.userDetails && !activityLog.length && !runOnece.current) {
+    if (userCtx.state.userDetails) {
       loadActivityLog();
-      runOnece.current = true;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userCtx.state.userDetails, activityLog]);
+  }, [userCtx.state.userDetails, globalState.searchingAction.pageNo]);
 
   useEffect(() => {
-    const load = async () => {
-      const newLog = activityLog.map((item) => {
-        const readedItem = readActivityLogReason(item);
-        return {
-          label: new Date(item.date).toLocaleString(),
-          children: <div>{readedItem?.reason}</div>,
-          dot: readedItem?.dot,
-          color: readedItem?.color,
-        };
-      });
-      const newLogFiltered = newLog.filter(async (item) => item !== null);
-      setLog(newLogFiltered as any);
-    };
-    load();
-    return () => setLog([]);
+    const newLog = activityLog.document.map((item) => {
+      const readedItem = readActivityLogReason(item);
+      return {
+        label: new Date(item.date).toLocaleString(),
+        children: <div>{readedItem?.reason}</div>,
+        dot: readedItem?.dot,
+        color: readedItem?.color,
+      };
+    });
+    const newLogFiltered = newLog.filter(async (item) => item !== null);
+    setLog(newLogFiltered as any);
   }, [activityLog]);
 
   return <Timeline mode="left" items={log} />;

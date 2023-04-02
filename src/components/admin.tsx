@@ -33,8 +33,7 @@ export const AdminMenu = ({
 }: {
   position?: "bottomLeft" | "bottomRight" | "bottomCenter";
 }) => {
-  const { state, logOut } = useUserContext();
-  const userCtxState = state;
+  const { logOut } = useUserContext();
   const userMenu: MenuProps["items"] = [
     {
       key: "/dashboard/account-setting",
@@ -66,15 +65,7 @@ export const AdminMenu = ({
       trigger={["click"]}
       dropdownRender={() => (
         <div className="bg-white rounded-md pt-5 shadow-md">
-          <div className="flex gap-2 justify-center items-center mx-5 pb-3 border-b-[1px]">
-            <SignInSignUp />
-            <div>
-              <p>{`${userCtxState.userDetails?.firstName} ${userCtxState.userDetails?.lastName}`}</p>
-              <p className="text-[0.8em] opacity-80">
-                {userCtxState.userDetails?.course}
-              </p>
-            </div>
-          </div>
+          <AdminDetails />
           <Menu
             className="opacity-80"
             style={{ boxShadow: "none" }}
@@ -149,23 +140,25 @@ export const AddAdmin = () => {
 };
 
 export const AdminDetails = ({
-  selectedMenu,
-  onSelect,
+  onClick,
 }: {
-  selectedMenu: string;
-  onSelect?: MenuProps["onSelect"];
+  onClick?: () => void | Promise<void>;
 }) => {
   const { state } = useUserContext();
 
   return (
     <>
-      <div className="flex gap-2 items-center mx-5 pb-3 border-b-[1px]">
+      <Link
+        onClick={onClick}
+        className="flex gap-2 items-center mx-5 pb-3 border-b-[1px]"
+        href={`/dashboard/admins?_id=${state.userDetails?._id}`}
+      >
         <SignInSignUp />
         <div className={` ${!state.userDetails && "hidden"}`}>
           <p>{`${state.userDetails?.firstName} ${state.userDetails?.lastName}`}</p>
           <p className="text-[0.8em] opacity-80">{state.userDetails?.course}</p>
         </div>
-      </div>
+      </Link>
     </>
   );
 };

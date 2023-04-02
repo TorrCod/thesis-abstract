@@ -1,4 +1,5 @@
 import {
+  ActivitylogState,
   PendingAdminList,
   SearchOption,
   SearchQuery,
@@ -104,7 +105,6 @@ export const updateUser = async (
   data: UserDetails
 ) => {
   if (token) {
-    delete data._id;
     const deleteResult = await axios.request({
       url: `/api/admin-user?collection=user&_id=${id}`,
       method: "PUT",
@@ -163,18 +163,18 @@ export const getAllUsers = async (token: string | undefined) => {
 export const getActivityLog = async (
   token: string | undefined,
   query?: { userId?: string; _id?: string },
-  option?: SearchOption
+  option?: SearchOption,
+  pageNo?: number
 ) => {
   if (token) {
     const activityLog = await axios.request({
-      url: `/api/admin-user?objective=get-activitylog${stringifyUserUri(
-        query,
-        option
-      )}`,
+      url: `/api/admin-user?objective=get-activitylog${
+        pageNo ? `&pageNo=${pageNo}` : ``
+      }${stringifyUserUri(query, option)}`,
       method: "GET",
       ...userConfig(token),
     });
-    return activityLog.data;
+    return activityLog.data as ActivitylogState;
   } else throw new Error("canont read user token");
 };
 

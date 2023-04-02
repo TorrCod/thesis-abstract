@@ -42,7 +42,7 @@ import { signOut as nextSignOut } from "next-auth/react";
 const userStateInit: UserState = {
   userDetails: undefined,
   listOfAdmins: [],
-  activityLog: [],
+  activityLog: { currentPage: 1, totalCount: 0, document: [] },
 };
 
 const userValueInit: UserValue = {
@@ -51,8 +51,8 @@ const userValueInit: UserValue = {
   saveUploadThesis: async () => {},
   loadAllUsers: async () => {},
   unsubscribeRef: { current: null },
-  loadActivityLog: async () => {
-    return [];
+  async loadActivityLog(query) {
+    return () => {};
   },
   async logOut() {},
 };
@@ -103,7 +103,11 @@ const userReducer = (state: UserState, action: UserAction): UserState => {
 export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(userReducer, userStateInit);
   const unsubscribeRef = useRef<Unsubscribe | null>(null);
-  const { dispatch: gloablDispatch, loadingState } = useGlobalContext();
+  const {
+    dispatch: gloablDispatch,
+    loadingState,
+    state: globalState,
+  } = useGlobalContext();
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
@@ -129,10 +133,16 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
         });
         dispatch({
           type: "load-activity-log",
-          payload: [],
+          payload: userStateInit.activityLog,
         });
-        gloablDispatch({ type: "load-thesis", payload: [] });
-        gloablDispatch({ type: "load-recycle", payload: [] });
+        gloablDispatch({
+          type: "load-thesis",
+          payload: { currentPage: 1, document: [], totalCount: 0 },
+        });
+        gloablDispatch({
+          type: "load-recycle",
+          payload: { currentPage: 1, document: [], totalCount: 0 },
+        });
         await axios.get("/api/logout");
       }
       unsubscribeRef.current = unsubscribe;
@@ -214,13 +224,22 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
     await addThesis(thesisItems, userToken);
   };
 
-  const loadActivityLog = async () => {
+  const loadActivityLog = async (query?: Record<string, any>) => {
     const token = await auth.currentUser?.getIdToken();
-    const activityLog = (await getActivityLog(token, undefined, {
-      limit: 10,
-    })) as ActivityLog[];
+    const activityLog = await getActivityLog(
+      token,
+      query,
+      {
+        limit: 10,
+      },
+      globalState.searchingAction.pageNo
+    );
     dispatch({ type: "load-activity-log", payload: activityLog });
-    return activityLog;
+    return clearActivitylog;
+  };
+
+  const clearActivitylog = () => {
+    dispatch({ type: "load-activity-log", payload: userStateInit.activityLog });
   };
 
   const logOut = async () => {

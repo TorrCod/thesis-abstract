@@ -38,7 +38,7 @@ const DashboardOverview: NextPageWithLayout = () => {
           <div className="md:absolute top-0 left-0 z-10">
             <Link className="grid w-fit" href={"/dashboard/thesis"}>
               <h3 className="opacity-80 mb-3 mx-5 pt-5">Thesis</h3>
-              <div className="ml-6 opacity-60 flex items-center gap-2">
+              <div className="ml-6 opacity-60 flex items-center gap-2 hover:underline hover:decoration-1 hover:text-blue-800">
                 Manage Thesis Abstracts <GoLinkExternal />
               </div>
             </Link>
@@ -60,7 +60,7 @@ const DashboardOverview: NextPageWithLayout = () => {
             <h3 className="opacity-80 mb-3">Admins</h3>
           </Link>
           <Link href="/dashboard/admins">
-            <div className="opacity-60 flex items-center gap-2 mb-5">
+            <div className="opacity-60 flex items-center gap-2 mb-5 hover:underline hover:decoration-1 hover:text-blue-800">
               Manage Co-Admins <GoLinkExternal />
             </div>
           </Link>
@@ -72,7 +72,9 @@ const DashboardOverview: NextPageWithLayout = () => {
         <div className="bg-white rounded-md p-5 flex flex-col gap-2 activitylog w-full overflow-auto">
           <Link className="w-fit" href={"/dashboard/activitylog"}>
             <h3 className="opacity-80 mb-3">Acitivity Log</h3>
-            <p className="opacity-60 mb-5">History</p>
+            <div className="opacity-60 flex items-center gap-2 mb-5 hover:underline hover:decoration-1 hover:text-blue-800">
+              All Activitylog <GoLinkExternal />
+            </div>
           </Link>
           <ActivityTimeline />
         </div>

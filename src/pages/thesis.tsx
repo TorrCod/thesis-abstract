@@ -3,7 +3,7 @@ import { SearchQuery, ThesisItems, ThesisState } from "@/context/types.d";
 import { ConfigProvider, Divider, Pagination } from "antd";
 import Head from "next/head";
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import useGlobalContext from "@/context/globalContext";
 import { useRouter } from "next/router";
 const Thesis = () => {
@@ -14,6 +14,7 @@ const Thesis = () => {
     clearDefault,
   } = useGlobalContext();
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     return () => {
@@ -24,6 +25,7 @@ const Thesis = () => {
   }, []);
 
   useEffect(() => {
+    setLoading(true);
     const { title, course, year } = router.query as SearchQuery;
     const decodedCourse = course
       ? JSON.parse(decodeURIComponent(course as unknown as string))
@@ -34,7 +36,11 @@ const Thesis = () => {
     const query = { title, course: decodedCourse, year: decodedYear };
     loadThesisItems(query, {
       projection: { title: 1, course: 1, year: 1, researchers: 1 },
-    });
+    })
+      .catch((e) => {
+        console.error(e);
+      })
+      .finally(() => setLoading(false));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.query, globalState.searchingAction.pageNo]);
 
@@ -80,7 +86,7 @@ const Thesis = () => {
             />
           </ConfigProvider>
           <div className="grid gap-2 w-full place-items-center lg:grid-cols-2 relative md:px-5">
-            {globalState.loading.includes("/thesis") ? (
+            {loading ? (
               <>
                 <ItemsLoading />
                 <ItemsLoading />

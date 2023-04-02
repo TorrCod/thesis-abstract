@@ -183,9 +183,9 @@ const UserProfile = ({ payloadUser }: { payloadUser: UserDetails }) => {
           </>
         )}
       </div>
-      <div className="bg-white rounded-md p-3 row-span-2 grid relative gap-5 grid-rows-[_0.2fr_1.8fr]">
+      <div className="bg-white rounded-md p-3 row-span-2">
         <div className="opacity-80">History</div>
-        <div className="w-full">
+        <div className="w-full mt-10">
           <Timeline mode="left" reverse items={history} />
           <Pagination
             current={globalState.searchingAction.pageNo ?? 1}

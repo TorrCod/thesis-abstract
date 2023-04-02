@@ -32,7 +32,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           case "get-activitylog": {
             const parse = parseQuery(req);
             const userId = req.query.userId as string | undefined;
-            if (userId) parse.query = { userId };
+            if (userId) (parse.query as any) = { userId };
             let activityLog: any[] = [];
             await getRawData(
               "accounts",
@@ -185,6 +185,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       }
       case "PUT": {
         const collection = req.query.collection as CollectionName;
+        delete req.body._id;
         const updateResult = await updateData(
           "accounts",
           collection,

@@ -6,15 +6,13 @@ import { useEffect } from "react";
 import PdfDownloadLink from "@/components/pdfDocs";
 import { GetServerSideProps } from "next";
 import useGlobalContext from "@/context/globalContext";
+import { useRouter } from "next/router";
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  return { props: { query: context.query } };
-};
-
-export default function Home(props: { query: string }) {
+export default function Home() {
   const { promptToSignIn } = useGlobalContext();
+  const router = useRouter();
   useEffect(() => {
-    if (Object.keys(props.query).includes("sign-in")) {
+    if (Object.keys(router.query).includes("sign-in")) {
       promptToSignIn();
     }
     document.body.style.overflow = "hidden";
@@ -22,7 +20,7 @@ export default function Home(props: { query: string }) {
       document.body.style.overflow = "visible";
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.query]);
+  }, [router]);
 
   return (
     <>

@@ -51,7 +51,9 @@ const userValueInit: UserValue = {
   saveUploadThesis: async () => {},
   loadAllUsers: async () => {},
   unsubscribeRef: { current: null },
-  async loadActivityLog() {},
+  async loadActivityLog(query) {
+    return () => {};
+  },
   async logOut() {},
 };
 
@@ -222,17 +224,22 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
     await addThesis(thesisItems, userToken);
   };
 
-  const loadActivityLog = async () => {
+  const loadActivityLog = async (query?: Record<string, any>) => {
     const token = await auth.currentUser?.getIdToken();
     const activityLog = await getActivityLog(
       token,
-      undefined,
+      query,
       {
         limit: 10,
       },
       globalState.searchingAction.pageNo
     );
     dispatch({ type: "load-activity-log", payload: activityLog });
+    return clearActivitylog;
+  };
+
+  const clearActivitylog = () => {
+    dispatch({ type: "load-activity-log", payload: userStateInit.activityLog });
   };
 
   const logOut = async () => {

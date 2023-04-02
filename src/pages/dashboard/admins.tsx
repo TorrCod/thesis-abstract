@@ -38,6 +38,7 @@ import useGlobalContext from "@/context/globalContext";
 import { readActivityLogReason } from "@/utils/helper";
 import useSocketContext from "@/context/socketContext";
 import { NextPageWithLayout } from "../_app";
+import { useEffectOnce } from "react-use";
 
 const Page: NextPageWithLayout = () => {
   const router = useRouter();
@@ -63,7 +64,7 @@ const Page: NextPageWithLayout = () => {
         ) : null}
       </div>
       {userDetails ? (
-        <UserProfile userDetails={userDetails} />
+        <UserProfile payloadUser={userDetails} />
       ) : (
         <div className="bg-white rounded-md p-5 flex flex-col gap-2 md:min-h-[85vh]">
           <p className="opacity-60 mb-5">Manage Co-Admins</p>
@@ -86,37 +87,37 @@ Page.getLayout = function getLayout(page: ReactElement) {
 
 export default Page;
 
-const UserProfile = ({ userDetails }: { userDetails: UserDetails }) => {
+const UserProfile = ({ payloadUser }: { payloadUser: UserDetails }) => {
   const [history, setHistory] = useState<TimelineProps["items"]>([]);
-  const [detail, setDetail] = useState({ pageNo: 1, totalCount: 0 });
-  const user = useUserContext().state.userDetails;
-  useEffect(() => {
-    const fetchData = async () => {
-      const token = await auth.currentUser?.getIdToken();
-      getActivityLog(token, { userId: userDetails?.uid }, { limit: 7 })
-        .then((res) => {
-          const data = res.document.map((item) => {
-            const readedData = readActivityLogReason(item);
-            return {
-              label: new Date(item.date).toLocaleString(),
-              children: <div>{readedData?.reason}</div>,
-              dot: readedData?.dot,
-              color: readedData?.color,
-            };
-          });
-          setHistory(data);
-          setDetail({ pageNo: res.currentPage, totalCount: res.totalCount });
-        })
-        .catch((e) => {
-          console.error(e);
-        });
-    };
-    if (user) {
-      fetchData();
-    }
-  }, [user, userDetails]);
+  const { state, loadActivityLog } = useUserContext();
+  const { updateSearchAction, state: globalState } = useGlobalContext();
 
-  return !userDetails ? (
+  useEffectOnce(() => updateSearchAction().clear);
+
+  useEffect(() => {
+    if (state.userDetails) {
+      loadActivityLog({ userId: payloadUser.uid });
+    }
+  }, [state.userDetails, payloadUser, globalState.searchingAction.pageNo]);
+
+  useEffect(() => {
+    const data = state.activityLog.document.map((item) => {
+      const readedData = readActivityLogReason(item);
+      return {
+        label: new Date(item.date).toLocaleString(),
+        children: <div>{readedData?.reason}</div>,
+        dot: readedData?.dot,
+        color: readedData?.color,
+      };
+    });
+    setHistory(data);
+  }, [state.activityLog.document]);
+
+  const handlePageChange = (pageNo: number) => {
+    updateSearchAction().update({ ...globalState.searchingAction, pageNo });
+  };
+
+  return !payloadUser ? (
     <></>
   ) : (
     <div className="grid gap-2 max-w-5xl m-auto lg:grid-cols-[1.2fr_0.8fr] auto-rows-auto">
@@ -124,58 +125,58 @@ const UserProfile = ({ userDetails }: { userDetails: UserDetails }) => {
         <div className="opacity-70">Profile</div>
         <div className="w-fit m-auto">
           <AdminProfile
-            userDetails={userDetails}
+            userDetails={payloadUser}
             size={{ height: "7em", width: "7em" }}
           />
         </div>
-        {userDetails?.status === "Pending" ? (
+        {payloadUser?.status === "Pending" ? (
           <>
             <div className="text-center">
-              <div>{userDetails.email}</div>
+              <div>{payloadUser.email}</div>
               <div className="text-sm bg-yellow-500 w-fit m-auto text-white px-2 rounded-md">
-                {userDetails.status}
+                {payloadUser.status}
               </div>
             </div>
             <div>
               <div className="text-sm opacity-80 ">Invited By</div>
-              {userDetails.approove}
+              {payloadUser.approove}
             </div>
             <div>
               <div className="text-sm opacity-80 ">Date Invited</div>
-              {new Date(userDetails.dateAdded as string).toLocaleString()}
+              {new Date(payloadUser.dateAdded as string).toLocaleString()}
             </div>
           </>
         ) : (
           <>
             <div className="text-center">
               <div>
-                {userDetails?.firstName} {userDetails?.lastName}
+                {payloadUser?.firstName} {payloadUser?.lastName}
               </div>
               <div className="text-sm bg-lime-500 w-fit m-auto text-white px-2 rounded-md">
-                {userDetails.status}
+                {payloadUser.status}
               </div>
             </div>
 
             <div className="grid gap-5 min-[400px]:grid-cols-2">
               <div>
                 <div className="text-sm opacity-80 ">Email</div>
-                {userDetails.email}
+                {payloadUser.email}
               </div>
               <div>
                 <div className="text-sm opacity-80 ">Username</div>
-                {userDetails.userName}
+                {payloadUser.userName}
               </div>
               <div>
                 <div className="text-sm opacity-80 ">Course</div>
-                {userDetails.course}
+                {payloadUser.course}
               </div>
               <div>
                 <div className="text-sm opacity-80 ">Invited By</div>
-                {userDetails?.approove ?? "---"}
+                {payloadUser?.approove ?? "---"}
               </div>
               <div>
                 <div className="text-sm opacity-80 ">Date joined</div>
-                {new Date(userDetails?.dateAdded as string).toLocaleString()}
+                {new Date(payloadUser?.dateAdded as string).toLocaleString()}
               </div>
             </div>
           </>
@@ -186,10 +187,10 @@ const UserProfile = ({ userDetails }: { userDetails: UserDetails }) => {
         <div className="w-full">
           <Timeline mode="left" reverse items={history} />
           <Pagination
-            current={detail.pageNo}
-            total={detail.totalCount}
+            current={globalState.searchingAction.pageNo ?? 1}
+            total={state.activityLog.totalCount}
             showSizeChanger={false}
-            onChange={() => {}}
+            onChange={handlePageChange}
           />
         </div>
       </div>

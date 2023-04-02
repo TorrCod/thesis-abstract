@@ -181,7 +181,7 @@ export type UserValue = {
   saveUploadThesis: (data: ThesisItems) => Promise<void>;
   loadAllUsers: () => Promise<void>;
   unsubscribeRef: MutableRefObject<Unsubscribe | null>;
-  loadActivityLog: () => Promise<void>;
+  loadActivityLog: (query?: Record<string, any>) => Promise<() => void>;
   logOut: () => Promise<void>;
 };
 

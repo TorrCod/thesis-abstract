@@ -9,6 +9,7 @@ import { authOptions } from "../api/auth/[...nextauth]";
 import { readActivityLogReason } from "@/utils/helper";
 import { NextPageWithLayout } from "../_app";
 import useGlobalContext from "@/context/globalContext";
+import { useEffectOnce } from "react-use";
 
 const Page: NextPageWithLayout = () => {
   const { state: userState } = useUserContext();
@@ -63,21 +64,17 @@ export const ActivityTimeline = () => {
   }, [userCtx.state.userDetails, globalState.searchingAction.pageNo]);
 
   useEffect(() => {
-    const load = async () => {
-      const newLog = activityLog.document.map((item) => {
-        const readedItem = readActivityLogReason(item);
-        return {
-          label: new Date(item.date).toLocaleString(),
-          children: <div>{readedItem?.reason}</div>,
-          dot: readedItem?.dot,
-          color: readedItem?.color,
-        };
-      });
-      const newLogFiltered = newLog.filter(async (item) => item !== null);
-      setLog(newLogFiltered as any);
-    };
-    load();
-    return () => setLog([]);
+    const newLog = activityLog.document.map((item) => {
+      const readedItem = readActivityLogReason(item);
+      return {
+        label: new Date(item.date).toLocaleString(),
+        children: <div>{readedItem?.reason}</div>,
+        dot: readedItem?.dot,
+        color: readedItem?.color,
+      };
+    });
+    const newLogFiltered = newLog.filter(async (item) => item !== null);
+    setLog(newLogFiltered as any);
   }, [activityLog]);
 
   return <Timeline mode="left" items={log} />;

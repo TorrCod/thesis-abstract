@@ -161,7 +161,8 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
             createdAt: 1,
             expireAfterSeconds: 1,
           },
-        }
+        },
+        state.searchingAction.pageNo
       );
       dispatch({ type: "load-recycle", payload: recycledThesis ?? [] });
     } catch (e) {

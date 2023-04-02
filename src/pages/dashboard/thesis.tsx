@@ -256,6 +256,7 @@ const RecycledTable = () => {
           return item;
         })}
         dataSource={removedTableData}
+        pagination={false}
       />
       <div className="mx-auto mt-5 w-fit md:absolute md:bottom-0 md:right-0 md:m-5">
         <Pagination

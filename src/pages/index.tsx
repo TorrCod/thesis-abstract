@@ -12,7 +12,7 @@ export default function Home() {
   const { promptToSignIn } = useGlobalContext();
   const router = useRouter();
   useEffect(() => {
-    if (Object.keys(router.query).includes("sign-in")) {
+    if (Object.keys(router.query).includes("signin")) {
       promptToSignIn();
     }
     document.body.style.overflow = "hidden";

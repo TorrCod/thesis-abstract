@@ -101,7 +101,11 @@ const userReducer = (state: UserState, action: UserAction): UserState => {
 export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(userReducer, userStateInit);
   const unsubscribeRef = useRef<Unsubscribe | null>(null);
-  const { dispatch: gloablDispatch, loadingState } = useGlobalContext();
+  const {
+    dispatch: gloablDispatch,
+    loadingState,
+    state: globalState,
+  } = useGlobalContext();
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
@@ -220,9 +224,14 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
 
   const loadActivityLog = async () => {
     const token = await auth.currentUser?.getIdToken();
-    const activityLog = await getActivityLog(token, undefined, {
-      limit: 10,
-    });
+    const activityLog = await getActivityLog(
+      token,
+      undefined,
+      {
+        limit: 10,
+      },
+      globalState.searchingAction.pageNo
+    );
     dispatch({ type: "load-activity-log", payload: activityLog });
   };
 

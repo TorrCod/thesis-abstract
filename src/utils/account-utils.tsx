@@ -163,14 +163,14 @@ export const getAllUsers = async (token: string | undefined) => {
 export const getActivityLog = async (
   token: string | undefined,
   query?: { userId?: string; _id?: string },
-  option?: SearchOption
+  option?: SearchOption,
+  pageNo?: number
 ) => {
   if (token) {
     const activityLog = await axios.request({
-      url: `/api/admin-user?objective=get-activitylog${stringifyUserUri(
-        query,
-        option
-      )}`,
+      url: `/api/admin-user?objective=get-activitylog${
+        pageNo ? `&pageNo=${pageNo}` : ``
+      }${stringifyUserUri(query, option)}`,
       method: "GET",
       ...userConfig(token),
     });

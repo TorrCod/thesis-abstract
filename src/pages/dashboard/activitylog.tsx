@@ -50,19 +50,14 @@ export const ActivityTimeline = () => {
   const userCtx = useUserContext();
   const { activityLog } = userCtx.state;
   const { loadActivityLog } = userCtx;
-  const runOnece = useRef(false);
+  const { state: globalState } = useGlobalContext();
 
   useEffect(() => {
-    if (
-      userCtx.state.userDetails &&
-      !activityLog.document.length &&
-      !runOnece.current
-    ) {
+    if (userCtx.state.userDetails) {
       loadActivityLog();
-      runOnece.current = true;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userCtx.state.userDetails, activityLog]);
+  }, [userCtx.state.userDetails, globalState.searchingAction.pageNo]);
 
   useEffect(() => {
     const load = async () => {

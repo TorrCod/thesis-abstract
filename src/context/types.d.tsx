@@ -128,6 +128,7 @@ export type GlobalValue = {
     update: (payload: SearchAction) => void;
     clear: () => void;
   };
+  clearDefault: () => void;
 };
 
 export type AdminData = {

@@ -19,6 +19,7 @@ import useUserContext from "@/context/userContext";
 import SignInSignUp from "./signin_signup";
 import { AiFillHome } from "react-icons/ai";
 import { IoHomeOutline } from "react-icons/io5";
+import useGlobalContext from "@/context/globalContext";
 
 type DashboardProps = {
   children?: React.ReactNode;
@@ -51,6 +52,7 @@ function DashboardLayout({ children }: DashboardProps) {
   const [selectedSider, setSelectedSider] = useState("/dashboard");
   const { pathname } = useLocation();
   const { logOut } = useUserContext();
+  const { clearDefault } = useGlobalContext();
   const router = useRouter();
 
   useEffect(() => {
@@ -67,7 +69,10 @@ function DashboardLayout({ children }: DashboardProps) {
       (
         document.getElementsByClassName("bg-circle")[0] as HTMLDivElement
       ).style.display = "grid";
+
+      clearDefault();
     };
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

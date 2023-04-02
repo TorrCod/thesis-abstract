@@ -68,6 +68,7 @@ const globalCtxInit: GlobalValue = {
   updateSearchAction() {
     return { update(payload) {}, clear() {} };
   },
+  clearDefault() {},
 };
 
 const GlobalContext = createContext<GlobalValue>(globalCtxInit);
@@ -282,10 +283,15 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
     });
   };
 
+  const clearDefault = () => {
+    dispatch({ type: "load-thesis", payload: globalStateInit.thesisItems });
+  };
+
   return (
     <GlobalContext.Provider
       value={{
         state,
+        clearDefault,
         recycleThesis,
         restoreThesis,
         dispatch,

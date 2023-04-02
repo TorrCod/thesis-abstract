@@ -11,10 +11,16 @@ const Thesis = () => {
     state: globalState,
     loadThesisItems,
     updateSearchAction,
+    clearDefault,
   } = useGlobalContext();
   const router = useRouter();
 
-  useEffect(() => updateSearchAction().clear, []);
+  useEffect(() => {
+    return () => {
+      updateSearchAction().clear;
+      clearDefault();
+    };
+  }, []);
 
   useEffect(() => {
     const { title, course, year } = router.query as SearchQuery;

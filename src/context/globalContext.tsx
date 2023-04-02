@@ -21,6 +21,8 @@ import {
   GlobalState,
   GlobalValue,
   SearchAction,
+  SearchOption,
+  SearchQuery,
   ThesisItems,
 } from "./types.d";
 import Router from "next/router";
@@ -42,8 +44,8 @@ const globalStateInit: GlobalState = {
   totalThesisCount: { totalCount: 0, thesisCount: totalDataInit },
   searchingAction: {
     filterState: {
-      years: { all: true, option: [] },
-      course: { all: true, option: courseOption as Course[] },
+      years: { all: true },
+      course: { all: true, option: courseOption },
     },
   },
 };
@@ -124,14 +126,28 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
     return { update, clear };
   };
 
-  const loadThesisItems = async () => {
+  const loadThesisItems = async (
+    query?: SearchQuery,
+    option?: SearchOption
+  ) => {
     try {
       loadingState.add("all-thesis");
+      const { searchTitle: title } = state.searchingAction;
+      const { option: course } = state.searchingAction.filterState.course;
+      const { option: year } = state.searchingAction.filterState.years;
       const thesisItems = await getAllThesis(
-        { title: state.searchingAction.searchTitle },
         {
-          limit: 10,
-          projection: { title: 1, course: 1, dateAdded: 1 },
+          title: query?.title ?? title,
+          course: query?.course ?? course,
+          year: query?.year ?? year,
+        },
+        {
+          limit: option?.limit ?? 10,
+          projection: option?.projection ?? {
+            title: 1,
+            course: 1,
+            dateAdded: 1,
+          },
         },
         state.searchingAction.pageNo
       );

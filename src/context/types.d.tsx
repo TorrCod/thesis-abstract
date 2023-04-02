@@ -20,8 +20,8 @@ export type SearchAction = {
 };
 
 export type FilterState = {
-  years: { all: boolean; option: string[] };
-  course: { all: boolean; option: Course[] };
+  years: { all: boolean; option?: string[] };
+  course: { all: boolean; option?: Course[] };
 };
 
 export type ThesisCount = { course: Course; count: number }[];
@@ -109,7 +109,10 @@ export type GlobalAction =
 export type GlobalValue = {
   state: GlobalState;
   dispatch: Dispatch<GlobalAction>;
-  loadThesisItems: () => Promise<void>;
+  loadThesisItems: (
+    query?: SearchQuery,
+    option?: SearchOption
+  ) => Promise<void>;
   loadRecycle: () => Promise<void>;
   loadThesisCount: () => Promise<void>;
   loadingState: {

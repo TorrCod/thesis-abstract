@@ -65,41 +65,14 @@ const Search = ({ className, limit, onSearch, showFilter }: SearchProps) => {
     searchReducer,
     searchState_init
   );
-  const globalCtx = useGlobalContext();
+  const { state, updateSearchAction } = useGlobalContext();
   const { course: courseOpt, years: yearsOpt } =
-    globalCtx.state.searchingAction.filterState;
+    state.searchingAction.filterState;
   const searchRef = useRef<HTMLDivElement>(null);
   const onSearchRef = useRef<HTMLAnchorElement>(null);
   useClickAway(searchRef, () => {
     searchDispatch({ type: "onfocus", payload: false });
   });
-
-  useEffect(() => {
-    if (!yearsOpt.option.length) {
-      const newFilterState = { ...globalCtx.state.searchingAction.filterState };
-      newFilterState["years"] = {
-        all: true,
-        option: globalCtx.state.dateOption,
-      };
-      globalCtx
-        .updateSearchAction()
-        .update({
-          ...globalCtx.state.searchingAction,
-          filterState: newFilterState,
-        });
-    }
-    if (!courseOpt.option.length) {
-      const newFilterState = { ...globalCtx.state.searchingAction.filterState };
-      newFilterState["course"] = { all: true, option: courseOption };
-      globalCtx
-        .updateSearchAction()
-        .update({
-          ...globalCtx.state.searchingAction,
-          filterState: newFilterState,
-        });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [yearsOpt.option.length, courseOpt.option.length]);
 
   const handleSearch = () => {
     const title = searchState.searchTitle;
@@ -109,7 +82,11 @@ const Search = ({ className, limit, onSearch, showFilter }: SearchProps) => {
   };
 
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
-    searchDispatch({ type: "onchange", payload: e.target.value });
+    updateSearchAction().update({
+      ...state.searchingAction,
+      searchTitle:
+        e.currentTarget.value === "" ? undefined : e.currentTarget.value,
+    });
   };
 
   const handleShowMore = () => {
@@ -131,12 +108,16 @@ const Search = ({ className, limit, onSearch, showFilter }: SearchProps) => {
         <Link
           ref={onSearchRef}
           href={`/thesis?${
-            searchState.searchTitle ? `title=${searchState.searchTitle}` : ``
+            state.searchingAction.searchTitle
+              ? `title=${state.searchingAction.searchTitle}`
+              : ``
           }${
-            courseOpt.all
+            state.searchingAction.filterState.course.all
               ? ``
               : `&course=${encodeURIComponent(
-                  JSON.stringify(courseOpt.option)
+                  JSON.stringify(
+                    state.searchingAction.filterState.course.option
+                  )
                 )}`
           }${
             yearsOpt.all
@@ -156,10 +137,15 @@ const Search = ({ className, limit, onSearch, showFilter }: SearchProps) => {
               searchDispatch={searchDispatch}
               searchState={searchState}
             />
-            {courseOpt.all ? (
+            {state.searchingAction.filterState.course.all ? (
               <FilterItems type="course" items={["All"]} noAction />
             ) : (
-              <FilterItems type="course" items={courseOpt.option as string[]} />
+              <FilterItems
+                type="course"
+                items={
+                  state.searchingAction.filterState.course.option as string[]
+                }
+              />
             )}
           </div>
           <div>
@@ -285,7 +271,6 @@ const DropDownCourse = ({
         All
       </Checkbox>
       <Checkbox.Group
-        // options={courseOption}
         value={courseOpt.option as string[]}
         onChange={handleCheckBxCourse}
       >
@@ -441,7 +426,7 @@ const SearchItem = (
     searchTimeoutRef.current = setTimeout(() => {
       getAllThesis(
         {
-          title: props.searchTitle,
+          title: state.searchingAction.searchTitle,
           course: state.searchingAction.filterState.course.option,
           year: state.searchingAction.filterState.years.option,
         },
@@ -486,7 +471,11 @@ const SearchItem = (
     }, 200);
     return () => clearTimeout(searchTimeoutRef.current ?? 0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.searchTitle, props.limit, state.searchingAction.filterState]);
+  }, [
+    state.searchingAction.searchTitle,
+    props.limit,
+    state.searchingAction.filterState,
+  ]);
 
   const handleSelect: MenuProps["onSelect"] = (item) => {
     props.searchDispatch({ type: "onfocus", payload: false });

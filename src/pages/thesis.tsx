@@ -1,38 +1,35 @@
 import Search from "@/components/search";
-import { ThesisItems, ThesisState } from "@/context/types.d";
+import { SearchQuery, ThesisItems, ThesisState } from "@/context/types.d";
 import { Divider } from "antd";
 import Head from "next/head";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import useGlobalContext from "@/context/globalContext";
 import { useRouter } from "next/router";
-import { getAllThesis } from "@/utils/thesis-item-utils";
-
 const Thesis = () => {
-  const { state: globalState, loadingState } = useGlobalContext();
-  const [thesisItems, setThesisItems] = useState<ThesisState>({
-    document: [],
-    totalPage: 1,
-    currentPage: 1,
-  });
+  const {
+    state: globalState,
+    loadThesisItems,
+    updateSearchAction,
+  } = useGlobalContext();
   const router = useRouter();
 
+  useEffect(() => updateSearchAction().clear, []);
+
   useEffect(() => {
-    loadingState.add("/thesis");
-    const title = router.query.title as string | undefined;
-    const course =
-      router.query.course && JSON.parse(router.query.course as string);
-    const year = router.query.year && JSON.parse(router.query.year as string);
-    getAllThesis({ title, course, year }, { limit: 10 })
-      .then((res) => {
-        setThesisItems(res);
-      })
-      .catch((e) => {
-        console.error(e);
-      })
-      .finally(() => loadingState.remove("/thesis"));
+    const { title, course, year } = router.query as SearchQuery;
+    const decodedCourse = course
+      ? JSON.parse(decodeURIComponent(course as unknown as string))
+      : undefined;
+    const decodedYear = year
+      ? JSON.parse(decodeURIComponent(year as unknown as string))
+      : undefined;
+    const query = { title, course: decodedCourse, year: decodedYear };
+    loadThesisItems(query, {
+      projection: { title: 1, course: 1, year: 1, researchers: 1 },
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router]);
+  }, [router.query]);
 
   return (
     <>
@@ -64,7 +61,7 @@ const Thesis = () => {
                 <ItemsLoading />
               </>
             ) : (
-              thesisItems.document?.map((thesisItem) => {
+              globalState.thesisItems.document.map((thesisItem) => {
                 return <Items key={thesisItem._id} {...thesisItem} />;
               })
             )}

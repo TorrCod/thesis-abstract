@@ -22,3 +22,5 @@ describe('Navigation', () => {
         cy.visit('http://localhost:3000/thesis')
       })
   })
+
+export {}

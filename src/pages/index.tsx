@@ -28,10 +28,7 @@ export default function Home() {
         <title>
           Thesis Abstract Management System for College of Engineering
         </title>
-        <meta
-          name="description"
-          content="Web based Thesis Abstract Management System for College of Engineering"
-        />
+        <link rel="manifest" href="/manifest.json" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <section>

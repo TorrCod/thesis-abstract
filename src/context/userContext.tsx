@@ -116,26 +116,6 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
           const res: UserDetails = await getUserDetails(token, user.uid);
           res.profilePic = user.photoURL as any;
           dispatch({ type: "on-signin", payload: { userDetails: res } });
-        } else {
-          dispatch({
-            type: "on-logout",
-          });
-          dispatch({
-            type: "load-all-users",
-            payload: { adminList: [], pendingAdminList: [] },
-          });
-          dispatch({
-            type: "load-activity-log",
-            payload: userStateInit.activityLog,
-          });
-          gloablDispatch({
-            type: "load-thesis",
-            payload: { currentPage: 1, document: [], totalCount: 0 },
-          });
-          gloablDispatch({
-            type: "load-recycle",
-            payload: { currentPage: 1, document: [], totalCount: 0 },
-          });
         }
         unsubscribeRef.current = unsubscribe;
       } catch (e) {
@@ -241,6 +221,25 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
   };
 
   const logOut = async () => {
+    dispatch({
+      type: "on-logout",
+    });
+    dispatch({
+      type: "load-all-users",
+      payload: { adminList: [], pendingAdminList: [] },
+    });
+    dispatch({
+      type: "load-activity-log",
+      payload: userStateInit.activityLog,
+    });
+    gloablDispatch({
+      type: "load-thesis",
+      payload: { currentPage: 1, document: [], totalCount: 0 },
+    });
+    gloablDispatch({
+      type: "load-recycle",
+      payload: { currentPage: 1, document: [], totalCount: 0 },
+    });
     await auth.signOut();
     await nextSignOut({ callbackUrl: "/?signin" });
     await axios.get("/api/logout");

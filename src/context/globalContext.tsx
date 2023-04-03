@@ -38,7 +38,7 @@ const totalDataInit: { course: Course; count: number }[] = [
 const globalStateInit: GlobalState = {
   thesisItems: { totalCount: 0, currentPage: 1, document: [] },
   dateOption: [],
-  loading: ["all-thesis", "all-admin"],
+  loading: [],
   recyclebin: { totalCount: 0, currentPage: 1, document: [] },
   searchThesis: [],
   totalThesisCount: { totalCount: 0, thesisCount: totalDataInit },
@@ -138,7 +138,6 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
     option?: SearchOption
   ) => {
     try {
-      loadingState.add("all-thesis");
       const { searchTitle: title } = state.searchingAction;
       const { option: course, default: courseDefault } =
         state.searchingAction.filterState.course;
@@ -174,8 +173,6 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
       });
     } catch (e) {
       console.error(e);
-    } finally {
-      loadingState.remove("all-thesis");
     }
   };
 

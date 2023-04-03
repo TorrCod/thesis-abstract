@@ -5,6 +5,7 @@ import Search from "@/components/search";
 import { useEffect } from "react";
 import useGlobalContext from "@/context/globalContext";
 import { useRouter } from "next/router";
+import { Button } from "antd";
 
 export default function Home() {
   const { promptToSignIn } = useGlobalContext();
@@ -26,10 +27,6 @@ export default function Home() {
         <title>
           Thesis Abstract Management System for College of Engineering
         </title>
-        <meta
-          name="viewport"
-          content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, user-scalable=no, viewport-fit=cover"
-        />
       </Head>
       <section>
         <header className="relative text-white md:grid md:grid-cols-2 place-items-center md:h-screen md:max-h-[70em]">
@@ -44,7 +41,9 @@ export default function Home() {
               </div>
             </div>
             <div className="z-[1] mt-12">
-              <PriButton size="large">Get Started</PriButton>
+              <Button className="bg-[#f8b49c]" type="primary" size="large">
+                Get Started
+              </Button>
             </div>
           </div>
           <div className="relative md:min-w-[50em] w-full h-[25em] md:w-full md:h-3/4 md:min-h-96 -z-10">

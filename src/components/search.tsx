@@ -107,6 +107,7 @@ const Search = ({ className, limit, onSearch, showFilter }: SearchProps) => {
           placeholder="Search"
         />
         <Link
+          aria-label="Goto Collection of Thesis"
           ref={onSearchRef}
           href={`/thesis?${
             state.searchingAction.searchTitle
@@ -126,7 +127,11 @@ const Search = ({ className, limit, onSearch, showFilter }: SearchProps) => {
               : `&year=${encodeURIComponent(JSON.stringify(yearsOpt.option))}`
           }`}
         >
-          <PriButton htmlType="submit" onClick={handleSearch}>
+          <PriButton
+            aria-label="View Thesis"
+            htmlType="submit"
+            onClick={handleSearch}
+          >
             <BsSearch color="white" />
           </PriButton>
         </Link>

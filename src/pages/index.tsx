@@ -3,8 +3,6 @@ import Image from "next/image";
 import { PriButton } from "@/components/button";
 import Search from "@/components/search";
 import { useEffect } from "react";
-import PdfDownloadLink from "@/components/pdfDocs";
-import { GetServerSideProps } from "next";
 import useGlobalContext from "@/context/globalContext";
 import { useRouter } from "next/router";
 

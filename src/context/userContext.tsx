@@ -110,42 +110,40 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
   } = useGlobalContext();
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        try {
+      try {
+        if (user) {
           const token = await user.getIdToken();
           const res: UserDetails = await getUserDetails(token, user.uid);
           res.profilePic = user.photoURL as any;
           dispatch({ type: "on-signin", payload: { userDetails: res } });
-        } catch (e) {
-          message.error("failed to fetch user details");
-          console.error(e);
-          nextSignOut({ redirect: false });
-          axios.get("/api/logout");
-          await auth.signOut();
+        } else {
+          dispatch({
+            type: "on-logout",
+          });
+          dispatch({
+            type: "load-all-users",
+            payload: { adminList: [], pendingAdminList: [] },
+          });
+          dispatch({
+            type: "load-activity-log",
+            payload: userStateInit.activityLog,
+          });
+          gloablDispatch({
+            type: "load-thesis",
+            payload: { currentPage: 1, document: [], totalCount: 0 },
+          });
+          gloablDispatch({
+            type: "load-recycle",
+            payload: { currentPage: 1, document: [], totalCount: 0 },
+          });
         }
-      } else {
-        dispatch({
-          type: "on-logout",
-        });
-        dispatch({
-          type: "load-all-users",
-          payload: { adminList: [], pendingAdminList: [] },
-        });
-        dispatch({
-          type: "load-activity-log",
-          payload: userStateInit.activityLog,
-        });
-        gloablDispatch({
-          type: "load-thesis",
-          payload: { currentPage: 1, document: [], totalCount: 0 },
-        });
-        gloablDispatch({
-          type: "load-recycle",
-          payload: { currentPage: 1, document: [], totalCount: 0 },
-        });
-        await axios.get("/api/logout");
+        unsubscribeRef.current = unsubscribe;
+      } catch (e) {
+        console.error(e);
+        nextSignOut({ redirect: false });
+        axios.get("/api/logout");
+        await auth.signOut();
       }
-      unsubscribeRef.current = unsubscribe;
     });
     return () => {
       unsubscribe();

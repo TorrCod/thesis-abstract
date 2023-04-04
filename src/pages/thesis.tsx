@@ -1,5 +1,5 @@
 import Search from "@/components/search";
-import { SearchQuery, ThesisItems, ThesisState } from "@/context/types.d";
+import { SearchQuery, ThesisItems } from "@/context/types.d";
 import { ConfigProvider, Divider, Pagination } from "antd";
 import Head from "next/head";
 import Link from "next/link";
@@ -47,7 +47,6 @@ const Thesis = () => {
   const handlePageChange = (pageNo: number) => {
     updateSearchAction().update({ ...globalState.searchingAction, pageNo });
   };
-
   return (
     <>
       <Head>

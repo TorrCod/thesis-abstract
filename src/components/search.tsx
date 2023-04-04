@@ -107,6 +107,7 @@ const Search = ({ className, limit, onSearch, showFilter }: SearchProps) => {
           placeholder="Search"
         />
         <Link
+          aria-label="Goto Collection of Thesis"
           ref={onSearchRef}
           href={`/thesis?${
             state.searchingAction.searchTitle
@@ -126,7 +127,11 @@ const Search = ({ className, limit, onSearch, showFilter }: SearchProps) => {
               : `&year=${encodeURIComponent(JSON.stringify(yearsOpt.option))}`
           }`}
         >
-          <PriButton htmlType="submit" onClick={handleSearch}>
+          <PriButton
+            aria-label="View Thesis"
+            htmlType="submit"
+            onClick={handleSearch}
+          >
             <BsSearch color="white" />
           </PriButton>
         </Link>
@@ -299,15 +304,12 @@ const DropDownCourse = ({
       destroyPopupOnHide
       autoAdjustOverflow
     >
-      <a
-        className="cursor-pointer text-slate-900"
-        onClick={(e) => e.preventDefault()}
-      >
+      <div className="cursor-pointer text-slate-900">
         <Space>
           Course
           <DownOutlined />
         </Space>
-      </a>
+      </div>
     </Dropdown>
   );
 };
@@ -394,15 +396,12 @@ const DropdownYear = ({
       getPopupContainer={() => document.getElementById("filter-component")!}
       destroyPopupOnHide
     >
-      <a
-        className="cursor-pointer text-slate-900"
-        onClick={(e) => e.preventDefault()}
-      >
+      <div className="cursor-pointer text-slate-900">
         <Space>
-          Date
+          Year
           <DownOutlined />
         </Space>
-      </a>
+      </div>
     </Dropdown>
   );
 };

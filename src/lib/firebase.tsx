@@ -25,10 +25,12 @@ import { signIn as nextSignIn } from "next-auth/react";
 //   measurementId: "G-E8FRF13T22",
 // };
 
-export const firebaseConfig = process.env.NEXT_PUBLIC_FIREBASE_CONFIG;
+export const firebaseConfig = JSON.parse(
+  process.env.NEXT_PUBLIC_FIREBASE_CONFIG || "{}"
+);
 
 // Initialize Firebase
-const app = initializeApp(JSON.parse(firebaseConfig || "{}"));
+const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const firebaseStorage = getStorage(app);
 

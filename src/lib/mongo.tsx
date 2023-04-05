@@ -11,8 +11,7 @@ import {
   WithId,
   Sort,
 } from "mongodb";
-import { Worker } from "worker_threads";
-import { CollectionName, DatabaseName, QueryPost } from "./types";
+import { CollectionName, DatabaseName } from "./types";
 
 let CONNECTION = [
   process.env["MONGO_URI1"],

@@ -15,18 +15,20 @@ import {
 } from "firebase/storage";
 import { signIn as nextSignIn } from "next-auth/react";
 
-export const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_APP_ID,
-  measurementId: process.env.NEXT_PUBLIC_MEASUREMENT_ID,
-};
+// export const firebaseConfig = {
+//   apiKey: "AIzaSyBZlCW7q74uaLWyQs6Nzf8CGduhQpZNcs8",
+//   authDomain: "thesis-abstract-account.firebaseapp.com",
+//   projectId: "thesis-abstract-account",
+//   storageBucket: "thesis-abstract-account.appspot.com",
+//   messagingSenderId: "172867120828",
+//   appId: "1:172867120828:web:497eabd0f6c44af7e32ab9",
+//   measurementId: "G-E8FRF13T22",
+// };
+
+export const firebaseConfig = process.env.NEXT_PUBLIC_FIREBASE_CONFIG;
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+const app = initializeApp(JSON.parse(firebaseConfig || "{}"));
 export const auth = getAuth(app);
 export const firebaseStorage = getStorage(app);
 

@@ -19,6 +19,10 @@ let CONNECTION = [
   process.env["MONGO_URI3"],
 ];
 
+if (process.env.NODE_ENV === "production") {
+  CONNECTION = [process.env["MONGO_URI"]];
+}
+
 export const connectToDatabase = async () => {
   let client: MongoClient | undefined;
   let connected = false;

@@ -1,9 +1,23 @@
 version: 1
+backend:
+  nodejs:
+    runtime: nodejs18.14.2
+  phases:
+    prebuild:
+      - apt update
+      - mkdir -p /usr/share/tesseract-ocr/tessdata/configs
+    build:
+      - apt install tesseract-ocr ghostscript pdftk
+      - apt install
+
 frontend:
   phases:
     preBuild:
       commands:
         - npm ci
+        - cd /node_modules/pdf-extract
+        - cp ./share/eng.traineddata /usr/share/tesseract-ocr/tessdata/eng.traineddata
+        - cp ./share/configs/alphanumeric /usr/share/tesseract-ocr/tessdata/configs/alphanumeric
     build:
       commands:
         - npm run build
@@ -14,6 +28,3 @@ frontend:
   cache:
     paths:
       - node_modules/**/*
-backend:
-  nodejs:
-    runtime: nodejs18.14.2

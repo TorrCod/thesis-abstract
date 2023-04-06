@@ -24,14 +24,16 @@ jobs:
         node-version: [18.14.2]
 
     steps:
-      - name: Check Env
-      - run: |
-        echo "env admin config: $ADMIN_CONFIG"
-      # - uses: actions/checkout@v3
-      # - name: Use Node.js ${{ matrix.node-version }}
-      #   uses: actions/setup-node@v3
-      #   with:
-      #     node-version: ${{ matrix.node-version }}
-      # - run: npm ci
-      # - run: npm run build
-      # - run: npm test
+      - name: Use variables
+        run: |
+          echo "variable from shell environment : $env_var"
+
+    # steps:
+    #   - uses: actions/checkout@v3
+    #   - name: Use Node.js ${{ matrix.node-version }}
+    #     uses: actions/setup-node@v3
+    #     with:
+    #       node-version: ${{ matrix.node-version }}
+    #   - run: npm ci
+    #   - run: npm run build
+    #   - run: npm test

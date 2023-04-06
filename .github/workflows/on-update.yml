@@ -18,6 +18,14 @@ jobs:
       - uses: actions/checkout@v3
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
+      - name: Deploy to Production
+        env:
+          ADMIN_CONFIG: ${{ secrets.ADMIN_CONFIG}}
+          MONGO_URI: ${{ secrets.MONGO_URI }}
+          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+          NEXT_PUBLIC_FIREBASE_CONFIG: ${{ secrets.NEXT_PUBLIC_FIREBASE_CONFIG }}
+          NEXTAUTH_URL: ${{ env.NEXTAUTH_URL }}
+          NEXT_PUBLIC_DOMAIN: ${{ env.NEXT_PUBLIC_DOMAIN }}
         with:
           node-version: ${{ matrix.node-version }}
       - run: npm ci

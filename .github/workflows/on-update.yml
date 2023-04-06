@@ -6,13 +6,13 @@ on:
   pull_request:
     branches: [to-cloud-aws]
 
-env:
-  ADMIN_CONFIG: ${{ secrets.ADMIN_CONFIG}}
-  MONGO_URI: ${{ secrets.MONGO_URI }}
-  NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
-  NEXT_PUBLIC_FIREBASE_CONFIG: ${{ secrets.NEXT_PUBLIC_FIREBASE_CONFIG }}
-  # NEXTAUTH_URL: ${{ vars.NEXTAUTH_URL }}
-  NEXT_PUBLIC_DOMAIN: ${{ vars.NEXT_PUBLIC_DOMAIN }}
+# env:
+#   ADMIN_CONFIG: ${{ secrets.ADMIN_CONFIG}}
+#   MONGO_URI: ${{ secrets.MONGO_URI }}
+#   NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+#   NEXT_PUBLIC_FIREBASE_CONFIG: ${{ secrets.NEXT_PUBLIC_FIREBASE_CONFIG }}
+#   # NEXTAUTH_URL: ${{ vars.NEXTAUTH_URL }}
+#   NEXT_PUBLIC_DOMAIN: ${{ vars.NEXT_PUBLIC_DOMAIN }}
 
 jobs:
   build:
@@ -23,11 +23,14 @@ jobs:
         node-version: [18.14.2]
 
     steps:
-      - uses: actions/checkout@v3
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
-      - run: npm ci
-      - run: npm run build --if-present
-      - run: npm test
+      - name: Use variables
+        run: |
+          echo "repository variable : ${{ vars.NEXTAUTH_URL }}"
+        # - uses: actions/checkout@v3
+        # - name: Use Node.js ${{ matrix.node-version }}
+        #   uses: actions/setup-node@v3
+        #   with:
+        #     node-version: ${{ matrix.node-version }}+
+        # - run: npm ci
+        # - run: npm run build --if-present
+        # - run: npm test

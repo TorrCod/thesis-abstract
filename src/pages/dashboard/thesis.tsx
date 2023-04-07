@@ -246,6 +246,7 @@ export const ThesisTable = () => {
     layout_ref.addEventListener("scroll", scrollHandler);
     return () => {
       layout_ref?.removeEventListener("scroll", scrollHandler);
+      updateSearchAction().clear();
     };
   }, [state.thesisItems]);
 

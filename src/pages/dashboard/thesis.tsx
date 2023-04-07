@@ -228,7 +228,11 @@ const RecycledTable = () => {
   const [removedTableData, setRemovedTableData] = useState<DataType[]>([]);
   const { state, loadRecycle } = useGlobalContext();
   const { userDetails } = useUserContext().state;
-  const { updateSearchAction, state: globalState } = useGlobalContext();
+  const {
+    updateSearchAction,
+    state: globalState,
+    loadingState,
+  } = useGlobalContext();
   const router = useRouter();
 
   useEffect(() => {
@@ -245,7 +249,8 @@ const RecycledTable = () => {
 
   useEffect(() => {
     if (userDetails) {
-      loadRecycle();
+      loadingState.add("recycle-table");
+      loadRecycle().finally(() => loadingState.remove("recycle-table"));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userDetails, globalState.searchingAction]);
@@ -263,6 +268,7 @@ const RecycledTable = () => {
   return (
     <>
       <Table
+        loading={state.loading.includes("recycle-table")}
         className="min-w-[40em]"
         columns={removeTableColumn.map((item) => {
           if (item.key === "title") item.render = undefined;

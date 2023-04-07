@@ -239,6 +239,10 @@ export const ThesisTable = () => {
   useEffectOnce(() => updateSearchAction().clear());
 
   useEffect(() => {
+    const thesisItems = state.thesisItems;
+    const toTableThesisItems = thesisToDataType(thesisItems.document);
+    setThesisTableData(toTableThesisItems);
+
     const layout_ref = document.getElementById(
       "layout-container"
     ) as HTMLDivElement;
@@ -247,13 +251,6 @@ export const ThesisTable = () => {
     return () => {
       scrollRef.current?.removeEventListener("scroll", scrollHandler);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.thesisItems]);
-
-  useEffect(() => {
-    const thesisItems = state.thesisItems;
-    const toTableThesisItems = thesisToDataType(thesisItems.document);
-    setThesisTableData(toTableThesisItems);
   }, [state.thesisItems]);
 
   return (
@@ -272,8 +269,10 @@ export const ThesisTable = () => {
 const RecycledTable = () => {
   const [removedTableData, setRemovedTableData] = useState<DataType[]>([]);
   const { state } = useGlobalContext();
-  const { updateSearchAction, loadingState, loadRecycle } = useGlobalContext();
+  const { updateSearchAction, loadingState, loadRecycle, dispatch } =
+    useGlobalContext();
   const router = useRouter();
+  const scrollRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     return () => updateSearchAction().clear();
@@ -287,10 +286,64 @@ const RecycledTable = () => {
       : "";
   };
 
+  const scrollHandler = async (event: Event) => {
+    const { scrollTop, scrollHeight, clientHeight } =
+      event.target as HTMLDivElement;
+    const isBottom = scrollHeight - scrollTop === clientHeight;
+    if (
+      isBottom &&
+      !(state.recyclebin.document.length === state.recyclebin.totalCount)
+    ) {
+      const newSearchAction = { ...state.searchingAction };
+      newSearchAction.pageNo = (newSearchAction.pageNo ?? 1) + 1;
+
+      const searchAction = newSearchAction;
+      const { searchTitle: title } = searchAction;
+      const token = await auth.currentUser?.getIdToken();
+      const recyclebin = await getAllDeletedThesis(
+        token,
+        {
+          title,
+        },
+        {
+          projection: {
+            title: 1,
+            course: 1,
+            createdAt: 1,
+            expireAfterSeconds: 1,
+          },
+        },
+        searchAction.pageNo,
+        searchAction.pageSize
+      );
+      if (
+        recyclebin.document.length &&
+        !(state.recyclebin.document.length === state.recyclebin.totalCount)
+      ) {
+        const newRecycleState = { ...state.recyclebin };
+        newRecycleState.document = [
+          ...newRecycleState.document,
+          ...recyclebin.document,
+        ];
+        dispatch({ type: "load-recycle", payload: newRecycleState });
+        updateSearchAction().update(newSearchAction);
+      }
+    }
+  };
+
   useEffect(() => {
     const thesisItems = state.recyclebin.document;
     const toTableThesisItems = thesisToDataType(thesisItems);
     setRemovedTableData(toTableThesisItems);
+
+    const layout_ref = document.getElementById(
+      "layout-container"
+    ) as HTMLDivElement;
+    scrollRef.current = layout_ref;
+    scrollRef.current.addEventListener("scroll", scrollHandler);
+    return () => {
+      scrollRef.current?.removeEventListener("scroll", scrollHandler);
+    };
   }, [state.recyclebin]);
 
   const handlePageChange: PaginationProps["onChange"] = (pageNo) => {
@@ -319,16 +372,6 @@ const RecycledTable = () => {
         pagination={false}
         rowClassName={highlightRow}
       />
-      <div className="mx-auto mt-5 w-fit md:absolute md:bottom-0 md:right-0 md:m-5">
-        <Pagination
-          current={state.searchingAction.pageNo ?? state.recyclebin.currentPage}
-          defaultCurrent={
-            state.searchingAction.pageNo ?? state.recyclebin.currentPage
-          }
-          total={state.recyclebin.totalCount}
-          onChange={handlePageChange}
-        />
-      </div>
     </>
   );
 };

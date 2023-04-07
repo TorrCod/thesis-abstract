@@ -209,7 +209,6 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
               : undefined),
         },
         {
-          limit: option?.limit ?? 30,
           projection: option?.projection ?? {
             title: 1,
             course: 1,
@@ -217,7 +216,8 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
             expireAfterSeconds: 1,
           },
         },
-        1
+        1,
+        searchAction.pageSize * (searchAction.pageNo ?? 1)
       );
       dispatch({ type: "load-recycle", payload: recycledThesis ?? [] });
     } catch (e) {

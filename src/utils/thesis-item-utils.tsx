@@ -61,13 +61,17 @@ export const getAllDeletedThesis = async (
   token: string | undefined,
   query?: SearchQuery,
   option?: SearchOption,
-  pageNo?: number
+  pageNo?: number,
+  pageSize?: number
 ) => {
   if (token) {
     const res = await axios.get(
       `/api/thesis-items?collection=deleted-thesis${
         pageNo ? `&pageNo=${pageNo}` : ``
-      }${stringifyURI(query, option)}`,
+      }${pageSize ? `&pageSize=${pageSize}` : ``}${stringifyURI(
+        query,
+        option
+      )}`,
       userConfig(token)
     );
     return res.data as ThesisState;

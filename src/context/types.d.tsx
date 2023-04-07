@@ -127,13 +127,18 @@ export type GlobalValue = {
   promptToSignIn: () => void;
   addThesisItem: (document: ThesisItems) => void;
   removeThesisItem: (_id: string) => ThesisState;
-  restoreThesis: (_id: string) => void;
+  restoreThesis: (_id: string) => {
+    document: ThesisItems[];
+    currentPage: number;
+    totalCount: number;
+  };
   recycleThesis: (thesis: ThesisItems) => void;
   updateSearchAction: () => {
     update: (payload: SearchAction) => void;
     clear: () => void;
   };
   clearDefault: () => void;
+  refreshThesis: () => Promise<void>;
 };
 
 export type AdminData = {

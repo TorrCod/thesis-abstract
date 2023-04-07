@@ -65,12 +65,15 @@ const globalCtxInit: GlobalValue = {
   removeThesisItem(_id) {
     return { totalCount: 0, currentPage: 1, document: [] };
   },
-  restoreThesis(_id) {},
+  restoreThesis(_id) {
+    return { totalCount: 0, currentPage: 1, document: [] };
+  },
   recycleThesis(thesis) {},
   updateSearchAction() {
     return { update(payload) {}, clear() {} };
   },
   clearDefault() {},
+  async refreshThesis() {},
 };
 
 const GlobalContext = createContext<GlobalValue>(globalCtxInit);
@@ -317,9 +320,14 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
     dispatch({ type: "load-thesis", payload: globalStateInit.thesisItems });
   };
 
+  const refreshThesis = async () => {
+    await Promise.all([loadThesisItems(), loadRecycle(), loadThesisCount()]);
+  };
+
   return (
     <GlobalContext.Provider
       value={{
+        refreshThesis,
         state,
         clearDefault,
         recycleThesis,

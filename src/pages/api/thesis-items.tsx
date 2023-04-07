@@ -26,9 +26,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     switch (req.method) {
       case "GET": {
         const { query, option } = parseQuery(req);
-        const pageSize = option?.limit;
+
+        const pageSize = (req.query.pageSize &&
+          parseInt(req.query.pageSize as string)) as number;
         const pageNo = (req.query.pageNo &&
           parseInt(req.query.pageNo as string)) as number;
+
         const payload = await getDataWithPaging(
           "thesis-abstract",
           req.query.collection as CollectionName,
@@ -71,7 +74,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               new Date(),
               thesisItems.title
             );
-            return res.status(200).json(resData);
+            return res.status(200).json(thesisItems);
           }
           default: {
             const thesisItems = (

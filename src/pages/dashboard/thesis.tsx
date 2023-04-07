@@ -2,13 +2,13 @@ import DashboardLayout from "@/components/dashboardLayout";
 import QuerySearch from "@/components/QuerySearch";
 import useGlobalContext from "@/context/globalContext";
 import { Course } from "@/context/types.d";
-import useUserContext from "@/context/userContext";
 import { auth } from "@/lib/firebase";
 import { thesisToDataType } from "@/utils/helper";
 import {
   getAllThesis,
   removeThesis,
   restoreThesis,
+  getAllDeletedThesis,
 } from "@/utils/thesis-item-utils";
 import {
   Button,
@@ -209,8 +209,12 @@ export const ThesisTable = () => {
       />
       <div className="mx-auto mt-5 w-fit md:absolute md:bottom-0 md:right-0 md:m-5">
         <Pagination
-          current={state.searchingAction.pageNo ?? 1}
-          defaultCurrent={state.searchingAction.pageNo ?? 1}
+          current={
+            state.searchingAction.pageNo ?? state.thesisItems.currentPage
+          }
+          defaultCurrent={
+            state.searchingAction.pageNo ?? state.thesisItems.currentPage
+          }
           total={state.thesisItems.totalCount}
           onChange={handlePageChange}
         />
@@ -271,8 +275,10 @@ const RecycledTable = () => {
       />
       <div className="mx-auto mt-5 w-fit md:absolute md:bottom-0 md:right-0 md:m-5">
         <Pagination
-          current={state.searchingAction.pageNo ?? 1}
-          defaultCurrent={state.recyclebin.currentPage ?? 1}
+          current={state.searchingAction.pageNo ?? state.recyclebin.currentPage}
+          defaultCurrent={
+            state.searchingAction.pageNo ?? state.recyclebin.currentPage
+          }
           total={state.recyclebin.totalCount}
           onChange={handlePageChange}
         />
@@ -282,45 +288,17 @@ const RecycledTable = () => {
 };
 
 const RemoveThesis = (props: DataType & { id: string }) => {
-  const { removeThesisItem, recycleThesis, state, dispatch, loadingState } =
-    useGlobalContext();
+  const { removeThesisItem, loadingState, refreshThesis } = useGlobalContext();
   const { triggerSocket } = useSocketContext();
 
   const handleClick = async () => {
     try {
       loadingState.add("thesis-table");
       const token = await auth.currentUser?.getIdToken();
-      const newThesisItem = removeThesisItem(props.id);
-      triggerSocket("thesis-update");
-
-      removeThesis({ token: token, thesisId: props.id })
-        .then(async (data) => {
-          recycleThesis(data);
-        })
-        .catch((e) => {
-          console.error(e);
-        });
-      if (newThesisItem.totalCount <= 10) {
-        return loadingState.remove("thesis-table");
-      }
-      getAllThesis(
-        undefined,
-        {
-          limit: 1,
-          projection: {
-            title: 1,
-            course: 1,
-            dateAdded: 1,
-          },
-        },
-        state.thesisItems.currentPage + 1
-      )
-        .then((data) => {
-          newThesisItem.document.push(data.document[0]);
-          dispatch({ type: "load-thesis", payload: newThesisItem });
-          message.success("Removed Success");
-        })
-        .finally(() => loadingState.remove("thesis-table"));
+      removeThesisItem(props.id);
+      await removeThesis({ token: token, thesisId: props.id });
+      await refreshThesis();
+      loadingState.remove("thesis-table");
     } catch (e) {
       message.error("remove failed");
       console.error(e);
@@ -343,24 +321,16 @@ const RestoreThesis = (props: DataType & { id: string }) => {
   const {
     restoreThesis: restore,
     loadingState,
-    loadRecycle,
+    refreshThesis,
   } = useGlobalContext();
-  const { triggerSocket } = useSocketContext();
 
   const handleClick = async () => {
     loadingState.add("recycle-table");
     restore(props.id);
-
-    auth.currentUser
-      ?.getIdToken()
-      .then(async (token) => {
-        await restoreThesis({ token: token, thesisId: props.id });
-        message.success("Restore Success");
-      })
-      .catch((e) => {
-        console.error(e);
-      })
-      .finally(() => loadingState.remove("recycle-table"));
+    const token = await auth.currentUser?.getIdToken();
+    await restoreThesis({ token: token, thesisId: props.id });
+    await refreshThesis();
+    loadingState.remove("recycle-table");
   };
 
   return (

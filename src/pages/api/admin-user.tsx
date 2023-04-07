@@ -5,7 +5,9 @@ import {
   addDataWithExpiration,
   deleteData,
   getData,
+  getDataWithPaging,
   getOneData,
+  getRawData,
   updateData,
 } from "@/lib/mongo";
 import { ActivitylogReason, CollectionName } from "@/lib/types";
@@ -30,23 +32,31 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         switch (req.query.objective) {
           case "get-activitylog": {
             const parse = parseQuery(req);
-            const activityLog = await getData(
+            const userId = req.query.userId as string | undefined;
+            const pageSize = parse.option?.limit;
+            const pageNo = (req.query.pageNo &&
+              parseInt(req.query.pageNo as string)) as number;
+            if (userId) (parse.query as any) = { userId };
+            let activityLog = await getDataWithPaging(
               "accounts",
               "activity-log",
-              parse.query,
-              { ...parse.option }
+              { pageSize, pageNo, sort: { date: -1 } },
+              parse.query
             );
-            const withUserName_promise = activityLog.map(async (item) => {
-              const response = await getOneData(
-                "accounts",
-                "user",
-                { uid: item.userId },
-                { projection: { userName: 1 } }
-              );
-              return { ...item, userName: response?.userName };
-            });
+            const withUserName_promise = activityLog.document.map(
+              async (item) => {
+                const response = await getOneData(
+                  "accounts",
+                  "user",
+                  { uid: item.userId },
+                  { projection: { userName: 1 } }
+                );
+                return { ...item, userName: response?.userName };
+              }
+            );
             const withUsername = await Promise.all(withUserName_promise);
-            return res.status(200).json(withUsername);
+            activityLog.document = withUsername;
+            return res.status(200).json(activityLog);
           }
           default: {
             const collection = req.query.collection as CollectionName;
@@ -76,6 +86,16 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         switch (req.query.objective) {
           case "invite-user": {
             const collection = req.query.collection as CollectionName;
+            const checkEmailUser = await getOneData("accounts", "user", {
+              email: req.body.email,
+            });
+            const checkEmailPending = await getOneData("accounts", "pending", {
+              email: req.body.email,
+            });
+            if (checkEmailUser || checkEmailPending)
+              return res
+                .status(400)
+                .send("email is exist please use another one");
             const { insertedResult, dateNow } = await addDataWithExpiration(
               "accounts",
               collection,
@@ -112,21 +132,23 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               isValidated.decodedToken as DecodedIdToken,
               "accepted the invite",
               insertResult.insertedId,
-              req.body.dateAdded,
+              new Date(),
               req.body.email
             );
             return res.status(200).json(req.body);
           }
           case "update-activity-log": {
-            const reason = req.body.reason as ActivitylogReason;
-            const itemId = req.body.itemId as string;
-            const date = req.body.date as Date;
-            const name = req.body.name as string;
+            const reason = req.body.reason as ActivitylogReason | undefined;
+            const itemId = req.body.itemId as string | undefined;
+            const date = req.body.date as string | undefined;
+            const name = req.body.name as string | undefined;
+            if (!(reason && itemId && date && name))
+              return res.status(400).send("Insufficient Input");
             const insertedResult = await updateActivityLog(
               isValidated.decodedToken as DecodedIdToken,
               reason,
               new ObjectId(itemId),
-              date,
+              new Date(date),
               name
             );
             return res.status(200).json(insertedResult);
@@ -161,6 +183,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       }
       case "PUT": {
         const collection = req.query.collection as CollectionName;
+        delete req.body._id;
         const updateResult = await updateData(
           "accounts",
           collection,

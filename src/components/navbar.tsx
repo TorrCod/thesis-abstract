@@ -12,9 +12,8 @@ import Login from "./signin_signup";
 import useUserContext from "@/context/userContext";
 import { RiDashboardLine } from "react-icons/ri";
 import { GrUserSettings } from "react-icons/gr";
-import { auth } from "@/lib/firebase";
-import { useRouter } from "next/router";
 import { AdminMenu } from "./admin";
+import { useSession } from "next-auth/react";
 
 const MENU_LIST = [
   { text: "Home", href: "/", icon: <AiOutlineHome /> },
@@ -69,9 +68,9 @@ const NavBar = () => {
   const { y } = useWindowScroll();
   const [active, setActive] = useState("/");
   const { pathname } = useLocation();
-  const userCtx = useUserContext();
-  const userCtxState = userCtx.state;
-  const router = useRouter();
+  const { state, logOut } = useUserContext();
+  const userCtxState = state;
+  const { status } = useSession();
 
   useEffect(() => {
     if (pathname) {
@@ -81,31 +80,28 @@ const NavBar = () => {
 
   const userMenu: MenuProps["items"] = [
     {
-      key: "/account-setting",
+      key: "/dashboard/account-setting",
       icon: (
-        <Link href={"/account-setting"}>
+        <Link href={"/dashboard/account-setting"}>
           <GrUserSettings size={"1.25em"} />
         </Link>
       ),
-      label: <Link href={"/account-setting"}>Account Setting</Link>,
+      label: <Link href={"/dashboard/account-setting"}>Account Setting</Link>,
     },
     {
-      key: "/dashboard/overview",
+      key: "/dashboard",
       icon: (
-        <Link href={"/dashboard/overview"}>
+        <Link href={"/dashboard"}>
           <RiDashboardLine size={"1.25em"} />
         </Link>
       ),
-      label: <Link href={"/dashboard/overview"}>Dashboard</Link>,
+      label: <Link href={"/dashboard"}>Dashboard</Link>,
     },
     {
       key: "logout",
       icon: <BiLogOut />,
       label: "Logout",
-      onClick: () => {
-        auth.signOut();
-        router.push("/");
-      },
+      onClick: logOut,
     },
   ];
 
@@ -145,7 +141,7 @@ const NavBar = () => {
           </div>
         ))}
 
-        {userCtxState.userDetails ? (
+        {status === "authenticated" ? (
           <div className="flex gap-1 items-center justify-center">
             <AdminMenu />
           </div>
@@ -178,15 +174,13 @@ const NavBar = () => {
             </p>
           </div>
         </div>
-        {userCtxState.userDetails ? (
+        {status === "authenticated" && (
           <Menu
             selectedKeys={[active]}
             className="opacity-80 md:text-lg"
             items={userMenu}
             onClick={() => setOpen(!open)}
           />
-        ) : (
-          ""
         )}
       </Drawer>
     </div>

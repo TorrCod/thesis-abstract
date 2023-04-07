@@ -6,15 +6,22 @@ import {
   MongoServerError,
   ObjectId,
   Document,
+  ChangeStream,
+  FindCursor,
+  WithId,
+  Sort,
 } from "mongodb";
-import { Worker } from "worker_threads";
-import { CollectionName, DatabaseName, QueryPost } from "./types";
+import { CollectionName, DatabaseName } from "./types";
 
 let CONNECTION = [
   process.env["MONGO_URI1"],
   process.env["MONGO_URI2"],
   process.env["MONGO_URI3"],
 ];
+
+if (process.env.NODE_ENV === "production") {
+  CONNECTION = [process.env["MONGO_URI"]];
+}
 
 export const connectToDatabase = async () => {
   let client: MongoClient | undefined;
@@ -72,6 +79,46 @@ export const getData = async (
   }
 };
 
+export const getDataWithPaging = async (
+  dbName: DatabaseName,
+  colName: CollectionName,
+  page?: { pageNo?: number; pageSize?: number; sort?: Sort },
+  query?: Filter<Document | {}>,
+  option?: {
+    limit?: number;
+    projection?: Record<string, 0 | 1>;
+  }
+) => {
+  try {
+    const client = await connectToDatabase();
+    const database = client.db(dbName);
+    const collection = database.collection(colName);
+
+    const countDocuments = await collection.countDocuments(query ?? undefined);
+    const skipDocuments = ((page?.pageNo ?? 1) - 1) * (page?.pageSize ?? 10);
+
+    let document = collection
+      .find(query ?? {}, {
+        projection: option?.projection,
+      })
+      .skip(skipDocuments)
+      .limit(page?.pageSize ?? 10);
+
+    if (page?.sort) document = document.sort(page.sort);
+
+    const response = await document.toArray();
+    client.close();
+    return {
+      totalCount: countDocuments,
+      document: response,
+      currentPage: page?.pageNo ?? 1,
+    };
+  } catch (e) {
+    console.error(e);
+    throw new Error(e as string).message;
+  }
+};
+
 export const getOneData = async (
   dbName: DatabaseName,
   colName: CollectionName,
@@ -111,6 +158,25 @@ export const addData = async (
     const res = await collection.insertOne(payload);
     client.close();
     return res;
+  } catch (e) {
+    console.error(e);
+    throw new Error(e as string).message;
+  }
+};
+
+export const getRawData = async (
+  dbName: DatabaseName,
+  colName: CollectionName,
+  callback: (arg: FindCursor<WithId<Document>>) => Promise<void>,
+  query?: Filter<Document | {}>
+) => {
+  try {
+    const client = await connectToDatabase();
+    const database = client.db(dbName);
+    const collection = database.collection(colName);
+    const res = collection.find(query ?? {});
+    await callback(res);
+    client.close();
   } catch (e) {
     console.error(e);
     throw new Error(e as string).message;
@@ -257,38 +323,33 @@ export const addDataWithExpiration = async (
   }
 };
 
-export const watchUser = async (
-  onChange: (changeStream: ChangeStreamDocument) => void
-) => {
-  try {
-    const dbName: DatabaseName = "accounts";
-    const client = await connectToDatabase();
-    const database = client.db(dbName);
-    const changeStream = database.watch();
-    changeStream.on("change", (change) => {
-      onChange(change);
-    });
-  } catch (e) {
-    console.log("watch user failed");
-    console.error(e);
-  }
-};
+export const watchChanges = async () => {
+  const client = await connectToDatabase();
+  const changeStreams: ChangeStream<
+    Document,
+    ChangeStreamDocument<Document>
+  >[] = [];
 
-export const watchThesisAbstract = async (
-  onChange: (changeStream: ChangeStreamDocument) => void
-) => {
-  try {
-    const dbName: DatabaseName = "thesis-abstract";
-    const client = await connectToDatabase();
-    const database = client.db(dbName);
-    const changeStream = database.watch();
-    changeStream.on("change", (change) => {
-      onChange(change);
+  const unsubscribe = () => {
+    changeStreams.forEach((change) => change.close());
+    client.close();
+  };
+
+  const subscribe = (
+    dbName: DatabaseName,
+    collName: CollectionName,
+    onChange: (changeStream: ChangeStreamDocument) => Promise<void> | void
+  ) => {
+    const collection = client.db(dbName).collection(collName);
+    const changeStream = collection.watch();
+    changeStreams.push(changeStream);
+
+    changeStream.on("change", (changeStream) => {
+      onChange(changeStream);
     });
-  } catch (e) {
-    console.log("watch thesis items failed");
-    console.error(e);
-  }
+  };
+
+  return { subscribe, unsubscribe };
 };
 
 export const dataAgregate = async (

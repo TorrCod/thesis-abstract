@@ -80,7 +80,8 @@ h3 {
   font-size: 0.8rem;
   padding-inline: 1em;
   padding-block: 0.5em;
-  width: 30em;
+  width: 100%;
+  max-width: 30em;
   outline: none;
   transition: cubic-bezier(0.075, 0.82, 0.165, 1);
   transition-duration: 1000ms;

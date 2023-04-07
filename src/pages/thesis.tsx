@@ -1,35 +1,52 @@
 import Search from "@/components/search";
-import { ThesisItems } from "@/context/types.d";
-import { Divider } from "antd";
+import { SearchQuery, ThesisItems } from "@/context/types.d";
+import { ConfigProvider, Divider, Pagination } from "antd";
 import Head from "next/head";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import useGlobalContext from "@/context/globalContext";
 import { useRouter } from "next/router";
-import { getAllThesis } from "@/utils/thesis-item-utils";
-
 const Thesis = () => {
-  const { state: globalState, loadingState } = useGlobalContext();
-  const [thesisItems, setThesisItems] = useState<ThesisItems[]>([]);
+  const {
+    state: globalState,
+    loadThesisItems,
+    updateSearchAction,
+    clearDefault,
+  } = useGlobalContext();
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    loadingState.add("/thesis");
-    const title = router.query.title as string | undefined;
-    const course =
-      router.query.course && JSON.parse(router.query.course as string);
-    const year = router.query.year && JSON.parse(router.query.year as string);
-    getAllThesis({ title, course, year }, { limit: 10 })
-      .then((res) => {
-        setThesisItems(res);
-      })
+    return () => {
+      updateSearchAction().clear;
+      clearDefault();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    setLoading(true);
+    const { title, course, year } = router.query as SearchQuery;
+    const decodedCourse = course
+      ? JSON.parse(decodeURIComponent(course as unknown as string))
+      : undefined;
+    const decodedYear = year
+      ? JSON.parse(decodeURIComponent(year as unknown as string))
+      : undefined;
+    const query = { title, course: decodedCourse, year: decodedYear };
+    loadThesisItems(query, {
+      projection: { title: 1, course: 1, year: 1, researchers: 1 },
+    })
       .catch((e) => {
         console.error(e);
       })
-      .finally(() => loadingState.remove("/thesis"));
+      .finally(() => setLoading(false));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router]);
+  }, [router.query, globalState.searchingAction.pageNo]);
 
+  const handlePageChange = (pageNo: number) => {
+    updateSearchAction().update({ ...globalState.searchingAction, pageNo });
+  };
   return (
     <>
       <Head>
@@ -47,10 +64,28 @@ const Thesis = () => {
               showFilter={true}
               className="place-self-center my-5 w-full max-w-3xl z-10 absolute top-0"
             />
-            <Divider className="bg-white/30 mt-32" />
+            <Divider className="bg-white/30 mt-40" />
           </div>
+          <ConfigProvider
+            theme={{
+              token: {
+                colorText: "white",
+                colorPrimary: "white",
+                colorBgContainer: "#38649C",
+                colorTextDisabled: "rgba(255,255,255,0.5)",
+              },
+            }}
+          >
+            <Pagination
+              className="mb-5"
+              total={globalState.thesisItems.totalCount}
+              current={globalState.searchingAction.pageNo ?? 1}
+              onChange={handlePageChange}
+              hideOnSinglePage
+            />
+          </ConfigProvider>
           <div className="grid gap-2 w-full place-items-center lg:grid-cols-2 relative md:px-5">
-            {globalState.loading.includes("/thesis") ? (
+            {loading ? (
               <>
                 <ItemsLoading />
                 <ItemsLoading />
@@ -60,7 +95,7 @@ const Thesis = () => {
                 <ItemsLoading />
               </>
             ) : (
-              thesisItems?.map((thesisItem) => {
+              globalState.thesisItems.document.map((thesisItem) => {
                 return <Items key={thesisItem._id} {...thesisItem} />;
               })
             )}

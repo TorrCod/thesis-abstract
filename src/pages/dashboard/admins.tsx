@@ -1,11 +1,20 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Form, message, Modal, Space, Table, Timeline } from "antd";
+import React, { ReactElement, useEffect, useRef, useState } from "react";
+import {
+  Form,
+  message,
+  Modal,
+  Pagination,
+  Space,
+  Table,
+  Timeline,
+  TimelineProps,
+} from "antd";
 import DashboardLayout from "@/components/dashboardLayout";
 import QuerySearch from "@/components/QuerySearch";
 import { PriButton } from "@/components/button";
 import AdminProfile, { AddAdmin } from "@/components/admin";
 import useUserContext from "@/context/userContext";
-import { AdminData, UserDetails } from "@/context/types.d";
+import { ActivityLog, AdminData, UserDetails } from "@/context/types.d";
 import { ColumnsType } from "antd/lib/table";
 import Password from "antd/lib/input/Password";
 import { useForm } from "antd/lib/form/Form";
@@ -15,6 +24,7 @@ import {
   customUpdateActivityLog,
   deleteAdmin,
   firebase_admin_delete_user,
+  getActivityLog,
   removePending,
 } from "@/utils/account-utils";
 import { useRouter } from "next/router";
@@ -25,8 +35,12 @@ import { getServerSession } from "next-auth";
 import { getCsrfToken } from "next-auth/react";
 import { authOptions } from "../api/auth/[...nextauth]";
 import useGlobalContext from "@/context/globalContext";
+import { readActivityLogReason } from "@/utils/helper";
+import useSocketContext from "@/context/socketContext";
+import { NextPageWithLayout } from "../_app";
+import { useEffectOnce } from "react-use";
 
-const DashboardAdmin = () => {
+const Page: NextPageWithLayout = () => {
   const router = useRouter();
   const allUsers = useUserContext().state.listOfAdmins;
   const [userDetails, setUserDetails] = useState<UserDetails | undefined>();
@@ -40,10 +54,7 @@ const DashboardAdmin = () => {
   }, [router.query._id, allUsers]);
 
   return (
-    <DashboardLayout
-      userSelectedMenu="/dashboard"
-      userSelectedSider="/dashboard/admins"
-    >
+    <>
       <div className="opacity-80 mb-3">
         Dashboard {">"} <Link href={"/dashboard/admins"}>Admin</Link>
         {userDetails ? (
@@ -52,8 +63,8 @@ const DashboardAdmin = () => {
           </>
         ) : null}
       </div>
-      {router.query._id ? (
-        <UserProfile userDetails={userDetails} />
+      {userDetails ? (
+        <UserProfile payloadUser={userDetails} />
       ) : (
         <div className="bg-white rounded-md p-5 flex flex-col gap-2 md:min-h-[85vh]">
           <p className="opacity-60 mb-5">Manage Co-Admins</p>
@@ -66,13 +77,48 @@ const DashboardAdmin = () => {
           <AdminTable />
         </div>
       )}
-    </DashboardLayout>
+    </>
   );
 };
 
-const UserProfile = ({ userDetails }: { userDetails?: UserDetails }) => {
-  const [history, setHistory] = useState();
-  return !userDetails ? (
+Page.getLayout = function getLayout(page: ReactElement) {
+  return <DashboardLayout>{page}</DashboardLayout>;
+};
+
+export default Page;
+
+const UserProfile = ({ payloadUser }: { payloadUser: UserDetails }) => {
+  const [history, setHistory] = useState<TimelineProps["items"]>([]);
+  const { state, loadActivityLog } = useUserContext();
+  const { updateSearchAction, state: globalState } = useGlobalContext();
+
+  useEffectOnce(() => updateSearchAction().clear);
+
+  useEffect(() => {
+    if (state.userDetails) {
+      loadActivityLog({ userId: payloadUser.uid });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.userDetails, payloadUser, globalState.searchingAction.pageNo]);
+
+  useEffect(() => {
+    const data = state.activityLog.document.map((item) => {
+      const readedData = readActivityLogReason(item);
+      return {
+        label: new Date(item.date).toLocaleString(),
+        children: <div>{readedData?.reason}</div>,
+        dot: readedData?.dot,
+        color: readedData?.color,
+      };
+    });
+    setHistory(data);
+  }, [state.activityLog.document]);
+
+  const handlePageChange = (pageNo: number) => {
+    updateSearchAction().update({ ...globalState.searchingAction, pageNo });
+  };
+
+  return !payloadUser ? (
     <></>
   ) : (
     <div className="grid gap-2 max-w-5xl m-auto lg:grid-cols-[1.2fr_0.8fr] auto-rows-auto">
@@ -80,67 +126,73 @@ const UserProfile = ({ userDetails }: { userDetails?: UserDetails }) => {
         <div className="opacity-70">Profile</div>
         <div className="w-fit m-auto">
           <AdminProfile
-            userDetails={userDetails}
+            userDetails={payloadUser}
             size={{ height: "7em", width: "7em" }}
           />
         </div>
-        {userDetails?.status === "Pending" ? (
+        {payloadUser?.status === "Pending" ? (
           <>
             <div className="text-center">
-              <div>{userDetails.email}</div>
+              <div>{payloadUser.email}</div>
               <div className="text-sm bg-yellow-500 w-fit m-auto text-white px-2 rounded-md">
-                {userDetails.status}
+                {payloadUser.status}
               </div>
             </div>
             <div>
               <div className="text-sm opacity-80 ">Invited By</div>
-              {userDetails.approove}
+              {payloadUser.approove}
             </div>
             <div>
               <div className="text-sm opacity-80 ">Date Invited</div>
-              {new Date(userDetails.dateAdded as string).toLocaleString()}
+              {new Date(payloadUser.dateAdded as string).toLocaleString()}
             </div>
           </>
         ) : (
           <>
             <div className="text-center">
               <div>
-                {userDetails?.firstName} {userDetails?.lastName}
+                {payloadUser?.firstName} {payloadUser?.lastName}
               </div>
               <div className="text-sm bg-lime-500 w-fit m-auto text-white px-2 rounded-md">
-                {userDetails.status}
+                {payloadUser.status}
               </div>
             </div>
 
             <div className="grid gap-5 min-[400px]:grid-cols-2">
               <div>
                 <div className="text-sm opacity-80 ">Email</div>
-                {userDetails.email}
+                {payloadUser.email}
               </div>
               <div>
                 <div className="text-sm opacity-80 ">Username</div>
-                {userDetails.userName}
+                {payloadUser.userName}
               </div>
               <div>
                 <div className="text-sm opacity-80 ">Course</div>
-                {userDetails.course}
+                {payloadUser.course}
               </div>
               <div>
                 <div className="text-sm opacity-80 ">Invited By</div>
-                {userDetails?.approove ?? "---"}
+                {payloadUser?.approove ?? "---"}
               </div>
               <div>
                 <div className="text-sm opacity-80 ">Date joined</div>
-                {new Date(userDetails?.dateAdded as string).toLocaleString()}
+                {new Date(payloadUser?.dateAdded as string).toLocaleString()}
               </div>
             </div>
           </>
         )}
       </div>
-      <div className="bg-white rounded-md p-3 row-span-2 grid relative gap-5 grid-rows-[_0.2fr_1.8fr]">
+      <div className="bg-white rounded-md p-3 row-span-2">
         <div className="opacity-80">History</div>
-        <div className="w-full">
-          <Timeline reverse items={[]} />;
+        <div className="w-full mt-10">
+          <Timeline mode="left" reverse items={history} />
+          <Pagination
+            current={globalState.searchingAction.pageNo ?? 1}
+            total={state.activityLog.totalCount}
+            showSizeChanger={false}
+            onChange={handlePageChange}
+          />
         </div>
       </div>
     </div>
@@ -165,10 +217,11 @@ export const AdminTable = ({ noAction }: { noAction?: boolean }) => {
   }, [noAction]);
 
   useEffect(() => {
-    if (state.userDetails && !state.listOfAdmins.length) {
+    if (state.userDetails) {
       loadAllUsers();
     }
-  }, [state.userDetails, state.listOfAdmins]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.userDetails]);
 
   useEffect(() => {
     if (router.query.username) {
@@ -199,8 +252,9 @@ const RemoveAdmin = ({ record }: { record: AdminData }) => {
   const [form] = useForm();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const userCtxState = useUserContext();
-  const userEmail = userCtxState.state.userDetails;
+  const { state, loadAllUsers } = useUserContext();
+  const userEmail = state.userDetails;
+  const { triggerSocket } = useSocketContext();
 
   const handleFinish = async () => {
     try {
@@ -231,6 +285,9 @@ const RemoveAdmin = ({ record }: { record: AdminData }) => {
           name: record.email,
         });
       }
+      triggerSocket("account-update");
+      loadAllUsers();
+      message.success("Remove Success");
       setOpen(false);
     } catch (e) {
       console.error(e);
@@ -393,5 +450,3 @@ const dataColumnType = (userDetails: UserDetails | undefined) => {
   ];
   return tableColumn;
 };
-
-export default DashboardAdmin;

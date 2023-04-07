@@ -9,45 +9,36 @@ import { GetServerSideProps } from "next";
 import { ObjectId } from "mongodb";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import useGlobalContext from "@/context/globalContext";
-import { getAllThesis, getOneById } from "@/utils/thesis-item-utils";
+import { getOneById } from "@/utils/thesis-item-utils";
 
 const PdfLink = dynamic(() => import("@/components/pdfDocs"), {
   ssr: false,
 });
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  try {
-    const itemId = (context.params as any).id as string;
-    if (!itemId) {
-      throw new Error("no params");
-    }
-    const isExist = await getOneData(
-      "thesis-abstract",
-      "thesis-items",
-      { _id: new ObjectId(itemId) },
-      { projection: { _id: 1 } }
-    );
-    if (!isExist) throw new Error("not found");
-    return { props: { _id: itemId } };
-  } catch (e) {
-    return {
-      notFound: true,
-    };
-  }
-};
-
-const ThesisItemsView = (props: { _id: string }) => {
+const ThesisItemsView = () => {
   const router = useRouter();
   const [data, setData] = useState<ThesisItems>();
 
   useEffect(() => {
     const fetchData = async () => {
-      const thesisItem = await getOneById(props._id);
-      setData(thesisItem);
+      try {
+        const thesisItem = await getOneById(router.query.id as string);
+        setData(thesisItem);
+        localStorage.setItem(
+          `thabs-${router.query.id}`,
+          JSON.stringify(thesisItem)
+        );
+      } catch (e) {
+        router.push("/404");
+      }
     };
-    fetchData();
-  }, [router, props._id]);
+    const cachedData = localStorage.getItem(`thabs-${router.query.id}`);
+    if (router.query.id && !cachedData) {
+      fetchData();
+    } else if (cachedData) {
+      setData(JSON.parse(cachedData));
+    }
+  }, [router]);
 
   return !data ? (
     <Loading />

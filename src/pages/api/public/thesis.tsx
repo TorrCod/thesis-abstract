@@ -1,15 +1,23 @@
-import { ThesisCount } from "@/context/types.d";
+import { ThesisCount, ThesisState } from "@/context/types.d";
 import {
   getDistinctData,
   getOneData,
   getData,
   dataAgregate,
+  getDataWithPaging,
 } from "@/lib/mongo";
-import { parseQuery } from "@/utils/server-utils";
+import { parseQuery, sleep } from "@/utils/server-utils";
 import { ObjectId } from "mongodb";
 import { NextApiRequest, NextApiResponse } from "next";
+import NextCors from "nextjs-cors";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+  await NextCors(req, res, {
+    // Options
+    methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
+    origin: "*",
+    optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+  });
   switch (req.query.objective) {
     case "get-distinct-years": {
       const distinctYears = (await getDistinctData(
@@ -38,24 +46,26 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         course: item._id,
         count: item.count,
       }));
-      return res
-        .status(200)
-        .json({
-          thesisCount,
-          totalCount: thesisCount.reduce((acc, { count }) => acc + count, 0),
-        });
+      return res.status(200).json({
+        thesisCount,
+        totalCount: thesisCount.reduce((acc, { count }) => acc + count, 0),
+      });
     }
     default: {
       const { query, option } = parseQuery(req);
-      const thesisItems = await getData(
+      const pageSize = option?.limit;
+      const pageNo = (req.query.pageNo &&
+        parseInt(req.query.pageNo as string)) as number;
+      const thesisItems = (await getDataWithPaging(
         "thesis-abstract",
         "thesis-items",
+        { pageNo: pageNo, pageSize },
         query,
         {
           limit: option?.limit,
           projection: option?.projection,
         }
-      );
+      )) as unknown as ThesisState;
       return res.status(200).json(thesisItems);
     }
   }

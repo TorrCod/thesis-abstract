@@ -8,26 +8,32 @@ import { RiDashboardFill } from "react-icons/ri";
 import { BottomMenuProps, SelectedDashboardSider } from "./types.d";
 
 export const BotomMenu = ({ defaultSelected }: BottomMenuProps) => {
-  const [selectedKeys, setSelectedKeys] =
-    useState<SelectedDashboardSider>(defaultSelected);
+  const [selectedKeys, setSelectedKeys] = useState<SelectedDashboardSider>(
+    defaultSelected ?? "/dashboard"
+  );
   const router = useRouter();
+
+  useEffect(
+    () => setSelectedKeys(router.pathname as SelectedDashboardSider),
+    [router]
+  );
 
   return (
     <div className="md:hidden fixed bottom-0 w-full h-[4.5em] bg-[#001529] text-white grid grid-flow-col place-items-center grid-col-4">
       <div
         className={
           "relative w-full h-full grid place-items-center transition ease-out duration-200 " +
-          (selectedKeys === "/dashboard/overview" ? "bg-[#1677ff]" : "")
+          (selectedKeys === "/dashboard" ? "bg-[#1677ff]" : "")
         }
         onClick={() => {
-          router.push("/dashboard/overview");
-          setSelectedKeys("/dashboard/overview");
+          router.push("/dashboard");
+          setSelectedKeys("/dashboard");
         }}
       >
         <RiDashboardFill
           className={
             "text-xl transition ease-out duration-200 " +
-            (selectedKeys === "/dashboard/overview" ? "scale-150" : "scale-100")
+            (selectedKeys === "/dashboard" ? "scale-150" : "scale-100")
           }
         />
       </div>
@@ -65,23 +71,6 @@ export const BotomMenu = ({ defaultSelected }: BottomMenuProps) => {
           }
         />
       </div>
-      {/* <div
-        className={
-          "relative w-full h-full grid place-items-center transition ease-out duration-200 " +
-          (selectedKeys === "/dashboard/users" ? "bg-[#1677ff]" : "")
-        }
-        onClick={() => {
-          router.push("/dashboard/users");
-          setSelectedKeys("/dashboard/users");
-        }}
-      >
-        <ImUserCheck
-          className={
-            "text-xl transition ease-out duration-200 " +
-            (selectedKeys === "/dashboard/users" ? "scale-150" : "scale-100")
-          }
-        />
-      </div> */}
       <div
         className={
           "relative w-full h-full grid place-items-center transition ease-out duration-200 " +

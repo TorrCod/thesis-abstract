@@ -1,22 +1,42 @@
-import { ActivitylogReason } from "@/lib/types";
+import { ActivitylogReason, SocketEmitEvent, _Socket } from "@/lib/types";
 import { Unsubscribe } from "firebase/auth";
 import { Dispatch, MutableRefObject } from "react";
 
 export interface GlobalState {
-  thesisItems: ThesisItems[];
+  thesisItems: ThesisState;
   searchThesis: ThesisItems[];
   dateOption: string[];
-  recyclebin: ThesisItems[];
+  recyclebin: ThesisState;
   signIn?: boolean;
   loading: string[];
   totalThesisCount: { thesisCount: ThesisCount; totalCount: number };
-  filterState: {
-    years: { all: boolean; option: string[] };
-    course: { all: boolean; option: Course[] };
-  };
+  searchingAction: SearchAction;
 }
 
+export type SearchAction = {
+  searchTitle?: string;
+  pageNo?: number;
+  filterState: FilterState;
+};
+
+export type FilterState = {
+  years: { all: boolean; option?: string[]; default: string[] };
+  course: { all: boolean; option?: Course[]; default: Course[] };
+};
+
 export type ThesisCount = { course: Course; count: number }[];
+
+export type ThesisState = {
+  currentPage: number;
+  totalCount: number;
+  document: ThesisItems[];
+};
+
+export type ActivitylogState = {
+  currentPage: number;
+  totalCount: number;
+  document: ActivityLog[];
+};
 
 export type Course =
   | "Computer Engineer"
@@ -50,12 +70,20 @@ export type SearchOption = {
 
 export type GlobalAction =
   | {
+      type: "on-search-action";
+      payload: {
+        searchTitle?: string;
+        thesisPageNo?: number;
+        filterState: FilterState;
+      };
+    }
+  | {
       type: "add-thesis";
       payload: ThesisItems;
     }
   | {
       type: "load-thesis";
-      payload: ThesisItems[];
+      payload: ThesisState;
     }
   | {
       type: "sign-in";
@@ -63,14 +91,7 @@ export type GlobalAction =
     }
   | {
       type: "load-recycle";
-      payload: ThesisItems[];
-    }
-  | {
-      type: "update-filter";
-      payload: {
-        years: { all: boolean; option: string[] };
-        course: { all: boolean; option: Course[] };
-      };
+      payload: ThesisState;
     }
   | {
       type: "update-default-years";
@@ -88,27 +109,26 @@ export type GlobalAction =
 export type GlobalValue = {
   state: GlobalState;
   dispatch: Dispatch<GlobalAction>;
-  loadThesisItems: (query?: SearchQuery, limit?: number) => Promise<void>;
-  recycledThesis: () => {
-    load: (query?: SearchQuery, option?: SearchOption) => Promise<void>;
-    clear: () => void;
-  };
-  updateFilter: (payload: {
-    years: {
-      all: boolean;
-      option: string[];
-    };
-    course: {
-      all: boolean;
-      option: Course[];
-    };
-  }) => void;
+  loadThesisItems: (
+    query?: SearchQuery,
+    option?: SearchOption
+  ) => Promise<void>;
+  loadRecycle: () => Promise<void>;
+  loadThesisCount: () => Promise<void>;
   loadingState: {
     add(key: string): void;
     remove(key: string): void;
   };
   promptToSignIn: () => void;
-  loadThesisCount: () => Promise<void>;
+  addThesisItem: (document: ThesisItems) => void;
+  removeThesisItem: (_id: string) => void;
+  restoreThesis: (_id: string) => void;
+  recycleThesis: (thesis: ThesisItems) => void;
+  updateSearchAction: () => {
+    update: (payload: SearchAction) => void;
+    clear: () => void;
+  };
+  clearDefault: () => void;
 };
 
 export type AdminData = {
@@ -123,7 +143,7 @@ export type AdminData = {
 export type UserState = {
   userDetails: UserDetails | undefined;
   listOfAdmins: AdminData[];
-  activityLog: ActivityLog[];
+  activityLog: ActivitylogState;
 };
 
 export type ActivityLog = {
@@ -148,7 +168,6 @@ export type UserDetails = {
   password?: string;
   dateAdded?: string;
   status?: "Pending" | "Admin";
-  newToken?: string;
 };
 
 export type UserValue = {
@@ -162,7 +181,8 @@ export type UserValue = {
   saveUploadThesis: (data: ThesisItems) => Promise<void>;
   loadAllUsers: () => Promise<void>;
   unsubscribeRef: MutableRefObject<Unsubscribe | null>;
-  loadActivityLog: () => Promise<ActivityLog[]>;
+  loadActivityLog: (query?: Record<string, any>) => Promise<() => void>;
+  logOut: () => Promise<void>;
 };
 
 export type PendingAdminList = {
@@ -197,5 +217,9 @@ export type UserAction =
     }
   | {
       type: "load-activity-log";
-      payload: ActivityLog[];
+      payload: ActivitylogState;
     };
+
+export type SocketValue = {
+  triggerSocket: (event: SocketEmitEvent) => void;
+};

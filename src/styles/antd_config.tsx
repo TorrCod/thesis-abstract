@@ -5,7 +5,7 @@ const AntD_Config = ({ children }: { children: React.ReactNode }) => (
     theme={{
       components: {
         Button: {
-          colorPrimaryHover: "#FCD1C2",
+          colorPrimaryHover: "#ffe5db",
           colorPrimaryActive: "#38649C",
         },
       },

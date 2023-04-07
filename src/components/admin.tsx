@@ -6,7 +6,7 @@ import { useForm } from "antd/lib/form/Form";
 import { sendSignInLinkToEmail } from "firebase/auth";
 import Link from "next/link";
 import router from "next/router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BiLogOut } from "react-icons/bi";
 import { BsPersonFillAdd } from "react-icons/bs";
 import { GrUserSettings } from "react-icons/gr";
@@ -15,7 +15,8 @@ import { PriButton } from "./button";
 import SignInSignUp from "./signin_signup";
 import { AdminProps } from "./types.d";
 import { signOut as nextSignOut } from "next-auth/react";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
+import useSocketContext from "@/context/socketContext";
 
 function AdminProfile({ userDetails, size, src }: AdminProps) {
   return (
@@ -32,23 +33,16 @@ export const AdminMenu = ({
 }: {
   position?: "bottomLeft" | "bottomRight" | "bottomCenter";
 }) => {
-  const userCtxState = useUserContext().state;
-
-  const handleLogOut = async () => {
-    await auth.signOut();
-    await nextSignOut({ redirect: false });
-    await axios.get("/api/logout");
-  };
-
+  const { logOut } = useUserContext();
   const userMenu: MenuProps["items"] = [
     {
-      key: "/account-setting",
+      key: "/dashboard/account-setting",
       icon: (
-        <Link href={"/account-setting"}>
+        <Link href={"/dashboard/account-setting"}>
           <GrUserSettings size={"1.25em"} />
         </Link>
       ),
-      label: <Link href={"/account-setting"}>Account Setting</Link>,
+      label: <Link href={"/dashboard/account-setting"}>Account Setting</Link>,
     },
     {
       key: "/dashboard",
@@ -63,7 +57,7 @@ export const AdminMenu = ({
       key: "logout",
       icon: <BiLogOut />,
       label: "Logout",
-      onClick: handleLogOut,
+      onClick: logOut,
     },
   ];
   return (
@@ -71,15 +65,7 @@ export const AdminMenu = ({
       trigger={["click"]}
       dropdownRender={() => (
         <div className="bg-white rounded-md pt-5 shadow-md">
-          <div className="flex gap-2 justify-center items-center mx-5 pb-3 border-b-[1px]">
-            <SignInSignUp />
-            <div>
-              <p>{`${userCtxState.userDetails?.firstName} ${userCtxState.userDetails?.lastName}`}</p>
-              <p className="text-[0.8em] opacity-80">
-                {userCtxState.userDetails?.course}
-              </p>
-            </div>
-          </div>
+          <AdminDetails />
           <Menu
             className="opacity-80"
             style={{ boxShadow: "none" }}
@@ -96,12 +82,15 @@ export const AdminMenu = ({
 };
 
 export const AddAdmin = () => {
-  const userDetails = useUserContext().state.userDetails;
+  const { state, loadAllUsers } = useUserContext();
+  const userDetails = state.userDetails;
   const [form] = useForm();
+  const { triggerSocket } = useSocketContext();
   const onFinish = async ({ email }: any) => {
     let id: string = "";
     try {
       const token = await auth.currentUser?.getIdToken();
+
       const inserResult = await inviteUser(token, {
         email: email,
         approove: `${userDetails?.userName}`,
@@ -112,10 +101,12 @@ export const AddAdmin = () => {
         handleCodeInApp: true,
       };
       await sendSignInLinkToEmail(auth, email, actionCodeSettings);
+      loadAllUsers();
+      triggerSocket("account-update");
       message.success("Invite Sent");
       form.resetFields();
     } catch (e) {
-      message.error("Invite failed");
+      message.error((e as AxiosError).response?.data as string);
       console.log(e);
     }
   };
@@ -145,6 +136,30 @@ export const AddAdmin = () => {
         </Form.Item>
       </Form>
     </div>
+  );
+};
+
+export const AdminDetails = ({
+  onClick,
+}: {
+  onClick?: () => void | Promise<void>;
+}) => {
+  const { state } = useUserContext();
+
+  return (
+    <>
+      <Link
+        onClick={onClick}
+        className="flex gap-2 items-center mx-5 pb-3 border-b-[1px]"
+        href={`/dashboard/admins?_id=${state.userDetails?._id}`}
+      >
+        <SignInSignUp />
+        <div className={` ${!state.userDetails && "hidden"}`}>
+          <p>{`${state.userDetails?.firstName} ${state.userDetails?.lastName}`}</p>
+          <p className="text-[0.8em] opacity-80">{state.userDetails?.course}</p>
+        </div>
+      </Link>
+    </>
   );
 };
 

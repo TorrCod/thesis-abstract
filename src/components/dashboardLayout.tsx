@@ -1,48 +1,59 @@
 import React, { useEffect, useState } from "react";
-import { Dropdown, Layout, Menu } from "antd";
+import { Button, Divider, Drawer, Dropdown, Layout, Menu } from "antd";
 const { Header, Sider } = Layout;
 import Link from "next/link";
 import { HomeButton } from "@/components/button";
 import { MenuProps } from "antd";
-import { FaSwatchbook } from "react-icons/fa";
+import { FaBars, FaSwatchbook } from "react-icons/fa";
 import { MdWorkHistory } from "react-icons/md";
 import { ImUserCheck } from "react-icons/im";
 import { BotomMenu } from "@/components/botomMenu";
-import { SelectedDashboardSider } from "@/components/types.d";
 import { RiDashboardFill, RiUserSettingsFill } from "react-icons/ri";
 import { useRouter } from "next/router";
-import { BsThreeDots } from "react-icons/bs";
 import { useLocation, useWindowSize } from "react-use";
 import Head from "next/head";
-
-type SelectedMenu = "/dashboard" | "/account-setting";
+import AdminProfile, { AdminDetails, AdminMenu } from "./admin";
+import { GrUserSettings } from "react-icons/gr";
+import { BiLogOut } from "react-icons/bi";
+import useUserContext from "@/context/userContext";
+import SignInSignUp from "./signin_signup";
+import { AiFillHome } from "react-icons/ai";
+import { IoHomeOutline } from "react-icons/io5";
+import useGlobalContext from "@/context/globalContext";
 
 type DashboardProps = {
   children?: React.ReactNode;
-  userSelectedMenu: SelectedMenu;
-  userSelectedSider?: SelectedDashboardSider;
-  title?: React.ReactNode;
 };
 
-function DashboardLayout({
-  children,
-  userSelectedMenu,
-  userSelectedSider,
-}: DashboardProps) {
-  const [selectedSider, setSelectedSider] = useState(userSelectedSider);
-  const [selectedMenu, setSelectedMenu] = useState(userSelectedMenu);
-  const [isScreen, setIsScreen] = useState(false);
-  const { width } = useWindowSize();
-  const { pathname } = useLocation();
-  const router = useRouter();
+const siderMenu: MenuProps["items"] = [
+  {
+    key: "/dashboard",
+    label: <Link href={"/dashboard"}>Overview</Link>,
+    icon: <RiDashboardFill size={"1.1em"} />,
+  },
+  {
+    key: "/dashboard/thesis",
+    label: <Link href={"/dashboard/thesis"}>Thesis</Link>,
+    icon: <FaSwatchbook size={"1.1em"} />,
+  },
+  {
+    key: "/dashboard/admins",
+    label: <Link href={"/dashboard/admins"}>Admins</Link>,
+    icon: <ImUserCheck size={"1.1em"} />,
+  },
+  {
+    key: "/dashboard/activitylog",
+    label: <Link href={"/dashboard/activitylog"}>Activity Log</Link>,
+    icon: <MdWorkHistory size={"1.1em"} />,
+  },
+];
 
-  useEffect(() => {
-    if (width >= 768) {
-      setIsScreen(true);
-    } else {
-      setIsScreen(false);
-    }
-  }, [width]);
+function DashboardLayout({ children }: DashboardProps) {
+  const [selectedSider, setSelectedSider] = useState("/dashboard");
+  const { pathname } = useLocation();
+  const { logOut } = useUserContext();
+  const { clearDefault } = useGlobalContext();
+  const router = useRouter();
 
   useEffect(() => {
     (
@@ -58,43 +69,37 @@ function DashboardLayout({
       (
         document.getElementsByClassName("bg-circle")[0] as HTMLDivElement
       ).style.display = "grid";
+
+      clearDefault();
     };
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const menuItem: MenuProps["items"] = [
-    {
-      key: "/dashboard",
-      label: <Link href={"/dashboard"}>Dashboard</Link>,
-      icon: <RiDashboardFill />,
-    },
-    {
-      key: "/account-setting",
-      label: <Link href={"/account-setting"}>Account Setting</Link>,
-      icon: <RiUserSettingsFill />,
-    },
-  ];
+  useEffect(() => {
+    setSelectedSider(router.pathname);
+  }, [router]);
 
-  const siderMenu: MenuProps["items"] = [
+  const handleSeletect: MenuProps["onSelect"] = (item) => {
+    setSelectedSider(item.key);
+  };
+
+  const accountMenu: MenuProps["items"] = [
     {
-      key: "/dashboard/overview",
-      label: <Link href={"/dashboard"}>Overview</Link>,
-      icon: <RiDashboardFill size={"1.1em"} />,
+      key: "/",
+      label: <Link href={"/"}>Home</Link>,
+      icon: <IoHomeOutline />,
     },
     {
-      key: "/dashboard/thesis",
-      label: <Link href={"/dashboard/thesis"}>Thesis</Link>,
-      icon: <FaSwatchbook size={"1.1em"} />,
+      key: "/dashboard/account-setting",
+      label: <Link href={"/dashboard/account-setting"}>Account Setting</Link>,
+      icon: <GrUserSettings />,
     },
     {
-      key: "/dashboard/admins",
-      label: <Link href={"/dashboard/admins"}>Admins</Link>,
-      icon: <ImUserCheck size={"1.1em"} />,
-    },
-    {
-      key: "/dashboard/activitylog",
-      label: <Link href={"/dashboard/activitylog"}>Activity Log</Link>,
-      icon: <MdWorkHistory size={"1.1em"} />,
+      key: "logout",
+      label: "Logout",
+      icon: <BiLogOut />,
+      onClick: logOut,
     },
   ];
 
@@ -111,63 +116,69 @@ function DashboardLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <div className="bg-[#D9D9D9] relative md:h-screen">
-        <Header className="header fixed top-0 w-full md:relative z-20 flex gap-10 items-center">
-          {isScreen ? (
-            <Menu
-              className="w-80"
-              selectedKeys={[selectedMenu]}
-              onSelect={(info) => setSelectedMenu(info.key as any)}
-              theme="dark"
-              mode="horizontal"
-              items={menuItem}
-            />
-          ) : (
+        <Header className="header fixed top-0 w-full md:relative z-20 flex gap-10 items-center justify-center md:justify-start">
+          <div className="absolute left-5 md:hidden">
             <Dropdown
               trigger={["click"]}
-              className="text-white"
-              menu={{ items: menuItem, selectedKeys: [selectedMenu] }}
-              placement="bottom"
+              dropdownRender={() => (
+                <div className="bg-white rounded-md pt-5 shadow-md">
+                  <AdminDetails />
+                  <Menu
+                    className="opacity-80"
+                    style={{ boxShadow: "none" }}
+                    items={accountMenu}
+                    selectedKeys={[selectedSider]}
+                    onSelect={(item) => setSelectedSider(item.key)}
+                  />
+                </div>
+              )}
             >
-              <button>
-                <BsThreeDots size={"1.5rem"} />
-              </button>
+              <div>
+                <SignInSignUp />
+              </div>
             </Dropdown>
-          )}
+          </div>
           <Link className="self-center" href="/">
             <HomeButton>Home</HomeButton>
           </Link>
         </Header>
         <div className="h-full">
-          {userSelectedMenu === "/dashboard" && selectedSider && (
-            <div className="flex md:h-full">
-              <Sider
-                className="md:bg-white z-10 hidden md:block opacity-80"
-                width={"15vw"}
-              >
+          <div className="flex md:h-full">
+            <Sider
+              className="md:bg-white z-10 hidden md:block opacity-80 relative"
+              width={"15vw"}
+            >
+              <div className="">
                 <Menu
-                  className="min-h-full text-[0.9vw]"
                   selectedKeys={[selectedSider]}
+                  className="place-self-start"
                   items={siderMenu}
-                  onSelect={(info) => setSelectedSider(info.key as any)}
+                  onSelect={handleSeletect}
                 />
-              </Sider>
-              <div
-                className="overflow-auto h-screen w-screen md:w-full
-             md:pb-20 py-20 md:py-5 md:px-5 round-md relative px-2"
-              >
-                {children}
+                <Divider />
+
+                <AdminDetails />
+
+                <Menu
+                  className="place-self-start"
+                  items={accountMenu}
+                  selectedKeys={[selectedSider]}
+                  onSelect={(item) => setSelectedSider(item.key)}
+                />
               </div>
-              <BotomMenu
-                defaultSelected={selectedSider}
-                onchange={(info) => {
-                  router.push(info);
-                }}
-              />
+            </Sider>
+            <div
+              className="overflow-auto h-screen w-screen md:w-full
+             md:pb-20 py-20 md:py-5 md:px-5 round-md relative px-2"
+            >
+              {children}
             </div>
-          )}
-          {userSelectedMenu === "/account-setting" && (
-            <div className="overflow-auto h-full relative">{children}</div>
-          )}
+            <BotomMenu
+              onchange={(info) => {
+                router.push(info);
+              }}
+            />
+          </div>
         </div>
       </div>
     </>

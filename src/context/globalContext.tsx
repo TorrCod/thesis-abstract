@@ -7,24 +7,25 @@ import {
   getDistincYear,
   getThesisCount,
 } from "@/utils/thesis-item-utils";
-import { useRouter } from "next/router";
 import React, {
   createContext,
   useContext,
   useEffect,
   useReducer,
-  useRef,
   useState,
 } from "react";
+import { io } from "socket.io-client";
 import {
   Course,
   GlobalAction,
   GlobalState,
   GlobalValue,
+  SearchAction,
   SearchOption,
   SearchQuery,
   ThesisItems,
 } from "./types.d";
+import Router from "next/router";
 
 const totalDataInit: { course: Course; count: number }[] = [
   { course: "Civil Engineer", count: 0 },
@@ -35,33 +36,39 @@ const totalDataInit: { course: Course; count: number }[] = [
 ];
 
 const globalStateInit: GlobalState = {
-  thesisItems: [],
+  thesisItems: { totalCount: 0, currentPage: 1, document: [] },
   dateOption: [],
-  loading: ["all-admin", "all-thesis"],
-  recyclebin: [],
+  loading: [],
+  recyclebin: { totalCount: 0, currentPage: 1, document: [] },
   searchThesis: [],
-  filterState: {
-    years: { all: true, option: [] },
-    course: { all: true, option: courseOption as Course[] },
-  },
   totalThesisCount: { totalCount: 0, thesisCount: totalDataInit },
+  searchingAction: {
+    filterState: {
+      years: { all: true, default: [] },
+      course: { all: true, option: courseOption, default: courseOption },
+    },
+  },
 };
 
 const globalCtxInit: GlobalValue = {
   state: globalStateInit,
   dispatch: () => {},
   async loadThesisItems() {},
-  recycledThesis: () => ({
-    load: async () => {},
-    clear: () => {},
-  }),
-  updateFilter: () => {},
+  async loadRecycle() {},
   loadingState: {
     add(key) {},
     remove(key) {},
   },
   promptToSignIn() {},
   async loadThesisCount() {},
+  addThesisItem(document) {},
+  removeThesisItem(_id) {},
+  restoreThesis(_id) {},
+  recycleThesis(thesis) {},
+  updateSearchAction() {
+    return { update(payload) {}, clear() {} };
+  },
+  clearDefault() {},
 };
 
 const GlobalContext = createContext<GlobalValue>(globalCtxInit);
@@ -73,7 +80,7 @@ const globalReducer = (
   switch (action.type) {
     case "add-thesis": {
       const newState = { ...state };
-      newState.thesisItems.push(action.payload);
+      newState.thesisItems.document.push(action.payload);
       return newState;
     }
     case "load-thesis": {
@@ -86,9 +93,6 @@ const globalReducer = (
 
     case "load-recycle":
       return { ...state, recyclebin: action.payload };
-
-    case "update-filter":
-      return { ...state, filterState: action.payload };
     case "update-default-years":
       return { ...state, dateOption: action.payload };
     case "add-loading": {
@@ -97,27 +101,100 @@ const globalReducer = (
     case "load-thesis-count": {
       return { ...state, totalThesisCount: action.payload };
     }
+    case "on-search-action": {
+      return { ...state, searchingAction: action.payload };
+    }
   }
 };
 
 export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(globalReducer, globalStateInit);
+
   useEffect(() => {
     loadYearsOpt();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.thesisItems]);
+  }, []);
 
-  const loadThesisItems = async (query?: SearchQuery, limit?: number) => {
-    try {
-      loadingState.add("all-thesis");
-      const thesisItems = await getAllThesis(query, {
-        limit: 10,
-        projection: { title: 1, course: 1, dateAdded: 1 },
+  const updateSearchAction = () => {
+    const update = (payload: SearchAction) => {
+      dispatch({ type: "on-search-action", payload: payload });
+    };
+    const clear = () => {
+      const newFilterState = { ...state.searchingAction.filterState };
+      newFilterState.years.option = newFilterState.years.default;
+      dispatch({
+        type: "on-search-action",
+        payload: {
+          ...globalStateInit.searchingAction,
+          filterState: newFilterState,
+        },
       });
+    };
+    return { update, clear };
+  };
+
+  const loadThesisItems = async (
+    query?: SearchQuery,
+    option?: SearchOption
+  ) => {
+    try {
+      const { searchTitle: title } = state.searchingAction;
+      const { option: course, default: courseDefault } =
+        state.searchingAction.filterState.course;
+      const { option: year, default: yearDefault } =
+        state.searchingAction.filterState.years;
+      const thesisItems = await getAllThesis(
+        {
+          title: title,
+          course:
+            query?.course ??
+            (year?.length && course?.length !== courseDefault.length
+              ? course
+              : undefined),
+          year:
+            query?.year ??
+            (year?.length && year?.length !== yearDefault.length
+              ? year
+              : undefined),
+        },
+        {
+          limit: option?.limit ?? 10,
+          projection: option?.projection ?? {
+            title: 1,
+            course: 1,
+            dateAdded: 1,
+          },
+        },
+        state.searchingAction.pageNo
+      );
       dispatch({
         type: "load-thesis",
         payload: thesisItems,
       });
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const loadRecycle = async () => {
+    try {
+      loadingState.add("all-thesis");
+      const token = await auth.currentUser?.getIdToken();
+      const recycledThesis = await getAllDeletedThesis(
+        token,
+        { title: state.searchingAction.searchTitle },
+        {
+          limit: 10,
+          projection: {
+            title: 1,
+            course: 1,
+            createdAt: 1,
+            expireAfterSeconds: 1,
+          },
+        },
+        state.searchingAction.pageNo
+      );
+      dispatch({ type: "load-recycle", payload: recycledThesis ?? [] });
     } catch (e) {
       console.error(e);
     } finally {
@@ -129,47 +206,16 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
     const distinctYear = await getDistincYear();
     dispatch({ type: "update-default-years", payload: distinctYear });
     dispatch({
-      type: "update-filter",
+      type: "on-search-action",
       payload: {
-        ...state.filterState,
-        years: { all: true, option: distinctYear },
+        ...state.searchingAction,
+        filterState: {
+          ...state.searchingAction.filterState,
+
+          years: { all: true, option: distinctYear, default: distinctYear },
+        },
       },
     });
-  };
-
-  const recycledThesis = () => ({
-    load: async (query?: SearchQuery, option?: SearchOption) => {
-      try {
-        const token = await auth.currentUser?.getIdToken();
-        const recycledThesis = await getAllDeletedThesis(token, query, {
-          ...option,
-          projection: {
-            title: 1,
-            course: 1,
-            createdAt: 1,
-            expireAfterSeconds: 1,
-          },
-        });
-        dispatch({ type: "load-recycle", payload: recycledThesis ?? [] });
-      } catch (e) {
-        console.error("failed to load deleted thesis");
-        console.error(e);
-      }
-    },
-    clear: () => dispatch({ type: "load-recycle", payload: [] }),
-  });
-
-  const updateFilter = (payload: {
-    years: {
-      all: boolean;
-      option: string[];
-    };
-    course: {
-      all: boolean;
-      option: Course[];
-    };
-  }) => {
-    dispatch({ type: "update-filter", payload: payload });
   };
 
   const loadingState = {
@@ -197,64 +243,106 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const addThesisItem = (document: ThesisItems) => {
+    dispatch({
+      type: "load-thesis",
+      payload: {
+        ...state.thesisItems,
+        document: [document, ...state.thesisItems.document],
+      },
+    });
+  };
+
+  const removeThesisItem = (_id: string) => {
+    const oldDoc = [...state.thesisItems.document];
+    const newDoc = oldDoc.filter((item) => item._id !== _id);
+    dispatch({
+      type: "load-thesis",
+      payload: { ...state.thesisItems, document: newDoc },
+    });
+    loadThesisItems();
+  };
+
+  const recycleThesis = (thesis: ThesisItems) => {
+    const oldRecyleThesis = [...state.recyclebin.document];
+    if (oldRecyleThesis.length >= 10) oldRecyleThesis.pop();
+    dispatch({
+      type: "load-recycle",
+      payload: { ...state.recyclebin, document: [thesis, ...oldRecyleThesis] },
+    });
+  };
+
+  const restoreThesis = (_id: string) => {
+    const oldRecyle = [...state.recyclebin.document];
+    const newRecyle = oldRecyle.filter((item) => item._id !== _id);
+    dispatch({
+      type: "load-recycle",
+      payload: { ...state.recyclebin, document: newRecyle },
+    });
+  };
+
+  const clearDefault = () => {
+    dispatch({ type: "load-thesis", payload: globalStateInit.thesisItems });
+  };
+
   return (
     <GlobalContext.Provider
       value={{
         state,
+        clearDefault,
+        recycleThesis,
+        restoreThesis,
         dispatch,
         loadThesisItems,
-        recycledThesis,
-        updateFilter,
+        loadRecycle,
         loadingState,
         promptToSignIn,
         loadThesisCount,
+        addThesisItem,
+        removeThesisItem,
+        updateSearchAction,
       }}
     >
-      <LoadingGlobal loading={state.loading.includes("global")}>
-        {children}
-      </LoadingGlobal>
+      <LoadingGlobal>{children}</LoadingGlobal>
     </GlobalContext.Provider>
   );
 };
 
-export const LoadingGlobal = ({
-  children,
-  loading,
-  backgroundColor,
-}: {
-  children?: React.ReactNode;
-  loading: boolean;
-  backgroundColor?: string;
-}) => {
-  const [noLoading, setNoLoading] = useState(loading);
-  const [slide, setSlide] = useState(loading);
+export const LoadingGlobal = ({ children }: { children?: React.ReactNode }) => {
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    setSlide(!loading);
-    const timeOut = setTimeout(() => setNoLoading(loading), 300);
-    return () => clearTimeout(timeOut);
-  }, [loading]);
+    let timeOut: NodeJS.Timeout;
+    const start = () => {
+      clearTimeout(timeOut);
+      timeOut = setTimeout(() => setLoading(true), 500);
+    };
+    const end = () => {
+      setLoading(false);
+      clearTimeout(timeOut);
+    };
+    Router.events.on("routeChangeStart", start);
+    Router.events.on("routeChangeComplete", end);
+    Router.events.on("routeChangeError", end);
+    return () => {
+      Router.events.off("routeChangeStart", start);
+      Router.events.off("routeChangeComplete", end);
+      Router.events.off("routeChangeError", end);
+      clearTimeout(timeOut);
+    };
+  }, []);
 
   return (
-    <div
-      className={noLoading ? "w-full h-screen overflow-hidden relative" : ""}
-    >
-      {noLoading ? (
-        <div
-          className={`absolute w-full h-screen bg-[${
-            backgroundColor ?? "#38649C"
-          }] z-[60] flex flex-col justify-center items-center text-white transition-transform duration-200 ease-out ${
-            slide ? `-translate-x-full` : `translate-x-0`
-          } `}
-        >
-          <h1>Loading</h1>
-          <LoadingIcon />
-        </div>
-      ) : (
-        <></>
-      )}
-      {children}
-    </div>
+    <>
+      <div
+        className={`absolute left-5 transition-all duration-200 ease-in-out z-50 ${
+          loading ? `top-0` : `-top-24`
+        }`}
+      >
+        <LoadingIcon />
+      </div>
+      <div>{children}</div>
+    </>
   );
 };
 

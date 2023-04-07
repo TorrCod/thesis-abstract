@@ -1,0 +1,27 @@
+{
+    "name": "UTAMS",
+    "short_name": "Next App",
+    "description": "A thesis abstract management system for the College of Engineering in URS Morong is a web application designed to simplify the process of submitting, reviewing, and managing thesis abstracts for students, faculty, and staff at the College of Engineering. The system would allow students to easily submit their thesis abstracts online, and the faculty and staff would be able to access and review them remotely. The system would also automate the approval process, allowing for faster turnaround times and increased efficiency. In addition to submission and review features, the system could include tools for tracking progress, managing deadlines, and generating reports. This would enable the College of Engineering to better manage their thesis abstract process, ensuring that all students have a fair chance to complete their thesis work on time. Overall, the thesis abstract management system would streamline the thesis process for students, faculty, and staff at the College of Engineering in URS Morong, making it more efficient and effective.",
+    "icons": [
+        {
+            "src": "/icon-144.png",
+            "sizes": "144x144",
+            "type": "image/png"
+        },
+        {
+            "src": "/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "start_url": "/",
+    "display": "standalone",
+    "theme_color": "#ffffff",
+    "background_color": "#ffffff",
+    "orientation": "portrait"
+}

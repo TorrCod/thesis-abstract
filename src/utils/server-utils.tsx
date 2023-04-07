@@ -1,7 +1,7 @@
 import { UserDetails } from "@/context/types.d";
 import { verifyIdToken } from "@/lib/firebase-admin";
 import { addData, getData } from "@/lib/mongo";
-import { ActivitylogReason } from "@/lib/types";
+import { ActivitylogReason, CollectionName, DatabaseName } from "@/lib/types";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import { ObjectId } from "mongodb";
@@ -93,7 +93,11 @@ export const parseQuery = (req: NextApiRequest) => {
   if (res.title)
     (res.title as any) = { $regex: new RegExp(`${res.title}`, "i") };
   return {
-    query: res,
+    query: res as unknown as {
+      title?: Record<string, any>;
+      year?: Record<string, any>;
+      course: Record<string, any>;
+    },
     option,
   };
 };

@@ -6,9 +6,11 @@
 **/out
 **/.next
 **/.vercel
+**/.env
 
 # Ignore testing files
 **/__tests__
+**/docker-mongo
 
 # Ignore other files
 Dockerfile

@@ -1,5 +1,4 @@
 import { auth, signUp } from "@/lib/firebase";
-import { _Socket } from "@/lib/types";
 import {
   addUserAccount,
   deleteAdmin,
@@ -8,7 +7,6 @@ import {
   getUserDetails,
   updateUser,
 } from "@/utils/account-utils";
-import { readSocket } from "@/utils/socket-utils";
 import { addThesis } from "@/utils/thesis-item-utils";
 import { message } from "antd";
 import axios from "axios";
@@ -44,7 +42,7 @@ import { signOut as nextSignOut } from "next-auth/react";
 const userStateInit: UserState = {
   userDetails: undefined,
   listOfAdmins: [],
-  activityLog: [],
+  activityLog: { currentPage: 1, totalCount: 0, document: [] },
 };
 
 const userValueInit: UserValue = {
@@ -53,9 +51,10 @@ const userValueInit: UserValue = {
   saveUploadThesis: async () => {},
   loadAllUsers: async () => {},
   unsubscribeRef: { current: null },
-  loadActivityLog: async () => {
-    return [];
+  async loadActivityLog(query) {
+    return () => {};
   },
+  async logOut() {},
 };
 
 const UserContext = createContext<UserValue>(userValueInit);
@@ -104,64 +103,33 @@ const userReducer = (state: UserState, action: UserAction): UserState => {
 export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(userReducer, userStateInit);
   const unsubscribeRef = useRef<Unsubscribe | null>(null);
-  const userSocketRef = useRef<_Socket | undefined>();
   const {
     dispatch: gloablDispatch,
-    recycledThesis,
     loadingState,
+    state: globalState,
   } = useGlobalContext();
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        try {
+      try {
+        if (user) {
           const token = await user.getIdToken();
           const res: UserDetails = await getUserDetails(token, user.uid);
-          res.newToken = token;
           res.profilePic = user.photoURL as any;
           dispatch({ type: "on-signin", payload: { userDetails: res } });
-        } catch (e) {
-          console.log("testyarn");
-          message.error("failed to fetch user details");
-          console.error(e);
-          nextSignOut({ redirect: false });
-          axios.get("/api/logout");
-          await auth.signOut();
         }
-      } else {
-        dispatch({
-          type: "on-logout",
-        });
-        recycledThesis().clear();
-        dispatch({
-          type: "load-all-users",
-          payload: { adminList: [], pendingAdminList: [] },
-        });
-        dispatch({
-          type: "load-activity-log",
-          payload: [],
-        });
-        gloablDispatch({ type: "load-thesis", payload: [] });
-        userSocketRef.current?.unsubscribe();
-        await axios.get("/api/logout");
+        unsubscribeRef.current = unsubscribe;
+      } catch (e) {
+        console.error(e);
+        nextSignOut({ redirect: false });
+        axios.get("/api/logout");
+        await auth.signOut();
       }
-      unsubscribeRef.current = unsubscribe;
     });
     return () => {
       unsubscribe();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    if (userSocketRef.current || !state.userDetails) return;
-    userSocketRef.current = readSocket(
-      state.userDetails.newToken,
-      "account-update"
-    );
-    userSocketRef.current.subscribe(() => {
-      loadAllUsers();
-    });
-  }, [state.userDetails]);
 
   const loadAllUsers = async () => {
     try {
@@ -184,11 +152,7 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
     const token = await credential.user.getIdToken();
     userDetails.uid = credential.user.uid;
     await addUserAccount(token, userDetails);
-    await signIn(
-      "credentials",
-      { callbackUrl: "/dashboard" },
-      { tokenId: token }
-    );
+    signIn("credentials", { callbackUrl: "/dashboard" }, { tokenId: token });
   };
 
   const userUpdateInfo = async (userDetails: UserDetails) => {
@@ -212,6 +176,8 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
       photoURL: userDetails.profilePic,
     });
     await auth.updateCurrentUser(auth.currentUser);
+    const token = await auth.currentUser?.getIdToken();
+    await updateUser(token, userDetails._id, userDetails);
     dispatch({ type: "on-signin", payload: { userDetails: userDetails } });
   };
 
@@ -236,13 +202,47 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
     await addThesis(thesisItems, userToken);
   };
 
-  const loadActivityLog = async () => {
+  const loadActivityLog = async (query?: Record<string, any>) => {
     const token = await auth.currentUser?.getIdToken();
-    const activityLog = (await getActivityLog(token, {
-      limit: 10,
-    })) as ActivityLog[];
+    const activityLog = await getActivityLog(
+      token,
+      query,
+      {
+        limit: 10,
+      },
+      globalState.searchingAction.pageNo
+    );
     dispatch({ type: "load-activity-log", payload: activityLog });
-    return activityLog;
+    return clearActivitylog;
+  };
+
+  const clearActivitylog = () => {
+    dispatch({ type: "load-activity-log", payload: userStateInit.activityLog });
+  };
+
+  const logOut = async () => {
+    dispatch({
+      type: "on-logout",
+    });
+    dispatch({
+      type: "load-all-users",
+      payload: { adminList: [], pendingAdminList: [] },
+    });
+    dispatch({
+      type: "load-activity-log",
+      payload: userStateInit.activityLog,
+    });
+    gloablDispatch({
+      type: "load-thesis",
+      payload: { currentPage: 1, document: [], totalCount: 0 },
+    });
+    gloablDispatch({
+      type: "load-recycle",
+      payload: { currentPage: 1, document: [], totalCount: 0 },
+    });
+    await auth.signOut();
+    await nextSignOut({ callbackUrl: "/?signin" });
+    await axios.get("/api/logout");
   };
 
   return (
@@ -259,6 +259,7 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
         saveUploadThesis,
         unsubscribeRef,
         loadActivityLog,
+        logOut,
       }}
     >
       {children}

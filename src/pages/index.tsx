@@ -3,26 +3,24 @@ import Image from "next/image";
 import { PriButton } from "@/components/button";
 import Search from "@/components/search";
 import { useEffect } from "react";
-import PdfDownloadLink from "@/components/pdfDocs";
-import { GetServerSideProps } from "next";
 import useGlobalContext from "@/context/globalContext";
-import Link from 'next/link';
+import { useRouter } from "next/router";
+import { Button } from "antd";
+import Link from "next/link";
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  return { props: { query: context.query } };
-};
-
-export default function Home(props: { query: string }) {
+export default function Home() {
   const { promptToSignIn } = useGlobalContext();
+  const router = useRouter();
   useEffect(() => {
-    if (Object.keys(props.query).includes("sign-in")) {
+    if (Object.keys(router.query).includes("signin")) {
       promptToSignIn();
     }
     document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = "visible";
     };
-  }, [props.query]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router]);
 
   return (
     <>
@@ -30,11 +28,6 @@ export default function Home(props: { query: string }) {
         <title>
           Thesis Abstract Management System for College of Engineering
         </title>
-        <meta
-          name="description"
-          content="Web based Thesis Abstract Management System for College of Engineering"
-        />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <section>
         <header className="relative text-white md:grid md:grid-cols-2 place-items-center md:h-screen md:max-h-[70em]">
@@ -50,7 +43,7 @@ export default function Home(props: { query: string }) {
             </div>
             <div className="z-[1] mt-12">
               <Link href="/GetStarted">
-              <PriButton size="large">Get Started</PriButton>
+                <PriButton size="large">Get Started</PriButton>
               </Link>
             </div>
           </div>

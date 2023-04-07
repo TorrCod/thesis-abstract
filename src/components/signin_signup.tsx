@@ -9,6 +9,7 @@ import { useRouter } from "next/router";
 import { signIn } from "@/lib/firebase";
 import { useSession } from "next-auth/react";
 import Cookies from "universal-cookie";
+import { FirebaseError } from "firebase-admin";
 
 const SignInSignUp = () => {
   const [open, setOpen] = useState(false);
@@ -33,11 +34,12 @@ const SignInSignUp = () => {
       const password = formSignIn.getFieldValue("sign-in-password");
       await signIn(email, password);
     } catch (error) {
-      const errorMessage: string = (error as any).message;
-      if (errorMessage) {
+      const errorMessage = error as FirebaseError;
+      if ((errorMessage.code = "auth/wrong-password")) {
         message.error("Wrong email or password");
+      } else {
+        console.error(error);
       }
-      console.error(error);
     } finally {
       setLoading(false);
       formSignIn.resetFields();

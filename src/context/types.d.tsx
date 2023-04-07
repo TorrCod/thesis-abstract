@@ -14,6 +14,7 @@ export interface GlobalState {
 }
 
 export type SearchAction = {
+  pageSize: number;
   searchTitle?: string;
   pageNo?: number;
   filterState: FilterState;
@@ -75,6 +76,7 @@ export type GlobalAction =
         searchTitle?: string;
         thesisPageNo?: number;
         filterState: FilterState;
+        pageSize: number;
       };
     }
   | {

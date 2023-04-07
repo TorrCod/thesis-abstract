@@ -10,6 +10,7 @@ import { parseQuery, sleep } from "@/utils/server-utils";
 import { ObjectId } from "mongodb";
 import { NextApiRequest, NextApiResponse } from "next";
 import NextCors from "nextjs-cors";
+import qs from "qs";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   await sleep(2000);
@@ -58,6 +59,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         parseInt(req.query.pageSize as string)) as number;
       const pageNo = (req.query.pageNo &&
         parseInt(req.query.pageNo as string)) as number;
+
       const thesisItems = (await getDataWithPaging(
         "thesis-abstract",
         "thesis-items",

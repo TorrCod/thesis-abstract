@@ -96,7 +96,7 @@ export const getDataWithPaging = async (
     collection.createIndex({ dateAdded: -1 });
 
     const countDocuments = await collection.countDocuments(query ?? undefined);
-    const skipDocuments = ((page?.pageNo ?? 1) - 1) * (page?.pageSize ?? 10);
+    const skipDocuments = ((page?.pageNo ?? 1) - 1) * (page?.pageSize ?? 30);
 
     let document = collection
       .find(query ?? { dateAdded: 0 }, {
@@ -104,7 +104,7 @@ export const getDataWithPaging = async (
       })
       .sort({ dateAdded: -1 })
       .skip(skipDocuments)
-      .limit(option?.limit ?? 10);
+      .limit(option?.limit ?? page?.pageSize ?? 30);
 
     if (page?.sort) document = document.sort(page.sort);
 

@@ -43,10 +43,9 @@ import {
 } from "recharts";
 import { ResponsiveContainer } from "recharts";
 import { authOptions } from "../api/auth/[...nextauth]";
-import useSocketContext from "@/context/socketContext";
 import { NextPageWithLayout } from "../_app";
 import useUserContext from "@/context/userContext";
-import { useEffectOnce } from "react-use";
+import { useDebounce, useScroll } from "react-use";
 
 const menuItems: MenuProps["items"] = [
   { key: "thesis-items", label: "Thesis Items" },
@@ -134,7 +133,7 @@ const Page: NextPageWithLayout = () => {
         </div>
       </div>
       <Divider />
-      <div className="mt-5 bg-white gap-1 rounded-md p-5 relative w-full min-h-[60em]">
+      <div className="mt-5 bg-white gap-1 rounded-md p-5 relative w-full">
         <p className="opacity-60 mb-5">Manage Thesis Abstracts</p>
         <QuerySearch onSearch={handleSearch} />
         <Divider />
@@ -187,31 +186,74 @@ export const ThesisCharts = () => {
 };
 
 export const ThesisTable = () => {
-  const { state, updateSearchAction, loadThesisItems, loadingState } =
+  const { state, updateSearchAction, loadThesisItems, dispatch } =
     useGlobalContext();
   const [thesisTableData, setThesisTableData] = useState<DataType[]>([]);
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+
+  const scrollHandler = async (event: Event) => {
+    const { scrollTop, scrollHeight, clientHeight } =
+      event.target as HTMLDivElement;
+    const isBottom = scrollHeight - scrollTop === clientHeight;
+
+    if (
+      isBottom &&
+      !(state.thesisItems.document.length === state.thesisItems.totalCount)
+    ) {
+      console.log("hello");
+      const newSearchAction = { ...state.searchingAction };
+      newSearchAction.pageNo = (newSearchAction.pageNo ?? 1) + 1;
+      updateSearchAction().update(newSearchAction);
+
+      const searchAction = newSearchAction;
+      const { searchTitle: title } = searchAction;
+      const { option: course, default: courseDefault } =
+        searchAction.filterState.course;
+      const { option: year, default: yearDefault } =
+        searchAction.filterState.years;
+      const thesisItems = await getAllThesis(
+        {
+          title,
+          course: course?.length ? course : undefined,
+          year: year?.length ? year : undefined,
+        },
+        {
+          projection: {
+            title: 1,
+            course: 1,
+            dateAdded: 1,
+          },
+        },
+        searchAction.pageNo,
+        searchAction.pageSize
+      );
+      const newThesisITemsState = { ...state.thesisItems };
+      newThesisITemsState.document = [
+        ...newThesisITemsState.document,
+        ...thesisItems.document,
+      ];
+      dispatch({ type: "load-thesis", payload: newThesisITemsState });
+    }
+  };
 
   useEffect(() => {
-    return () => updateSearchAction().clear();
+    const layout_ref = document.getElementById(
+      "layout-container"
+    ) as HTMLDivElement;
+    scrollRef.current = layout_ref;
+    scrollRef.current.addEventListener("scroll", scrollHandler);
+    return () => {
+      scrollRef.current?.removeEventListener("scroll", scrollHandler);
+      updateSearchAction().clear();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [state.thesisItems]);
 
   useEffect(() => {
     const thesisItems = state.thesisItems;
     const toTableThesisItems = thesisToDataType(thesisItems.document);
     setThesisTableData(toTableThesisItems);
   }, [state.thesisItems]);
-
-  const handlePageChange: PaginationProps["onChange"] = (pageNo) => {
-    loadingState.add("thesis-table");
-    const searchAction = { ...state.searchingAction, pageNo };
-    updateSearchAction().update(searchAction);
-    loadThesisItems(undefined, undefined, searchAction)
-      .catch((e) => {
-        console.error(e);
-      })
-      .finally(() => loadingState.remove("thesis-table"));
-  };
 
   return (
     <>
@@ -222,18 +264,6 @@ export const ThesisTable = () => {
         scroll={{ x: 50 }}
         pagination={false}
       />
-      <div className="mx-auto mt-5 w-fit md:absolute md:bottom-0 md:right-0 md:m-5">
-        <Pagination
-          current={
-            state.searchingAction.pageNo ?? state.thesisItems.currentPage
-          }
-          defaultCurrent={
-            state.searchingAction.pageNo ?? state.thesisItems.currentPage
-          }
-          total={state.thesisItems.totalCount}
-          onChange={handlePageChange}
-        />
-      </div>
     </>
   );
 };

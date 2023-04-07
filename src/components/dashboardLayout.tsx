@@ -191,6 +191,7 @@ function DashboardLayout({ children }: DashboardProps) {
               </div>
             </Sider>
             <div
+              id="layout-container"
               className="overflow-auto h-screen w-screen md:w-full
              md:pb-20 py-20 md:py-5 md:px-5 round-md relative px-2"
             >

@@ -43,6 +43,7 @@ const globalStateInit: GlobalState = {
   searchThesis: [],
   totalThesisCount: { totalCount: 0, thesisCount: totalDataInit },
   searchingAction: {
+    pageSize: 5,
     filterState: {
       years: { all: true, default: [] },
       course: { all: true, option: courseOption, default: courseOption },
@@ -164,14 +165,14 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
             : undefined),
       },
       {
-        limit: option?.limit ?? 10,
         projection: option?.projection ?? {
           title: 1,
           course: 1,
           dateAdded: 1,
         },
       },
-      searchAction.pageNo
+      searchAction.pageNo,
+      searchAction.pageSize
     );
     dispatch({
       type: "load-thesis",
@@ -208,7 +209,7 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
               : undefined),
         },
         {
-          limit: option?.limit ?? 10,
+          limit: option?.limit ?? 30,
           projection: option?.projection ?? {
             title: 1,
             course: 1,

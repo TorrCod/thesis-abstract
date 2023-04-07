@@ -2,19 +2,10 @@ import {
   ActivitylogState,
   PendingAdminList,
   SearchOption,
-  SearchQuery,
-  ThesisItems,
   UserDetails,
 } from "@/context/types.d";
-import {
-  ActivitylogReason,
-  AddPost,
-  MongoDetails,
-  QueryPost,
-} from "@/lib/types";
-import axios, { AxiosError } from "axios";
-import { stringifyURI } from "./helper";
-
+import { ActivitylogReason } from "@/lib/types";
+import axios from "axios";
 export const userConfig = (token: string) => ({
   headers: { authorization: `Bearer ${token}` },
 });

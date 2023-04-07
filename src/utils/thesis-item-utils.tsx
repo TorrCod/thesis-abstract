@@ -12,12 +12,13 @@ import { stringifyURI } from "./helper";
 export const getAllThesis = async (
   query?: SearchQuery,
   option?: SearchOption,
-  pageNo?: number
+  pageNo?: number,
+  pageSize?: number
 ) => {
   const res = await axios.get(
     `${process.env.NEXT_PUBLIC_DOMAIN}/api/public/thesis?${
-      pageNo ? `pageNo=${pageNo}` : ``
-    }${stringifyURI(query, option)}`
+      pageNo ? `&pageNo=${pageNo}` : ``
+    }${pageSize ? `&pageSize=${pageSize}` : ``}${stringifyURI(query, option)}`
   );
   const data = res.data as ThesisState;
   return data;

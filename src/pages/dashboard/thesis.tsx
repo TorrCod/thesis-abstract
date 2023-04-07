@@ -46,6 +46,7 @@ import { authOptions } from "../api/auth/[...nextauth]";
 import useSocketContext from "@/context/socketContext";
 import { NextPageWithLayout } from "../_app";
 import useUserContext from "@/context/userContext";
+import { useEffectOnce } from "react-use";
 
 const menuItems: MenuProps["items"] = [
   { key: "thesis-items", label: "Thesis Items" },
@@ -53,7 +54,13 @@ const menuItems: MenuProps["items"] = [
 ];
 
 const Page: NextPageWithLayout = () => {
-  const { state: globalState, updateSearchAction } = useGlobalContext();
+  const {
+    state: globalState,
+    updateSearchAction,
+    loadThesisItems,
+    loadingState,
+    loadRecycle,
+  } = useGlobalContext();
   const router = useRouter();
 
   const handleMenu: MenuProps["onSelect"] = (item) => {
@@ -61,17 +68,24 @@ const Page: NextPageWithLayout = () => {
   };
 
   const handleSearch = (searchText: string) => {
-    if (searchText === "")
-      updateSearchAction().update({
-        ...globalState.searchingAction,
-        searchTitle: undefined,
-      });
-    else
-      updateSearchAction().update({
-        ...globalState.searchingAction,
-        searchTitle: searchText,
-      });
+    const searchAction = {
+      ...globalState.searchingAction,
+      searchTitle: searchText === "" ? undefined : searchText,
+    };
+    updateSearchAction().update(searchAction);
+    if (router.query.tab === "thesis-items" || !router.query.tab) {
+      loadingState.add("thesis-table");
+      loadThesisItems(undefined, undefined, searchAction).finally(() =>
+        loadingState.remove("thesis-table")
+      );
+    } else {
+      loadingState.add("recycle-table");
+      loadRecycle(undefined, undefined, searchAction).finally(() =>
+        loadingState.remove("recycle-table")
+      );
+    }
   };
+
   return (
     <div className="m-auto relative w-full">
       <div className="opacity-80 mb-3">Dashboard {">"} Thesis</div>

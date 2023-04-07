@@ -121,7 +121,7 @@ export type GlobalValue = {
   };
   promptToSignIn: () => void;
   addThesisItem: (document: ThesisItems) => void;
-  removeThesisItem: (_id: string) => void;
+  removeThesisItem: (_id: string) => Promise<void>;
   restoreThesis: (_id: string) => void;
   recycleThesis: (thesis: ThesisItems) => void;
   updateSearchAction: () => {

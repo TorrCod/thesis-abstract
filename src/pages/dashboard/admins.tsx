@@ -201,7 +201,6 @@ const UserProfile = ({ payloadUser }: { payloadUser: UserDetails }) => {
 
 export const AdminTable = ({ noAction }: { noAction?: boolean }) => {
   const { state, loadAllUsers } = useUserContext();
-  const { state: globalState } = useGlobalContext();
   const [dataCol, setDataCol] = useState<ColumnsType<AdminData>>(
     dataColumnType(state.userDetails)
   );

@@ -62,7 +62,7 @@ const globalCtxInit: GlobalValue = {
   promptToSignIn() {},
   async loadThesisCount() {},
   addThesisItem(document) {},
-  removeThesisItem(_id) {},
+  async removeThesisItem(_id) {},
   restoreThesis(_id) {},
   recycleThesis(thesis) {},
   updateSearchAction() {
@@ -253,14 +253,14 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
     });
   };
 
-  const removeThesisItem = (_id: string) => {
+  const removeThesisItem = async (_id: string) => {
     const oldDoc = [...state.thesisItems.document];
     const newDoc = oldDoc.filter((item) => item._id !== _id);
     dispatch({
       type: "load-thesis",
       payload: { ...state.thesisItems, document: newDoc },
     });
-    loadThesisItems();
+    await loadThesisItems();
   };
 
   const recycleThesis = (thesis: ThesisItems) => {

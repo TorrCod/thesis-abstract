@@ -176,9 +176,9 @@ export const ThesisCharts = () => {
 export const ThesisTable = () => {
   const { state: userState } = useUserContext();
   const userDetails = userState.userDetails;
-  const { state, loadThesisItems, updateSearchAction } = useGlobalContext();
+  const { state, loadThesisItems, updateSearchAction, loadingState } =
+    useGlobalContext();
   const [thesisTableData, setThesisTableData] = useState<DataType[]>([]);
-  const updated = useRef(false);
 
   useEffect(() => {
     return () => updateSearchAction().clear();
@@ -187,8 +187,8 @@ export const ThesisTable = () => {
 
   useEffect(() => {
     if (userDetails) {
-      loadThesisItems();
-      updated.current = true;
+      loadingState.add("all-thesis");
+      loadThesisItems().finally(() => loadingState.remove("all-thesis"));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userDetails, state.searchingAction]);
@@ -207,7 +207,6 @@ export const ThesisTable = () => {
     <>
       <Table
         loading={state.loading.includes("all-thesis")}
-        // className="min-w-[40em]"
         columns={thesisTableColumn}
         dataSource={thesisTableData}
         scroll={{ x: 50 }}
@@ -215,8 +214,8 @@ export const ThesisTable = () => {
       />
       <div className="mx-auto mt-5 w-fit md:absolute md:bottom-0 md:right-0 md:m-5">
         <Pagination
-          current={state.thesisItems.currentPage}
-          defaultCurrent={state.thesisItems.currentPage ?? 1}
+          current={state.searchingAction.pageNo ?? 1}
+          defaultCurrent={state.searchingAction.pageNo ?? 1}
           total={state.thesisItems.totalCount}
           onChange={handlePageChange}
         />
@@ -275,7 +274,7 @@ const RecycledTable = () => {
       />
       <div className="mx-auto mt-5 w-fit md:absolute md:bottom-0 md:right-0 md:m-5">
         <Pagination
-          current={state.recyclebin.currentPage}
+          current={state.searchingAction.pageNo}
           defaultCurrent={state.recyclebin.currentPage ?? 1}
           total={state.recyclebin.totalCount}
           onChange={handlePageChange}
@@ -286,16 +285,23 @@ const RecycledTable = () => {
 };
 
 const RemoveThesis = (props: DataType & { id: string }) => {
-  const { removeThesisItem } = useGlobalContext();
+  const { removeThesisItem, loadingState } = useGlobalContext();
   const { triggerSocket } = useSocketContext();
 
   const handleClick = async () => {
     try {
       const token = await auth.currentUser?.getIdToken();
-      await removeThesis({ token: token, thesisId: props.id });
-      removeThesisItem(props.id);
-      triggerSocket("thesis-update");
-      message.success("Removed Success");
+      loadingState.add("all-thesis");
+      removeThesis({ token: token, thesisId: props.id })
+        .then(async () => {
+          await removeThesisItem(props.id);
+          triggerSocket("thesis-update");
+          message.success("Removed Success");
+        })
+        .catch((e) => {
+          console.error(e);
+        })
+        .finally(() => loadingState.remove("all-thesis"));
     } catch (e) {
       message.error("remove failed");
       console.error(e);

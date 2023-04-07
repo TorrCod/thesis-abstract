@@ -246,19 +246,23 @@ const RemoveAdmin = ({ record }: { record: AdminData }) => {
   const [form] = useForm();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { state, loadAllUsers } = useUserContext();
+  const { state, refreshAdmin } = useUserContext();
+  const { loadingState } = useGlobalContext();
   const userEmail = state.userDetails;
-  const { triggerSocket } = useSocketContext();
 
   const handleFinish = async () => {
     try {
       setLoading(true);
+      loadingState.add("admin-table");
       await form.validateFields().catch(() => {
         throw new Error("Please fillup password");
       });
+      setOpen(false);
+
       const password = form.getFieldValue("password");
       const email = userEmail?.email;
       await signInWithEmailAndPassword(auth, email ?? "", password);
+
       if (record.status === "Admin") {
         const token = await auth.currentUser?.getIdToken();
         await firebase_admin_delete_user(token, record.email);
@@ -279,16 +283,16 @@ const RemoveAdmin = ({ record }: { record: AdminData }) => {
           name: record.email,
         });
       }
-      triggerSocket("account-update");
-      loadAllUsers();
+
+      await refreshAdmin();
       message.success("Remove Success");
-      setOpen(false);
     } catch (e) {
       console.error(e);
       message.error((e as Error).message);
     } finally {
       form.resetFields();
       setLoading(false);
+      loadingState.remove("admin-table");
     }
   };
 

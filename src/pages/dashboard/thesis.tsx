@@ -45,6 +45,7 @@ import { ResponsiveContainer } from "recharts";
 import { authOptions } from "../api/auth/[...nextauth]";
 import useSocketContext from "@/context/socketContext";
 import { NextPageWithLayout } from "../_app";
+import useUserContext from "@/context/userContext";
 
 const menuItems: MenuProps["items"] = [
   { key: "thesis-items", label: "Thesis Items" },
@@ -289,7 +290,7 @@ const RecycledTable = () => {
 
 const RemoveThesis = (props: DataType & { id: string }) => {
   const { removeThesisItem, loadingState, refreshThesis } = useGlobalContext();
-  const { triggerSocket } = useSocketContext();
+  const { loadActivityLog } = useUserContext();
 
   const handleClick = async () => {
     try {
@@ -297,7 +298,7 @@ const RemoveThesis = (props: DataType & { id: string }) => {
       const token = await auth.currentUser?.getIdToken();
       removeThesisItem(props.id);
       await removeThesis({ token: token, thesisId: props.id });
-      await refreshThesis();
+      await Promise.all([refreshThesis(), loadActivityLog()]);
       loadingState.remove("thesis-table");
     } catch (e) {
       message.error("remove failed");
@@ -323,13 +324,14 @@ const RestoreThesis = (props: DataType & { id: string }) => {
     loadingState,
     refreshThesis,
   } = useGlobalContext();
+  const { loadActivityLog } = useUserContext();
 
   const handleClick = async () => {
     loadingState.add("recycle-table");
     restore(props.id);
     const token = await auth.currentUser?.getIdToken();
     await restoreThesis({ token: token, thesisId: props.id });
-    await refreshThesis();
+    await Promise.all([refreshThesis(), loadActivityLog()]);
     loadingState.remove("recycle-table");
   };
 

@@ -93,7 +93,10 @@ export const removeThesis = async ({
     const response = await axios.delete(`/api/thesis-items?_id=${thesisId}`, {
       ...config,
     });
-    return response.data;
+    return response.data as {
+      nextItem?: ThesisItems;
+      recycledItem: ThesisItems;
+    };
   } else throw new Error("canont read user token");
 };
 

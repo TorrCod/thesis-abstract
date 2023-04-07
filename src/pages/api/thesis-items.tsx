@@ -99,11 +99,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               thesisItems.title
             );
             return res.status(200).json({
-              _id: resData.insertedResult.insertedId,
-              course: thesisItems.course,
-              createdAt: resData.dateNow,
-              expireAfterSeconds: 604800,
-              title: thesisItems.title,
+              recycledItem: {
+                _id: resData.insertedResult.insertedId,
+                course: thesisItems.course,
+                createdAt: resData.dateNow,
+                expireAfterSeconds: 604800,
+                title: thesisItems.title,
+              },
             });
           }
         }

@@ -275,7 +275,7 @@ const RemoveThesis = (props: DataType & { id: string }) => {
   const handleClick = async () => {
     try {
       const token = await auth.currentUser?.getIdToken();
-      loadingState.add("all-thesis");
+      loadingState.add("thesis-table");
       removeThesis({ token: token, thesisId: props.id })
         .then(async () => {
           await removeThesisItem(props.id);
@@ -285,7 +285,7 @@ const RemoveThesis = (props: DataType & { id: string }) => {
         .catch((e) => {
           console.error(e);
         })
-        .finally(() => loadingState.remove("all-thesis"));
+        .finally(() => loadingState.remove("thesis-table"));
     } catch (e) {
       message.error("remove failed");
       console.error(e);

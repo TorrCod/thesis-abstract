@@ -189,8 +189,6 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
       const { option: year, default: yearDefault } =
         searchAction.filterState.years;
       const token = await auth.currentUser?.getIdToken();
-      console.log();
-
       const recycledThesis = await getAllDeletedThesis(
         token,
         {

@@ -189,7 +189,6 @@ export const ThesisTable = () => {
   const { state, updateSearchAction, loadThesisItems, dispatch } =
     useGlobalContext();
   const [thesisTableData, setThesisTableData] = useState<DataType[]>([]);
-  const scrollRef = useRef<HTMLDivElement | null>(null);
 
   const scrollHandler = async (event: Event) => {
     const { scrollTop, scrollHeight, clientHeight } =
@@ -202,9 +201,8 @@ export const ThesisTable = () => {
     ) {
       console.log("hello");
       const newSearchAction = { ...state.searchingAction };
-      newSearchAction.pageNo = (newSearchAction.pageNo ?? 1) + 1;
-
       const searchAction = newSearchAction;
+      searchAction.pageNo = (searchAction.pageNo ?? 1) + 1;
       const { searchTitle: title } = searchAction;
 
       const thesisItems = await getAllThesis(
@@ -233,7 +231,9 @@ export const ThesisTable = () => {
     }
   };
 
-  useEffectOnce(() => updateSearchAction().clear());
+  useEffect(() => {
+    return updateSearchAction().clear();
+  }, []);
 
   useEffect(() => {
     const thesisItems = state.thesisItems;
@@ -243,10 +243,9 @@ export const ThesisTable = () => {
     const layout_ref = document.getElementById(
       "layout-container"
     ) as HTMLDivElement;
-    scrollRef.current = layout_ref;
-    scrollRef.current.addEventListener("scroll", scrollHandler);
+    layout_ref.addEventListener("scroll", scrollHandler);
     return () => {
-      scrollRef.current?.removeEventListener("scroll", scrollHandler);
+      layout_ref?.removeEventListener("scroll", scrollHandler);
     };
   }, [state.thesisItems]);
 
@@ -266,10 +265,8 @@ export const ThesisTable = () => {
 const RecycledTable = () => {
   const [removedTableData, setRemovedTableData] = useState<DataType[]>([]);
   const { state } = useGlobalContext();
-  const { updateSearchAction, loadingState, loadRecycle, dispatch } =
-    useGlobalContext();
+  const { updateSearchAction, dispatch } = useGlobalContext();
   const router = useRouter();
-  const scrollRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     return () => updateSearchAction().clear();
@@ -292,10 +289,9 @@ const RecycledTable = () => {
       !(state.recyclebin.document.length === state.recyclebin.totalCount)
     ) {
       const newSearchAction = { ...state.searchingAction };
-      newSearchAction.pageNo = (newSearchAction.pageNo ?? 1) + 1;
-
       const searchAction = newSearchAction;
       const { searchTitle: title } = searchAction;
+      searchAction.pageNo = (newSearchAction.pageNo ?? 1) + 1;
       const token = await auth.currentUser?.getIdToken();
       const recyclebin = await getAllDeletedThesis(
         token,
@@ -336,10 +332,9 @@ const RecycledTable = () => {
     const layout_ref = document.getElementById(
       "layout-container"
     ) as HTMLDivElement;
-    scrollRef.current = layout_ref;
-    scrollRef.current.addEventListener("scroll", scrollHandler);
+    layout_ref.addEventListener("scroll", scrollHandler);
     return () => {
-      scrollRef.current?.removeEventListener("scroll", scrollHandler);
+      layout_ref?.removeEventListener("scroll", scrollHandler);
     };
   }, [state.recyclebin]);
 
@@ -369,10 +364,9 @@ const RemoveThesis = (props: DataType & { id: string }) => {
       loadingState.add("thesis-table");
       const token = await auth.currentUser?.getIdToken();
       removeThesisItem(props.id);
-      loadingState.remove("thesis-table");
       await removeThesis({ token: token, thesisId: props.id });
-      loadActivityLog();
-      loadRecycle();
+      await Promise.all([loadActivityLog(), loadRecycle()]);
+      loadingState.remove("thesis-table");
     } catch (e) {
       message.error("remove failed");
       console.error(e);
@@ -403,11 +397,10 @@ const RestoreThesis = (props: DataType & { id: string }) => {
   const handleClick = async () => {
     loadingState.add("recycle-table");
     restore(props.id);
-    loadingState.remove("recycle-table");
     const token = await auth.currentUser?.getIdToken();
     await restoreThesis({ token: token, thesisId: props.id });
-    loadThesisItems();
-    loadActivityLog();
+    await Promise.all([loadThesisItems(), loadActivityLog()]);
+    loadingState.remove("recycle-table");
   };
 
   return (

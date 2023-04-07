@@ -55,6 +55,7 @@ const userValueInit: UserValue = {
     return () => {};
   },
   async logOut() {},
+  async refreshAdmin() {},
 };
 
 const UserContext = createContext<UserValue>(userValueInit);
@@ -217,6 +218,10 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
     dispatch({ type: "load-activity-log", payload: userStateInit.activityLog });
   };
 
+  const refreshAdmin = async () => {
+    await Promise.all([loadActivityLog(), loadAllUsers()]);
+  };
+
   const logOut = async () => {
     dispatch({
       type: "on-logout",
@@ -246,6 +251,7 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
     <UserContext.Provider
       value={{
         state,
+        refreshAdmin,
         loadAllUsers,
         dispatch,
         userSignUp,

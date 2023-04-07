@@ -83,11 +83,10 @@ export const AdminMenu = ({
 };
 
 export const AddAdmin = () => {
-  const { state, loadAllUsers } = useUserContext();
+  const { state, refreshAdmin } = useUserContext();
   const userDetails = state.userDetails;
   const [form] = useForm();
-  const { triggerSocket } = useSocketContext();
-  const { state: globalState, loadingState } = useGlobalContext();
+  const { loadingState } = useGlobalContext();
 
   const onFinish = ({ email }: any) => {
     loadingState.add("admin-table");
@@ -104,7 +103,7 @@ export const AddAdmin = () => {
           handleCodeInApp: true,
         };
         await sendSignInLinkToEmail(auth, email, actionCodeSettings);
-        triggerSocket("account-update");
+        await refreshAdmin();
         message.success("Invite Sent");
         form.resetFields();
       })

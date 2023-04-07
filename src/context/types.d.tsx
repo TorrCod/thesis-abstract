@@ -193,6 +193,7 @@ export type UserValue = {
   unsubscribeRef: MutableRefObject<Unsubscribe | null>;
   loadActivityLog: (query?: Record<string, any>) => Promise<() => void>;
   logOut: () => Promise<void>;
+  refreshAdmin: () => Promise<void>;
 };
 
 export type PendingAdminList = {

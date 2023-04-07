@@ -1,8 +1,6 @@
 import { PriButton } from "@/components/button";
 import DashboardLayout from "@/components/dashboardLayout";
 import {
-  Button,
-  DatePicker,
   Form,
   Input,
   message,
@@ -12,25 +10,18 @@ import {
   UploadProps,
 } from "antd";
 import Link from "next/link";
-import React, { ReactElement, useEffect, useState } from "react";
+import React, { ReactElement, useState } from "react";
 import {
   AiFillFileImage,
   AiOutlineUpload,
   AiOutlineUser,
   AiOutlineUserAdd,
 } from "react-icons/ai";
-import { BiMinus, BiPlus } from "react-icons/bi";
-import { FaAddressCard } from "react-icons/fa";
-import { GrAdd } from "react-icons/gr";
 import { FiHelpCircle } from "react-icons/fi";
 import useUserContext from "@/context/userContext";
-import axios from "axios";
 import { getPdfText } from "@/utils/helper";
 import LoadingIcon from "@/components/loadingIcon";
-import { GeneratedTextRes } from "@/lib/types";
-import { useForm } from "antd/lib/form/Form";
 import { ThesisItems } from "@/context/types.d";
-import moment from "moment";
 import { MdSubtitles } from "react-icons/md";
 import { useRouter } from "next/router";
 import useSocketContext from "@/context/socketContext";

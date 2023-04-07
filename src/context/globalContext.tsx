@@ -291,6 +291,7 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
       type: "load-recycle",
       payload: { ...state.recyclebin, document: newRecyle },
     });
+    return { ...state.recyclebin, document: newRecyle };
   };
 
   const clearDefault = () => {

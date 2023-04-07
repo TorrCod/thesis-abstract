@@ -273,16 +273,16 @@ const RecycledTable = () => {
 };
 
 const RemoveThesis = (props: DataType & { id: string }) => {
-  const { removeThesisItem, recycleThesis, addThesisItem, state, dispatch } =
+  const { removeThesisItem, recycleThesis, state, dispatch, loadingState } =
     useGlobalContext();
   const { triggerSocket } = useSocketContext();
 
   const handleClick = async () => {
     try {
+      loadingState.add("thesis-table");
       const token = await auth.currentUser?.getIdToken();
       const newThesisItem = removeThesisItem(props.id);
       triggerSocket("thesis-update");
-      message.success("Removed Success");
 
       removeThesis({ token: token, thesisId: props.id })
         .then(async (data) => {
@@ -291,7 +291,9 @@ const RemoveThesis = (props: DataType & { id: string }) => {
         .catch((e) => {
           console.error(e);
         });
-
+      if (newThesisItem.totalCount <= 10) {
+        return loadingState.remove("thesis-table");
+      }
       getAllThesis(
         undefined,
         {
@@ -303,10 +305,13 @@ const RemoveThesis = (props: DataType & { id: string }) => {
           },
         },
         state.thesisItems.currentPage + 1
-      ).then((data) => {
-        newThesisItem.document.push(data.document[0]);
-        dispatch({ type: "load-thesis", payload: newThesisItem });
-      });
+      )
+        .then((data) => {
+          newThesisItem.document.push(data.document[0]);
+          dispatch({ type: "load-thesis", payload: newThesisItem });
+          message.success("Removed Success");
+        })
+        .finally(() => loadingState.remove("thesis-table"));
     } catch (e) {
       message.error("remove failed");
       console.error(e);
@@ -332,26 +337,21 @@ const RestoreThesis = (props: DataType & { id: string }) => {
     loadRecycle,
   } = useGlobalContext();
   const { triggerSocket } = useSocketContext();
+
   const handleClick = async () => {
     loadingState.add("recycle-table");
-    try {
-      auth.currentUser
-        ?.getIdToken()
-        .then(async (token) => {
-          await restoreThesis({ token: token, thesisId: props.id });
-          restore(props.id);
-          triggerSocket("thesis-update");
-          await loadRecycle();
-          message.success("Restore Success");
-        })
-        .catch((e) => {
-          console.error(e);
-        })
-        .finally(() => loadingState.remove("recycle-thesis"));
-    } catch (e) {
-      message.error("Restore failed");
-      console.error(e);
-    }
+    restore(props.id);
+
+    auth.currentUser
+      ?.getIdToken()
+      .then(async (token) => {
+        await restoreThesis({ token: token, thesisId: props.id });
+        message.success("Restore Success");
+      })
+      .catch((e) => {
+        console.error(e);
+      })
+      .finally(() => loadingState.remove("recycle-table"));
   };
 
   return (

@@ -168,10 +168,7 @@ export const ThesisCharts = () => {
 };
 
 export const ThesisTable = () => {
-  const { state: userState } = useUserContext();
-  const userDetails = userState.userDetails;
-  const { state, loadThesisItems, updateSearchAction, loadingState } =
-    useGlobalContext();
+  const { state, updateSearchAction } = useGlobalContext();
   const [thesisTableData, setThesisTableData] = useState<DataType[]>([]);
 
   useEffect(() => {
@@ -212,13 +209,8 @@ export const ThesisTable = () => {
 
 const RecycledTable = () => {
   const [removedTableData, setRemovedTableData] = useState<DataType[]>([]);
-  const { state, loadRecycle } = useGlobalContext();
-  const { userDetails } = useUserContext().state;
-  const {
-    updateSearchAction,
-    state: globalState,
-    loadingState,
-  } = useGlobalContext();
+  const { state } = useGlobalContext();
+  const { updateSearchAction } = useGlobalContext();
   const router = useRouter();
 
   useEffect(() => {

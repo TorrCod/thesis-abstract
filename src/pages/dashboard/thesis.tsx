@@ -327,15 +327,23 @@ const RemoveThesis = (props: DataType & { id: string }) => {
 };
 
 const RestoreThesis = (props: DataType & { id: string }) => {
-  const { restoreThesis: restore } = useGlobalContext();
+  const { restoreThesis: restore, loadingState } = useGlobalContext();
   const { triggerSocket } = useSocketContext();
   const handleClick = async () => {
+    loadingState.add("recycle-table");
     try {
-      const token = await auth.currentUser?.getIdToken();
-      await restoreThesis({ token: token, thesisId: props.id });
-      restore(props.id);
-      triggerSocket("thesis-update");
-      message.success("Restore Success");
+      auth.currentUser
+        ?.getIdToken()
+        .then(async (token) => {
+          await restoreThesis({ token: token, thesisId: props.id });
+          restore(props.id);
+          triggerSocket("thesis-update");
+          message.success("Restore Success");
+        })
+        .catch((e) => {
+          console.error(e);
+        })
+        .finally(() => loadingState.remove("recycle-thesis"));
     } catch (e) {
       message.error("Restore failed");
       console.error(e);

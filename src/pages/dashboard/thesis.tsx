@@ -45,7 +45,7 @@ import { ResponsiveContainer } from "recharts";
 import { authOptions } from "../api/auth/[...nextauth]";
 import { NextPageWithLayout } from "../_app";
 import useUserContext from "@/context/userContext";
-import { useDebounce, useScroll } from "react-use";
+import { useEffectOnce } from "react-use";
 
 const menuItems: MenuProps["items"] = [
   { key: "thesis-items", label: "Thesis Items" },
@@ -203,7 +203,6 @@ export const ThesisTable = () => {
       console.log("hello");
       const newSearchAction = { ...state.searchingAction };
       newSearchAction.pageNo = (newSearchAction.pageNo ?? 1) + 1;
-      updateSearchAction().update(newSearchAction);
 
       const searchAction = newSearchAction;
       const { searchTitle: title } = searchAction;
@@ -227,14 +226,19 @@ export const ThesisTable = () => {
         searchAction.pageNo,
         searchAction.pageSize
       );
-      const newThesisITemsState = { ...state.thesisItems };
-      newThesisITemsState.document = [
-        ...newThesisITemsState.document,
-        ...thesisItems.document,
-      ];
-      dispatch({ type: "load-thesis", payload: newThesisITemsState });
+      if (thesisItems.document.length) {
+        const newThesisITemsState = { ...state.thesisItems };
+        newThesisITemsState.document = [
+          ...newThesisITemsState.document,
+          ...thesisItems.document,
+        ];
+        dispatch({ type: "load-thesis", payload: newThesisITemsState });
+        updateSearchAction().update(newSearchAction);
+      }
     }
   };
+
+  useEffectOnce(() => updateSearchAction().clear());
 
   useEffect(() => {
     const layout_ref = document.getElementById(
@@ -244,7 +248,6 @@ export const ThesisTable = () => {
     scrollRef.current.addEventListener("scroll", scrollHandler);
     return () => {
       scrollRef.current?.removeEventListener("scroll", scrollHandler);
-      updateSearchAction().clear();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.thesisItems]);

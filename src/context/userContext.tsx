@@ -133,15 +133,12 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
 
   const loadAllUsers = async () => {
     try {
-      loadingState.add("all-admin");
       const token = await auth.currentUser?.getIdToken();
       const allUsers = await getAllUsers(token);
       dispatch({ type: "load-all-users", payload: allUsers });
     } catch (e) {
       message.error("failed to load all users");
       console.error(e);
-    } finally {
-      loadingState.remove("all-admin");
     }
   };
 

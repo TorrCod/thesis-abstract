@@ -208,6 +208,8 @@ export const AdminTable = ({ noAction }: { noAction?: boolean }) => {
   const [dataSourse, setDataSourse] = useState<AdminData[]>([]);
   const dataColRef = useRef(dataCol);
   const router = useRouter();
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     if (noAction) {
       const oldDataCol = [...dataColRef.current];
@@ -218,7 +220,7 @@ export const AdminTable = ({ noAction }: { noAction?: boolean }) => {
 
   useEffect(() => {
     if (state.userDetails) {
-      loadAllUsers();
+      loadAllUsers().finally(() => setLoading(false));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.userDetails]);
@@ -240,7 +242,7 @@ export const AdminTable = ({ noAction }: { noAction?: boolean }) => {
 
   return (
     <Table
-      loading={globalState.loading.includes("all-admin")}
+      loading={loading}
       columns={dataCol}
       dataSource={dataSourse}
       scroll={{ x: 50 }}

@@ -206,10 +206,8 @@ export const ThesisTable = () => {
 
       const searchAction = newSearchAction;
       const { searchTitle: title } = searchAction;
-      const { option: course, default: courseDefault } =
-        searchAction.filterState.course;
-      const { option: year, default: yearDefault } =
-        searchAction.filterState.years;
+      const { option: course } = searchAction.filterState.course;
+      const { option: year } = searchAction.filterState.years;
       const thesisItems = await getAllThesis(
         {
           title,
@@ -345,8 +343,8 @@ const RemoveThesis = (props: DataType & { id: string }) => {
       const token = await auth.currentUser?.getIdToken();
       removeThesisItem(props.id);
       await removeThesis({ token: token, thesisId: props.id });
-      await Promise.all([refreshThesis(), loadActivityLog()]);
       loadingState.remove("thesis-table");
+      Promise.all([refreshThesis(), loadActivityLog()]);
     } catch (e) {
       message.error("remove failed");
       console.error(e);

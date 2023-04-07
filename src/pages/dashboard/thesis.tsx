@@ -168,7 +168,8 @@ export const ThesisCharts = () => {
 };
 
 export const ThesisTable = () => {
-  const { state, updateSearchAction } = useGlobalContext();
+  const { state, updateSearchAction, loadThesisItems, loadingState } =
+    useGlobalContext();
   const [thesisTableData, setThesisTableData] = useState<DataType[]>([]);
 
   useEffect(() => {
@@ -183,7 +184,14 @@ export const ThesisTable = () => {
   }, [state.thesisItems]);
 
   const handlePageChange: PaginationProps["onChange"] = (pageNo) => {
-    updateSearchAction().update({ ...state.searchingAction, pageNo });
+    loadingState.add("thesis-table");
+    const searchAction = { ...state.searchingAction, pageNo };
+    updateSearchAction().update(searchAction);
+    loadThesisItems(undefined, undefined, searchAction)
+      .catch((e) => {
+        console.error(e);
+      })
+      .finally(() => loadingState.remove("thesis-table"));
   };
 
   return (

@@ -111,7 +111,8 @@ export type GlobalValue = {
   dispatch: Dispatch<GlobalAction>;
   loadThesisItems: (
     query?: SearchQuery,
-    option?: SearchOption
+    option?: SearchOption,
+    searchingAction?: SearchAction
   ) => Promise<void>;
   loadRecycle: () => Promise<void>;
   loadThesisCount: () => Promise<void>;

@@ -135,45 +135,43 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
 
   const loadThesisItems = async (
     query?: SearchQuery,
-    option?: SearchOption
+    option?: SearchOption,
+    searchingAction?: SearchAction
   ) => {
-    try {
-      const { searchTitle: title } = state.searchingAction;
-      const { option: course, default: courseDefault } =
-        state.searchingAction.filterState.course;
-      const { option: year, default: yearDefault } =
-        state.searchingAction.filterState.years;
-      const thesisItems = await getAllThesis(
-        {
-          title: title,
-          course:
-            query?.course ??
-            (year?.length && course?.length !== courseDefault.length
-              ? course
-              : undefined),
-          year:
-            query?.year ??
-            (year?.length && year?.length !== yearDefault.length
-              ? year
-              : undefined),
+    const searchAction = searchingAction ?? state.searchingAction;
+    const { searchTitle: title } = searchAction;
+    const { option: course, default: courseDefault } =
+      searchAction.filterState.course;
+    const { option: year, default: yearDefault } =
+      searchAction.filterState.years;
+    const thesisItems = await getAllThesis(
+      {
+        title: title,
+        course:
+          query?.course ??
+          (year?.length && course?.length !== courseDefault.length
+            ? course
+            : undefined),
+        year:
+          query?.year ??
+          (year?.length && year?.length !== yearDefault.length
+            ? year
+            : undefined),
+      },
+      {
+        limit: option?.limit ?? 10,
+        projection: option?.projection ?? {
+          title: 1,
+          course: 1,
+          dateAdded: 1,
         },
-        {
-          limit: option?.limit ?? 10,
-          projection: option?.projection ?? {
-            title: 1,
-            course: 1,
-            dateAdded: 1,
-          },
-        },
-        state.searchingAction.pageNo
-      );
-      dispatch({
-        type: "load-thesis",
-        payload: thesisItems,
-      });
-    } catch (e) {
-      console.error(e);
-    }
+      },
+      searchAction.pageNo
+    );
+    dispatch({
+      type: "load-thesis",
+      payload: thesisItems,
+    });
   };
 
   const loadRecycle = async () => {

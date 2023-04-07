@@ -334,7 +334,7 @@ const RecycledTable = () => {
 };
 
 const RemoveThesis = (props: DataType & { id: string }) => {
-  const { removeThesisItem, loadingState, refreshThesis } = useGlobalContext();
+  const { removeThesisItem, loadingState, loadRecycle } = useGlobalContext();
   const { loadActivityLog } = useUserContext();
 
   const handleClick = async () => {
@@ -342,9 +342,10 @@ const RemoveThesis = (props: DataType & { id: string }) => {
       loadingState.add("thesis-table");
       const token = await auth.currentUser?.getIdToken();
       removeThesisItem(props.id);
-      await removeThesis({ token: token, thesisId: props.id });
       loadingState.remove("thesis-table");
-      Promise.all([refreshThesis(), loadActivityLog()]);
+      await removeThesis({ token: token, thesisId: props.id });
+      loadActivityLog();
+      loadRecycle();
     } catch (e) {
       message.error("remove failed");
       console.error(e);

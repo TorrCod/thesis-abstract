@@ -171,8 +171,8 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
           dateAdded: 1,
         },
       },
-      searchAction.pageNo,
-      searchAction.pageSize
+      1,
+      searchAction.pageSize * (searchAction.pageNo ?? 1)
     );
     dispatch({
       type: "load-thesis",
@@ -217,7 +217,7 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
             expireAfterSeconds: 1,
           },
         },
-        searchAction.pageNo
+        1
       );
       dispatch({ type: "load-recycle", payload: recycledThesis ?? [] });
     } catch (e) {

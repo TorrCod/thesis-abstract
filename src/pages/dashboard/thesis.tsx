@@ -206,13 +206,10 @@ export const ThesisTable = () => {
 
       const searchAction = newSearchAction;
       const { searchTitle: title } = searchAction;
-      const { option: course } = searchAction.filterState.course;
-      const { option: year } = searchAction.filterState.years;
+
       const thesisItems = await getAllThesis(
         {
           title,
-          course: course?.length ? course : undefined,
-          year: year?.length ? year : undefined,
         },
         {
           projection: {
@@ -346,19 +343,6 @@ const RecycledTable = () => {
     };
   }, [state.recyclebin]);
 
-  const handlePageChange: PaginationProps["onChange"] = (pageNo) => {
-    loadingState.add("recycle-table");
-    const searchAction = { ...state.searchingAction, pageNo };
-    console.log(searchAction);
-
-    updateSearchAction().update(searchAction);
-    loadRecycle(undefined, undefined, searchAction)
-      .catch((e) => {
-        console.error(e);
-      })
-      .finally(() => loadingState.remove("recycle-table"));
-  };
-
   return (
     <>
       <Table
@@ -412,16 +396,18 @@ const RestoreThesis = (props: DataType & { id: string }) => {
     restoreThesis: restore,
     loadingState,
     refreshThesis,
+    loadThesisItems,
   } = useGlobalContext();
   const { loadActivityLog } = useUserContext();
 
   const handleClick = async () => {
     loadingState.add("recycle-table");
     restore(props.id);
+    loadingState.remove("recycle-table");
     const token = await auth.currentUser?.getIdToken();
     await restoreThesis({ token: token, thesisId: props.id });
-    await Promise.all([refreshThesis(), loadActivityLog()]);
-    loadingState.remove("recycle-table");
+    loadThesisItems();
+    loadActivityLog();
   };
 
   return (

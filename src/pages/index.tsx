@@ -5,7 +5,6 @@ import Search from "@/components/search";
 import { useEffect } from "react";
 import useGlobalContext from "@/context/globalContext";
 import { useRouter } from "next/router";
-import { Button } from "antd";
 import Link from "next/link";
 
 export default function Home() {

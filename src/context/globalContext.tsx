@@ -176,29 +176,50 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
     });
   };
 
-  const loadRecycle = async () => {
+  const loadRecycle = async (
+    query?: SearchQuery,
+    option?: SearchOption,
+    searchingAction?: SearchAction
+  ) => {
     try {
-      loadingState.add("all-thesis");
+      const searchAction = searchingAction ?? state.searchingAction;
+      const { searchTitle: title } = searchAction;
+      const { option: course, default: courseDefault } =
+        searchAction.filterState.course;
+      const { option: year, default: yearDefault } =
+        searchAction.filterState.years;
       const token = await auth.currentUser?.getIdToken();
+      console.log();
+
       const recycledThesis = await getAllDeletedThesis(
         token,
-        { title: state.searchingAction.searchTitle },
         {
-          limit: 10,
-          projection: {
+          title,
+          course:
+            query?.course ??
+            (year?.length && course?.length !== courseDefault.length
+              ? course
+              : undefined),
+          year:
+            query?.year ??
+            (year?.length && year?.length !== yearDefault.length
+              ? year
+              : undefined),
+        },
+        {
+          limit: option?.limit ?? 10,
+          projection: option?.projection ?? {
             title: 1,
             course: 1,
             createdAt: 1,
             expireAfterSeconds: 1,
           },
         },
-        state.searchingAction.pageNo
+        searchAction.pageNo
       );
       dispatch({ type: "load-recycle", payload: recycledThesis ?? [] });
     } catch (e) {
       console.error(e);
-    } finally {
-      loadingState.remove("all-thesis");
     }
   };
 

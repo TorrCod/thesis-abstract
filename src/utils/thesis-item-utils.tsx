@@ -62,7 +62,6 @@ export const getAllDeletedThesis = async (
   option?: SearchOption,
   pageNo?: number
 ) => {
-  const { title, year, course } = query || {};
   if (token) {
     const res = await axios.get(
       `/api/thesis-items?collection=deleted-thesis${

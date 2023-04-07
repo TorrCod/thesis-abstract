@@ -222,7 +222,7 @@ export const ThesisTable = () => {
 const RecycledTable = () => {
   const [removedTableData, setRemovedTableData] = useState<DataType[]>([]);
   const { state } = useGlobalContext();
-  const { updateSearchAction } = useGlobalContext();
+  const { updateSearchAction, loadingState, loadRecycle } = useGlobalContext();
   const router = useRouter();
 
   useEffect(() => {
@@ -244,7 +244,16 @@ const RecycledTable = () => {
   }, [state.recyclebin]);
 
   const handlePageChange: PaginationProps["onChange"] = (pageNo) => {
-    updateSearchAction().update({ ...state.searchingAction, pageNo });
+    loadingState.add("recycle-table");
+    const searchAction = { ...state.searchingAction, pageNo };
+    console.log(searchAction);
+
+    updateSearchAction().update(searchAction);
+    loadRecycle(undefined, undefined, searchAction)
+      .catch((e) => {
+        console.error(e);
+      })
+      .finally(() => loadingState.remove("recycle-table"));
   };
 
   return (
@@ -262,7 +271,7 @@ const RecycledTable = () => {
       />
       <div className="mx-auto mt-5 w-fit md:absolute md:bottom-0 md:right-0 md:m-5">
         <Pagination
-          current={state.searchingAction.pageNo}
+          current={state.searchingAction.pageNo ?? 1}
           defaultCurrent={state.recyclebin.currentPage ?? 1}
           total={state.recyclebin.totalCount}
           onChange={handlePageChange}

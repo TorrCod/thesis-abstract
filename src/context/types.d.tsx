@@ -114,7 +114,11 @@ export type GlobalValue = {
     option?: SearchOption,
     searchingAction?: SearchAction
   ) => Promise<void>;
-  loadRecycle: () => Promise<void>;
+  loadRecycle: (
+    query?: SearchQuery,
+    option?: SearchOption,
+    searchingAction?: SearchAction
+  ) => Promise<void>;
   loadThesisCount: () => Promise<void>;
   loadingState: {
     add(key: string): void;

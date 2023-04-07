@@ -93,16 +93,18 @@ export const getDataWithPaging = async (
     const client = await connectToDatabase();
     const database = client.db(dbName);
     const collection = database.collection(colName);
+    collection.createIndex({ dateAdded: -1 });
 
     const countDocuments = await collection.countDocuments(query ?? undefined);
     const skipDocuments = ((page?.pageNo ?? 1) - 1) * (page?.pageSize ?? 10);
 
     let document = collection
-      .find(query ?? {}, {
+      .find(query ?? { dateAdded: 0 }, {
         projection: option?.projection,
       })
+      .sort({ dateAdded: -1 })
       .skip(skipDocuments)
-      .limit(page?.pageSize ?? 10);
+      .limit(option?.limit ?? 10);
 
     if (page?.sort) document = document.sort(page.sort);
 

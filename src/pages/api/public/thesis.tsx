@@ -54,7 +54,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
     default: {
       const { query, option } = parseQuery(req);
-      const pageSize = option?.limit;
+      const pageSize = (req.query.pageSize &&
+        parseInt(req.query.pageSize as string)) as number;
       const pageNo = (req.query.pageNo &&
         parseInt(req.query.pageNo as string)) as number;
       const thesisItems = (await getDataWithPaging(

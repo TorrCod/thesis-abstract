@@ -62,7 +62,9 @@ const globalCtxInit: GlobalValue = {
   promptToSignIn() {},
   async loadThesisCount() {},
   addThesisItem(document) {},
-  async removeThesisItem(_id) {},
+  removeThesisItem(_id) {
+    return { totalCount: 0, currentPage: 1, document: [] };
+  },
   restoreThesis(_id) {},
   recycleThesis(thesis) {},
   updateSearchAction() {
@@ -251,13 +253,22 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
     });
   };
 
-  const removeThesisItem = async (_id: string) => {
+  const removeThesisItem = (_id: string) => {
     const oldDoc = [...state.thesisItems.document];
     const newDoc = oldDoc.filter((item) => item._id !== _id);
     dispatch({
       type: "load-thesis",
-      payload: { ...state.thesisItems, document: newDoc },
+      payload: {
+        ...state.thesisItems,
+        document: newDoc,
+        totalCount: state.thesisItems.totalCount - 1,
+      },
     });
+    return {
+      ...state.thesisItems,
+      document: newDoc,
+      totalCount: state.thesisItems.totalCount - 1,
+    };
   };
 
   const recycleThesis = (thesis: ThesisItems) => {
@@ -265,7 +276,11 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
     if (oldRecyleThesis.length >= 10) oldRecyleThesis.pop();
     dispatch({
       type: "load-recycle",
-      payload: { ...state.recyclebin, document: [thesis, ...oldRecyleThesis] },
+      payload: {
+        ...state.recyclebin,
+        document: [thesis, ...oldRecyleThesis],
+        totalCount: state.recyclebin.totalCount + 1,
+      },
     });
   };
 

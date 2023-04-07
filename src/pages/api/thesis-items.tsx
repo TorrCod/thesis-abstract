@@ -58,6 +58,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             )[0];
             delete thesisItems.createdAt;
             delete thesisItems.expireAfterSeconds;
+            thesisItems.dateAdded = new Date(thesisItems.dateAdded);
             const resData = await addData(
               "thesis-abstract",
               "thesis-items",
@@ -94,7 +95,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               resData.dateNow,
               thesisItems.title
             );
-            return res.status(200).json(resData);
+            return res.status(200).json({
+              _id: resData.insertedResult.insertedId,
+              course: thesisItems.course,
+              createdAt: resData.dateNow,
+              expireAfterSeconds: 604800,
+              title: thesisItems.title,
+            });
           }
         }
       }

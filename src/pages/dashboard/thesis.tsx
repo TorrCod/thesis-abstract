@@ -5,7 +5,11 @@ import { Course } from "@/context/types.d";
 import useUserContext from "@/context/userContext";
 import { auth } from "@/lib/firebase";
 import { thesisToDataType } from "@/utils/helper";
-import { removeThesis, restoreThesis } from "@/utils/thesis-item-utils";
+import {
+  getAllThesis,
+  removeThesis,
+  restoreThesis,
+} from "@/utils/thesis-item-utils";
 import {
   Button,
   Card,
@@ -269,23 +273,40 @@ const RecycledTable = () => {
 };
 
 const RemoveThesis = (props: DataType & { id: string }) => {
-  const { removeThesisItem, loadingState } = useGlobalContext();
+  const { removeThesisItem, recycleThesis, addThesisItem, state, dispatch } =
+    useGlobalContext();
   const { triggerSocket } = useSocketContext();
 
   const handleClick = async () => {
     try {
       const token = await auth.currentUser?.getIdToken();
-      loadingState.add("thesis-table");
+      const newThesisItem = removeThesisItem(props.id);
+      triggerSocket("thesis-update");
+      message.success("Removed Success");
+
       removeThesis({ token: token, thesisId: props.id })
-        .then(async () => {
-          await removeThesisItem(props.id);
-          triggerSocket("thesis-update");
-          message.success("Removed Success");
+        .then(async (data) => {
+          recycleThesis(data);
         })
         .catch((e) => {
           console.error(e);
-        })
-        .finally(() => loadingState.remove("thesis-table"));
+        });
+
+      getAllThesis(
+        undefined,
+        {
+          limit: 1,
+          projection: {
+            title: 1,
+            course: 1,
+            dateAdded: 1,
+          },
+        },
+        state.thesisItems.currentPage + 1
+      ).then((data) => {
+        newThesisItem.document.push(data.document[0]);
+        dispatch({ type: "load-thesis", payload: newThesisItem });
+      });
     } catch (e) {
       message.error("remove failed");
       console.error(e);

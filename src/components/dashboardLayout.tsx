@@ -51,8 +51,20 @@ const siderMenu: MenuProps["items"] = [
 function DashboardLayout({ children }: DashboardProps) {
   const [selectedSider, setSelectedSider] = useState("/dashboard");
   const { pathname } = useLocation();
-  const { logOut } = useUserContext();
-  const { clearDefault } = useGlobalContext();
+  const {
+    logOut,
+    state: userState,
+    loadAllUsers,
+    loadActivityLog,
+  } = useUserContext();
+  const {
+    clearDefault,
+    state: globalState,
+    loadingState,
+    loadThesisItems,
+    loadRecycle,
+    loadThesisCount,
+  } = useGlobalContext();
   const router = useRouter();
 
   useEffect(() => {
@@ -102,6 +114,17 @@ function DashboardLayout({ children }: DashboardProps) {
       onClick: logOut,
     },
   ];
+
+  useEffect(() => {
+    if (userState.userDetails) {
+      loadThesisItems();
+      loadRecycle();
+      loadAllUsers();
+      loadActivityLog();
+      loadThesisCount();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userState.userDetails]);
 
   return (
     <>

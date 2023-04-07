@@ -201,13 +201,13 @@ const UserProfile = ({ payloadUser }: { payloadUser: UserDetails }) => {
 
 export const AdminTable = ({ noAction }: { noAction?: boolean }) => {
   const { state, loadAllUsers } = useUserContext();
+  const { state: globalState, loadingState } = useGlobalContext();
   const [dataCol, setDataCol] = useState<ColumnsType<AdminData>>(
     dataColumnType(state.userDetails)
   );
   const [dataSourse, setDataSourse] = useState<AdminData[]>([]);
   const dataColRef = useRef(dataCol);
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (noAction) {
@@ -216,13 +216,6 @@ export const AdminTable = ({ noAction }: { noAction?: boolean }) => {
       setDataCol(newDataCol);
     }
   }, [noAction]);
-
-  useEffect(() => {
-    if (state.userDetails) {
-      loadAllUsers().finally(() => setLoading(false));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.userDetails]);
 
   useEffect(() => {
     if (router.query.username) {
@@ -241,7 +234,7 @@ export const AdminTable = ({ noAction }: { noAction?: boolean }) => {
 
   return (
     <Table
-      loading={loading}
+      loading={globalState.loading.includes("admin-table")}
       columns={dataCol}
       dataSource={dataSourse}
       scroll={{ x: 50 }}

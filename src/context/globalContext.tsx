@@ -260,7 +260,6 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
       type: "load-thesis",
       payload: { ...state.thesisItems, document: newDoc },
     });
-    await loadThesisItems();
   };
 
   const recycleThesis = (thesis: ThesisItems) => {

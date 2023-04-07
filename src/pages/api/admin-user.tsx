@@ -111,7 +111,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               dateNow,
               req.body.email
             );
-            return res.status(200).json(insertedResult);
+            return res.status(200).json({
+              _id: insertedResult.insertedId,
+              ...req.body,
+              expireAfterSeconds: 604800,
+              createdAt: dateNow,
+            });
           }
           case "signup": {
             const collection = req.query.collection as CollectionName;

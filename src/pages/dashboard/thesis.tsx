@@ -143,13 +143,7 @@ Page.getLayout = function getLayout(page: ReactElement) {
 export default Page;
 
 export const ThesisCharts = () => {
-  const { state: globalStatate, loadThesisCount } = useGlobalContext();
-  useEffect(() => {
-    if (!globalStatate.totalThesisCount.totalCount) {
-      loadThesisCount();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [globalStatate.totalThesisCount.totalCount]);
+  const { state: globalStatate } = useGlobalContext();
 
   return (
     <ResponsiveContainer width={"99%"} height="99%">
@@ -186,14 +180,6 @@ export const ThesisTable = () => {
   }, []);
 
   useEffect(() => {
-    if (userDetails) {
-      loadingState.add("all-thesis");
-      loadThesisItems().finally(() => loadingState.remove("all-thesis"));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userDetails, state.searchingAction]);
-
-  useEffect(() => {
     const thesisItems = state.thesisItems;
     const toTableThesisItems = thesisToDataType(thesisItems.document);
     setThesisTableData(toTableThesisItems);
@@ -206,7 +192,7 @@ export const ThesisTable = () => {
   return (
     <>
       <Table
-        loading={state.loading.includes("all-thesis")}
+        loading={state.loading.includes("thesis-table")}
         columns={thesisTableColumn}
         dataSource={thesisTableData}
         scroll={{ x: 50 }}
@@ -246,14 +232,6 @@ const RecycledTable = () => {
       ? "bg-red-500/30 border-2 border-blue-200 rounded-md !important"
       : "";
   };
-
-  useEffect(() => {
-    if (userDetails) {
-      loadingState.add("recycle-table");
-      loadRecycle().finally(() => loadingState.remove("recycle-table"));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userDetails, globalState.searchingAction]);
 
   useEffect(() => {
     const thesisItems = state.recyclebin.document;

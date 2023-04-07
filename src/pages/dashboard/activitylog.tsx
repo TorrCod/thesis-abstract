@@ -53,15 +53,6 @@ export const ActivityTimeline = () => {
   const [log, setLog] = useState<TimelineItemProps[]>([]);
   const userCtx = useUserContext();
   const { activityLog } = userCtx.state;
-  const { loadActivityLog } = userCtx;
-  const { state: globalState } = useGlobalContext();
-
-  useEffect(() => {
-    if (userCtx.state.userDetails) {
-      loadActivityLog();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userCtx.state.userDetails, globalState.searchingAction.pageNo]);
 
   useEffect(() => {
     const newLog = activityLog.document.map((item) => {

@@ -199,7 +199,13 @@ const UserProfile = ({ payloadUser }: { payloadUser: UserDetails }) => {
   );
 };
 
-export const AdminTable = ({ noAction }: { noAction?: boolean }) => {
+export const AdminTable = ({
+  noAction,
+  max_content,
+}: {
+  noAction?: boolean;
+  max_content?: number;
+}) => {
   const { state, loadAllUsers } = useUserContext();
   const { state: globalState, loadingState } = useGlobalContext();
   const [dataCol, setDataCol] = useState<ColumnsType<AdminData>>(
@@ -235,9 +241,9 @@ export const AdminTable = ({ noAction }: { noAction?: boolean }) => {
       const source: AdminData[] = fuse
         .search(searchTerm)
         .map((item) => item.item);
-      setDataSourse(source);
+      setDataSourse(source.slice(0, max_content));
     } else {
-      setDataSourse(state.listOfAdmins);
+      setDataSourse(state.listOfAdmins.slice(0, max_content));
     }
   }, [router.query, state.listOfAdmins]);
 

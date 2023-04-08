@@ -67,7 +67,7 @@ const DashboardOverview: NextPageWithLayout = () => {
             </div>
           </Link>
           <div className="overflow-auto">
-            <AdminTable noAction />
+            <AdminTable noAction max_content={3} />
           </div>
         </div>
 

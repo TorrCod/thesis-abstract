@@ -114,10 +114,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         }
       }
       case "POST": {
-        const thesisItem: ThesisItems = req.body;
+        const thesisItem = req.body;
         const new_id = new ObjectId();
         (thesisItem._id as any) = new_id;
         thesisItem.id = new_id.toString();
+        if (typeof thesisItem.dateAdded === "string") {
+          thesisItem.dateAdded = new Date(thesisItem.dateAdded);
+        }
         const resData = await addData(
           "thesis-abstract",
           "thesis-items",

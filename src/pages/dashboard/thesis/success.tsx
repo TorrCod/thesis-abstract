@@ -21,7 +21,7 @@ const Page: NextPageWithLayout = () => {
         <BsFillSendCheckFill size={"3em"} />
         <h3>Abstract is uploaded successfully</h3>
         <Space>
-          <Link href="/dashboard/overview">
+          <Link href="/dashboard">
             <PriButton>Back to Dashboard</PriButton>
           </Link>
           <Link href="/dashboard/thesis/upload-thesis">

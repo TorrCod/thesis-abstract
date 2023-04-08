@@ -33,7 +33,7 @@ import { getCsrfToken } from "next-auth/react";
 
 interface FormValues {
   title: string;
-  year: number;
+  year: string;
   course: string;
   researchers: string[];
   abstract: string;
@@ -63,7 +63,7 @@ const Page: NextPageWithLayout = () => {
         abstract: values.abstract,
         course: values.course as any,
         dateAdded: dateNow,
-        year: values.year,
+        year: parseInt(values.year),
         title: values.title,
         id: "",
         researchers: researchers,

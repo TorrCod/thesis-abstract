@@ -10,10 +10,8 @@ import { parseQuery, sleep } from "@/utils/server-utils";
 import { ObjectId } from "mongodb";
 import { NextApiRequest, NextApiResponse } from "next";
 import NextCors from "nextjs-cors";
-import qs from "qs";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  await sleep(2000);
   await NextCors(req, res, {
     // Options
     methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],

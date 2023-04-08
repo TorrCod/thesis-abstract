@@ -23,7 +23,6 @@ import { serialize } from "cookie";
 import { sleep } from "@/utils/helper";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  await sleep(2000);
   try {
     const isValidated = await validateAuth(req, res);
     if (isValidated.error) {
@@ -97,12 +96,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               email: req.body.email,
             });
             if (checkEmailUser || checkEmailPending)
-              return res
-                .status(400)
-                .json({
-                  code: "email-duplicate",
-                  message: "email is exist please use another one",
-                });
+              return res.status(400).json({
+                code: "email-duplicate",
+                message: "email is exist please use another one",
+              });
             const { insertedResult, dateNow } = await addDataWithExpiration(
               "accounts",
               collection,

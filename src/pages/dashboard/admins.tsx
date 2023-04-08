@@ -210,6 +210,15 @@ export const AdminTable = ({ noAction }: { noAction?: boolean }) => {
   const router = useRouter();
 
   useEffect(() => {
+    loadingState.add("admin-table");
+    if (state.userDetails) {
+      loadAllUsers()
+        .catch(() => {})
+        .finally(() => loadingState.remove("admin-table"));
+    }
+  }, [state.userDetails]);
+
+  useEffect(() => {
     if (noAction) {
       const oldDataCol = [...dataColRef.current];
       const newDataCol = oldDataCol.filter((item) => item.key !== "action");

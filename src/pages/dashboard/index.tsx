@@ -11,6 +11,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]";
 import { getCsrfToken } from "next-auth/react";
 import { NextPageWithLayout } from "../_app";
+import useGlobalContext from "@/context/globalContext";
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   const session = await getServerSession(req, res, authOptions);
@@ -29,6 +30,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
 };
 
 const DashboardOverview: NextPageWithLayout = () => {
+  const { state: globalState } = useGlobalContext();
   return (
     <>
       <div className="opacity-80 mb-3">Dashboard {">"} Overview</div>
@@ -76,7 +78,7 @@ const DashboardOverview: NextPageWithLayout = () => {
               All Activitylog <GoLinkExternal />
             </div>
           </Link>
-          <ActivityTimeline />
+          <ActivityTimeline maxSize={globalState.searchingAction.pageSize} />
         </div>
       </div>
     </>

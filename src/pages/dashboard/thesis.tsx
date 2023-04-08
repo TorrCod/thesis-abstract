@@ -443,16 +443,17 @@ const RemoveThesis = (props: DataType & { id: string }) => {
   const { loadActivityLog } = useUserContext();
 
   const handleClick = async () => {
+    loadingState.add("thesis-table");
     try {
-      loadingState.add("thesis-table");
       const token = await auth.currentUser?.getIdToken();
       removeThesisItem(props.id);
       await removeThesis({ token: token, thesisId: props.id });
       await loadActivityLog();
-      loadingState.remove("thesis-table");
     } catch (e) {
       message.error("remove failed");
       console.error(e);
+    } finally {
+      loadingState.remove("thesis-table");
     }
   };
 
@@ -474,11 +475,16 @@ const RestoreThesis = (props: DataType & { id: string }) => {
 
   const handleClick = async () => {
     loadingState.add("recycle-table");
-    restore(props.id);
-    const token = await auth.currentUser?.getIdToken();
-    await restoreThesis({ token: token, thesisId: props.id });
-    await loadActivityLog();
-    loadingState.remove("recycle-table");
+    try {
+      restore(props.id);
+      const token = await auth.currentUser?.getIdToken();
+      await restoreThesis({ token: token, thesisId: props.id });
+      await loadActivityLog();
+    } catch (e) {
+      console.error(e);
+    } finally {
+      loadingState.remove("recycle-table");
+    }
   };
 
   return (

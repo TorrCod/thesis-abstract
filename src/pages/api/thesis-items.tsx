@@ -85,6 +85,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                 { deleteAfterGet: true }
               )
             )[0];
+            if (!thesisItems) {
+              return res.status(400).send("not found");
+            }
             const resData = await addDataWithExpiration(
               "thesis-abstract",
               "deleted-thesis",

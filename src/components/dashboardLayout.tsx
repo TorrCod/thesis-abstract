@@ -51,20 +51,8 @@ const siderMenu: MenuProps["items"] = [
 function DashboardLayout({ children }: DashboardProps) {
   const [selectedSider, setSelectedSider] = useState("/dashboard");
   const { pathname } = useLocation();
-  const {
-    logOut,
-    state: userState,
-    loadAllUsers,
-    loadActivityLog,
-  } = useUserContext();
-  const {
-    clearDefault,
-    state: globalState,
-    loadingState,
-    loadThesisItems,
-    loadRecycle,
-    loadThesisCount,
-  } = useGlobalContext();
+  const { logOut, state: userState, loadActivityLog } = useUserContext();
+  const { clearDefault, loadThesisCount } = useGlobalContext();
   const router = useRouter();
 
   useEffect(() => {

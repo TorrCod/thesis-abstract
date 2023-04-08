@@ -319,6 +319,7 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
 
   const clearDefault = () => {
     dispatch({ type: "load-thesis", payload: globalStateInit.thesisItems });
+    dispatch({ type: "load-recycle", payload: globalStateInit.recyclebin });
   };
 
   const refreshThesis = async () => {

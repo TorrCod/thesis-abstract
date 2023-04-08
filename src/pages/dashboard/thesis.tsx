@@ -188,8 +188,14 @@ export const ThesisCharts = () => {
 };
 
 export const ThesisTable = () => {
-  const { state, updateSearchAction, loadThesisItems, dispatch, loadingState } =
-    useGlobalContext();
+  const {
+    state,
+    updateSearchAction,
+    loadThesisItems,
+    dispatch,
+    loadingState,
+    clearDefault,
+  } = useGlobalContext();
   const [thesisTableData, setThesisTableData] = useState<DataType[]>([]);
   const [isFetching, setIsFetching] = useState(false);
   const bottomRef = useRef<HTMLDivElement | null>(null);
@@ -239,6 +245,7 @@ export const ThesisTable = () => {
     ) {
       fetchData();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOnScreen]);
 
   useEffect(() => {
@@ -246,7 +253,9 @@ export const ThesisTable = () => {
     loadThesisItems().finally(() => loadingState.remove("thesis-table"));
     return () => {
       updateSearchAction().clear();
+      clearDefault();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -254,6 +263,38 @@ export const ThesisTable = () => {
     const toTableThesisItems = thesisToDataType(thesisItems.document);
     setThesisTableData(toTableThesisItems);
   }, [state.thesisItems]);
+
+  const thesisTableColumn: ColumnsType<DataType> = [
+    {
+      title: "Title",
+      dataIndex: "title",
+      key: "title",
+      render: (text, record) => (
+        <Link
+          className="hover:underline hover:decoration-1 hover:text-blue-800"
+          href={"/thesis/" + record.key}
+        >
+          {text}
+        </Link>
+      ),
+    },
+    {
+      title: "Course",
+      dataIndex: "course",
+      key: "course",
+    },
+    {
+      title: "Date Added",
+      dataIndex: "dateAdded",
+      key: "dateAdded",
+    },
+    {
+      title: "Action",
+      key: "action",
+      dataIndex: "action",
+      render: (_, record) => <RemoveThesis {...record} id={record.key} />,
+    },
+  ];
 
   return (
     <>
@@ -270,10 +311,16 @@ export const ThesisTable = () => {
 };
 
 const RecycledTable = () => {
+  const {
+    updateSearchAction,
+    dispatch,
+    loadRecycle,
+    loadingState,
+    clearDefault,
+    state,
+  } = useGlobalContext();
+  const { state: userState } = useUserContext();
   const [removedTableData, setRemovedTableData] = useState<DataType[]>([]);
-  const { state } = useGlobalContext();
-  const { updateSearchAction, dispatch, loadRecycle, loadingState } =
-    useGlobalContext();
   const router = useRouter();
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const [isFetching, setIsFetching] = useState(false);
@@ -321,15 +368,20 @@ const RecycledTable = () => {
     ) {
       fetchData();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOnScreen]);
 
   useEffect(() => {
     loadingState.add("recycle-table");
-    loadRecycle().finally(() => loadingState.remove("recycle-table"));
+    if (userState.userDetails) {
+      loadRecycle().finally(() => loadingState.remove("recycle-table"));
+    }
     return () => {
       updateSearchAction().clear();
+      clearDefault();
     };
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userState.userDetails]);
 
   useEffect(() => {
     const thesisItems = state.recyclebin.document;
@@ -344,12 +396,36 @@ const RecycledTable = () => {
       : "";
   };
 
+  const recycleTableColumn: ColumnsType<DataType> = [
+    {
+      title: "Title",
+      dataIndex: "title",
+      key: "title",
+    },
+    {
+      title: "Course",
+      dataIndex: "course",
+      key: "course",
+    },
+    {
+      title: "Expire At",
+      key: "expireAt",
+      dataIndex: "expireAt",
+    },
+    {
+      title: "Action",
+      key: "action",
+      dataIndex: "action",
+      render: (_, record) => <RestoreThesis {...record} id={record.key} />,
+    },
+  ];
+
   return (
     <>
       <Table
         loading={state.loading.includes("recycle-table")}
         className="min-w-[40em]"
-        columns={removeTableColumn.map((item) => {
+        columns={recycleTableColumn.map((item) => {
           if (item.key === "title") item.render = undefined;
           return item;
         })}
@@ -393,12 +469,7 @@ const RemoveThesis = (props: DataType & { id: string }) => {
 };
 
 const RestoreThesis = (props: DataType & { id: string }) => {
-  const {
-    restoreThesis: restore,
-    loadingState,
-    refreshThesis,
-    loadThesisItems,
-  } = useGlobalContext();
+  const { restoreThesis: restore, loadingState } = useGlobalContext();
   const { loadActivityLog } = useUserContext();
 
   const handleClick = async () => {
@@ -406,7 +477,7 @@ const RestoreThesis = (props: DataType & { id: string }) => {
     restore(props.id);
     const token = await auth.currentUser?.getIdToken();
     await restoreThesis({ token: token, thesisId: props.id });
-    await Promise.all([loadThesisItems(), loadActivityLog()]);
+    await loadActivityLog();
     loadingState.remove("recycle-table");
   };
 
@@ -438,65 +509,9 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   };
 };
 
-const removeTableColumn: ColumnsType<DataType> = [
-  {
-    title: "Title",
-    dataIndex: "title",
-    key: "title",
-  },
-  {
-    title: "Course",
-    dataIndex: "course",
-    key: "course",
-  },
-  {
-    title: "Expire At",
-    key: "expireAt",
-    dataIndex: "expireAt",
-  },
-  {
-    title: "Action",
-    key: "action",
-    dataIndex: "action",
-    render: (_, record) => <RestoreThesis {...record} id={record.key} />,
-  },
-];
-
 type DataType = {
   key: string;
   title: string;
   course: Course;
   [key: string]: any;
 };
-
-const thesisTableColumn: ColumnsType<DataType> = [
-  {
-    title: "Title",
-    dataIndex: "title",
-    key: "title",
-    render: (text, record) => (
-      <Link
-        className="hover:underline hover:decoration-1 hover:text-blue-800"
-        href={"/thesis/" + record.key}
-      >
-        {text}
-      </Link>
-    ),
-  },
-  {
-    title: "Course",
-    dataIndex: "course",
-    key: "course",
-  },
-  {
-    title: "Date Added",
-    dataIndex: "dateAdded",
-    key: "dateAdded",
-  },
-  {
-    title: "Action",
-    key: "action",
-    dataIndex: "action",
-    render: (_, record) => <RemoveThesis {...record} id={record.key} />,
-  },
-];

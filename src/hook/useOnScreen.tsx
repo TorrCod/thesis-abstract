@@ -7,6 +7,8 @@ function useOnScreen<T extends Element | null>(
   // State and setter for storing whether element is visible
   const [isIntersecting, setIntersecting] = useState<boolean>(false);
   useEffect(() => {
+    let observerRefValue: Element | null = null; // <-- variable to hold ref value
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         // Update our state when observer callback fires
@@ -18,13 +20,15 @@ function useOnScreen<T extends Element | null>(
     );
     if (ref.current) {
       observer.observe(ref.current);
+      observerRefValue = ref.current;
     }
     return () => {
-      if (ref.current) {
-        observer.unobserve(ref.current);
+      if (observerRefValue) {
+        observer.unobserve(observerRefValue);
       }
     };
-  }, []); // Empty array ensures that effect is only run on mount and unmount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return isIntersecting;
 }
 

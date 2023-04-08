@@ -9,11 +9,52 @@ import { authOptions } from "../api/auth/[...nextauth]";
 import { readActivityLogReason } from "@/utils/helper";
 import { NextPageWithLayout } from "../_app";
 import useGlobalContext from "@/context/globalContext";
-import { useEffectOnce } from "react-use";
+import useOnScreen from "@/hook/useOnScreen";
+import { getActivityLog } from "@/utils/account-utils";
+import { auth } from "@/lib/firebase";
+import { ActivityLog } from "@/context/types.d";
 
 const Page: NextPageWithLayout = () => {
-  const { state: userState } = useUserContext();
+  const {
+    state: userState,
+    loadActivityLog,
+    dispatch,
+    addActivityLog,
+  } = useUserContext();
   const { updateSearchAction, state: globalState } = useGlobalContext();
+  const [loading, setLoading] = useState(false);
+  const [isFetching, setIsFetching] = useState(false);
+  const bottomRef = useRef<HTMLDivElement | null>(null);
+  const isOnScreen = useOnScreen<HTMLDivElement | null>(bottomRef);
+  const [isAllData, setIsAllData] = useState(false);
+  const [newActivityLog, setNewActivityLog] = useState<ActivityLog[]>([]);
+  const pageNo = useRef(1);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const token = await auth.currentUser?.getIdToken();
+      pageNo.current += 1;
+      const activityLog = await getActivityLog(
+        token,
+        undefined,
+        undefined,
+        pageNo.current,
+        5
+      );
+      if (activityLog.document.length) {
+        setNewActivityLog(activityLog.document);
+      }
+    };
+    if (isOnScreen && !isAllData && userState.userDetails) {
+      fetchData();
+    }
+  }, [isOnScreen, isAllData, userState.userDetails]);
+
+  useEffect(() => {
+    if (newActivityLog.length) {
+      addActivityLog(newActivityLog);
+    }
+  }, [newActivityLog]);
 
   useEffect(() => {
     return () => updateSearchAction().clear();
@@ -21,7 +62,10 @@ const Page: NextPageWithLayout = () => {
   }, []);
 
   const handlePageChange: PaginationProps["onChange"] = async (pageNo) => {
-    updateSearchAction().update({ ...globalState.searchingAction, pageNo });
+    setLoading(true);
+    const searchAction = { ...globalState.searchingAction, pageNo };
+    updateSearchAction().update(searchAction);
+    loadActivityLog(undefined, searchAction.pageNo);
   };
 
   return (
@@ -32,12 +76,13 @@ const Page: NextPageWithLayout = () => {
         <div className="md:-translate-x-40 lg:-translate-x-60">
           <ActivityTimeline />
         </div>
-        <Pagination
+        <div ref={bottomRef} />
+        {/* <Pagination
           className="place-self-end"
           current={globalState.searchingAction.pageNo ?? 1}
           total={userState.activityLog.totalCount}
           onChange={handlePageChange}
-        />
+        /> */}
       </div>
     </>
   );

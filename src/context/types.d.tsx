@@ -193,9 +193,13 @@ export type UserValue = {
   saveUploadThesis: (data: ThesisItems) => Promise<void>;
   loadAllUsers: () => Promise<void>;
   unsubscribeRef: MutableRefObject<Unsubscribe | null>;
-  loadActivityLog: (query?: Record<string, any>) => Promise<() => void>;
+  loadActivityLog: (
+    query?: Record<string, any>,
+    pageNo?: number
+  ) => Promise<() => void>;
   logOut: () => Promise<void>;
   refreshAdmin: () => Promise<void>;
+  addActivityLog: (docs: ActivityLog[]) => void;
 };
 
 export type PendingAdminList = {

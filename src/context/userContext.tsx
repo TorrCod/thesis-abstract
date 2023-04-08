@@ -56,6 +56,7 @@ const userValueInit: UserValue = {
   },
   async logOut() {},
   async refreshAdmin() {},
+  addActivityLog(docs) {},
 };
 
 const UserContext = createContext<UserValue>(userValueInit);
@@ -200,18 +201,26 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
     await addThesis(thesisItems, userToken);
   };
 
-  const loadActivityLog = async (query?: Record<string, any>) => {
+  const loadActivityLog = async (
+    query?: Record<string, any>,
+    pageNo?: number
+  ) => {
     const token = await auth.currentUser?.getIdToken();
     const activityLog = await getActivityLog(
       token,
       query,
-      {
-        limit: 10,
-      },
-      globalState.searchingAction.pageNo
+      undefined,
+      1,
+      globalState.searchingAction.pageSize
     );
     dispatch({ type: "load-activity-log", payload: activityLog });
     return clearActivitylog;
+  };
+
+  const addActivityLog = (docs: ActivityLog[]) => {
+    const newActivitylogState = { ...state.activityLog };
+    newActivitylogState.document = [...newActivitylogState.document, ...docs];
+    dispatch({ type: "load-activity-log", payload: newActivitylogState });
   };
 
   const clearActivitylog = () => {
@@ -251,6 +260,7 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
     <UserContext.Provider
       value={{
         state,
+        addActivityLog,
         refreshAdmin,
         loadAllUsers,
         dispatch,

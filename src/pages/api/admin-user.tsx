@@ -33,17 +33,19 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       case "GET": {
         switch (req.query.objective) {
           case "get-activitylog": {
-            const parse = parseQuery(req);
-            const userId = req.query.userId as string | undefined;
-            const pageSize = parse.option?.limit;
+            const { query, option } = parseQuery(req);
+            const pageSize = (req.query.pageSize &&
+              parseInt(req.query.pageSize as string)) as number;
             const pageNo = (req.query.pageNo &&
               parseInt(req.query.pageNo as string)) as number;
-            if (userId) (parse.query as any) = { userId };
+            const userId = (query as any).userId as string | undefined;
+            if (userId) (query as any) = { userId };
             let activityLog = await getDataWithPaging(
               "accounts",
               "activity-log",
               { pageSize, pageNo, sort: { date: -1 } },
-              parse.query
+              query,
+              { limit: option?.limit, projection: option?.projection }
             );
             const withUserName_promise = activityLog.document.map(
               async (item) => {

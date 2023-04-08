@@ -29,6 +29,11 @@ function useOnScreen<T extends Element | null>(
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const toggle = () => {
+    setIntersecting(false);
+  };
+
   return isIntersecting;
 }
 

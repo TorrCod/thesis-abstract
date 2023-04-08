@@ -46,6 +46,8 @@ import { authOptions } from "../api/auth/[...nextauth]";
 import { NextPageWithLayout } from "../_app";
 import useUserContext from "@/context/userContext";
 import { useEffectOnce } from "react-use";
+import LoadingIcon from "@/components/loadingIcon";
+import useOnScreen from "@/hook/useOnScreen";
 
 const menuItems: MenuProps["items"] = [
   { key: "thesis-items", label: "Thesis Items" },
@@ -186,68 +188,71 @@ export const ThesisCharts = () => {
 };
 
 export const ThesisTable = () => {
-  const { state, updateSearchAction, loadThesisItems, dispatch } =
+  const { state, updateSearchAction, loadThesisItems, dispatch, loadingState } =
     useGlobalContext();
   const [thesisTableData, setThesisTableData] = useState<DataType[]>([]);
+  const [isFetching, setIsFetching] = useState(false);
+  const bottomRef = useRef<HTMLDivElement | null>(null);
+  const isOnScreen = useOnScreen<HTMLDivElement | null>(bottomRef);
 
-  const scrollHandler = async (event: Event) => {
-    const { scrollTop, scrollHeight, clientHeight } =
-      event.target as HTMLDivElement;
-    const isBottom = scrollHeight - scrollTop === clientHeight;
-
-    if (
-      isBottom &&
-      !(state.thesisItems.document.length === state.thesisItems.totalCount)
-    ) {
-      console.log("hello");
+  useEffect(() => {
+    const fetchData = async () => {
+      console.log("fetching data");
       const newSearchAction = { ...state.searchingAction };
       const searchAction = newSearchAction;
       searchAction.pageNo = (searchAction.pageNo ?? 1) + 1;
       const { searchTitle: title } = searchAction;
-
-      const thesisItems = await getAllThesis(
-        {
-          title,
-        },
-        {
-          projection: {
-            title: 1,
-            course: 1,
-            dateAdded: 1,
+      setIsFetching(true);
+      try {
+        const thesisItems = await getAllThesis(
+          {
+            title,
           },
-        },
-        searchAction.pageNo,
-        searchAction.pageSize
-      );
-      if (thesisItems.document.length) {
-        const newThesisITemsState = { ...state.thesisItems };
-        newThesisITemsState.document = [
-          ...newThesisITemsState.document,
-          ...thesisItems.document,
-        ];
-        dispatch({ type: "load-thesis", payload: newThesisITemsState });
-        updateSearchAction().update(newSearchAction);
+          {
+            projection: {
+              title: 1,
+              course: 1,
+              dateAdded: 1,
+            },
+          },
+          searchAction.pageNo,
+          searchAction.pageSize
+        );
+        if (thesisItems.document.length) {
+          const newThesisITemsState = { ...state.thesisItems };
+          newThesisITemsState.document = [
+            ...newThesisITemsState.document,
+            ...thesisItems.document,
+          ];
+          dispatch({ type: "load-thesis", payload: newThesisITemsState });
+          updateSearchAction().update(newSearchAction);
+        }
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setIsFetching(false);
       }
+    };
+    if (
+      isOnScreen &&
+      !(state.thesisItems.document.length === state.thesisItems.totalCount)
+    ) {
+      fetchData();
     }
-  };
+  }, [isOnScreen]);
 
   useEffect(() => {
-    return updateSearchAction().clear();
+    loadingState.add("thesis-table");
+    loadThesisItems().finally(() => loadingState.remove("thesis-table"));
+    return () => {
+      updateSearchAction().clear();
+    };
   }, []);
 
   useEffect(() => {
     const thesisItems = state.thesisItems;
     const toTableThesisItems = thesisToDataType(thesisItems.document);
     setThesisTableData(toTableThesisItems);
-
-    const layout_ref = document.getElementById(
-      "layout-container"
-    ) as HTMLDivElement;
-    layout_ref.addEventListener("scroll", scrollHandler);
-    return () => {
-      layout_ref?.removeEventListener("scroll", scrollHandler);
-      updateSearchAction().clear();
-    };
   }, [state.thesisItems]);
 
   return (
@@ -259,6 +264,7 @@ export const ThesisTable = () => {
         scroll={{ x: 50 }}
         pagination={false}
       />
+      <div ref={bottomRef}>{isFetching && <LoadingIcon />}</div>
     </>
   );
 };
@@ -266,33 +272,21 @@ export const ThesisTable = () => {
 const RecycledTable = () => {
   const [removedTableData, setRemovedTableData] = useState<DataType[]>([]);
   const { state } = useGlobalContext();
-  const { updateSearchAction, dispatch } = useGlobalContext();
+  const { updateSearchAction, dispatch, loadRecycle, loadingState } =
+    useGlobalContext();
   const router = useRouter();
+  const bottomRef = useRef<HTMLDivElement | null>(null);
+  const [isFetching, setIsFetching] = useState(false);
+  const isOnScreen = useOnScreen<HTMLDivElement | null>(bottomRef);
 
   useEffect(() => {
-    return () => updateSearchAction().clear();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const highlightRow = (record: any) => {
-    // Add your logic to determine if the row should be highlighted here
-    return record.key === router.query._id
-      ? "bg-red-500/30 border-2 border-blue-200 rounded-md !important"
-      : "";
-  };
-
-  const scrollHandler = async (event: Event) => {
-    const { scrollTop, scrollHeight, clientHeight } =
-      event.target as HTMLDivElement;
-    const isBottom = scrollHeight - scrollTop === clientHeight;
-    if (
-      isBottom &&
-      !(state.recyclebin.document.length === state.recyclebin.totalCount)
-    ) {
+    const fetchData = async () => {
+      console.log("fetching data");
       const newSearchAction = { ...state.searchingAction };
       const searchAction = newSearchAction;
+      searchAction.pageNo = (searchAction.pageNo ?? 1) + 1;
       const { searchTitle: title } = searchAction;
-      searchAction.pageNo = (newSearchAction.pageNo ?? 1) + 1;
+      setIsFetching(true);
       const token = await auth.currentUser?.getIdToken();
       const recyclebin = await getAllDeletedThesis(
         token,
@@ -310,10 +304,8 @@ const RecycledTable = () => {
         searchAction.pageNo,
         searchAction.pageSize
       );
-      if (
-        recyclebin.document.length &&
-        !(state.recyclebin.document.length === state.recyclebin.totalCount)
-      ) {
+      setIsFetching(false);
+      if (recyclebin.document.length) {
         const newRecycleState = { ...state.recyclebin };
         newRecycleState.document = [
           ...newRecycleState.document,
@@ -322,22 +314,35 @@ const RecycledTable = () => {
         dispatch({ type: "load-recycle", payload: newRecycleState });
         updateSearchAction().update(newSearchAction);
       }
+    };
+    if (
+      isOnScreen &&
+      !(state.recyclebin.document.length === state.recyclebin.totalCount)
+    ) {
+      fetchData();
     }
-  };
+  }, [isOnScreen]);
+
+  useEffect(() => {
+    loadingState.add("recycle-table");
+    loadRecycle().finally(() => loadingState.remove("recycle-table"));
+    return () => {
+      updateSearchAction().clear();
+    };
+  }, []);
 
   useEffect(() => {
     const thesisItems = state.recyclebin.document;
     const toTableThesisItems = thesisToDataType(thesisItems);
     setRemovedTableData(toTableThesisItems);
-
-    const layout_ref = document.getElementById(
-      "layout-container"
-    ) as HTMLDivElement;
-    layout_ref.addEventListener("scroll", scrollHandler);
-    return () => {
-      layout_ref?.removeEventListener("scroll", scrollHandler);
-    };
   }, [state.recyclebin]);
+
+  const highlightRow = (record: any) => {
+    // Add your logic to determine if the row should be highlighted here
+    return record.key === router.query._id
+      ? "bg-red-500/30 border-2 border-blue-200 rounded-md !important"
+      : "";
+  };
 
   return (
     <>
@@ -352,12 +357,13 @@ const RecycledTable = () => {
         pagination={false}
         rowClassName={highlightRow}
       />
+      <div ref={bottomRef}>{isFetching && <LoadingIcon />}</div>
     </>
   );
 };
 
 const RemoveThesis = (props: DataType & { id: string }) => {
-  const { removeThesisItem, loadingState, loadRecycle } = useGlobalContext();
+  const { removeThesisItem, loadingState } = useGlobalContext();
   const { loadActivityLog } = useUserContext();
 
   const handleClick = async () => {
@@ -366,7 +372,7 @@ const RemoveThesis = (props: DataType & { id: string }) => {
       const token = await auth.currentUser?.getIdToken();
       removeThesisItem(props.id);
       await removeThesis({ token: token, thesisId: props.id });
-      await Promise.all([loadActivityLog(), loadRecycle()]);
+      await loadActivityLog();
       loadingState.remove("thesis-table");
     } catch (e) {
       message.error("remove failed");

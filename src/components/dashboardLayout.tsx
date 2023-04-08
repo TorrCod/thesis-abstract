@@ -117,9 +117,6 @@ function DashboardLayout({ children }: DashboardProps) {
 
   useEffect(() => {
     if (userState.userDetails) {
-      loadThesisItems();
-      loadRecycle();
-      loadAllUsers();
       loadActivityLog();
       loadThesisCount();
     }

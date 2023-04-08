@@ -108,7 +108,12 @@ export const AddAdmin = () => {
         form.resetFields();
       })
       .catch((e) => {
-        console.error(e);
+        const error: AxiosError = e;
+        if ((error.response?.data as any).code === "email-duplicate") {
+          message.error((error.response?.data as any).message);
+        } else {
+          console.error(e);
+        }
       })
       .finally(() => loadingState.remove("admin-table"));
   };

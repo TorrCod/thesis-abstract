@@ -99,7 +99,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             if (checkEmailUser || checkEmailPending)
               return res
                 .status(400)
-                .send("email is exist please use another one");
+                .json({
+                  code: "email-duplicate",
+                  message: "email is exist please use another one",
+                });
             const { insertedResult, dateNow } = await addDataWithExpiration(
               "accounts",
               collection,

@@ -43,7 +43,7 @@ const globalStateInit: GlobalState = {
   searchThesis: [],
   totalThesisCount: { totalCount: 0, thesisCount: totalDataInit },
   searchingAction: {
-    pageSize: 5,
+    pageSize: 30,
     filterState: {
       years: { all: true, default: [] },
       course: { all: true, option: courseOption, default: courseOption },

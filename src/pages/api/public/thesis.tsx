@@ -2,7 +2,6 @@ import { ThesisCount, ThesisState } from "@/context/types.d";
 import {
   getDistinctData,
   getOneData,
-  getData,
   dataAgregate,
   getDataWithPaging,
 } from "@/lib/mongo";

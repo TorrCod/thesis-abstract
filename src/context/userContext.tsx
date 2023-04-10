@@ -105,11 +105,7 @@ const userReducer = (state: UserState, action: UserAction): UserState => {
 export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(userReducer, userStateInit);
   const unsubscribeRef = useRef<Unsubscribe | null>(null);
-  const {
-    dispatch: gloablDispatch,
-    loadingState,
-    state: globalState,
-  } = useGlobalContext();
+  const { dispatch: gloablDispatch, state: globalState } = useGlobalContext();
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       try {
@@ -118,13 +114,17 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
           const res: UserDetails = await getUserDetails(token, user.uid);
           res.profilePic = user.photoURL as any;
           dispatch({ type: "on-signin", payload: { userDetails: res } });
+        } else {
+          throw new Error("account logout", { cause: "logout" });
         }
         unsubscribeRef.current = unsubscribe;
       } catch (e) {
-        console.error(e);
+        if ((e as Error).cause !== "logout") {
+          console.error(e);
+          await auth.signOut();
+        }
         nextSignOut({ redirect: false });
         axios.get("/api/logout");
-        await auth.signOut();
       }
     });
     return () => {

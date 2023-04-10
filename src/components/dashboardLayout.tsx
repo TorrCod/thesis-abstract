@@ -206,6 +206,7 @@ function DashboardLayout({ children }: DashboardProps) {
         }
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     globalState.thesisItems,
     thesisUpdate,
@@ -229,6 +230,7 @@ function DashboardLayout({ children }: DashboardProps) {
           console.error(error);
         });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userState.listOfAdmins, userState.activityLog, adminUpdate]);
 
   useEffect(() => {

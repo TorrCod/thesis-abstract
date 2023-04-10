@@ -73,6 +73,7 @@ const Page: NextPageWithLayout = () => {
     if (newActivityLog.length) {
       addActivityLog(newActivityLog);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [newActivityLog]);
 
   useEffect(() => {
@@ -80,6 +81,7 @@ const Page: NextPageWithLayout = () => {
       setLoading(true);
       loadActivityLog().finally(() => setLoading(false));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userState.userDetails]);
 
   useEffect(() => {
@@ -131,7 +133,7 @@ export const ActivityTimeline = (props: { maxSize?: number }) => {
     });
     const newLogFiltered = newLog.filter(async (item) => item !== null);
     setLog(newLogFiltered as any);
-  }, [activityLog]);
+  }, [activityLog, props.maxSize]);
 
   return <Timeline mode="left" items={log} />;
 };

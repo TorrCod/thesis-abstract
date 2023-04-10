@@ -222,6 +222,7 @@ export const AdminTable = ({
         .catch(() => {})
         .finally(() => loadingState.remove("admin-table"));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.userDetails]);
 
   useEffect(() => {
@@ -245,7 +246,7 @@ export const AdminTable = ({
     } else {
       setDataSourse(state.listOfAdmins.slice(0, max_content));
     }
-  }, [router.query, state.listOfAdmins]);
+  }, [router.query, state.listOfAdmins, max_content]);
 
   return (
     <Table

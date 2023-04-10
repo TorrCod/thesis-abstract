@@ -29,7 +29,7 @@ export const authOptions: AuthOptions = {
     signOut: "/",
     error: "/?signin", // Error code passed in query string as ?error=
   },
-  debug: true,
+  debug: process.env.NODE_ENV === "development",
 };
 
 export default NextAuth(authOptions);

@@ -22,7 +22,7 @@ import { IoHomeOutline } from "react-icons/io5";
 import useGlobalContext from "@/context/globalContext";
 import Pusher from "pusher-js";
 import { pusherInit } from "@/utils/pusher-utils";
-import { ActivityLog, ThesisItems } from "@/context/types.d";
+import { ActivityLog, ThesisCount, ThesisItems } from "@/context/types.d";
 
 type DashboardProps = {
   children?: React.ReactNode;
@@ -68,10 +68,15 @@ function DashboardLayout({ children }: DashboardProps) {
     removeThesisItem,
     recycleThesis,
     restoreThesis,
+    dispatch: globalDispatch,
   } = useGlobalContext();
   const [thesisUpdate, setThesisUpdate] = useState<{
     activityLog: ActivityLog;
     addedData: ThesisItems;
+    thesisCharts: {
+      thesisCount: ThesisCount;
+      totalCount: number;
+    };
   }>();
   const router = useRouter();
 
@@ -80,19 +85,40 @@ function DashboardLayout({ children }: DashboardProps) {
     const channel = pusher.subscribe("thesis-update");
     channel.bind(
       "add-thesis",
-      (res: { activityLog: ActivityLog; addedData: ThesisItems }) => {
+      (res: {
+        activityLog: ActivityLog;
+        addedData: ThesisItems;
+        thesisCharts: {
+          thesisCount: ThesisCount;
+          totalCount: number;
+        };
+      }) => {
         setThesisUpdate(res);
       }
     );
     channel.bind(
       "remove-thesis",
-      (res: { activityLog: ActivityLog; addedData: ThesisItems }) => {
+      (res: {
+        activityLog: ActivityLog;
+        addedData: ThesisItems;
+        thesisCharts: {
+          thesisCount: ThesisCount;
+          totalCount: number;
+        };
+      }) => {
         setThesisUpdate(res);
       }
     );
     channel.bind(
       "restore-thesis",
-      (res: { activityLog: ActivityLog; addedData: ThesisItems }) => {
+      (res: {
+        activityLog: ActivityLog;
+        addedData: ThesisItems;
+        thesisCharts: {
+          thesisCount: ThesisCount;
+          totalCount: number;
+        };
+      }) => {
         setThesisUpdate(res);
       }
     );
@@ -117,6 +143,10 @@ function DashboardLayout({ children }: DashboardProps) {
           const newAL = { ...userState.activityLog };
           newAL.document.push(thesisUpdate.activityLog);
           dispatch({ type: "load-activity-log", payload: newAL });
+          globalDispatch({
+            type: "load-thesis-count",
+            payload: thesisUpdate.thesisCharts,
+          });
           break;
         }
         case "removed a thesis": {
@@ -133,6 +163,10 @@ function DashboardLayout({ children }: DashboardProps) {
           const newAL = { ...userState.activityLog };
           newAL.document.push(thesisUpdate.activityLog);
           dispatch({ type: "load-activity-log", payload: newAL });
+          globalDispatch({
+            type: "load-thesis-count",
+            payload: thesisUpdate.thesisCharts,
+          });
           break;
         }
         case "restored a thesis": {
@@ -148,6 +182,10 @@ function DashboardLayout({ children }: DashboardProps) {
           const newAL = { ...userState.activityLog };
           newAL.document.push(thesisUpdate.activityLog);
           dispatch({ type: "load-activity-log", payload: newAL });
+          globalDispatch({
+            type: "load-thesis-count",
+            payload: thesisUpdate.thesisCharts,
+          });
           break;
         }
       }

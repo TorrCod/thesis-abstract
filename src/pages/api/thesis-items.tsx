@@ -76,17 +76,30 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               thesisItems.title
             );
 
+            const thesisCount = await calculateThesisCount();
             const pusher = new Pusher(JSON.parse(process.env.PUSHER || "{}"));
             pusher.trigger("thesis-update", "remove-thesis", {
               addedData: thesisItems,
               activityLog,
+              thesisCharts: {
+                thesisCount,
+                totalCount: thesisCount.reduce(
+                  (acc, { count }) => acc + count,
+                  0
+                ),
+              },
             });
 
-            const thesisCount = await calculateThesisCount();
             return res.status(200).json({
               addedData: thesisItems,
               activityLog,
-              thesisCount,
+              thesisCharts: {
+                thesisCount,
+                totalCount: thesisCount.reduce(
+                  (acc, { count }) => acc + count,
+                  0
+                ),
+              },
             });
           }
           default: {
@@ -116,16 +129,30 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             );
 
             const pusher = new Pusher(JSON.parse(process.env.PUSHER || "{}"));
+            const thesisCount = await calculateThesisCount();
+
             pusher.trigger("thesis-update", "remove-thesis", {
               addedData,
               activityLog,
+              thesisCharts: {
+                thesisCount,
+                totalCount: thesisCount.reduce(
+                  (acc, { count }) => acc + count,
+                  0
+                ),
+              },
             });
 
-            const thesisCount = await calculateThesisCount();
             return res.status(200).json({
               addedData,
               activityLog,
-              thesisCount,
+              thesisCharts: {
+                thesisCount,
+                totalCount: thesisCount.reduce(
+                  (acc, { count }) => acc + count,
+                  0
+                ),
+              },
             });
           }
         }
@@ -152,15 +179,25 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         );
 
         const pusher = new Pusher(JSON.parse(process.env.PUSHER || "{}"));
+        const thesisCount = await calculateThesisCount();
+
         pusher.trigger("thesis-update", "add-thesis", {
           addedData: thesisItem,
           activityLog,
+          thesisCharts: {
+            thesisCount,
+            totalCount: thesisCount.reduce((acc, { count }) => acc + count, 0),
+          },
         });
 
-        const thesisCount = await calculateThesisCount();
-        return res
-          .status(200)
-          .json({ addedData: thesisItem, activityLog, thesisCount });
+        return res.status(200).json({
+          addedData: thesisItem,
+          activityLog,
+          thesisCharts: {
+            thesisCount,
+            totalCount: thesisCount.reduce((acc, { count }) => acc + count, 0),
+          },
+        });
       }
       default:
         return res.status(400).json({ error: "no method" });

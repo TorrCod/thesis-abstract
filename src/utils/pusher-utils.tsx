@@ -16,14 +16,14 @@ export const thesisUpdate = async (
 };
 
 export const watchUserState = (
-  action: "signin" | "signout",
-  callback: (userDetails: string) => void
+  action: "remove" | "add" | "restore",
+  callback: (data: string) => void
 ) => {
   const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY || "", {
     cluster: "ap1",
   });
   const channel = pusher.subscribe(action);
   const unsubscribe = () => pusher.unsubscribe("online");
-  channel.bind("on-signin", callback);
+  channel.bind(action, callback);
   return unsubscribe;
 };

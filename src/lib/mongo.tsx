@@ -308,17 +308,24 @@ export const addDataWithExpiration = async (
     const database = client.db(dbName);
     const collection = database.collection(colName);
     const dateNow = new Date();
+    const _id = new ObjectId();
     await collection.createIndex(
       { createdAt: 1 },
       { expireAfterSeconds: timer ?? 3600 }
     );
-    const insertedResult = await collection.insertOne({
+    await collection.insertOne({
+      _id,
       ...payload,
       createdAt: dateNow,
       expireAfterSeconds: timer ?? 3600,
     });
     client.close();
-    return { insertedResult, dateNow };
+    return {
+      _id,
+      ...payload,
+      createdAt: dateNow,
+      expireAfterSeconds: timer ?? 3600,
+    };
   } catch (e) {
     console.error(e);
     throw new Error(e as string).message;

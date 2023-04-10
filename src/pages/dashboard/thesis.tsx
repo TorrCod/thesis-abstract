@@ -446,9 +446,9 @@ const RemoveThesis = (props: DataType & { id: string }) => {
     loadingState.add("thesis-table");
     try {
       const token = await auth.currentUser?.getIdToken();
-      removeThesisItem(props.id);
+      // removeThesisItem(props.id);
       await removeThesis({ token: token, thesisId: props.id });
-      await loadActivityLog();
+      // await loadActivityLog();
     } catch (e) {
       message.error("remove failed");
       console.error(e);

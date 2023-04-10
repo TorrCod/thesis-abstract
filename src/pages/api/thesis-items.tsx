@@ -88,27 +88,29 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             if (!thesisItems) {
               return res.status(400).send("not found");
             }
-            const resData = await addDataWithExpiration(
+            const addedData = await addDataWithExpiration(
               "thesis-abstract",
               "deleted-thesis",
               thesisItems,
               604800
             );
-            await updateActivityLog(
+            const activityLog = await updateActivityLog(
               isValidated.decodedToken as DecodedIdToken,
               "removed a thesis",
-              resData.insertedResult.insertedId,
-              resData.dateNow,
+              addedData._id,
+              addedData.createdAt,
               thesisItems.title
             );
+
+            const pusher = new Pusher(JSON.parse(process.env.PUSHER || "{}"));
+            pusher.trigger("thesis-update", "remove-thesis", {
+              addedData,
+              activityLog,
+            });
+
             return res.status(200).json({
-              recycledItem: {
-                _id: resData.insertedResult.insertedId,
-                course: thesisItems.course,
-                createdAt: resData.dateNow,
-                expireAfterSeconds: 604800,
-                title: thesisItems.title,
-              },
+              addedData,
+              activityLog,
             });
           }
         }

@@ -100,7 +100,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                 code: "email-duplicate",
                 message: "email is exist please use another one",
               });
-            const { insertedResult, dateNow } = await addDataWithExpiration(
+            const { _id, createdAt } = await addDataWithExpiration(
               "accounts",
               collection,
               req.body,
@@ -109,15 +109,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             await updateActivityLog(
               isValidated.decodedToken as DecodedIdToken,
               "invited an admin",
-              insertedResult.insertedId,
-              dateNow,
+              _id,
+              createdAt,
               req.body.email
             );
             return res.status(200).json({
-              _id: insertedResult.insertedId,
+              _id: _id,
               ...req.body,
               expireAfterSeconds: 604800,
-              createdAt: dateNow,
+              createdAt: createdAt,
             });
           }
           case "signup": {

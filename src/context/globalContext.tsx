@@ -295,7 +295,6 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
 
   const recycleThesis = (thesis: ThesisItems) => {
     const oldRecyleThesis = [...state.recyclebin.document];
-    if (oldRecyleThesis.length >= 10) oldRecyleThesis.pop();
     dispatch({
       type: "load-recycle",
       payload: {

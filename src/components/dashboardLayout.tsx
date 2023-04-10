@@ -65,6 +65,8 @@ function DashboardLayout({ children }: DashboardProps) {
     loadThesisCount,
     state: globalState,
     addThesisItem,
+    removeThesisItem,
+    recycleThesis,
   } = useGlobalContext();
   const [thesisUpdate, setThesisUpdate] = useState<{
     activityLog: ActivityLog;
@@ -77,6 +79,12 @@ function DashboardLayout({ children }: DashboardProps) {
     const channel = pusher.subscribe("thesis-update");
     channel.bind(
       "add-thesis",
+      (res: { activityLog: ActivityLog; addedData: ThesisItems }) => {
+        setThesisUpdate(res);
+      }
+    );
+    channel.bind(
+      "remove-thesis",
       (res: { activityLog: ActivityLog; addedData: ThesisItems }) => {
         setThesisUpdate(res);
       }
@@ -104,9 +112,30 @@ function DashboardLayout({ children }: DashboardProps) {
           dispatch({ type: "load-activity-log", payload: newAL });
           break;
         }
+        case "removed a thesis": {
+          const isLogExist = userState.activityLog.document.filter(
+            ({ _id }) => thesisUpdate.activityLog._id === _id
+          )[0];
+          const isReCycleExist = globalState.recyclebin.document.filter(
+            ({ _id }) => _id === thesisUpdate.addedData._id
+          )[0];
+          if (isLogExist || isReCycleExist) return;
+          removeThesisItem(thesisUpdate.activityLog.data.itemId);
+          recycleThesis(thesisUpdate.addedData);
+
+          const newAL = { ...userState.activityLog };
+          newAL.document.push(thesisUpdate.activityLog);
+          dispatch({ type: "load-activity-log", payload: newAL });
+          break;
+        }
       }
     }
-  }, [globalState.thesisItems, thesisUpdate, userState.activityLog]);
+  }, [
+    globalState.thesisItems,
+    thesisUpdate,
+    userState.activityLog,
+    globalState.recyclebin,
+  ]);
 
   useEffect(() => {
     (

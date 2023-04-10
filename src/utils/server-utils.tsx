@@ -52,13 +52,21 @@ export const updateActivityLog = async (
   name: string
 ) => {
   const userUid = decodedToken.uid;
-  const insertedResult = await addData("accounts", "activity-log", {
+  const _id = new ObjectId();
+  await addData("accounts", "activity-log", {
+    _id,
     userId: userUid,
     reason: reason,
     data: { itemId: Itemid, name: name },
     date: date,
   });
-  return insertedResult;
+  return {
+    _id,
+    userId: userUid,
+    reason: reason,
+    data: { itemId: Itemid, name: name },
+    date: date,
+  };
 };
 
 export const parseQuery = (req: NextApiRequest) => {

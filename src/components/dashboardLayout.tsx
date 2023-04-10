@@ -20,6 +20,9 @@ import SignInSignUp from "./signin_signup";
 import { AiFillHome } from "react-icons/ai";
 import { IoHomeOutline } from "react-icons/io5";
 import useGlobalContext from "@/context/globalContext";
+import Pusher from "pusher-js";
+import { pusherInit } from "@/utils/pusher-utils";
+import { ActivityLog, ThesisItems } from "@/context/types.d";
 
 type DashboardProps = {
   children?: React.ReactNode;
@@ -51,9 +54,59 @@ const siderMenu: MenuProps["items"] = [
 function DashboardLayout({ children }: DashboardProps) {
   const [selectedSider, setSelectedSider] = useState("/dashboard");
   const { pathname } = useLocation();
-  const { logOut, state: userState, loadActivityLog } = useUserContext();
-  const { clearDefault, loadThesisCount } = useGlobalContext();
+  const {
+    logOut,
+    state: userState,
+    loadActivityLog,
+    dispatch,
+  } = useUserContext();
+  const {
+    clearDefault,
+    loadThesisCount,
+    state: globalState,
+    addThesisItem,
+  } = useGlobalContext();
+  const [thesisUpdate, setThesisUpdate] = useState<{
+    activityLog: ActivityLog;
+    addedData: ThesisItems;
+  }>();
   const router = useRouter();
+
+  useEffect(() => {
+    const pusher = pusherInit();
+    const channel = pusher.subscribe("thesis-update");
+    channel.bind(
+      "add-thesis",
+      (res: { activityLog: ActivityLog; addedData: ThesisItems }) => {
+        setThesisUpdate(res);
+      }
+    );
+    return () => {
+      pusher.unsubscribe("thesis-update");
+    };
+  }, []);
+
+  useEffect(() => {
+    if (thesisUpdate) {
+      switch (thesisUpdate.activityLog.reason) {
+        case "added a thesis": {
+          const isLogExist = userState.activityLog.document.filter(
+            ({ _id }) => thesisUpdate.activityLog._id === _id
+          )[0];
+          const isThesisExist = globalState.thesisItems.document.filter(
+            ({ _id }) => _id === thesisUpdate.addedData._id
+          )[0];
+          if (isLogExist || isThesisExist) return;
+          addThesisItem(thesisUpdate.addedData);
+
+          const newAL = { ...userState.activityLog };
+          newAL.document.push(thesisUpdate.activityLog);
+          dispatch({ type: "load-activity-log", payload: newAL });
+          break;
+        }
+      }
+    }
+  }, [globalState.thesisItems, thesisUpdate, userState.activityLog]);
 
   useEffect(() => {
     (

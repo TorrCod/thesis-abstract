@@ -15,6 +15,7 @@ import {
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import { ObjectId } from "mongodb";
 import { NextApiRequest, NextApiResponse } from "next";
+import Pusher from "pusher";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
@@ -125,14 +126,20 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           "thesis-items",
           thesisItem
         );
-        await updateActivityLog(
+        const activityLog = await updateActivityLog(
           isValidated.decodedToken as DecodedIdToken,
           "added a thesis",
           resData.insertedId,
           thesisItem.dateAdded,
           thesisItem.title
         );
-        return res.status(200).json(resData);
+
+        const pusher = new Pusher(JSON.parse(process.env.PUSHER || "{}"));
+        pusher.trigger("thesis-update", "add-thesis", {
+          addedData: thesisItem,
+          activityLog,
+        });
+        return res.status(200).json({ addedData: thesisItem, activityLog });
       }
       default:
         return res.status(400).json({ error: "no method" });

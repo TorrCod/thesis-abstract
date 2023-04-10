@@ -3,6 +3,11 @@ import { userConfig } from "./account-utils";
 import Pusher from "pusher-js";
 import { UserDetails } from "@/context/types.d";
 
+export const pusherInit = () =>
+  new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY || "", {
+    cluster: "ap1",
+  });
+
 export const thesisUpdate = async (
   action: "remove" | "add" | "restore",
   uid?: string,
@@ -15,15 +20,13 @@ export const thesisUpdate = async (
   );
 };
 
-export const watchUserState = (
-  action: "remove" | "add" | "restore",
-  callback: (data: string) => void
-) => {
-  const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY || "", {
-    cluster: "ap1",
-  });
-  const channel = pusher.subscribe(action);
-  const unsubscribe = () => pusher.unsubscribe("online");
-  channel.bind(action, callback);
-  return unsubscribe;
-};
+// export const watchUserState = (
+//   action: "remove" | "add" | "restore",
+//   callback: (data: string) => void
+// ) => {
+//   const
+//   const channel = pusher.subscribe(action);
+//   const unsubscribe = () => pusher.unsubscribe("online");
+//   channel.bind(action, callback);
+//   return unsubscribe;
+// };

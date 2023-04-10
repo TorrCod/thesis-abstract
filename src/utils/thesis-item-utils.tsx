@@ -82,8 +82,9 @@ export const addThesis = async (
   data: ThesisItems,
   token: string | undefined
 ) => {
-  if (token) await axios.post("/api/thesis-items", data, userConfig(token));
-  else throw new Error("canont read user token");
+  if (!token) throw new Error("canont read user token");
+  const res = await axios.post("/api/thesis-items", data, userConfig(token));
+  return res.data;
 };
 
 export const removeThesis = async ({

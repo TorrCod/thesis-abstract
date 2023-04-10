@@ -476,7 +476,7 @@ const RestoreThesis = (props: DataType & { id: string }) => {
       restore(props.id);
       const token = await auth.currentUser?.getIdToken();
       await restoreThesis({ token: token, thesisId: props.id });
-      await loadActivityLog();
+      // await loadActivityLog();
     } catch (e) {
       console.error(e);
     } finally {

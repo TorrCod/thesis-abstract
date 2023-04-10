@@ -62,19 +62,29 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             delete thesisItems.createdAt;
             delete thesisItems.expireAfterSeconds;
             thesisItems.dateAdded = new Date(thesisItems.dateAdded);
-            const resData = await addData(
+            const response = await addData(
               "thesis-abstract",
               "thesis-items",
               thesisItems
             );
-            await updateActivityLog(
+            const activityLog = await updateActivityLog(
               isValidated.decodedToken as DecodedIdToken,
               "restored a thesis",
-              resData.insertedId,
+              response.insertedId,
               new Date(),
               thesisItems.title
             );
-            return res.status(200).json(thesisItems);
+
+            const pusher = new Pusher(JSON.parse(process.env.PUSHER || "{}"));
+            pusher.trigger("thesis-update", "remove-thesis", {
+              addedData: thesisItems,
+              activityLog,
+            });
+
+            return res.status(200).json({
+              addedData: thesisItems,
+              activityLog,
+            });
           }
           default: {
             const thesisItems = (

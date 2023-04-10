@@ -67,6 +67,7 @@ function DashboardLayout({ children }: DashboardProps) {
     addThesisItem,
     removeThesisItem,
     recycleThesis,
+    restoreThesis,
   } = useGlobalContext();
   const [thesisUpdate, setThesisUpdate] = useState<{
     activityLog: ActivityLog;
@@ -85,6 +86,12 @@ function DashboardLayout({ children }: DashboardProps) {
     );
     channel.bind(
       "remove-thesis",
+      (res: { activityLog: ActivityLog; addedData: ThesisItems }) => {
+        setThesisUpdate(res);
+      }
+    );
+    channel.bind(
+      "restore-thesis",
       (res: { activityLog: ActivityLog; addedData: ThesisItems }) => {
         setThesisUpdate(res);
       }
@@ -123,6 +130,21 @@ function DashboardLayout({ children }: DashboardProps) {
           removeThesisItem(thesisUpdate.activityLog.data.itemId);
           recycleThesis(thesisUpdate.addedData);
 
+          const newAL = { ...userState.activityLog };
+          newAL.document.push(thesisUpdate.activityLog);
+          dispatch({ type: "load-activity-log", payload: newAL });
+          break;
+        }
+        case "restored a thesis": {
+          const isLogExist = userState.activityLog.document.filter(
+            ({ _id }) => thesisUpdate.activityLog._id === _id
+          )[0];
+          const isThesisExist = globalState.thesisItems.document.filter(
+            ({ _id }) => _id === thesisUpdate.addedData._id
+          )[0];
+          if (isLogExist || isThesisExist) return;
+          addThesisItem(thesisUpdate.addedData);
+          restoreThesis(thesisUpdate.activityLog.data.itemId);
           const newAL = { ...userState.activityLog };
           newAL.document.push(thesisUpdate.activityLog);
           dispatch({ type: "load-activity-log", payload: newAL });

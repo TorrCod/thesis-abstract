@@ -8,6 +8,7 @@ import {
 import { CollectionName } from "@/lib/types";
 import { sleep } from "@/utils/helper";
 import {
+  calculateThesisCount,
   parseQuery,
   updateActivityLog,
   validateAuth,
@@ -81,9 +82,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               activityLog,
             });
 
+            const thesisCount = await calculateThesisCount();
             return res.status(200).json({
               addedData: thesisItems,
               activityLog,
+              thesisCount,
             });
           }
           default: {
@@ -118,9 +121,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               activityLog,
             });
 
+            const thesisCount = await calculateThesisCount();
             return res.status(200).json({
               addedData,
               activityLog,
+              thesisCount,
             });
           }
         }
@@ -151,7 +156,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           addedData: thesisItem,
           activityLog,
         });
-        return res.status(200).json({ addedData: thesisItem, activityLog });
+
+        const thesisCount = await calculateThesisCount();
+        return res
+          .status(200)
+          .json({ addedData: thesisItem, activityLog, thesisCount });
       }
       default:
         return res.status(400).json({ error: "no method" });

@@ -439,16 +439,13 @@ const RecycledTable = () => {
 };
 
 const RemoveThesis = (props: DataType & { id: string }) => {
-  const { removeThesisItem, loadingState } = useGlobalContext();
-  const { loadActivityLog } = useUserContext();
+  const { loadingState } = useGlobalContext();
 
   const handleClick = async () => {
-    loadingState.add("thesis-table");
     try {
+      loadingState.add("thesis-table");
       const token = await auth.currentUser?.getIdToken();
-      // removeThesisItem(props.id);
       await removeThesis({ token: token, thesisId: props.id });
-      // await loadActivityLog();
     } catch (e) {
       message.error("remove failed");
       console.error(e);

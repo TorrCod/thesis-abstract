@@ -26,6 +26,7 @@ import {
   useEffect,
   useReducer,
   useRef,
+  useState,
 } from "react";
 import useGlobalContext from "./globalContext";
 import {
@@ -44,6 +45,7 @@ const userStateInit: UserState = {
   userDetails: undefined,
   listOfAdmins: [],
   activityLog: { currentPage: 1, totalCount: 0, document: [] },
+  onlineMembers: [],
 };
 
 const userValueInit: UserValue = {
@@ -100,6 +102,9 @@ const userReducer = (state: UserState, action: UserAction): UserState => {
     case "load-activity-log": {
       return { ...state, activityLog: action.payload };
     }
+    case "update-online-members": {
+      return { ...state, onlineMembers: action.payload };
+    }
   }
 };
 
@@ -107,10 +112,12 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(userReducer, userStateInit);
   const unsubscribeRef = useRef<Unsubscribe | null>(null);
   const { dispatch: gloablDispatch, state: globalState } = useGlobalContext();
+  const [newOnline, setNewOnline] = useState<string>();
+
   useEffect(() => {
     const unsubscribe_pusher = watchUserState((sender_uid) => {
       if (auth.currentUser?.uid === sender_uid) return;
-      console.log(sender_uid);
+      setNewOnline(sender_uid);
     });
 
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -119,6 +126,7 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
           const token = await user.getIdToken();
           const res: UserDetails = await getUserDetails(token, user.uid);
           res.profilePic = user.photoURL as any;
+          setNewOnline(res.uid);
           dispatch({ type: "on-signin", payload: { userDetails: res } });
           await go_online(res.uid, token).catch((error) => {
             console.error(error);
@@ -141,9 +149,21 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
     return () => {
       unsubscribe();
       unsubscribe_pusher();
+      dispatch({
+        type: "update-online-members",
+        payload: [],
+      });
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (newOnline && !state.onlineMembers.includes(newOnline)) {
+      dispatch({
+        type: "update-online-members",
+        payload: [...state.onlineMembers, newOnline],
+      });
+    }
+  }, [newOnline, state.onlineMembers]);
 
   const loadAllUsers = async () => {
     try {

@@ -156,6 +156,7 @@ export type UserState = {
   userDetails: UserDetails | undefined;
   listOfAdmins: AdminData[];
   activityLog: ActivitylogState;
+  onlineMembers: string[];
 };
 
 export type ActivityLog = {
@@ -235,6 +236,10 @@ export type UserAction =
   | {
       type: "load-activity-log";
       payload: ActivitylogState;
+    }
+  | {
+      type: "update-online-members";
+      payload: string[];
     };
 
 export type SocketValue = {

@@ -240,3 +240,7 @@ export type UserAction =
 export type SocketValue = {
   triggerSocket: (event: SocketEmitEvent) => void;
 };
+
+export type PusherValue = {
+  triggerPusher: () => void;
+};

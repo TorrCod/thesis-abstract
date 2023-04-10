@@ -38,6 +38,7 @@ import {
   UserValue,
 } from "./types.d";
 import { signOut as nextSignOut } from "next-auth/react";
+import { watchUserState, go_online } from "@/utils/pusher-utils";
 
 const userStateInit: UserState = {
   userDetails: undefined,
@@ -107,6 +108,11 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
   const unsubscribeRef = useRef<Unsubscribe | null>(null);
   const { dispatch: gloablDispatch, state: globalState } = useGlobalContext();
   useEffect(() => {
+    const unsubscribe_pusher = watchUserState((sender_uid) => {
+      if (auth.currentUser?.uid === sender_uid) return;
+      console.log(sender_uid);
+    });
+
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       try {
         if (user) {
@@ -114,6 +120,9 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
           const res: UserDetails = await getUserDetails(token, user.uid);
           res.profilePic = user.photoURL as any;
           dispatch({ type: "on-signin", payload: { userDetails: res } });
+          await go_online(res.uid, token).catch((error) => {
+            console.error(error);
+          });
         } else {
           throw new Error("account logout", { cause: "logout" });
         }
@@ -122,13 +131,16 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
         if ((e as Error).cause !== "logout") {
           console.error(e);
           await auth.signOut();
+        } else {
+          nextSignOut({ redirect: false });
+          axios.get("/api/logout");
         }
-        nextSignOut({ redirect: false });
-        axios.get("/api/logout");
       }
     });
+
     return () => {
       unsubscribe();
+      unsubscribe_pusher();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

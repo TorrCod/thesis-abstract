@@ -103,7 +103,7 @@ export const AddAdmin = () => {
           handleCodeInApp: true,
         };
         await sendSignInLinkToEmail(auth, email, actionCodeSettings);
-        await refreshAdmin();
+        // await refreshAdmin();
         message.success("Invite Sent");
         form.resetFields();
       })

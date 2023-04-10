@@ -22,7 +22,12 @@ import { IoHomeOutline } from "react-icons/io5";
 import useGlobalContext from "@/context/globalContext";
 import Pusher from "pusher-js";
 import { pusherInit } from "@/utils/pusher-utils";
-import { ActivityLog, ThesisCount, ThesisItems } from "@/context/types.d";
+import {
+  ActivityLog,
+  ThesisCount,
+  ThesisItems,
+  UserDetails,
+} from "@/context/types.d";
 
 type DashboardProps = {
   children?: React.ReactNode;
@@ -59,6 +64,7 @@ function DashboardLayout({ children }: DashboardProps) {
     state: userState,
     loadActivityLog,
     dispatch,
+    loadAllUsers,
   } = useUserContext();
   const {
     clearDefault,
@@ -78,12 +84,15 @@ function DashboardLayout({ children }: DashboardProps) {
       totalCount: number;
     };
   }>();
+  const [adminUpdate, setAdminUpdate] = useState<{
+    activityLog: ActivityLog;
+  }>();
   const router = useRouter();
 
   useEffect(() => {
     const pusher = pusherInit();
-    const channel = pusher.subscribe("thesis-update");
-    channel.bind(
+    const thesisChannel = pusher.subscribe("thesis-update");
+    thesisChannel.bind(
       "add-thesis",
       (res: {
         activityLog: ActivityLog;
@@ -96,7 +105,7 @@ function DashboardLayout({ children }: DashboardProps) {
         setThesisUpdate(res);
       }
     );
-    channel.bind(
+    thesisChannel.bind(
       "remove-thesis",
       (res: {
         activityLog: ActivityLog;
@@ -109,7 +118,7 @@ function DashboardLayout({ children }: DashboardProps) {
         setThesisUpdate(res);
       }
     );
-    channel.bind(
+    thesisChannel.bind(
       "restore-thesis",
       (res: {
         activityLog: ActivityLog;
@@ -122,8 +131,15 @@ function DashboardLayout({ children }: DashboardProps) {
         setThesisUpdate(res);
       }
     );
+
+    const adminChannel = pusher.subscribe("admin-update");
+    adminChannel.bind("update", (arg: { activityLog: ActivityLog }) => {
+      setAdminUpdate(arg);
+    });
+
     return () => {
       pusher.unsubscribe("thesis-update");
+      adminChannel.unsubscribe();
     };
   }, []);
 
@@ -196,6 +212,24 @@ function DashboardLayout({ children }: DashboardProps) {
     userState.activityLog,
     globalState.recyclebin,
   ]);
+
+  useEffect(() => {
+    if (adminUpdate) {
+      const isLogExist = userState.activityLog.document.filter(
+        ({ _id }) => adminUpdate.activityLog._id === _id
+      )[0];
+      if (isLogExist) return;
+      loadAllUsers()
+        .then(() => {
+          const newAL = { ...userState.activityLog };
+          newAL.document.push(adminUpdate.activityLog);
+          dispatch({ type: "load-activity-log", payload: newAL });
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+  }, [userState.listOfAdmins, userState.activityLog, adminUpdate]);
 
   useEffect(() => {
     (

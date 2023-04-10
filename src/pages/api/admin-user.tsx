@@ -12,6 +12,7 @@ import {
 } from "@/lib/mongo";
 import { ActivitylogReason, CollectionName } from "@/lib/types";
 import {
+  calculateThesisCount,
   parseQuery,
   updateActivityLog,
   validateAuth,
@@ -21,6 +22,7 @@ import { ObjectId } from "mongodb";
 import { NextApiRequest, NextApiResponse } from "next";
 import { serialize } from "cookie";
 import { sleep } from "@/utils/helper";
+import Pusher from "pusher";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
@@ -92,33 +94,49 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             const checkEmailUser = await getOneData("accounts", "user", {
               email: req.body.email,
             });
+
             const checkEmailPending = await getOneData("accounts", "pending", {
               email: req.body.email,
             });
+
             if (checkEmailUser || checkEmailPending)
               return res.status(400).json({
                 code: "email-duplicate",
                 message: "email is exist please use another one",
               });
-            const { _id, createdAt } = await addDataWithExpiration(
+
+            const invitedData = await addDataWithExpiration(
               "accounts",
               collection,
               req.body,
               604800
             );
-            await updateActivityLog(
+
+            const activityLog = await updateActivityLog(
               isValidated.decodedToken as DecodedIdToken,
               "invited an admin",
-              _id,
-              createdAt,
+              invitedData._id,
+              invitedData.createdAt,
               req.body.email
             );
-            return res.status(200).json({
-              _id: _id,
-              ...req.body,
-              expireAfterSeconds: 604800,
-              createdAt: createdAt,
+
+            const pusher = new Pusher(JSON.parse(process.env.PUSHER || "{}"));
+
+            pusher.trigger("admin-update", "update", {
+              activityLog,
             });
+
+            return res.status(200).json({
+              addedData: invitedData,
+              activityLog,
+            });
+
+            // return res.status(200).json({
+            //   _id: _id,
+            //   ...req.body,
+            //   expireAfterSeconds: 604800,
+            //   createdAt: createdAt,
+            // });
           }
           case "signup": {
             const collection = req.query.collection as CollectionName;

@@ -25,10 +25,11 @@ export const authOptions: AuthOptions = {
     }),
   ],
   pages: {
-    signIn: "/?sign-in",
+    signIn: "/?signin",
     signOut: "/",
-    error: "/?sign-in", // Error code passed in query string as ?error=
+    error: "/?signin", // Error code passed in query string as ?error=
   },
+  debug: true,
 };
 
 export default NextAuth(authOptions);

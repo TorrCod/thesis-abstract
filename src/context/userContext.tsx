@@ -39,7 +39,6 @@ import {
   UserValue,
 } from "./types.d";
 import { signOut as nextSignOut } from "next-auth/react";
-import { watchUserState, go_online } from "@/utils/pusher-utils";
 
 const userStateInit: UserState = {
   userDetails: undefined,
@@ -112,55 +111,53 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(userReducer, userStateInit);
   const unsubscribeRef = useRef<Unsubscribe | null>(null);
   const { dispatch: gloablDispatch, state: globalState } = useGlobalContext();
-  const [newOnline, setNewOnline] = useState<string>();
+  const [newOnline, setNewOnline] = useState<{
+    action: "signin" | "signout";
+    uid: string;
+  }>();
 
   useEffect(() => {
-    const unsubscribe_pusher = watchUserState((sender_uid) => {
-      if (auth.currentUser?.uid === sender_uid) return;
-      setNewOnline(sender_uid);
-    });
-
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       try {
         if (user) {
           const token = await user.getIdToken();
           const res: UserDetails = await getUserDetails(token, user.uid);
           res.profilePic = user.photoURL as any;
-          setNewOnline(res.uid);
+          setNewOnline({ action: "signin", uid: user.uid });
           dispatch({ type: "on-signin", payload: { userDetails: res } });
-          await go_online(res.uid, token).catch((error) => {
-            console.error(error);
-          });
         } else {
           throw new Error("account logout", { cause: "logout" });
         }
         unsubscribeRef.current = unsubscribe;
       } catch (e) {
-        if ((e as Error).cause !== "logout") {
-          console.error(e);
-          await auth.signOut();
-        } else {
+        if ((e as Error).cause === "logout") {
           nextSignOut({ redirect: false });
           axios.get("/api/logout");
+        } else {
+          console.error(e);
+          await auth.signOut();
         }
       }
     });
 
     return () => {
       unsubscribe();
-      unsubscribe_pusher();
-      dispatch({
-        type: "update-online-members",
-        payload: [],
-      });
     };
   }, []);
 
   useEffect(() => {
-    if (newOnline && !state.onlineMembers.includes(newOnline)) {
+    if (newOnline && !state.onlineMembers.includes(newOnline.uid)) {
       dispatch({
         type: "update-online-members",
-        payload: [...state.onlineMembers, newOnline],
+        payload: [...state.onlineMembers, newOnline.uid],
+      });
+    } else if (
+      newOnline?.action === "signout" &&
+      state.onlineMembers.includes(newOnline.uid)
+    ) {
+      dispatch({
+        type: "update-online-members",
+        payload: state.onlineMembers.filter((uid) => uid !== newOnline.uid),
       });
     }
   }, [newOnline, state.onlineMembers]);
@@ -271,6 +268,7 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
       type: "load-all-users",
       payload: { adminList: [], pendingAdminList: [] },
     });
+    dispatch({ type: "update-online-members", payload: [] });
     dispatch({
       type: "load-activity-log",
       payload: userStateInit.activityLog,

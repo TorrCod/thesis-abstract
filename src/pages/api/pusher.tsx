@@ -11,16 +11,23 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       return res.status(400).json(isValidated);
     }
 
-    switch (req.query.objective) {
-      case "on-signin":
-        if (!req.query.uid) return res.status(400).send("INSUFFICIENT INPUT");
-        pusher.trigger("online", "on-signin", req.query.uid);
+    switch (req.query.channel) {
+      case "thesis-update":
+        const action = req.query.action as string | undefined;
+        const data = req.body;
+        if (!data || !action)
+          throw new Error("Insufficient Input", {
+            cause: "INSUFFICIENT INPUT",
+          });
+        pusher.trigger("user_state", action, data);
         res.status(200).send("online");
         return res.end();
-      default:
-        return res.status(400).send("INSUFFICIENT INPUT");
     }
+
+    throw new Error("Insufficient Input", { cause: "INSUFFICIENT INPUT" });
   } catch (e) {
+    if ((e as Error).cause === "INSUFFICIENT INPUT")
+      return res.status(400).send("INSUFFICIENT INPUT");
     console.error(e);
     return res.status(500).end();
   }

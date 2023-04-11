@@ -5,7 +5,7 @@ import Search from "@/components/search";
 import { useEffect } from "react";
 import useGlobalContext from "@/context/globalContext";
 import { useRouter } from "next/router";
-import { Button } from "antd";
+import Link from "next/link";
 
 export default function Home() {
   const { promptToSignIn } = useGlobalContext();
@@ -41,9 +41,9 @@ export default function Home() {
               </div>
             </div>
             <div className="z-[1] mt-12">
-              <Button className="bg-[#f8b49c]" type="primary" size="large">
-                Get Started
-              </Button>
+              <Link href="/GetStarted">
+                <PriButton size="large">Get Started</PriButton>
+              </Link>
             </div>
           </div>
           <div className="relative md:min-w-[50em] w-full h-[25em] md:w-full md:h-3/4 md:min-h-96 -z-10">

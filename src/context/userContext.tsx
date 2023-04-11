@@ -239,7 +239,7 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
       token,
       query,
       undefined,
-      1,
+      pageNo ?? 1,
       globalState.searchingAction.pageSize
     );
     dispatch({ type: "load-activity-log", payload: activityLog });

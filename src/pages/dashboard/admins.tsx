@@ -96,7 +96,10 @@ const UserProfile = ({ payloadUser }: { payloadUser: UserDetails }) => {
 
   useEffect(() => {
     if (state.userDetails) {
-      loadActivityLog({ userId: payloadUser.uid }, undefined).catch((error) => {
+      loadActivityLog(
+        { userId: payloadUser.uid },
+        globalState.searchingAction.pageNo
+      ).catch((error) => {
         console.error(error);
       });
     }
@@ -194,6 +197,7 @@ const UserProfile = ({ payloadUser }: { payloadUser: UserDetails }) => {
             total={state.activityLog.totalCount}
             showSizeChanger={false}
             onChange={handlePageChange}
+            pageSize={globalState.searchingAction.pageSize}
           />
         </div>
       </div>

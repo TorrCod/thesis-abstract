@@ -21,7 +21,6 @@ import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import { ObjectId } from "mongodb";
 import { NextApiRequest, NextApiResponse } from "next";
 import { serialize } from "cookie";
-import { sleep } from "@/utils/helper";
 import Pusher from "pusher";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -41,8 +40,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               parseInt(req.query.pageNo as string)) as number;
             const userId = (req.query as any).userId as string | undefined;
             if (userId) (query as any) = { userId };
-            console.log(query);
-
             let activityLog = await getDataWithPaging(
               "accounts",
               "activity-log",

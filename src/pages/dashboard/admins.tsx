@@ -96,7 +96,9 @@ const UserProfile = ({ payloadUser }: { payloadUser: UserDetails }) => {
 
   useEffect(() => {
     if (state.userDetails) {
-      loadActivityLog({ userId: payloadUser.uid });
+      loadActivityLog({ userId: payloadUser.uid }, undefined).catch((error) => {
+        console.error(error);
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.userDetails, payloadUser, globalState.searchingAction.pageNo]);

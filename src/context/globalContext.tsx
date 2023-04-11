@@ -43,7 +43,7 @@ const globalStateInit: GlobalState = {
   searchThesis: [],
   totalThesisCount: { totalCount: 0, thesisCount: totalDataInit },
   searchingAction: {
-    pageSize: 30,
+    pageSize: 10,
     filterState: {
       years: { all: true, default: [] },
       course: { all: true, option: courseOption, default: courseOption },
@@ -171,7 +171,7 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
           dateAdded: 1,
         },
       },
-      1,
+      searchAction.pageNo ?? 1,
       searchAction.pageSize
     );
     dispatch({

@@ -27,6 +27,7 @@ export const firebaseStorage = getStorage(app);
 if (process.env.NODE_ENV === "development") {
   console.log("emulator connected");
   connectAuthEmulator(auth, "http://localhost:9099");
+  process.env.FIREBASE_AUTH_EMULATOR_HOST = process.env.EMULATOR_HOST;
 }
 
 export const signIn = async (email: string, password: string) => {

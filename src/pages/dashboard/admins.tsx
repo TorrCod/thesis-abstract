@@ -96,7 +96,12 @@ const UserProfile = ({ payloadUser }: { payloadUser: UserDetails }) => {
 
   useEffect(() => {
     if (state.userDetails) {
-      loadActivityLog({ userId: payloadUser.uid });
+      loadActivityLog(
+        { userId: payloadUser.uid },
+        globalState.searchingAction.pageNo
+      ).catch((error) => {
+        console.error(error);
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.userDetails, payloadUser, globalState.searchingAction.pageNo]);
@@ -192,6 +197,7 @@ const UserProfile = ({ payloadUser }: { payloadUser: UserDetails }) => {
             total={state.activityLog.totalCount}
             showSizeChanger={false}
             onChange={handlePageChange}
+            pageSize={globalState.searchingAction.pageSize}
           />
         </div>
       </div>

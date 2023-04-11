@@ -10,13 +10,13 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     <GlobalWrapper>
       <UserWrapper>
         <AntD_Config>
-          <SocketWrapper>
-            <NavBar />
-            <main>
-              <Background />
-              {children}
-            </main>
-          </SocketWrapper>
+          {/* <SocketWrapper> */}
+          <NavBar />
+          <main>
+            <Background />
+            {children}
+          </main>
+          {/* </SocketWrapper> */}
         </AntD_Config>
       </UserWrapper>
     </GlobalWrapper>

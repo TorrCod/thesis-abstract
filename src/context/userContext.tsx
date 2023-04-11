@@ -26,6 +26,7 @@ import {
   useEffect,
   useReducer,
   useRef,
+  useState,
 } from "react";
 import useGlobalContext from "./globalContext";
 import {
@@ -43,6 +44,7 @@ const userStateInit: UserState = {
   userDetails: undefined,
   listOfAdmins: [],
   activityLog: { currentPage: 1, totalCount: 0, document: [] },
+  onlineMembers: [],
 };
 
 const userValueInit: UserValue = {
@@ -55,6 +57,8 @@ const userValueInit: UserValue = {
     return () => {};
   },
   async logOut() {},
+  async refreshAdmin() {},
+  addActivityLog(docs) {},
 };
 
 const UserContext = createContext<UserValue>(userValueInit);
@@ -97,17 +101,21 @@ const userReducer = (state: UserState, action: UserAction): UserState => {
     case "load-activity-log": {
       return { ...state, activityLog: action.payload };
     }
+    case "update-online-members": {
+      return { ...state, onlineMembers: action.payload };
+    }
   }
 };
 
 export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(userReducer, userStateInit);
   const unsubscribeRef = useRef<Unsubscribe | null>(null);
-  const {
-    dispatch: gloablDispatch,
-    loadingState,
-    state: globalState,
-  } = useGlobalContext();
+  const { dispatch: gloablDispatch, state: globalState } = useGlobalContext();
+  const [newOnline, setNewOnline] = useState<{
+    action: "signin" | "signout";
+    uid: string;
+  }>();
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       try {
@@ -115,33 +123,53 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
           const token = await user.getIdToken();
           const res: UserDetails = await getUserDetails(token, user.uid);
           res.profilePic = user.photoURL as any;
+          setNewOnline({ action: "signin", uid: user.uid });
           dispatch({ type: "on-signin", payload: { userDetails: res } });
+        } else {
+          throw new Error("account logout", { cause: "logout" });
         }
         unsubscribeRef.current = unsubscribe;
       } catch (e) {
-        console.error(e);
-        nextSignOut({ redirect: false });
-        axios.get("/api/logout");
-        await auth.signOut();
+        if ((e as Error).cause === "logout") {
+          nextSignOut({ redirect: false });
+          axios.get("/api/logout");
+        } else {
+          console.error(e);
+          await auth.signOut();
+        }
       }
     });
+
     return () => {
       unsubscribe();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (newOnline && !state.onlineMembers.includes(newOnline.uid)) {
+      dispatch({
+        type: "update-online-members",
+        payload: [...state.onlineMembers, newOnline.uid],
+      });
+    } else if (
+      newOnline?.action === "signout" &&
+      state.onlineMembers.includes(newOnline.uid)
+    ) {
+      dispatch({
+        type: "update-online-members",
+        payload: state.onlineMembers.filter((uid) => uid !== newOnline.uid),
+      });
+    }
+  }, [newOnline, state.onlineMembers]);
 
   const loadAllUsers = async () => {
     try {
-      loadingState.add("all-admin");
       const token = await auth.currentUser?.getIdToken();
       const allUsers = await getAllUsers(token);
       dispatch({ type: "load-all-users", payload: allUsers });
     } catch (e) {
       message.error("failed to load all users");
       console.error(e);
-    } finally {
-      loadingState.remove("all-admin");
     }
   };
 
@@ -202,22 +230,34 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
     await addThesis(thesisItems, userToken);
   };
 
-  const loadActivityLog = async (query?: Record<string, any>) => {
+  const loadActivityLog = async (
+    query?: Record<string, any>,
+    pageNo?: number
+  ) => {
     const token = await auth.currentUser?.getIdToken();
     const activityLog = await getActivityLog(
       token,
       query,
-      {
-        limit: 10,
-      },
-      globalState.searchingAction.pageNo
+      undefined,
+      1,
+      globalState.searchingAction.pageSize
     );
     dispatch({ type: "load-activity-log", payload: activityLog });
     return clearActivitylog;
   };
 
+  const addActivityLog = (docs: ActivityLog[]) => {
+    const newActivitylogState = { ...state.activityLog };
+    newActivitylogState.document = [...newActivitylogState.document, ...docs];
+    dispatch({ type: "load-activity-log", payload: newActivitylogState });
+  };
+
   const clearActivitylog = () => {
     dispatch({ type: "load-activity-log", payload: userStateInit.activityLog });
+  };
+
+  const refreshAdmin = async () => {
+    await Promise.all([loadActivityLog(), loadAllUsers()]);
   };
 
   const logOut = async () => {
@@ -228,6 +268,7 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
       type: "load-all-users",
       payload: { adminList: [], pendingAdminList: [] },
     });
+    dispatch({ type: "update-online-members", payload: [] });
     dispatch({
       type: "load-activity-log",
       payload: userStateInit.activityLog,
@@ -249,6 +290,8 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
     <UserContext.Provider
       value={{
         state,
+        addActivityLog,
+        refreshAdmin,
         loadAllUsers,
         dispatch,
         userSignUp,

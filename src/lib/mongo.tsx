@@ -93,16 +93,18 @@ export const getDataWithPaging = async (
     const client = await connectToDatabase();
     const database = client.db(dbName);
     const collection = database.collection(colName);
+    collection.createIndex({ dateAdded: -1 });
 
     const countDocuments = await collection.countDocuments(query ?? undefined);
-    const skipDocuments = ((page?.pageNo ?? 1) - 1) * (page?.pageSize ?? 10);
+    const skipDocuments = ((page?.pageNo ?? 1) - 1) * (page?.pageSize ?? 30);
 
     let document = collection
-      .find(query ?? {}, {
+      .find(query ?? { dateAdded: 0 }, {
         projection: option?.projection,
       })
+      .sort({ dateAdded: -1 })
       .skip(skipDocuments)
-      .limit(page?.pageSize ?? 10);
+      .limit(option?.limit ?? page?.pageSize ?? 30);
 
     if (page?.sort) document = document.sort(page.sort);
 
@@ -306,17 +308,24 @@ export const addDataWithExpiration = async (
     const database = client.db(dbName);
     const collection = database.collection(colName);
     const dateNow = new Date();
+    const _id = new ObjectId();
     await collection.createIndex(
       { createdAt: 1 },
       { expireAfterSeconds: timer ?? 3600 }
     );
-    const insertedResult = await collection.insertOne({
+    await collection.insertOne({
+      _id,
       ...payload,
       createdAt: dateNow,
       expireAfterSeconds: timer ?? 3600,
     });
     client.close();
-    return { insertedResult, dateNow };
+    return {
+      _id,
+      ...payload,
+      createdAt: dateNow,
+      expireAfterSeconds: timer ?? 3600,
+    };
   } catch (e) {
     console.error(e);
     throw new Error(e as string).message;

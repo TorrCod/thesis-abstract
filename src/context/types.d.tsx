@@ -14,6 +14,7 @@ export interface GlobalState {
 }
 
 export type SearchAction = {
+  pageSize: number;
   searchTitle?: string;
   pageNo?: number;
   filterState: FilterState;
@@ -75,6 +76,7 @@ export type GlobalAction =
         searchTitle?: string;
         thesisPageNo?: number;
         filterState: FilterState;
+        pageSize: number;
       };
     }
   | {
@@ -111,9 +113,14 @@ export type GlobalValue = {
   dispatch: Dispatch<GlobalAction>;
   loadThesisItems: (
     query?: SearchQuery,
-    option?: SearchOption
+    option?: SearchOption,
+    searchingAction?: SearchAction
   ) => Promise<void>;
-  loadRecycle: () => Promise<void>;
+  loadRecycle: (
+    query?: SearchQuery,
+    option?: SearchOption,
+    searchingAction?: SearchAction
+  ) => Promise<void>;
   loadThesisCount: () => Promise<void>;
   loadingState: {
     add(key: string): void;
@@ -121,14 +128,19 @@ export type GlobalValue = {
   };
   promptToSignIn: () => void;
   addThesisItem: (document: ThesisItems) => void;
-  removeThesisItem: (_id: string) => void;
-  restoreThesis: (_id: string) => void;
+  removeThesisItem: (_id: string) => ThesisState;
+  restoreThesis: (_id: string) => {
+    document: ThesisItems[];
+    currentPage: number;
+    totalCount: number;
+  };
   recycleThesis: (thesis: ThesisItems) => void;
   updateSearchAction: () => {
     update: (payload: SearchAction) => void;
     clear: () => void;
   };
   clearDefault: () => void;
+  refreshThesis: () => Promise<void>;
 };
 
 export type AdminData = {
@@ -144,6 +156,7 @@ export type UserState = {
   userDetails: UserDetails | undefined;
   listOfAdmins: AdminData[];
   activityLog: ActivitylogState;
+  onlineMembers: string[];
 };
 
 export type ActivityLog = {
@@ -181,8 +194,13 @@ export type UserValue = {
   saveUploadThesis: (data: ThesisItems) => Promise<void>;
   loadAllUsers: () => Promise<void>;
   unsubscribeRef: MutableRefObject<Unsubscribe | null>;
-  loadActivityLog: (query?: Record<string, any>) => Promise<() => void>;
+  loadActivityLog: (
+    query?: Record<string, any>,
+    pageNo?: number
+  ) => Promise<() => void>;
   logOut: () => Promise<void>;
+  refreshAdmin: () => Promise<void>;
+  addActivityLog: (docs: ActivityLog[]) => void;
 };
 
 export type PendingAdminList = {
@@ -218,8 +236,16 @@ export type UserAction =
   | {
       type: "load-activity-log";
       payload: ActivitylogState;
+    }
+  | {
+      type: "update-online-members";
+      payload: string[];
     };
 
 export type SocketValue = {
   triggerSocket: (event: SocketEmitEvent) => void;
+};
+
+export type PusherValue = {
+  triggerPusher: () => void;
 };

@@ -20,6 +20,14 @@ import SignInSignUp from "./signin_signup";
 import { AiFillHome } from "react-icons/ai";
 import { IoHomeOutline } from "react-icons/io5";
 import useGlobalContext from "@/context/globalContext";
+import Pusher from "pusher-js";
+import { pusherInit } from "@/utils/pusher-utils";
+import {
+  ActivityLog,
+  ThesisCount,
+  ThesisItems,
+  UserDetails,
+} from "@/context/types.d";
 
 type DashboardProps = {
   children?: React.ReactNode;
@@ -51,9 +59,179 @@ const siderMenu: MenuProps["items"] = [
 function DashboardLayout({ children }: DashboardProps) {
   const [selectedSider, setSelectedSider] = useState("/dashboard");
   const { pathname } = useLocation();
-  const { logOut } = useUserContext();
-  const { clearDefault } = useGlobalContext();
+  const {
+    logOut,
+    state: userState,
+    loadActivityLog,
+    dispatch,
+    loadAllUsers,
+  } = useUserContext();
+  const {
+    clearDefault,
+    loadThesisCount,
+    state: globalState,
+    addThesisItem,
+    removeThesisItem,
+    recycleThesis,
+    restoreThesis,
+    dispatch: globalDispatch,
+  } = useGlobalContext();
+  const [thesisUpdate, setThesisUpdate] = useState<{
+    activityLog: ActivityLog;
+    addedData: ThesisItems;
+    thesisCharts: {
+      thesisCount: ThesisCount;
+      totalCount: number;
+    };
+  }>();
+  const [adminUpdate, setAdminUpdate] = useState<{
+    activityLog: ActivityLog;
+  }>();
   const router = useRouter();
+
+  useEffect(() => {
+    const pusher = pusherInit();
+    const thesisChannel = pusher.subscribe("thesis-update");
+    thesisChannel.bind(
+      "add-thesis",
+      (res: {
+        activityLog: ActivityLog;
+        addedData: ThesisItems;
+        thesisCharts: {
+          thesisCount: ThesisCount;
+          totalCount: number;
+        };
+      }) => {
+        setThesisUpdate(res);
+      }
+    );
+    thesisChannel.bind(
+      "remove-thesis",
+      (res: {
+        activityLog: ActivityLog;
+        addedData: ThesisItems;
+        thesisCharts: {
+          thesisCount: ThesisCount;
+          totalCount: number;
+        };
+      }) => {
+        setThesisUpdate(res);
+      }
+    );
+    thesisChannel.bind(
+      "restore-thesis",
+      (res: {
+        activityLog: ActivityLog;
+        addedData: ThesisItems;
+        thesisCharts: {
+          thesisCount: ThesisCount;
+          totalCount: number;
+        };
+      }) => {
+        setThesisUpdate(res);
+      }
+    );
+
+    const adminChannel = pusher.subscribe("admin-update");
+    adminChannel.bind("update", (arg: { activityLog: ActivityLog }) => {
+      setAdminUpdate(arg);
+    });
+
+    return () => {
+      pusher.unsubscribe("thesis-update");
+      adminChannel.unsubscribe();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (thesisUpdate) {
+      switch (thesisUpdate.activityLog.reason) {
+        case "added a thesis": {
+          const isLogExist = userState.activityLog.document.filter(
+            ({ _id }) => thesisUpdate.activityLog._id === _id
+          )[0];
+          const isThesisExist = globalState.thesisItems.document.filter(
+            ({ _id }) => _id === thesisUpdate.addedData._id
+          )[0];
+          if (isLogExist || isThesisExist) return;
+          addThesisItem(thesisUpdate.addedData);
+
+          const newAL = { ...userState.activityLog };
+          newAL.document.push(thesisUpdate.activityLog);
+          dispatch({ type: "load-activity-log", payload: newAL });
+          globalDispatch({
+            type: "load-thesis-count",
+            payload: thesisUpdate.thesisCharts,
+          });
+          break;
+        }
+        case "removed a thesis": {
+          const isLogExist = userState.activityLog.document.filter(
+            ({ _id }) => thesisUpdate.activityLog._id === _id
+          )[0];
+          const isReCycleExist = globalState.recyclebin.document.filter(
+            ({ _id }) => _id === thesisUpdate.addedData._id
+          )[0];
+          if (isLogExist || isReCycleExist) return;
+          removeThesisItem(thesisUpdate.activityLog.data.itemId);
+          recycleThesis(thesisUpdate.addedData);
+
+          const newAL = { ...userState.activityLog };
+          newAL.document.push(thesisUpdate.activityLog);
+          dispatch({ type: "load-activity-log", payload: newAL });
+          globalDispatch({
+            type: "load-thesis-count",
+            payload: thesisUpdate.thesisCharts,
+          });
+          break;
+        }
+        case "restored a thesis": {
+          const isLogExist = userState.activityLog.document.filter(
+            ({ _id }) => thesisUpdate.activityLog._id === _id
+          )[0];
+          const isThesisExist = globalState.thesisItems.document.filter(
+            ({ _id }) => _id === thesisUpdate.addedData._id
+          )[0];
+          if (isLogExist || isThesisExist) return;
+          addThesisItem(thesisUpdate.addedData);
+          restoreThesis(thesisUpdate.activityLog.data.itemId);
+          const newAL = { ...userState.activityLog };
+          newAL.document.push(thesisUpdate.activityLog);
+          dispatch({ type: "load-activity-log", payload: newAL });
+          globalDispatch({
+            type: "load-thesis-count",
+            payload: thesisUpdate.thesisCharts,
+          });
+          break;
+        }
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    globalState.thesisItems,
+    thesisUpdate,
+    userState.activityLog,
+    globalState.recyclebin,
+  ]);
+
+  useEffect(() => {
+    if (adminUpdate) {
+      const isLogExist = userState.activityLog.document.filter(
+        ({ _id }) => adminUpdate.activityLog._id === _id
+      )[0];
+      if (isLogExist) return;
+      loadAllUsers()
+        .then(() => {
+          const newAL = { ...userState.activityLog };
+          newAL.document.push(adminUpdate.activityLog);
+          dispatch({ type: "load-activity-log", payload: newAL });
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userState.listOfAdmins, userState.activityLog, adminUpdate]);
 
   useEffect(() => {
     (
@@ -102,6 +280,14 @@ function DashboardLayout({ children }: DashboardProps) {
       onClick: logOut,
     },
   ];
+
+  useEffect(() => {
+    if (userState.userDetails) {
+      loadActivityLog();
+      loadThesisCount();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userState.userDetails]);
 
   return (
     <>
@@ -168,6 +354,7 @@ function DashboardLayout({ children }: DashboardProps) {
               </div>
             </Sider>
             <div
+              id="layout-container"
               className="overflow-auto h-screen w-screen md:w-full
              md:pb-20 py-20 md:py-5 md:px-5 round-md relative px-2"
             >

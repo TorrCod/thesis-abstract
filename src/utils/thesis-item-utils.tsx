@@ -12,12 +12,13 @@ import { stringifyURI } from "./helper";
 export const getAllThesis = async (
   query?: SearchQuery,
   option?: SearchOption,
-  pageNo?: number
+  pageNo?: number,
+  pageSize?: number
 ) => {
   const res = await axios.get(
     `${process.env.NEXT_PUBLIC_DOMAIN}/api/public/thesis?${
-      pageNo ? `pageNo=${pageNo}` : ``
-    }${stringifyURI(query, option)}`
+      pageNo ? `&pageNo=${pageNo}` : ``
+    }${pageSize ? `&pageSize=${pageSize}` : ``}${stringifyURI(query, option)}`
   );
   const data = res.data as ThesisState;
   return data;
@@ -60,14 +61,17 @@ export const getAllDeletedThesis = async (
   token: string | undefined,
   query?: SearchQuery,
   option?: SearchOption,
-  pageNo?: number
+  pageNo?: number,
+  pageSize?: number
 ) => {
-  const { title, year, course } = query || {};
   if (token) {
     const res = await axios.get(
       `/api/thesis-items?collection=deleted-thesis${
         pageNo ? `&pageNo=${pageNo}` : ``
-      }${stringifyURI(query, option)}`,
+      }${pageSize ? `&pageSize=${pageSize}` : ``}${stringifyURI(
+        query,
+        option
+      )}`,
       userConfig(token)
     );
     return res.data as ThesisState;
@@ -78,8 +82,9 @@ export const addThesis = async (
   data: ThesisItems,
   token: string | undefined
 ) => {
-  if (token) await axios.post("/api/thesis-items", data, userConfig(token));
-  else throw new Error("canont read user token");
+  if (!token) throw new Error("canont read user token");
+  const res = await axios.post("/api/thesis-items", data, userConfig(token));
+  return res.data;
 };
 
 export const removeThesis = async ({
@@ -91,7 +96,13 @@ export const removeThesis = async ({
 }) => {
   if (token) {
     const config = userConfig(token);
-    await axios.delete(`/api/thesis-items?_id=${thesisId}`, { ...config });
+    const response = await axios.delete(`/api/thesis-items?_id=${thesisId}`, {
+      ...config,
+    });
+    return response.data as {
+      nextItem?: ThesisItems;
+      recycledItem: ThesisItems;
+    };
   } else throw new Error("canont read user token");
 };
 

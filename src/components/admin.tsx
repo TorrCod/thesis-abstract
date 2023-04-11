@@ -17,6 +17,7 @@ import { AdminProps } from "./types.d";
 import { signOut as nextSignOut } from "next-auth/react";
 import axios, { AxiosError } from "axios";
 import useSocketContext from "@/context/socketContext";
+import useGlobalContext from "@/context/globalContext";
 
 function AdminProfile({ userDetails, size, src }: AdminProps) {
   return (
@@ -82,33 +83,39 @@ export const AdminMenu = ({
 };
 
 export const AddAdmin = () => {
-  const { state, loadAllUsers } = useUserContext();
+  const { state, refreshAdmin } = useUserContext();
   const userDetails = state.userDetails;
   const [form] = useForm();
-  const { triggerSocket } = useSocketContext();
-  const onFinish = async ({ email }: any) => {
-    let id: string = "";
-    try {
-      const token = await auth.currentUser?.getIdToken();
+  const { loadingState } = useGlobalContext();
 
-      const inserResult = await inviteUser(token, {
-        email: email,
-        approove: `${userDetails?.userName}`,
-      });
-      id = inserResult.insertedId;
-      const actionCodeSettings = {
-        url: `${process.env.NEXT_PUBLIC_DOMAIN}/sign-up/${id}`,
-        handleCodeInApp: true,
-      };
-      await sendSignInLinkToEmail(auth, email, actionCodeSettings);
-      loadAllUsers();
-      triggerSocket("account-update");
-      message.success("Invite Sent");
-      form.resetFields();
-    } catch (e) {
-      message.error((e as AxiosError).response?.data as string);
-      console.log(e);
-    }
+  const onFinish = ({ email }: any) => {
+    loadingState.add("admin-table");
+    auth.currentUser
+      ?.getIdToken()
+      .then(async (token) => {
+        const response = await inviteUser(token, {
+          email: email,
+          approove: `${userDetails?.userName}`,
+        });
+        const _id = response._id;
+        const actionCodeSettings = {
+          url: `${process.env.NEXT_PUBLIC_DOMAIN}/sign-up/${_id}`,
+          handleCodeInApp: true,
+        };
+        await sendSignInLinkToEmail(auth, email, actionCodeSettings);
+        // await refreshAdmin();
+        message.success("Invite Sent");
+        form.resetFields();
+      })
+      .catch((e) => {
+        const error: AxiosError = e;
+        if ((error.response?.data as any).code === "email-duplicate") {
+          message.error((error.response?.data as any).message);
+        } else {
+          console.error(e);
+        }
+      })
+      .finally(() => loadingState.remove("admin-table"));
   };
   return (
     <div className="max-w-[20em]">

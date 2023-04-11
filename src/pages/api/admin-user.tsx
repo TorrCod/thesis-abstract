@@ -12,6 +12,7 @@ import {
 } from "@/lib/mongo";
 import { ActivitylogReason, CollectionName } from "@/lib/types";
 import {
+  calculateThesisCount,
   parseQuery,
   updateActivityLog,
   validateAuth,
@@ -20,6 +21,8 @@ import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import { ObjectId } from "mongodb";
 import { NextApiRequest, NextApiResponse } from "next";
 import { serialize } from "cookie";
+import { sleep } from "@/utils/helper";
+import Pusher from "pusher";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
@@ -31,17 +34,19 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       case "GET": {
         switch (req.query.objective) {
           case "get-activitylog": {
-            const parse = parseQuery(req);
-            const userId = req.query.userId as string | undefined;
-            const pageSize = parse.option?.limit;
+            const { query, option } = parseQuery(req);
+            const pageSize = (req.query.pageSize &&
+              parseInt(req.query.pageSize as string)) as number;
             const pageNo = (req.query.pageNo &&
               parseInt(req.query.pageNo as string)) as number;
-            if (userId) (parse.query as any) = { userId };
+            const userId = (query as any).userId as string | undefined;
+            if (userId) (query as any) = { userId };
             let activityLog = await getDataWithPaging(
               "accounts",
               "activity-log",
               { pageSize, pageNo, sort: { date: -1 } },
-              parse.query
+              query,
+              { limit: option?.limit, projection: option?.projection }
             );
             const withUserName_promise = activityLog.document.map(
               async (item) => {
@@ -89,27 +94,49 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             const checkEmailUser = await getOneData("accounts", "user", {
               email: req.body.email,
             });
+
             const checkEmailPending = await getOneData("accounts", "pending", {
               email: req.body.email,
             });
+
             if (checkEmailUser || checkEmailPending)
-              return res
-                .status(400)
-                .send("email is exist please use another one");
-            const { insertedResult, dateNow } = await addDataWithExpiration(
+              return res.status(400).json({
+                code: "email-duplicate",
+                message: "email is exist please use another one",
+              });
+
+            const invitedData = await addDataWithExpiration(
               "accounts",
               collection,
               req.body,
               604800
             );
-            await updateActivityLog(
+
+            const activityLog = await updateActivityLog(
               isValidated.decodedToken as DecodedIdToken,
               "invited an admin",
-              insertedResult.insertedId,
-              dateNow,
+              invitedData._id,
+              invitedData.createdAt,
               req.body.email
             );
-            return res.status(200).json(insertedResult);
+
+            const pusher = new Pusher(JSON.parse(process.env.PUSHER || "{}"));
+
+            pusher.trigger("admin-update", "update", {
+              activityLog,
+            });
+
+            return res.status(200).json({
+              addedData: invitedData,
+              activityLog,
+            });
+
+            // return res.status(200).json({
+            //   _id: _id,
+            //   ...req.body,
+            //   expireAfterSeconds: 604800,
+            //   createdAt: createdAt,
+            // });
           }
           case "signup": {
             const collection = req.query.collection as CollectionName;

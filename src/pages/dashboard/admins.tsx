@@ -199,15 +199,32 @@ const UserProfile = ({ payloadUser }: { payloadUser: UserDetails }) => {
   );
 };
 
-export const AdminTable = ({ noAction }: { noAction?: boolean }) => {
+export const AdminTable = ({
+  noAction,
+  max_content,
+}: {
+  noAction?: boolean;
+  max_content?: number;
+}) => {
   const { state, loadAllUsers } = useUserContext();
-  const { state: globalState } = useGlobalContext();
+  const { state: globalState, loadingState } = useGlobalContext();
   const [dataCol, setDataCol] = useState<ColumnsType<AdminData>>(
     dataColumnType(state.userDetails)
   );
   const [dataSourse, setDataSourse] = useState<AdminData[]>([]);
   const dataColRef = useRef(dataCol);
   const router = useRouter();
+
+  useEffect(() => {
+    loadingState.add("admin-table");
+    if (state.userDetails) {
+      loadAllUsers()
+        .catch(() => {})
+        .finally(() => loadingState.remove("admin-table"));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.userDetails]);
+
   useEffect(() => {
     if (noAction) {
       const oldDataCol = [...dataColRef.current];
@@ -215,13 +232,6 @@ export const AdminTable = ({ noAction }: { noAction?: boolean }) => {
       setDataCol(newDataCol);
     }
   }, [noAction]);
-
-  useEffect(() => {
-    if (state.userDetails) {
-      loadAllUsers();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.userDetails]);
 
   useEffect(() => {
     if (router.query.username) {
@@ -232,15 +242,15 @@ export const AdminTable = ({ noAction }: { noAction?: boolean }) => {
       const source: AdminData[] = fuse
         .search(searchTerm)
         .map((item) => item.item);
-      setDataSourse(source);
+      setDataSourse(source.slice(0, max_content));
     } else {
-      setDataSourse(state.listOfAdmins);
+      setDataSourse(state.listOfAdmins.slice(0, max_content));
     }
-  }, [router.query, state.listOfAdmins]);
+  }, [router.query, state.listOfAdmins, max_content]);
 
   return (
     <Table
-      loading={globalState.loading.includes("all-admin")}
+      loading={globalState.loading.includes("admin-table")}
       columns={dataCol}
       dataSource={dataSourse}
       scroll={{ x: 50 }}
@@ -252,19 +262,23 @@ const RemoveAdmin = ({ record }: { record: AdminData }) => {
   const [form] = useForm();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { state, loadAllUsers } = useUserContext();
+  const { state, refreshAdmin } = useUserContext();
+  const { loadingState } = useGlobalContext();
   const userEmail = state.userDetails;
-  const { triggerSocket } = useSocketContext();
 
   const handleFinish = async () => {
     try {
       setLoading(true);
+      loadingState.add("admin-table");
       await form.validateFields().catch(() => {
         throw new Error("Please fillup password");
       });
+      setOpen(false);
+
       const password = form.getFieldValue("password");
       const email = userEmail?.email;
       await signInWithEmailAndPassword(auth, email ?? "", password);
+
       if (record.status === "Admin") {
         const token = await auth.currentUser?.getIdToken();
         await firebase_admin_delete_user(token, record.email);
@@ -285,16 +299,16 @@ const RemoveAdmin = ({ record }: { record: AdminData }) => {
           name: record.email,
         });
       }
-      triggerSocket("account-update");
-      loadAllUsers();
+
+      await refreshAdmin();
       message.success("Remove Success");
-      setOpen(false);
     } catch (e) {
       console.error(e);
       message.error((e as Error).message);
     } finally {
       form.resetFields();
       setLoading(false);
+      loadingState.remove("admin-table");
     }
   };
 

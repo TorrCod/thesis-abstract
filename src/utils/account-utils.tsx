@@ -2,19 +2,10 @@ import {
   ActivitylogState,
   PendingAdminList,
   SearchOption,
-  SearchQuery,
-  ThesisItems,
   UserDetails,
 } from "@/context/types.d";
-import {
-  ActivitylogReason,
-  AddPost,
-  MongoDetails,
-  QueryPost,
-} from "@/lib/types";
-import axios, { AxiosError } from "axios";
-import { stringifyURI } from "./helper";
-
+import { ActivitylogReason } from "@/lib/types";
+import axios from "axios";
 export const userConfig = (token: string) => ({
   headers: { authorization: `Bearer ${token}` },
 });
@@ -164,13 +155,17 @@ export const getActivityLog = async (
   token: string | undefined,
   query?: { userId?: string; _id?: string },
   option?: SearchOption,
-  pageNo?: number
+  pageNo?: number,
+  pageSize?: number
 ) => {
   if (token) {
     const activityLog = await axios.request({
       url: `/api/admin-user?objective=get-activitylog${
         pageNo ? `&pageNo=${pageNo}` : ``
-      }${stringifyUserUri(query, option)}`,
+      }${pageSize ? `&pageSize=${pageSize}` : ``}${stringifyUserUri(
+        query,
+        option
+      )}`,
       method: "GET",
       ...userConfig(token),
     });

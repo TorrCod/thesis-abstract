@@ -1,6 +1,6 @@
-import { UserDetails } from "@/context/types.d";
+import { ThesisCount, UserDetails } from "@/context/types.d";
 import { verifyIdToken } from "@/lib/firebase-admin";
-import { addData, getData } from "@/lib/mongo";
+import { addData, dataAgregate, getData } from "@/lib/mongo";
 import { ActivitylogReason, CollectionName, DatabaseName } from "@/lib/types";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
@@ -52,13 +52,21 @@ export const updateActivityLog = async (
   name: string
 ) => {
   const userUid = decodedToken.uid;
-  const insertedResult = await addData("accounts", "activity-log", {
+  const _id = new ObjectId();
+  await addData("accounts", "activity-log", {
+    _id,
     userId: userUid,
     reason: reason,
     data: { itemId: Itemid, name: name },
     date: date,
   });
-  return insertedResult;
+  return {
+    _id,
+    userId: userUid,
+    reason: reason,
+    data: { itemId: Itemid, name: name },
+    date: date,
+  };
 };
 
 export const parseQuery = (req: NextApiRequest) => {
@@ -104,4 +112,16 @@ export const parseQuery = (req: NextApiRequest) => {
 
 export const sleep = (ms: number) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
+};
+
+export const calculateThesisCount = async () => {
+  const response = await dataAgregate("thesis-abstract", "thesis-items", [
+    { $group: { _id: "$course", count: { $sum: 1 } } },
+  ]);
+  const thesisCount: ThesisCount = response.map((item) => ({
+    course: item._id,
+    count: item.count,
+  }));
+
+  return thesisCount;
 };

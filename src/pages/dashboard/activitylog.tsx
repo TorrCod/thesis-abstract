@@ -9,35 +9,102 @@ import { authOptions } from "../api/auth/[...nextauth]";
 import { readActivityLogReason } from "@/utils/helper";
 import { NextPageWithLayout } from "../_app";
 import useGlobalContext from "@/context/globalContext";
-import { useEffectOnce } from "react-use";
+import useOnScreen from "@/hook/useOnScreen";
+import { getActivityLog } from "@/utils/account-utils";
+import { auth } from "@/lib/firebase";
+import { ActivityLog } from "@/context/types.d";
+import LoadingIcon from "@/components/loadingIcon";
 
 const Page: NextPageWithLayout = () => {
-  const { state: userState } = useUserContext();
+  const bottomRef = useRef<HTMLDivElement | null>(null);
+  const pageNo = useRef(1);
+  const {
+    state: userState,
+    addActivityLog,
+    loadActivityLog,
+  } = useUserContext();
   const { updateSearchAction, state: globalState } = useGlobalContext();
+  const isOnScreen = useOnScreen<HTMLDivElement | null>(bottomRef, "200px");
+  const [isFetching, setIsFetching] = useState(false);
+  const [isAllData, setIsAllData] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [newActivityLog, setNewActivityLog] = useState<ActivityLog[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsFetching(true);
+      const token = await auth.currentUser?.getIdToken();
+      pageNo.current += 1;
+      const activityLog = await getActivityLog(
+        token,
+        undefined,
+        undefined,
+        pageNo.current,
+        globalState.searchingAction.pageSize
+      );
+      if (activityLog.document.length) {
+        setNewActivityLog(activityLog.document);
+      }
+      setIsFetching(false);
+    };
+    if (isOnScreen && !isAllData && userState.userDetails) {
+      fetchData();
+    }
+  }, [
+    isOnScreen,
+    isAllData,
+    userState.userDetails,
+    globalState.searchingAction.pageSize,
+  ]);
+
+  useEffect(() => {
+    if (
+      userState.activityLog.document.length >=
+        userState.activityLog.totalCount &&
+      !userState.activityLog.document.length
+    ) {
+      setIsAllData(true);
+    } else {
+      setIsAllData(false);
+    }
+  }, [userState.activityLog]);
+
+  useEffect(() => {
+    if (newActivityLog.length) {
+      addActivityLog(newActivityLog);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [newActivityLog]);
+
+  useEffect(() => {
+    if (userState.userDetails) {
+      setLoading(true);
+      loadActivityLog().finally(() => setLoading(false));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userState.userDetails]);
 
   useEffect(() => {
     return () => updateSearchAction().clear();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handlePageChange: PaginationProps["onChange"] = async (pageNo) => {
-    updateSearchAction().update({ ...globalState.searchingAction, pageNo });
-  };
-
   return (
     <>
       <div className="opacity-80 mb-3">Dashboard {">"} Activity Log</div>
-      <div className="bg-white rounded-md p-5 grid gap-2 overflow-hidden">
+      <div className="bg-white rounded-md p-5 grid gap-2 overflow-hidden relative">
         <p className="opacity-60 mb-5">History</p>
+        {loading && (
+          <div className="w-full h-full grid justify-center absolute top-0 left-0 bg-black/30 z-10">
+            <LoadingIcon />
+          </div>
+        )}
         <div className="md:-translate-x-40 lg:-translate-x-60">
           <ActivityTimeline />
         </div>
-        <Pagination
-          className="place-self-end"
-          current={globalState.searchingAction.pageNo ?? 1}
-          total={userState.activityLog.totalCount}
-          onChange={handlePageChange}
-        />
+        <div className="grid place-content-center h-5 w-full" ref={bottomRef}>
+          {isFetching ? <LoadingIcon /> : <></>}
+        </div>
       </div>
     </>
   );
@@ -49,22 +116,13 @@ Page.getLayout = function getLayout(page: ReactElement) {
 
 export default Page;
 
-export const ActivityTimeline = () => {
+export const ActivityTimeline = (props: { maxSize?: number }) => {
   const [log, setLog] = useState<TimelineItemProps[]>([]);
   const userCtx = useUserContext();
   const { activityLog } = userCtx.state;
-  const { loadActivityLog } = userCtx;
-  const { state: globalState } = useGlobalContext();
 
   useEffect(() => {
-    if (userCtx.state.userDetails) {
-      loadActivityLog();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userCtx.state.userDetails, globalState.searchingAction.pageNo]);
-
-  useEffect(() => {
-    const newLog = activityLog.document.map((item) => {
+    const newLog = activityLog.document.slice(0, props.maxSize).map((item) => {
       const readedItem = readActivityLogReason(item);
       return {
         label: new Date(item.date).toLocaleString(),
@@ -75,7 +133,7 @@ export const ActivityTimeline = () => {
     });
     const newLogFiltered = newLog.filter(async (item) => item !== null);
     setLog(newLogFiltered as any);
-  }, [activityLog]);
+  }, [activityLog, props.maxSize]);
 
   return <Timeline mode="left" items={log} />;
 };

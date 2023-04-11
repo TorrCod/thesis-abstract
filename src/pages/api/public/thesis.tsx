@@ -2,11 +2,10 @@ import { ThesisCount, ThesisState } from "@/context/types.d";
 import {
   getDistinctData,
   getOneData,
-  getData,
   dataAgregate,
   getDataWithPaging,
 } from "@/lib/mongo";
-import { parseQuery, sleep } from "@/utils/server-utils";
+import { calculateThesisCount, parseQuery, sleep } from "@/utils/server-utils";
 import { ObjectId } from "mongodb";
 import { NextApiRequest, NextApiResponse } from "next";
 import NextCors from "nextjs-cors";
@@ -39,13 +38,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       return res.status(200).json(thesisItem);
     }
     case "get-thesis-count": {
-      const response = await dataAgregate("thesis-abstract", "thesis-items", [
-        { $group: { _id: "$course", count: { $sum: 1 } } },
-      ]);
-      const thesisCount: ThesisCount = response.map((item) => ({
-        course: item._id,
-        count: item.count,
-      }));
+      const thesisCount = await calculateThesisCount();
       return res.status(200).json({
         thesisCount,
         totalCount: thesisCount.reduce((acc, { count }) => acc + count, 0),
@@ -53,9 +46,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
     default: {
       const { query, option } = parseQuery(req);
-      const pageSize = option?.limit;
+      const pageSize = (req.query.pageSize &&
+        parseInt(req.query.pageSize as string)) as number;
       const pageNo = (req.query.pageNo &&
         parseInt(req.query.pageNo as string)) as number;
+
       const thesisItems = (await getDataWithPaging(
         "thesis-abstract",
         "thesis-items",

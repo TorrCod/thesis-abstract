@@ -1,8 +1,6 @@
 import { PriButton } from "@/components/button";
 import DashboardLayout from "@/components/dashboardLayout";
 import {
-  Button,
-  DatePicker,
   Form,
   Input,
   message,
@@ -12,25 +10,18 @@ import {
   UploadProps,
 } from "antd";
 import Link from "next/link";
-import React, { ReactElement, useEffect, useState } from "react";
+import React, { ReactElement, useState } from "react";
 import {
   AiFillFileImage,
   AiOutlineUpload,
   AiOutlineUser,
   AiOutlineUserAdd,
 } from "react-icons/ai";
-import { BiMinus, BiPlus } from "react-icons/bi";
-import { FaAddressCard } from "react-icons/fa";
-import { GrAdd } from "react-icons/gr";
 import { FiHelpCircle } from "react-icons/fi";
 import useUserContext from "@/context/userContext";
-import axios from "axios";
 import { getPdfText } from "@/utils/helper";
 import LoadingIcon from "@/components/loadingIcon";
-import { GeneratedTextRes } from "@/lib/types";
-import { useForm } from "antd/lib/form/Form";
 import { ThesisItems } from "@/context/types.d";
-import moment from "moment";
 import { MdSubtitles } from "react-icons/md";
 import { useRouter } from "next/router";
 import useSocketContext from "@/context/socketContext";
@@ -42,7 +33,7 @@ import { getCsrfToken } from "next-auth/react";
 
 interface FormValues {
   title: string;
-  year: number;
+  year: string;
   course: string;
   researchers: string[];
   abstract: string;
@@ -72,7 +63,7 @@ const Page: NextPageWithLayout = () => {
         abstract: values.abstract,
         course: values.course as any,
         dateAdded: dateNow,
-        year: values.year,
+        year: parseInt(values.year),
         title: values.title,
         id: "",
         researchers: researchers,

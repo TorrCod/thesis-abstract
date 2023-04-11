@@ -70,7 +70,6 @@ interface NextApiResponseWithSocket extends NextApiResponse {
   socket: SocketWithIO
 }
 
-
 export type SocketOnEvent =
   | "acknowledged"
   | "change/account-update"

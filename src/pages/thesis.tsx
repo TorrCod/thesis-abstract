@@ -33,7 +33,8 @@ const Thesis = () => {
     if (
       (isOnScreen && !globalState.thesisItems.document.length) ||
       globalState.thesisItems.document.length !==
-        globalState.thesisItems.totalCount
+        globalState.thesisItems.totalCount ||
+      router.query
     ) {
       setLoading(true);
       const { title, course, year } = router.query as SearchQuery;
@@ -85,6 +86,9 @@ const Thesis = () => {
         <div className="md:pt-20 md:flex md:place-items-center md:flex-col mb-10">
           <div className="grid w-full relative">
             <Search
+              onSearch={() => {
+                clearDefault();
+              }}
               showFilter={true}
               className="place-self-center my-5 w-full max-w-3xl z-10 absolute top-0"
             />

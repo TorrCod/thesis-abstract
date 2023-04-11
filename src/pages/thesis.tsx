@@ -3,13 +3,10 @@ import { SearchQuery, ThesisItems } from "@/context/types.d";
 import { ConfigProvider, Divider, Pagination } from "antd";
 import Head from "next/head";
 import Link from "next/link";
-import { forwardRef, useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import useGlobalContext from "@/context/globalContext";
 import { useRouter } from "next/router";
-import useOnScreen from "@/hook/useOnScreen";
-
 const Thesis = () => {
-  const onscreenRef = useRef<HTMLDivElement | null>(null);
   const {
     state: globalState,
     loadThesisItems,
@@ -18,8 +15,6 @@ const Thesis = () => {
   } = useGlobalContext();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const isOnScreen = useOnScreen(onscreenRef);
-  const [pageSize, setPageSize] = useState(8);
 
   useEffect(() => {
     return () => {
@@ -30,44 +25,24 @@ const Thesis = () => {
   }, []);
 
   useEffect(() => {
-    if (
-      (isOnScreen && !globalState.thesisItems.document.length) ||
-      globalState.thesisItems.document.length !==
-        globalState.thesisItems.totalCount ||
-      router.query
-    ) {
-      setLoading(true);
-      const { title, course, year } = router.query as SearchQuery;
-      const decodedCourse = course
-        ? JSON.parse(decodeURIComponent(course as unknown as string))
-        : undefined;
-      const decodedYear = year
-        ? JSON.parse(decodeURIComponent(year as unknown as string))
-        : undefined;
-      const query = { title, course: decodedCourse, year: decodedYear };
-      loadThesisItems(
-        query,
-        {
-          projection: { title: 1, course: 1, year: 1, researchers: 1 },
-        },
-        { ...globalState.searchingAction, pageSize }
-      )
-        .then(async () => {
-          setPageSize((oldPs) => oldPs + 8);
-          updateSearchAction().update({
-            ...globalState.searchingAction,
-            pageSize,
-          });
-        })
-        .catch((e) => {
-          console.error(e);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    }
+    setLoading(true);
+    const { title, course, year } = router.query as SearchQuery;
+    const decodedCourse = course
+      ? JSON.parse(decodeURIComponent(course as unknown as string))
+      : undefined;
+    const decodedYear = year
+      ? JSON.parse(decodeURIComponent(year as unknown as string))
+      : undefined;
+    const query = { title, course: decodedCourse, year: decodedYear };
+    loadThesisItems(query, {
+      projection: { title: 1, course: 1, year: 1, researchers: 1 },
+    })
+      .catch((e) => {
+        console.error(e);
+      })
+      .finally(() => setLoading(false));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router.query, isOnScreen]);
+  }, [router.query, globalState.searchingAction.pageNo]);
 
   const handlePageChange = (pageNo: number) => {
     updateSearchAction().update({ ...globalState.searchingAction, pageNo });
@@ -86,15 +61,12 @@ const Thesis = () => {
         <div className="md:pt-20 md:flex md:place-items-center md:flex-col mb-10">
           <div className="grid w-full relative">
             <Search
-              onSearch={() => {
-                clearDefault();
-              }}
               showFilter={true}
               className="place-self-center my-5 w-full max-w-3xl z-10 absolute top-0"
             />
             <Divider className="bg-white/30 mt-40" />
           </div>
-          {/* <ConfigProvider
+          <ConfigProvider
             theme={{
               token: {
                 colorText: "white",
@@ -111,18 +83,9 @@ const Thesis = () => {
               onChange={handlePageChange}
               hideOnSinglePage
             />
-          </ConfigProvider> */}
+          </ConfigProvider>
           <div className="grid gap-2 w-full place-items-center lg:grid-cols-2 relative md:px-5">
-            {globalState.thesisItems.document.map((thesisItem) => {
-              return <Items key={thesisItem._id} {...thesisItem} />;
-            })}
-            {loading && (
-              <>
-                <ItemsLoading />
-                <ItemsLoading />
-              </>
-            )}
-            {/* {loading ? (
+            {loading ? (
               <>
                 <ItemsLoading />
                 <ItemsLoading />
@@ -132,16 +95,11 @@ const Thesis = () => {
                 <ItemsLoading />
               </>
             ) : (
-              <>
-                {globalState.thesisItems.document.map((thesisItem) => {
-                  return <Items key={thesisItem._id} {...thesisItem} />;
-                })}
-                <ItemsLoading />
-                <ItemsLoading ref={onscreenRef} />
-              </>
-            )} */}
+              globalState.thesisItems.document.map((thesisItem) => {
+                return <Items key={thesisItem._id} {...thesisItem} />;
+              })
+            )}
           </div>
-          <div ref={onscreenRef}></div>
         </div>
       </section>
     </>
@@ -199,12 +157,9 @@ const Items = ({
   );
 };
 
-const ItemsLoading = forwardRef<HTMLDivElement | null, {}>((props, ref) => {
+const ItemsLoading = () => {
   return (
-    <div
-      ref={ref}
-      className="thesis_items w-full bg-slate-100 max-w-[50em] shadow-md rounded-md p-5 grid h-full gap-5"
-    >
+    <div className="thesis_items w-full bg-slate-100 max-w-[50em] shadow-md rounded-md p-5 grid h-full gap-5">
       <div className="div2 flex flex-col gap-5">
         <div className="grid gap-2 max-w-xs">
           <div className="w-1/4 h-2 sk_bg"></div>
@@ -248,6 +203,6 @@ const ItemsLoading = forwardRef<HTMLDivElement | null, {}>((props, ref) => {
       </div>
     </div>
   );
-});
+};
 
 export default Thesis;

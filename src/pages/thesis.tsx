@@ -147,8 +147,20 @@ const Items = ({
           </ul>
         </div>
       </div>
-      <div className="div1 bg-white shadow-md rounded-sm h-52 overflow-h_idden text-[0.7em] relative text-justify justify-self-center leading-4 w-full">
-        <Image src={abstract[0]} alt="abstract" fill sizes="1" priority />
+      <div className="div1 h-52 overflow-h_idden text-[0.7em] relative text-justify justify-self-center leading-4 w-full">
+        <Link
+          className="hover:text-sky-700 hover:underline hover:decoration-1"
+          href={`/thesis/${_id}`}
+        >
+          <Image
+            className="object-contain relative"
+            src={abstract[0]}
+            alt="abstract"
+            fill
+            sizes="1"
+            priority
+          />
+        </Link>
       </div>
     </div>
   );

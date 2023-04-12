@@ -19,7 +19,7 @@ import {
 } from "react-icons/ai";
 import { FiHelpCircle } from "react-icons/fi";
 import useUserContext from "@/context/userContext";
-import { getPdfText } from "@/utils/helper";
+import { getBase64, getPdfText } from "@/utils/helper";
 import LoadingIcon from "@/components/loadingIcon";
 import { ThesisItems } from "@/context/types.d";
 import { MdSubtitles } from "react-icons/md";
@@ -30,13 +30,16 @@ import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { GetServerSideProps } from "next";
 import { getServerSession } from "next-auth";
 import { getCsrfToken } from "next-auth/react";
+import Image from "next/image";
+import { BsFillTrashFill } from "react-icons/bs";
+import { FaTrash } from "react-icons/fa";
 
 interface FormValues {
   title: string;
   year: string;
   course: string;
   researchers: string[];
-  abstract: string;
+  abstract: string[];
 }
 
 const courseOptions = [
@@ -50,9 +53,10 @@ const courseOptions = [
 const Page: NextPageWithLayout = () => {
   const [researchers, setResearchers] = useState<string[]>(["", ""]);
   const [loadingText, setLoadingText] = useState(false);
+  const [abstract, setAbstract] = useState<string[]>([]);
   const userCtx = useUserContext();
   const uid = userCtx.state.userDetails?.uid;
-  const [form] = Form.useForm();
+  const [form] = Form.useForm<FormValues>();
   const router = useRouter();
   const { triggerSocket } = useSocketContext();
 
@@ -91,47 +95,22 @@ const Page: NextPageWithLayout = () => {
     name: "file",
     accept: ".pdf,.jpg,.jpeg,.png",
     showUploadList: false,
-    onChange(info: any) {
-      const { status, response } = info.file;
-      if (status === "done") {
-        response
-          .json()
-          .then((data: any) => {
-            let extractedText = getPdfText(data);
-            extractedText = extractedText.replace(/\n\f|\n/g, " ");
-            form.setFieldsValue({
-              abstract: form.getFieldValue("abstract") ?? "" + extractedText,
-            });
-          })
-          .finally(() => setLoadingText(false));
+    multiple: true,
+    action: "/api/ping",
+    onChange(info) {
+      const { status, originFileObj } = info.file;
+      setLoadingText(status !== "done");
+      if (status === "done" && originFileObj) {
+        getBase64(originFileObj).then((url) => {
+          setAbstract((oldValue) => [...oldValue, url]);
+        });
       }
     },
-    beforeUpload() {
-      setLoadingText(true);
-    },
-    customRequest(options) {
-      const formData = new FormData();
-      formData.append("file", options.file);
-      formData.append("uid", uid ?? "no uid");
+  };
 
-      fetch("/api/pdf-text", {
-        method: "POST",
-        body: formData,
-      })
-        .then((response) => {
-          // handle response from server
-          // reset loading state for Upload component
-          if (options.onSuccess) {
-            options.onSuccess(response);
-          }
-        })
-        .catch((error) => {
-          // handle error
-          // reset loading state for Upload component
-          console.log(error);
-          message.error("Cant read files");
-        });
-    },
+  const handleRemove = (index: number) => {
+    console.log(index);
+    setAbstract((oldVal) => oldVal.filter((_, valIndex) => index !== valIndex));
   };
 
   return (
@@ -205,6 +184,22 @@ const Page: NextPageWithLayout = () => {
             </p>
           </Tooltip>
         </div>
+        {abstract.map((item, index) => (
+          <div className="relative" key={index}>
+            <img
+              src={item}
+              alt="abstract preview"
+              key={index}
+              placeholder="blur"
+            />
+            <div
+              onClick={() => handleRemove(index)}
+              className="absolute w-full h-full cursor-pointer transition-all duration-200 ease-in-out bg-black/0 z-10 top-0 left-0 text-red-500 grid place-content-center text-lg opacity-0 hover:bg-black/30 hover:opacity-100"
+            >
+              <FaTrash />
+            </div>
+          </div>
+        ))}
         <Form.Item className="grid place-content-end mb-0 col-span-2 mt-10">
           <PriButton
             type="primary"

@@ -33,6 +33,8 @@ import { getCsrfToken } from "next-auth/react";
 import Image from "next/image";
 import { BsFillTrashFill } from "react-icons/bs";
 import { FaTrash } from "react-icons/fa";
+import { uploadAbstract } from "@/lib/firebase";
+import { ObjectId } from "mongodb";
 
 interface FormValues {
   title: string;
@@ -50,7 +52,7 @@ const courseOptions = [
   { label: "Electrical Engineer", value: "Electrical Engineer" },
 ];
 
-const Page: NextPageWithLayout = () => {
+const Page = (props: { _id: string }) => {
   const [researchers, setResearchers] = useState<string[]>(["", ""]);
   const [loadingText, setLoadingText] = useState(false);
   const [abstract, setAbstract] = useState<string[]>([]);
@@ -63,13 +65,15 @@ const Page: NextPageWithLayout = () => {
   const onFinish = async (values: FormValues) => {
     try {
       const dateNow = new Date();
+      const urlList = await uploadAbstract(abstract, props._id);
       const payload: ThesisItems = {
-        abstract: values.abstract,
+        _id: props._id,
+        abstract: urlList,
         course: values.course as any,
         dateAdded: dateNow,
         year: parseInt(values.year),
         title: values.title,
-        id: "",
+        id: props._id,
         researchers: researchers,
       };
       await userCtx.saveUploadThesis(payload);
@@ -217,6 +221,7 @@ const Page: NextPageWithLayout = () => {
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   const session = await getServerSession(req, res, authOptions);
   const csrfToken = await getCsrfToken({ req });
+  const _id = new ObjectId().toString();
   if (!session)
     return {
       redirect: { destination: "/?sign-in" },
@@ -225,7 +230,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   if (!csrfToken) return { notFound: true };
   return {
     props: {
-      data: [],
+      _id,
     },
   };
 };

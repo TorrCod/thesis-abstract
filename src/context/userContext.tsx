@@ -131,7 +131,6 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
         unsubscribeRef.current = unsubscribe;
       } catch (e) {
         if ((e as Error).cause === "logout") {
-          nextSignOut({ redirect: false });
           axios.get("/api/logout");
         } else {
           console.error(e);

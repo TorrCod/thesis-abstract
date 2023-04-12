@@ -93,7 +93,7 @@ const ThesisItemsView = () => {
                 return <></>;
               }
               return (
-                <div className="w-full relative">
+                <div key={index} className="w-full relative">
                   <Image className="object-contain" src={url} alt="abstract" />
                 </div>
               );

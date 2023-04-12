@@ -2,7 +2,7 @@ import { CSSProperties } from "react";
 
 const styles: { [key: string]: CSSProperties } = {
   title: {
-    gridColumn: "1 / span 6",
+    gridColumn: "1 / span 3",
     textAlign: "center",
     fontSize: "27px",
     color: "white",

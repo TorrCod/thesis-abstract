@@ -70,8 +70,8 @@ const styles = StyleSheet.create({
 const MyDocument = (props: ThesisItems) => (
   <Document>
     <Page size="LETTER" style={styles.page}>
-      {props.abstract.map((url) => (
-        <Image src={url} />
+      {props.abstract.map((url, index) => (
+        <Image key={index} src={url} />
       ))}
     </Page>
   </Document>

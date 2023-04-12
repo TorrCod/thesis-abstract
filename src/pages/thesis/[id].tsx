@@ -2,14 +2,12 @@ import { PriButton } from "@/components/button";
 import Search from "@/components/search";
 import { ThesisItems } from "@/context/types.d";
 import { Divider } from "antd";
-import { getData, getOneData } from "@/lib/mongo";
 import dynamic from "next/dynamic";
 import Head from "next/head";
-import { GetServerSideProps } from "next";
-import { ObjectId } from "mongodb";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { getOneById } from "@/utils/thesis-item-utils";
+import Image from "next/image";
 
 const PdfLink = dynamic(() => import("@/components/pdfDocs"), {
   ssr: false,
@@ -58,11 +56,15 @@ const ThesisItemsView = () => {
         </div>
         <Divider />
         <div className="rs-container bg-slate-100 rounded-md max-w-5xl grid p-5 gap-2 md:gap-5 w-full relative">
-          <div className="rs-preview p-3 bg-white shadow-md rounded-sm h-52 overflow-hidden text-[0.7em] relative text-justify justify-self-center">
-            <div className="w-full h-full overflow-hidden">
-              <div className="text-center">Abstract</div>
-              <p className="indent-3">{data.abstract}</p>
-            </div>
+          <div className="rs-preview h-52 relative">
+            <Image
+              className="object-contain"
+              src={data.abstract[0]}
+              alt="abstract"
+              fill
+              sizes="1"
+              priority
+            />
           </div>
           <div className="rs-details grid gap-2">
             <div>
@@ -88,12 +90,21 @@ const ThesisItemsView = () => {
               </ul>
             </div>
           </div>
-          <div className="rs-abstract justify-self-center text-justify leading-10 w-full">
-            <div className="max-w-xl">
-              <h3 className="text-center">Abstract</h3>
-              <p className="indent-20">{data.abstract}</p>
-            </div>
+          <div className="rs-abstract grid gap-5">
+            {data.abstract.map((url) => (
+              <div className="w-full relative h-[50em]">
+                <Image
+                  className="object-fit"
+                  src={url}
+                  alt="abstract"
+                  fill
+                  sizes="1"
+                  priority
+                />
+              </div>
+            ))}
           </div>
+
           <div className="rs-button grid place-items-end md:place-items-start">
             <Divider />
             <PriButton>

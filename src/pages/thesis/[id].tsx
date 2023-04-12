@@ -92,13 +92,13 @@ const ThesisItemsView = () => {
           </div>
           <div className="rs-abstract grid gap-5">
             {data.abstract.map((url) => (
-              <div className="w-full relative h-[50em]">
+              <div className="w-full relative h-[30em] md:h-[50em]">
                 <Image
-                  className="object-fit"
+                  className="object-contain"
                   src={url}
                   alt="abstract"
                   fill
-                  sizes="1"
+                  sizes="100%"
                   priority
                 />
               </div>

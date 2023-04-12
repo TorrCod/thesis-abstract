@@ -153,7 +153,7 @@ const Items = ({
           href={`/thesis/${_id}`}
         >
           <Image
-            className="object-contain relative"
+            className="object-contain"
             src={abstract[0]}
             alt="abstract"
             fill

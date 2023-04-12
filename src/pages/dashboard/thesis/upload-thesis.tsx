@@ -56,14 +56,17 @@ const Page = (props: { _id: string }) => {
   const [researchers, setResearchers] = useState<string[]>(["", ""]);
   const [loadingText, setLoadingText] = useState(false);
   const [abstract, setAbstract] = useState<string[]>([]);
+  const [uploading, setUploading] = useState(false);
   const userCtx = useUserContext();
-  const uid = userCtx.state.userDetails?.uid;
   const [form] = Form.useForm<FormValues>();
   const router = useRouter();
   const { triggerSocket } = useSocketContext();
 
   const onFinish = async (values: FormValues) => {
     try {
+      if (!abstract.length)
+        throw new Error("Please upload abstracts", { cause: "empty abstract" });
+      setUploading(true);
       const dateNow = new Date();
       const urlList = await uploadAbstract(abstract, props._id);
       const payload: ThesisItems = {
@@ -81,8 +84,12 @@ const Page = (props: { _id: string }) => {
       message.success("Success");
       router.push("/dashboard/thesis/success");
     } catch (e) {
+      if (((e as Error).cause = "empty abstract"))
+        return message.error((e as Error).message);
       console.error(e);
       message.error("Upload Failed");
+    } finally {
+      setUploading(false);
     }
   };
   const handleAddResearcher = () => {
@@ -99,7 +106,6 @@ const Page = (props: { _id: string }) => {
     name: "file",
     accept: ".pdf,.jpg,.jpeg,.png",
     showUploadList: false,
-    multiple: true,
     action: "/api/ping",
     onChange(info) {
       const { status, originFileObj } = info.file;
@@ -164,6 +170,22 @@ const Page = (props: { _id: string }) => {
             <AiOutlineUserAdd />
           </PriButton>
         </Form.Item>
+        {abstract.map((item, index) => (
+          <div className="relative" key={index}>
+            <img
+              src={item}
+              alt="abstract preview"
+              key={index}
+              placeholder="blur"
+            />
+            <div
+              onClick={() => handleRemove(index)}
+              className="absolute w-full h-full cursor-pointer transition-all duration-200 ease-in-out bg-black/0 z-10 top-0 left-0 text-red-500 grid place-content-center text-lg opacity-0 hover:bg-black/30 hover:opacity-100"
+            >
+              <FaTrash />
+            </div>
+          </div>
+        ))}
         <div className={`col-span-2 relative`}>
           <Upload
             disabled={loadingText}
@@ -188,27 +210,13 @@ const Page = (props: { _id: string }) => {
             </p>
           </Tooltip>
         </div>
-        {abstract.map((item, index) => (
-          <div className="relative" key={index}>
-            <img
-              src={item}
-              alt="abstract preview"
-              key={index}
-              placeholder="blur"
-            />
-            <div
-              onClick={() => handleRemove(index)}
-              className="absolute w-full h-full cursor-pointer transition-all duration-200 ease-in-out bg-black/0 z-10 top-0 left-0 text-red-500 grid place-content-center text-lg opacity-0 hover:bg-black/30 hover:opacity-100"
-            >
-              <FaTrash />
-            </div>
-          </div>
-        ))}
+
         <Form.Item className="grid place-content-end mb-0 col-span-2 mt-10">
           <PriButton
             type="primary"
             htmlType="submit"
             icon={<AiOutlineUpload />}
+            loading={uploading}
           >
             Upload
           </PriButton>

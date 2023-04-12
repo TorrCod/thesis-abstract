@@ -204,18 +204,8 @@ const Page: NextPageWithLayout = () => {
               <FiHelpCircle />
             </p>
           </Tooltip>
-          <Form.Item
-            name="abstract"
-            label="Abstract"
-            rules={[{ required: true }]}
-          >
-            <Input.TextArea
-              className="text-justify"
-              autoSize={{ minRows: 10 }}
-            />
-          </Form.Item>
         </div>
-        <Form.Item className="absolute bottom-0 right-5">
+        <Form.Item className="grid place-content-end mb-0 col-span-2 mt-10">
           <PriButton
             type="primary"
             htmlType="submit"

@@ -7,7 +7,7 @@ import Head from "next/head";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { getOneById } from "@/utils/thesis-item-utils";
-import Image from "next/image";
+import { Image } from "antd";
 
 const PdfLink = dynamic(() => import("@/components/pdfDocs"), {
   ssr: false,
@@ -50,20 +50,17 @@ const ThesisItemsView = () => {
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
-      <section className="flex flex-col gap-1 md:pt-20 items-center mb-10">
+      <section className="flex flex-col gap-1 md:pt-20 items-center mb-10 px-0">
         <div className="relative z-10 w-full">
           <Search className="w-screen max-w-lg absolute top-0 left-0 right-0 m-auto" />
         </div>
         <Divider />
         <div className="rs-container bg-slate-100 rounded-md max-w-5xl grid p-5 gap-2 md:gap-5 w-full relative">
-          <div className="rs-preview h-52 relative">
+          <div className="rs-preview relative w-52 m-auto">
             <Image
               className="object-contain"
               src={data.abstract[0]}
               alt="abstract"
-              fill
-              sizes="1"
-              priority
             />
           </div>
           <div className="rs-details grid gap-2">
@@ -90,19 +87,17 @@ const ThesisItemsView = () => {
               </ul>
             </div>
           </div>
-          <div className="rs-abstract grid gap-5">
-            {data.abstract.map((url) => (
-              <div className="w-full relative h-[30em] md:h-[50em]">
-                <Image
-                  className="object-contain"
-                  src={url}
-                  alt="abstract"
-                  fill
-                  sizes="100%"
-                  priority
-                />
-              </div>
-            ))}
+          <div className="rs-abstract grid">
+            {data.abstract.map((url, index) => {
+              if (index === 0) {
+                return <></>;
+              }
+              return (
+                <div className="w-full relative">
+                  <Image className="object-contain" src={url} alt="abstract" />
+                </div>
+              );
+            })}
           </div>
 
           <div className="rs-button grid place-items-end md:place-items-start">

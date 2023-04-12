@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
 
+const isDevlopmemt = process.env.NODE_ENV === "development";
+
 const withPWA = require("next-pwa")({
   dest: "public",
   disable: process.env.NODE_ENV === "development",
@@ -52,6 +54,16 @@ const nextConfig = withPWA({
       headers: securityHeaders,
     },
   ],
+  images: {
+    remotePatterns: [
+      {
+        protocol: isDevlopmemt ? "http" : "https",
+        hostname: isDevlopmemt ? "localhost" : "*",
+        port: isDevlopmemt ? "9199" : "",
+        pathname: "/v0/b/thesis-abstract-account.appspot.com/**",
+      },
+    ],
+  },
 });
 
 module.exports = nextConfig;

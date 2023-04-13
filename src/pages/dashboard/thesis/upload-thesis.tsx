@@ -19,19 +19,15 @@ import {
 } from "react-icons/ai";
 import { FiHelpCircle } from "react-icons/fi";
 import useUserContext from "@/context/userContext";
-import { getBase64, getPdfText } from "@/utils/helper";
+import { getBase64 } from "@/utils/helper";
 import LoadingIcon from "@/components/loadingIcon";
 import { ThesisItems } from "@/context/types.d";
 import { MdSubtitles } from "react-icons/md";
 import { useRouter } from "next/router";
-import useSocketContext from "@/context/socketContext";
-import { NextPageWithLayout } from "@/pages/_app";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { GetServerSideProps } from "next";
 import { getServerSession } from "next-auth";
 import { getCsrfToken } from "next-auth/react";
-import Image from "next/image";
-import { BsFillTrashFill } from "react-icons/bs";
 import { FaTrash } from "react-icons/fa";
 import { uploadAbstract } from "@/lib/firebase";
 import { ObjectId } from "mongodb";
@@ -248,7 +244,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   const _id = new ObjectId().toString();
   if (!session)
     return {
-      redirect: { destination: "/?sign-in" },
+      redirect: { destination: "/?signin" },
       props: { data: [] },
     };
   if (!csrfToken) return { notFound: true };

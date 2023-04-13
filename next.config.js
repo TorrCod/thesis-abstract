@@ -58,7 +58,7 @@ const nextConfig = withPWA({
     remotePatterns: [
       {
         protocol: isDevlopmemt ? "http" : "https",
-        hostname: isDevlopmemt ? "localhost" : "*",
+        hostname: isDevlopmemt ? "localhost" : "firebasestorage.googleapis.com",
         port: isDevlopmemt ? "9199" : "",
         pathname: "/v0/b/thesis-abstract-account.appspot.com/**",
       },

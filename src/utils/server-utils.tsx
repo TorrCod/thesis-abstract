@@ -128,10 +128,13 @@ export const calculateThesisCount = async () => {
 };
 
 export const pusherInit = () => {
+  let secretKey: string = process.env.PUSER ?? "";
   if (process.env.NODE_ENV === "development") {
-    process.env.PUSER =
+    console.log("pusher devs");
+
+    secretKey =
       '{"appId": "1583848","key": "866c012957a8a998c831","secret": "91b4cac0e12d5bf9cc07","cluster": "ap1","useTLS": true}';
   }
-  const pusher = new Pusher(JSON.parse(process.env.PUSHER || "{}"));
+  const pusher = new Pusher(JSON.parse(secretKey));
   return pusher;
 };

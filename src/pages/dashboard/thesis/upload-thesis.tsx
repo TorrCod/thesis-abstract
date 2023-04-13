@@ -35,6 +35,7 @@ import { BsFillTrashFill } from "react-icons/bs";
 import { FaTrash } from "react-icons/fa";
 import { uploadAbstract } from "@/lib/firebase";
 import { ObjectId } from "mongodb";
+import useGlobalContext from "@/context/globalContext";
 
 interface FormValues {
   title: string;
@@ -57,6 +58,7 @@ const Page = (props: { _id: string }) => {
   const [loadingText, setLoadingText] = useState(false);
   const [abstract, setAbstract] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
+  const { loadThesisCount } = useGlobalContext();
   const userCtx = useUserContext();
   const [form] = Form.useForm<FormValues>();
   const router = useRouter();
@@ -79,6 +81,7 @@ const Page = (props: { _id: string }) => {
         researchers: researchers,
       };
       await userCtx.saveUploadThesis(payload);
+      await loadThesisCount();
       message.success("Success");
       router.push("/dashboard/thesis/success");
     } catch (e) {

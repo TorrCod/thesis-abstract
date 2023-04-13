@@ -124,6 +124,12 @@ const Page = (props: { _id: string }) => {
     setAbstract((oldVal) => oldVal.filter((_, valIndex) => index !== valIndex));
   };
 
+  const handleResearcherRemove = (index: number) => {
+    setResearchers((oldVal) =>
+      oldVal.filter((arg, valIndex) => valIndex !== index)
+    );
+  };
+
   return (
     <>
       <div className="opacity-80 mb-3">
@@ -155,13 +161,20 @@ const Page = (props: { _id: string }) => {
         </div>
         <Form.Item className="" label="Researchers">
           {researchers.map((researcher, index) => (
-            <Input
-              key={index}
-              value={researcher}
-              onChange={(e) => handleResearcherChange(index, e.target.value)}
-              style={{ marginBottom: 8 }}
-              suffix={<AiOutlineUser />}
-            />
+            <div className="flex gap-1" key={index}>
+              <Input
+                value={researcher}
+                onChange={(e) => handleResearcherChange(index, e.target.value)}
+                style={{ marginBottom: 8 }}
+                suffix={<AiOutlineUser />}
+              />
+              <PriButton
+                shape="circle"
+                onClick={() => handleResearcherRemove(index)}
+              >
+                <FaTrash className="m-auto" />
+              </PriButton>
+            </div>
           ))}
           <PriButton
             className="grid place-items-center text-white bg-[#F8B49C]"

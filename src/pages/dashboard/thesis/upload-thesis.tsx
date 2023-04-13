@@ -19,24 +19,26 @@ import {
 } from "react-icons/ai";
 import { FiHelpCircle } from "react-icons/fi";
 import useUserContext from "@/context/userContext";
-import { getPdfText } from "@/utils/helper";
+import { getBase64 } from "@/utils/helper";
 import LoadingIcon from "@/components/loadingIcon";
 import { ThesisItems } from "@/context/types.d";
 import { MdSubtitles } from "react-icons/md";
 import { useRouter } from "next/router";
-import useSocketContext from "@/context/socketContext";
-import { NextPageWithLayout } from "@/pages/_app";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { GetServerSideProps } from "next";
 import { getServerSession } from "next-auth";
 import { getCsrfToken } from "next-auth/react";
+import { FaTrash } from "react-icons/fa";
+import { uploadAbstract } from "@/lib/firebase";
+import { ObjectId } from "mongodb";
+import useGlobalContext from "@/context/globalContext";
 
 interface FormValues {
   title: string;
   year: string;
   course: string;
   researchers: string[];
-  abstract: string;
+  abstract: string[];
 }
 
 const courseOptions = [
@@ -47,34 +49,44 @@ const courseOptions = [
   { label: "Electrical Engineer", value: "Electrical Engineer" },
 ];
 
-const Page: NextPageWithLayout = () => {
+const Page = (props: { _id: string }) => {
   const [researchers, setResearchers] = useState<string[]>(["", ""]);
   const [loadingText, setLoadingText] = useState(false);
+  const [abstract, setAbstract] = useState<string[]>([]);
+  const [uploading, setUploading] = useState(false);
+  const { loadThesisCount } = useGlobalContext();
   const userCtx = useUserContext();
-  const uid = userCtx.state.userDetails?.uid;
-  const [form] = Form.useForm();
+  const [form] = Form.useForm<FormValues>();
   const router = useRouter();
-  const { triggerSocket } = useSocketContext();
 
   const onFinish = async (values: FormValues) => {
     try {
+      if (!abstract.length)
+        throw new Error("Please upload abstracts", { cause: "empty abstract" });
+      setUploading(true);
       const dateNow = new Date();
+      const urlList = await uploadAbstract(abstract, props._id);
       const payload: ThesisItems = {
-        abstract: values.abstract,
+        _id: props._id,
+        abstract: urlList,
         course: values.course as any,
         dateAdded: dateNow,
         year: parseInt(values.year),
         title: values.title,
-        id: "",
+        id: props._id,
         researchers: researchers,
       };
       await userCtx.saveUploadThesis(payload);
-      triggerSocket("thesis-update");
+      await loadThesisCount();
       message.success("Success");
       router.push("/dashboard/thesis/success");
     } catch (e) {
+      if (((e as Error).cause = "empty abstract"))
+        return message.error((e as Error).message);
       console.error(e);
       message.error("Upload Failed");
+    } finally {
+      setUploading(false);
     }
   };
   const handleAddResearcher = () => {
@@ -91,47 +103,28 @@ const Page: NextPageWithLayout = () => {
     name: "file",
     accept: ".pdf,.jpg,.jpeg,.png",
     showUploadList: false,
-    onChange(info: any) {
-      const { status, response } = info.file;
-      if (status === "done") {
-        response
-          .json()
-          .then((data: any) => {
-            let extractedText = getPdfText(data);
-            extractedText = extractedText.replace(/\n\f|\n/g, " ");
-            form.setFieldsValue({
-              abstract: form.getFieldValue("abstract") ?? "" + extractedText,
-            });
-          })
-          .finally(() => setLoadingText(false));
+    action: "/api/ping",
+    multiple: true,
+    onChange(info) {
+      const { status, originFileObj } = info.file;
+      setLoadingText(status !== "done");
+      if (status === "done" && originFileObj) {
+        getBase64(originFileObj).then((url) => {
+          setAbstract((oldValue) => [...oldValue, url]);
+        });
       }
     },
-    beforeUpload() {
-      setLoadingText(true);
-    },
-    customRequest(options) {
-      const formData = new FormData();
-      formData.append("file", options.file);
-      formData.append("uid", uid ?? "no uid");
+  };
 
-      fetch("/api/pdf-text", {
-        method: "POST",
-        body: formData,
-      })
-        .then((response) => {
-          // handle response from server
-          // reset loading state for Upload component
-          if (options.onSuccess) {
-            options.onSuccess(response);
-          }
-        })
-        .catch((error) => {
-          // handle error
-          // reset loading state for Upload component
-          console.log(error);
-          message.error("Cant read files");
-        });
-    },
+  const handleRemove = (index: number) => {
+    console.log(index);
+    setAbstract((oldVal) => oldVal.filter((_, valIndex) => index !== valIndex));
+  };
+
+  const handleResearcherRemove = (index: number) => {
+    setResearchers((oldVal) =>
+      oldVal.filter((arg, valIndex) => valIndex !== index)
+    );
   };
 
   return (
@@ -165,13 +158,21 @@ const Page: NextPageWithLayout = () => {
         </div>
         <Form.Item className="" label="Researchers">
           {researchers.map((researcher, index) => (
-            <Input
-              key={index}
-              value={researcher}
-              onChange={(e) => handleResearcherChange(index, e.target.value)}
-              style={{ marginBottom: 8 }}
-              suffix={<AiOutlineUser />}
-            />
+            <div className="flex gap-1" key={index}>
+              <Input
+                value={researcher}
+                onChange={(e) => handleResearcherChange(index, e.target.value)}
+                style={{ marginBottom: 8 }}
+                suffix={<AiOutlineUser />}
+              />
+              <PriButton
+                tabIndex={-1}
+                shape="circle"
+                onClick={() => handleResearcherRemove(index)}
+              >
+                <FaTrash className="m-auto" />
+              </PriButton>
+            </div>
           ))}
           <PriButton
             className="grid place-items-center text-white bg-[#F8B49C]"
@@ -181,6 +182,22 @@ const Page: NextPageWithLayout = () => {
             <AiOutlineUserAdd />
           </PriButton>
         </Form.Item>
+        {abstract.map((item, index) => (
+          <div className="relative" key={index}>
+            <img
+              src={item}
+              alt="abstract preview"
+              key={index}
+              placeholder="blur"
+            />
+            <div
+              onClick={() => handleRemove(index)}
+              className="absolute w-full h-full cursor-pointer transition-all duration-200 ease-in-out bg-black/0 z-10 top-0 left-0 text-red-500 grid place-content-center text-lg opacity-0 hover:bg-black/30 hover:opacity-100"
+            >
+              <FaTrash />
+            </div>
+          </div>
+        ))}
         <div className={`col-span-2 relative`}>
           <Upload
             disabled={loadingText}
@@ -192,34 +209,26 @@ const Page: NextPageWithLayout = () => {
             </div>
             <AiFillFileImage className="m-auto" size={"3em"} />
             <p className="text-center">
-              Upload a thesis abstract in a pdf or image format
+              Upload a thesis abstract in a image format
             </p>
           </Upload>
           <Tooltip
             placement="bottom"
-            title="Upload a file that contains abstract's body only"
+            title="The title page should be the first"
           >
             <p className="flex items-center gap-1 mx-auto mt-1 w-fit">
               Help
               <FiHelpCircle />
             </p>
           </Tooltip>
-          <Form.Item
-            name="abstract"
-            label="Abstract"
-            rules={[{ required: true }]}
-          >
-            <Input.TextArea
-              className="text-justify"
-              autoSize={{ minRows: 10 }}
-            />
-          </Form.Item>
         </div>
-        <Form.Item className="absolute bottom-0 right-5">
+
+        <Form.Item className="grid place-content-end mb-0 col-span-2 mt-10">
           <PriButton
             type="primary"
             htmlType="submit"
             icon={<AiOutlineUpload />}
+            loading={uploading}
           >
             Upload
           </PriButton>
@@ -232,15 +241,16 @@ const Page: NextPageWithLayout = () => {
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   const session = await getServerSession(req, res, authOptions);
   const csrfToken = await getCsrfToken({ req });
+  const _id = new ObjectId().toString();
   if (!session)
     return {
-      redirect: { destination: "/?sign-in" },
+      redirect: { destination: "/?signin" },
       props: { data: [] },
     };
   if (!csrfToken) return { notFound: true };
   return {
     props: {
-      data: [],
+      _id,
     },
   };
 };

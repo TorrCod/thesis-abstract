@@ -1,4 +1,5 @@
 import {
+  ActivityLog,
   ActivitylogState,
   PendingAdminList,
   SearchOption,
@@ -64,7 +65,10 @@ export const inviteUser = async (token: string | undefined, data: any) => {
       method: "POST",
       ...userConfig(token),
     });
-    return insertResult.data;
+    return insertResult.data as {
+      activityLog: ActivityLog;
+      addedData: PendingAdminList;
+    };
   } else throw new Error("canont read user token");
 };
 

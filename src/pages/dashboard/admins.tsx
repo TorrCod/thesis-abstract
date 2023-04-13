@@ -191,7 +191,7 @@ const UserProfile = ({ payloadUser }: { payloadUser: UserDetails }) => {
       <div className="bg-white rounded-md p-3 row-span-2">
         <div className="opacity-80">History</div>
         <div className="w-full mt-10">
-          <Timeline mode="left" reverse items={history} />
+          <Timeline mode="left" items={history} />
           <Pagination
             current={globalState.searchingAction.pageNo ?? 1}
             total={state.activityLog.totalCount}
@@ -367,7 +367,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   const csrfToken = await getCsrfToken({ req });
   if (!session)
     return {
-      redirect: { destination: "/?sign-in" },
+      redirect: { destination: "/?signin" },
       props: { data: [] },
     };
   if (!csrfToken) return { notFound: true };

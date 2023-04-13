@@ -2,14 +2,12 @@ import { PriButton } from "@/components/button";
 import Search from "@/components/search";
 import { ThesisItems } from "@/context/types.d";
 import { Divider } from "antd";
-import { getData, getOneData } from "@/lib/mongo";
 import dynamic from "next/dynamic";
 import Head from "next/head";
-import { GetServerSideProps } from "next";
-import { ObjectId } from "mongodb";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { getOneById } from "@/utils/thesis-item-utils";
+import { Image } from "antd";
 
 const PdfLink = dynamic(() => import("@/components/pdfDocs"), {
   ssr: false,
@@ -52,26 +50,27 @@ const ThesisItemsView = () => {
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
-      <section className="flex flex-col gap-1 md:pt-20 items-center mb-10">
+      <section className="flex flex-col gap-1 md:pt-20 items-center mb-10 px-0">
         <div className="relative z-10 w-full">
           <Search className="w-screen max-w-lg absolute top-0 left-0 right-0 m-auto" />
         </div>
         <Divider />
         <div className="rs-container bg-slate-100 rounded-md max-w-5xl grid p-5 gap-2 md:gap-5 w-full relative">
-          <div className="rs-preview p-3 bg-white shadow-md rounded-sm h-52 overflow-hidden text-[0.7em] relative text-justify justify-self-center">
-            <div className="w-full h-full overflow-hidden">
-              <div className="text-center">Abstract</div>
-              <p className="indent-3">{data.abstract}</p>
-            </div>
+          <div className="rs-preview relative w-52 m-auto">
+            <Image
+              className="object-contain"
+              src={data.abstract[0]}
+              alt="abstract"
+            />
           </div>
           <div className="rs-details grid gap-2">
             <div>
               <span className="text-sm text-[#38649C]">Title</span>
-              <h2>{data.title}</h2>
+              <h2>{data.title.toLocaleUpperCase()}</h2>
             </div>
             <div>
               <span className="text-sm text-[#38649C]">Course</span>
-              <h2>{data.course}</h2>
+              <h2>{(data.course as string).toLocaleUpperCase()}</h2>
             </div>
             <div>
               <span className="text-sm text-[#38649C]">Year</span>
@@ -83,17 +82,27 @@ const ThesisItemsView = () => {
             <div className="pl-5">
               <ul className="list-disc">
                 {data.researchers.map((child, index) => (
-                  <li key={index}>{child}</li>
+                  <li key={index}>{child.toLocaleUpperCase()}</li>
                 ))}
               </ul>
             </div>
           </div>
-          <div className="rs-abstract justify-self-center text-justify leading-10 w-full">
-            <div className="max-w-xl">
-              <h3 className="text-center">Abstract</h3>
-              <p className="indent-20">{data.abstract}</p>
-            </div>
+          <div className="rs-abstract grid">
+            {data.abstract.map((url, index) => {
+              if (index !== 0) {
+                return (
+                  <div key={index} className="w-full relative">
+                    <Image
+                      className="object-contain"
+                      src={url}
+                      alt="abstract"
+                    />
+                  </div>
+                );
+              }
+            })}
           </div>
+
           <div className="rs-button grid place-items-end md:place-items-start">
             <Divider />
             <PriButton>

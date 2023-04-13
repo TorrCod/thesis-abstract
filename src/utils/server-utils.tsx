@@ -9,6 +9,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
 import { getCsrfToken } from "next-auth/react";
 import { serialize } from "cookie";
+import Pusher from "pusher";
 
 export const validateAuth = async (
   req: NextApiRequest,
@@ -124,4 +125,15 @@ export const calculateThesisCount = async () => {
   }));
 
   return thesisCount;
+};
+
+export const pusherInit = () => {
+  let secretKey: string = process.env.PUSHER ?? "";
+  if (process.env.NODE_ENV === "development") {
+    console.log("pusher devs");
+    secretKey =
+      '{"appId": "1583848","key": "866c012957a8a998c831","secret": "91b4cac0e12d5bf9cc07","cluster": "ap1","useTLS": true}';
+  }
+  const pusher = new Pusher(JSON.parse(secretKey));
+  return pusher;
 };

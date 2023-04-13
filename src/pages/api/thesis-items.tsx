@@ -1,4 +1,3 @@
-import { ThesisItems } from "@/context/types.d";
 import {
   addData,
   addDataWithExpiration,
@@ -6,17 +5,16 @@ import {
   getDataWithPaging,
 } from "@/lib/mongo";
 import { CollectionName } from "@/lib/types";
-import { sleep } from "@/utils/helper";
 import {
   calculateThesisCount,
   parseQuery,
+  pusherInit,
   updateActivityLog,
   validateAuth,
 } from "@/utils/server-utils";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import { ObjectId } from "mongodb";
 import { NextApiRequest, NextApiResponse } from "next";
-import Pusher from "pusher";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
@@ -77,7 +75,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             );
 
             const thesisCount = await calculateThesisCount();
-            const pusher = new Pusher(JSON.parse(process.env.PUSHER || "{}"));
+            const pusher = pusherInit();
             pusher.trigger("thesis-update", "remove-thesis", {
               addedData: thesisItems,
               activityLog,
@@ -128,7 +126,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               thesisItems.title
             );
 
-            const pusher = new Pusher(JSON.parse(process.env.PUSHER || "{}"));
+            const pusher = pusherInit();
             const thesisCount = await calculateThesisCount();
 
             pusher.trigger("thesis-update", "remove-thesis", {
@@ -159,7 +157,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       }
       case "POST": {
         const thesisItem = req.body;
-        const new_id = new ObjectId();
+        const new_id = new ObjectId(req.body._id);
         (thesisItem._id as any) = new_id;
         thesisItem.id = new_id.toString();
         if (typeof thesisItem.dateAdded === "string") {
@@ -178,7 +176,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           thesisItem.title
         );
 
-        const pusher = new Pusher(JSON.parse(process.env.PUSHER || "{}"));
+        const pusher = pusherInit();
         const thesisCount = await calculateThesisCount();
 
         pusher.trigger("thesis-update", "add-thesis", {
@@ -204,7 +202,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
   } catch (e) {
     console.error(e);
-    return res.status(500).json({ error: "server error" });
+    return res.status(500).json({ error: "server error", message: e });
   }
 };
 

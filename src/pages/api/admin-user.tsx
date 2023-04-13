@@ -1,4 +1,3 @@
-import { ActivityLog, ThesisItems } from "@/context/types.d";
 import { createSessionCookies, verifyIdToken } from "@/lib/firebase-admin";
 import {
   addData,
@@ -7,13 +6,12 @@ import {
   getData,
   getDataWithPaging,
   getOneData,
-  getRawData,
   updateData,
 } from "@/lib/mongo";
 import { ActivitylogReason, CollectionName } from "@/lib/types";
 import {
-  calculateThesisCount,
   parseQuery,
+  pusherInit,
   updateActivityLog,
   validateAuth,
 } from "@/utils/server-utils";
@@ -119,7 +117,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               req.body.email
             );
 
-            const pusher = new Pusher(JSON.parse(process.env.PUSHER || "{}"));
+            const pusher = pusherInit();
 
             pusher.trigger("admin-update", "update", {
               activityLog,
@@ -154,13 +152,20 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             if (!insertResult.acknowledged)
               return res.status(204).json({ error: "Insert Data failed" });
 
-            updateActivityLog(
+            const activityLog = updateActivityLog(
               isValidated.decodedToken as DecodedIdToken,
               "accepted the invite",
               insertResult.insertedId,
               new Date(),
               req.body.email
             );
+
+            const pusher = pusherInit();
+
+            pusher.trigger("admin-update", "update", {
+              activityLog,
+            });
+
             return res.status(200).json(req.body);
           }
           case "update-activity-log": {
@@ -223,7 +228,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
   } catch (e) {
     console.error(e);
-    return res.status(500).json({ error: "server error" });
+    return res.status(500).json({ error: "server error", message: e });
   }
 };
 

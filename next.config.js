@@ -1,9 +1,12 @@
 /** @type {import('next').NextConfig} */
 
+const isDevlopmemt = process.env.NODE_ENV === "development";
+
 const withPWA = require("next-pwa")({
   dest: "public",
   disable: process.env.NODE_ENV === "development",
 });
+const runtimeCaching = require("next-pwa/cache");
 
 const ContentSecurityPolicy = `
   default-src 'self' http://localhost:3000;
@@ -42,9 +45,6 @@ const nextConfig = withPWA({
     }
     return config;
   },
-  compiler: {
-    removeConsole: process.env.NODE_ENV === "production",
-  },
   headers: async () => [
     {
       // Apply these headers to all routes in your application.
@@ -52,6 +52,16 @@ const nextConfig = withPWA({
       headers: securityHeaders,
     },
   ],
+  images: {
+    remotePatterns: [
+      {
+        protocol: isDevlopmemt ? "http" : "https",
+        hostname: isDevlopmemt ? "localhost" : "firebasestorage.googleapis.com",
+        port: isDevlopmemt ? "9199" : "",
+        pathname: "/v0/b/thesis-abstract-account.appspot.com/**",
+      },
+    ],
+  },
 });
 
 module.exports = nextConfig;

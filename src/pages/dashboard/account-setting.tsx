@@ -423,7 +423,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   const csrfToken = await getCsrfToken({ req });
   if (!session)
     return {
-      redirect: { destination: "/?sign-in" },
+      redirect: { destination: "/?signin" },
       props: { data: [] },
     };
   if (!csrfToken) return { notFound: true };

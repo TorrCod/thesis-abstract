@@ -8,6 +8,7 @@ import {
   updateProfile,
 } from "firebase/auth";
 import {
+  connectStorageEmulator,
   getDownloadURL,
   getStorage,
   ref,
@@ -28,6 +29,7 @@ if (process.env.NODE_ENV === "development") {
   console.log("emulator connected");
   connectAuthEmulator(auth, "http://localhost:9099");
   process.env.FIREBASE_AUTH_EMULATOR_HOST = process.env.EMULATOR_HOST;
+  connectStorageEmulator(firebaseStorage, "localhost", 9199);
 }
 
 export const signIn = async (email: string, password: string) => {
@@ -57,4 +59,25 @@ export const uploadProfile = async (dataUrl: string, uid: string) => {
   const { ref: fileRef } = await uploadString(storageRef, dataUrl, "data_url");
   const url = await getDownloadURL(fileRef);
   return url;
+};
+
+export const uploadAbstract = async (
+  dataUrlList: string[],
+  folderId: string
+) => {
+  const abstractUrlList: string[] = [];
+  for (const dataUrl of dataUrlList) {
+    const storageRef = ref(
+      firebaseStorage,
+      `abstract/${folderId}/${dataUrlList.indexOf(dataUrl)}`
+    );
+    const { ref: fileRef } = await uploadString(
+      storageRef,
+      dataUrl,
+      "data_url"
+    );
+    const url = await getDownloadURL(fileRef);
+    abstractUrlList.push(url);
+  }
+  return abstractUrlList;
 };

@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import useGlobalContext from "@/context/globalContext";
 import { useRouter } from "next/router";
+import Image from "next/image";
 const Thesis = () => {
   const {
     state: globalState,
@@ -35,7 +36,7 @@ const Thesis = () => {
       : undefined;
     const query = { title, course: decodedCourse, year: decodedYear };
     loadThesisItems(query, {
-      projection: { title: 1, course: 1, year: 1, researchers: 1 },
+      projection: { title: 1, course: 1, year: 1, researchers: 1, abstract: 1 },
     })
       .catch((e) => {
         console.error(e);
@@ -82,6 +83,8 @@ const Thesis = () => {
               current={globalState.searchingAction.pageNo ?? 1}
               onChange={handlePageChange}
               hideOnSinglePage
+              pageSize={globalState.searchingAction.pageSize}
+              showSizeChanger={false}
             />
           </ConfigProvider>
           <div className="grid gap-2 w-full place-items-center lg:grid-cols-2 relative md:px-5">
@@ -123,12 +126,12 @@ const Items = ({
             className="hover:text-sky-700 hover:underline hover:decoration-1"
             href={`/thesis/${_id}`}
           >
-            <h2>{title}</h2>
+            <h2>{title.toLocaleUpperCase()}</h2>
           </Link>
         </div>
         <div>
           <span className="text-sm text-[#38649C]">Course</span>
-          <h2>{course}</h2>
+          <h2>{(course as string).toLocaleUpperCase()}</h2>
         </div>
         <div>
           <span className="text-sm text-[#38649C]">year</span>
@@ -140,19 +143,23 @@ const Items = ({
         <div className="pl-5">
           <ul className="list-disc">
             {researchers.map((child, index) => {
-              return <li key={index}>{child}</li>;
+              return <li key={index}>{child.toLocaleUpperCase()}</li>;
             })}
           </ul>
         </div>
       </div>
-      <div className="div1 p-3 bg-white shadow-md rounded-sm h-52 overflow-h_idden text-[0.7em] relative text-justify justify-self-center leading-4 w-full">
-        <Link href={`/thesis/${_id}`}>
-          <div className="overflow-hidden w-full h-full">
-            <h4 className="text-center">Abstract</h4>
-            <p className="indent-3">{abstract}</p>
-          </div>
-        </Link>
-      </div>
+      <Link className="div1" href={`/thesis/${_id}`}>
+        <div className="h-52 relative">
+          <Image
+            className="object-contain"
+            src={abstract[0]}
+            alt="abstract"
+            fill
+            sizes="1"
+            priority
+          />
+        </div>
+      </Link>
     </div>
   );
 };

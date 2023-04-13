@@ -5,8 +5,7 @@ import { Avatar, Dropdown, Form, Input, Menu, MenuProps, message } from "antd";
 import { useForm } from "antd/lib/form/Form";
 import { sendSignInLinkToEmail } from "firebase/auth";
 import Link from "next/link";
-import router from "next/router";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { BiLogOut } from "react-icons/bi";
 import { BsPersonFillAdd } from "react-icons/bs";
 import { GrUserSettings } from "react-icons/gr";
@@ -14,9 +13,7 @@ import { RiDashboardLine } from "react-icons/ri";
 import { PriButton } from "./button";
 import SignInSignUp from "./signin_signup";
 import { AdminProps } from "./types.d";
-import { signOut as nextSignOut } from "next-auth/react";
-import axios, { AxiosError } from "axios";
-import useSocketContext from "@/context/socketContext";
+import { AxiosError } from "axios";
 import useGlobalContext from "@/context/globalContext";
 
 function AdminProfile({ userDetails, size, src }: AdminProps) {
@@ -83,7 +80,7 @@ export const AdminMenu = ({
 };
 
 export const AddAdmin = () => {
-  const { state, refreshAdmin } = useUserContext();
+  const { state } = useUserContext();
   const userDetails = state.userDetails;
   const [form] = useForm();
   const { loadingState } = useGlobalContext();
@@ -97,19 +94,23 @@ export const AddAdmin = () => {
           email: email,
           approove: `${userDetails?.userName}`,
         });
-        const _id = response._id;
+        const _id = response.addedData._id;
+        if (!_id) throw new Error("undefined _id");
         const actionCodeSettings = {
           url: `${process.env.NEXT_PUBLIC_DOMAIN}/sign-up/${_id}`,
           handleCodeInApp: true,
         };
         await sendSignInLinkToEmail(auth, email, actionCodeSettings);
-        // await refreshAdmin();
         message.success("Invite Sent");
         form.resetFields();
       })
       .catch((e) => {
         const error: AxiosError = e;
-        if ((error.response?.data as any).code === "email-duplicate") {
+        if (
+          typeof error === typeof AxiosError
+            ? (error.response?.data as any).code === "email-duplicate"
+            : false
+        ) {
           message.error((error.response?.data as any).message);
         } else {
           console.error(e);

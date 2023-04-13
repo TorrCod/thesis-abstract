@@ -45,7 +45,6 @@ import { ResponsiveContainer } from "recharts";
 import { authOptions } from "../api/auth/[...nextauth]";
 import { NextPageWithLayout } from "../_app";
 import useUserContext from "@/context/userContext";
-import { useEffectOnce } from "react-use";
 import LoadingIcon from "@/components/loadingIcon";
 import useOnScreen from "@/hook/useOnScreen";
 
@@ -67,6 +66,7 @@ const Page: NextPageWithLayout = () => {
 
   useEffect(() => {
     loadThesisCount();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleMenu: MenuProps["onSelect"] = (item) => {
@@ -171,6 +171,7 @@ export const ThesisCharts = () => {
   const { state: globalStatate, loadThesisCount } = useGlobalContext();
   useEffect(() => {
     loadThesisCount();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
     <>

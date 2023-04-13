@@ -97,7 +97,8 @@ export const AddAdmin = () => {
           email: email,
           approove: `${userDetails?.userName}`,
         });
-        const _id = response._id;
+        const _id = response.addedData._id;
+        if (!_id) throw new Error("undefined _id");
         const actionCodeSettings = {
           url: `${process.env.NEXT_PUBLIC_DOMAIN}/sign-up/${_id}`,
           handleCodeInApp: true,

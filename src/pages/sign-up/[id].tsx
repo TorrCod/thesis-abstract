@@ -13,8 +13,6 @@ const courseOpt: { value: Course; label: Course }[] = [
 import { GetServerSideProps } from "next";
 import { getOneData } from "@/lib/mongo";
 import { ObjectId } from "mongodb";
-import { Socket, io } from "socket.io-client";
-import { ClientToServerEvents, ServerToClientEvents } from "@/lib/types";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   try {
@@ -62,11 +60,6 @@ const HandleInviteLink = (props: {
       };
       unsubscribeRef.current?.();
       await userSignUp?.(userDetails);
-      const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io();
-      socket.emit("account-update");
-      socket.once("acknowledged", () => {
-        socket.close();
-      });
       message.success({
         type: "success",
         content: "Initialized Successfully",

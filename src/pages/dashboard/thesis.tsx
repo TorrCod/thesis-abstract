@@ -166,7 +166,8 @@ export const ThesisCharts = () => {
   const { state: globalStatate } = useGlobalContext();
 
   return (
-    <ResponsiveContainer width={"99%"} height="99%">
+    <>
+      {/* <ResponsiveContainer width={"99%"} height="99%">
       <RadarChart
         outerRadius={90}
         data={globalStatate.totalThesisCount.thesisCount}
@@ -183,7 +184,8 @@ export const ThesisCharts = () => {
         <Tooltip />
         <Legend />
       </RadarChart>
-    </ResponsiveContainer>
+    </ResponsiveContainer> */}
+    </>
   );
 };
 

@@ -13,6 +13,7 @@ import {
 import { ActivitylogReason, CollectionName } from "@/lib/types";
 import {
   parseQuery,
+  pusherInit,
   updateActivityLog,
   validateAuth,
 } from "@/utils/server-utils";
@@ -118,7 +119,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               req.body.email
             );
 
-            const pusher = new Pusher(JSON.parse(process.env.PUSHER || "{}"));
+            const pusher = pusherInit();
 
             pusher.trigger("admin-update", "update", {
               activityLog,

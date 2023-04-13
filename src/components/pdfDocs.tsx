@@ -1,8 +1,6 @@
 import React from "react";
 import {
   Page,
-  Text,
-  View,
   Document,
   StyleSheet,
   BlobProvider,
@@ -36,37 +34,6 @@ Font.registerHyphenationCallback((word) => [word]);
 const styles = StyleSheet.create({
   page: {},
 });
-// const styles = StyleSheet.create({
-//   page: {
-//     paddingLeft: "1.5in",
-//     paddingVertical: "1in",
-//     paddingRight: "1in",
-//     backgroundColor: "#E4E4E4",
-//     fontSize: "12px",
-//     lineHeight: 2,
-//     textAlign: "justify",
-//     fontFamily: "Ubuntu",
-//   },
-//   twoColumn: {
-//     flexDirection: "row",
-//     width: "100%",
-//     position: "relative",
-//   },
-//   twoColumn1Item: {
-//     width: "20%",
-//   },
-//   twoColumn2Item: {
-//     flexDirection: "row",
-//     position: "relative",
-//     flexWrap: "wrap",
-//     width: "100%",
-//   },
-//   body: {
-//     paddingTop: "20px",
-//   },
-// });
-
-// Create Document Component
 const MyDocument = (props: ThesisItems) => (
   <Document>
     <Page size="LETTER" style={styles.page}>

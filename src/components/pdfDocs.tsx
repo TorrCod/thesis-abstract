@@ -36,9 +36,9 @@ const styles = StyleSheet.create({
 });
 const MyDocument = (props: ThesisItems) => (
   <Document>
-    <Page size="LETTER" style={styles.page}>
-      {props.abstract.map((url, index) => (
-        // <Image key={index} src={url} />
+    {props.abstract.map((url, index) => (
+      // <Image key={index} src={url} />
+      <Page key={index} size="LETTER" style={styles.page}>
         <Image
           style={{
             position: "absolute",
@@ -49,10 +49,9 @@ const MyDocument = (props: ThesisItems) => (
             objectFit: "fill",
           }}
           source={url}
-          key={index}
         />
-      ))}
-    </Page>
+      </Page>
+    ))}
   </Document>
 );
 

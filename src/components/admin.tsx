@@ -18,6 +18,7 @@ import { signOut as nextSignOut } from "next-auth/react";
 import axios, { AxiosError } from "axios";
 import useSocketContext from "@/context/socketContext";
 import useGlobalContext from "@/context/globalContext";
+import { UserDetails, PendingAdminList } from "@/context/types.d";
 
 function AdminProfile({ userDetails, size, src }: AdminProps) {
   return (
@@ -83,7 +84,7 @@ export const AdminMenu = ({
 };
 
 export const AddAdmin = () => {
-  const { state, refreshAdmin } = useUserContext();
+  const { state } = useUserContext();
   const userDetails = state.userDetails;
   const [form] = useForm();
   const { loadingState } = useGlobalContext();
@@ -97,13 +98,13 @@ export const AddAdmin = () => {
           email: email,
           approove: `${userDetails?.userName}`,
         });
-        const _id = response._id;
+        const _id = response.addedData._id;
+        if (!_id) throw new Error("undefined _id");
         const actionCodeSettings = {
           url: `${process.env.NEXT_PUBLIC_DOMAIN}/sign-up/${_id}`,
           handleCodeInApp: true,
         };
         await sendSignInLinkToEmail(auth, email, actionCodeSettings);
-        // await refreshAdmin();
         message.success("Invite Sent");
         form.resetFields();
       })

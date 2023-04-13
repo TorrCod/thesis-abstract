@@ -45,7 +45,6 @@ import { ResponsiveContainer } from "recharts";
 import { authOptions } from "../api/auth/[...nextauth]";
 import { NextPageWithLayout } from "../_app";
 import useUserContext from "@/context/userContext";
-import { useEffectOnce } from "react-use";
 import LoadingIcon from "@/components/loadingIcon";
 import useOnScreen from "@/hook/useOnScreen";
 
@@ -61,8 +60,14 @@ const Page: NextPageWithLayout = () => {
     loadThesisItems,
     loadingState,
     loadRecycle,
+    loadThesisCount,
   } = useGlobalContext();
   const router = useRouter();
+
+  useEffect(() => {
+    loadThesisCount();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleMenu: MenuProps["onSelect"] = (item) => {
     router.push(`/dashboard/thesis?tab=${item.key}`);
@@ -163,27 +168,32 @@ Page.getLayout = function getLayout(page: ReactElement) {
 export default Page;
 
 export const ThesisCharts = () => {
-  const { state: globalStatate } = useGlobalContext();
-
+  const { state: globalStatate, loadThesisCount } = useGlobalContext();
+  useEffect(() => {
+    loadThesisCount();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return (
-    <ResponsiveContainer width={"99%"} height="99%">
-      <RadarChart
-        outerRadius={90}
-        data={globalStatate.totalThesisCount.thesisCount}
-      >
-        <PolarGrid />
-        <PolarAngleAxis dataKey="course" />
-        <Radar
-          name="Thesis Count"
-          dataKey="count"
-          stroke="#F8B49C"
-          fill="#F8B49C"
-          fillOpacity={0.6}
-        />
-        <Tooltip />
-        <Legend />
-      </RadarChart>
-    </ResponsiveContainer>
+    <>
+      <ResponsiveContainer width={"99%"} height="99%">
+        <RadarChart
+          outerRadius={90}
+          data={globalStatate.totalThesisCount.thesisCount}
+        >
+          <PolarGrid />
+          <PolarAngleAxis dataKey="course" />
+          <Radar
+            name="Thesis Count"
+            dataKey="count"
+            stroke="#F8B49C"
+            fill="#F8B49C"
+            fillOpacity={0.6}
+          />
+          <Tooltip />
+          <Legend />
+        </RadarChart>
+      </ResponsiveContainer>
+    </>
   );
 };
 
@@ -439,13 +449,14 @@ const RecycledTable = () => {
 };
 
 const RemoveThesis = (props: DataType & { id: string }) => {
-  const { loadingState } = useGlobalContext();
+  const { loadingState, removeThesisItem } = useGlobalContext();
 
   const handleClick = async () => {
     try {
       loadingState.add("thesis-table");
       const token = await auth.currentUser?.getIdToken();
       await removeThesis({ token: token, thesisId: props.id });
+      removeThesisItem(props.id);
     } catch (e) {
       message.error("remove failed");
       console.error(e);

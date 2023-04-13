@@ -6,6 +6,7 @@ const withPWA = require("next-pwa")({
   dest: "public",
   disable: process.env.NODE_ENV === "development",
 });
+const runtimeCaching = require("next-pwa/cache");
 
 const ContentSecurityPolicy = `
   default-src 'self' http://localhost:3000;

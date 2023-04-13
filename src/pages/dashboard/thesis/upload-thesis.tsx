@@ -35,6 +35,7 @@ import { BsFillTrashFill } from "react-icons/bs";
 import { FaTrash } from "react-icons/fa";
 import { uploadAbstract } from "@/lib/firebase";
 import { ObjectId } from "mongodb";
+import useGlobalContext from "@/context/globalContext";
 
 interface FormValues {
   title: string;
@@ -57,10 +58,10 @@ const Page = (props: { _id: string }) => {
   const [loadingText, setLoadingText] = useState(false);
   const [abstract, setAbstract] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
+  const { loadThesisCount } = useGlobalContext();
   const userCtx = useUserContext();
   const [form] = Form.useForm<FormValues>();
   const router = useRouter();
-  const { triggerSocket } = useSocketContext();
 
   const onFinish = async (values: FormValues) => {
     try {
@@ -80,7 +81,7 @@ const Page = (props: { _id: string }) => {
         researchers: researchers,
       };
       await userCtx.saveUploadThesis(payload);
-      triggerSocket("thesis-update");
+      await loadThesisCount();
       message.success("Success");
       router.push("/dashboard/thesis/success");
     } catch (e) {
@@ -107,6 +108,7 @@ const Page = (props: { _id: string }) => {
     accept: ".pdf,.jpg,.jpeg,.png",
     showUploadList: false,
     action: "/api/ping",
+    multiple: true,
     onChange(info) {
       const { status, originFileObj } = info.file;
       setLoadingText(status !== "done");
@@ -121,6 +123,12 @@ const Page = (props: { _id: string }) => {
   const handleRemove = (index: number) => {
     console.log(index);
     setAbstract((oldVal) => oldVal.filter((_, valIndex) => index !== valIndex));
+  };
+
+  const handleResearcherRemove = (index: number) => {
+    setResearchers((oldVal) =>
+      oldVal.filter((arg, valIndex) => valIndex !== index)
+    );
   };
 
   return (
@@ -154,13 +162,20 @@ const Page = (props: { _id: string }) => {
         </div>
         <Form.Item className="" label="Researchers">
           {researchers.map((researcher, index) => (
-            <Input
-              key={index}
-              value={researcher}
-              onChange={(e) => handleResearcherChange(index, e.target.value)}
-              style={{ marginBottom: 8 }}
-              suffix={<AiOutlineUser />}
-            />
+            <div className="flex gap-1" key={index}>
+              <Input
+                value={researcher}
+                onChange={(e) => handleResearcherChange(index, e.target.value)}
+                style={{ marginBottom: 8 }}
+                suffix={<AiOutlineUser />}
+              />
+              <PriButton
+                shape="circle"
+                onClick={() => handleResearcherRemove(index)}
+              >
+                <FaTrash className="m-auto" />
+              </PriButton>
+            </div>
           ))}
           <PriButton
             className="grid place-items-center text-white bg-[#F8B49C]"
@@ -197,12 +212,12 @@ const Page = (props: { _id: string }) => {
             </div>
             <AiFillFileImage className="m-auto" size={"3em"} />
             <p className="text-center">
-              Upload a thesis abstract in a pdf or image format
+              Upload a thesis abstract in a image format
             </p>
           </Upload>
           <Tooltip
             placement="bottom"
-            title="Upload a file that contains abstract's body only"
+            title="The title page should be the first"
           >
             <p className="flex items-center gap-1 mx-auto mt-1 w-fit">
               Help

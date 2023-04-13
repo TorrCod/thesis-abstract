@@ -66,11 +66,11 @@ const ThesisItemsView = () => {
           <div className="rs-details grid gap-2">
             <div>
               <span className="text-sm text-[#38649C]">Title</span>
-              <h2>{data.title}</h2>
+              <h2>{data.title.toLocaleUpperCase()}</h2>
             </div>
             <div>
               <span className="text-sm text-[#38649C]">Course</span>
-              <h2>{data.course}</h2>
+              <h2>{(data.course as string).toLocaleUpperCase()}</h2>
             </div>
             <div>
               <span className="text-sm text-[#38649C]">Year</span>
@@ -82,21 +82,24 @@ const ThesisItemsView = () => {
             <div className="pl-5">
               <ul className="list-disc">
                 {data.researchers.map((child, index) => (
-                  <li key={index}>{child}</li>
+                  <li key={index}>{child.toLocaleUpperCase()}</li>
                 ))}
               </ul>
             </div>
           </div>
           <div className="rs-abstract grid">
             {data.abstract.map((url, index) => {
-              if (index === 0) {
-                return <></>;
+              if (index !== 0) {
+                return (
+                  <div key={index} className="w-full relative">
+                    <Image
+                      className="object-contain"
+                      src={url}
+                      alt="abstract"
+                    />
+                  </div>
+                );
               }
-              return (
-                <div key={index} className="w-full relative">
-                  <Image className="object-contain" src={url} alt="abstract" />
-                </div>
-              );
             })}
           </div>
 

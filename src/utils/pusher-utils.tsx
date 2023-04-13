@@ -3,10 +3,17 @@ import { userConfig } from "./account-utils";
 import Pusher from "pusher-js";
 import { UserDetails } from "@/context/types.d";
 
-export const pusherInit = () =>
-  new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY || "", {
+export const pusherInit = () => {
+  let secretKey: string = process.env.NEXT_PUBLIC_PUSHER_KEY ?? "";
+  if (process.env.NODE_ENV === "development") {
+    secretKey = "866c012957a8a998c831";
+    Pusher.logToConsole = true;
+  }
+  const pusher = new Pusher(secretKey, {
     cluster: "ap1",
   });
+  return pusher;
+};
 
 export const thesisUpdate = async (
   action: "remove" | "add" | "restore",

@@ -174,24 +174,24 @@ export const ThesisCharts = () => {
   }, []);
   return (
     <>
-      {/* <ResponsiveContainer width={"99%"} height="99%">
-      <RadarChart
-        outerRadius={90}
-        data={globalStatate.totalThesisCount.thesisCount}
-      >
-        <PolarGrid />
-        <PolarAngleAxis dataKey="course" />
-        <Radar
-          name="Thesis Count"
-          dataKey="count"
-          stroke="#F8B49C"
-          fill="#F8B49C"
-          fillOpacity={0.6}
-        />
-        <Tooltip />
-        <Legend />
-      </RadarChart>
-    </ResponsiveContainer> */}
+      <ResponsiveContainer width={"99%"} height="99%">
+        <RadarChart
+          outerRadius={90}
+          data={globalStatate.totalThesisCount.thesisCount}
+        >
+          <PolarGrid />
+          <PolarAngleAxis dataKey="course" />
+          <Radar
+            name="Thesis Count"
+            dataKey="count"
+            stroke="#F8B49C"
+            fill="#F8B49C"
+            fillOpacity={0.6}
+          />
+          <Tooltip />
+          <Legend />
+        </RadarChart>
+      </ResponsiveContainer>
     </>
   );
 };

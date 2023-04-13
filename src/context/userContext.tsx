@@ -111,10 +111,6 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(userReducer, userStateInit);
   const unsubscribeRef = useRef<Unsubscribe | null>(null);
   const { dispatch: gloablDispatch, state: globalState } = useGlobalContext();
-  const [newOnline, setNewOnline] = useState<{
-    action: "signin" | "signout";
-    uid: string;
-  }>();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -122,13 +118,11 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
         if (user) {
           const token = await user.getIdToken();
           const res: UserDetails = await getUserDetails(token, user.uid);
-          res.profilePic = user.photoURL as any;
-          setNewOnline({ action: "signin", uid: user.uid });
+          res.profilePic = user.photoURL ?? undefined;
           dispatch({ type: "on-signin", payload: { userDetails: res } });
         } else {
           throw new Error("account logout", { cause: "logout" });
         }
-        unsubscribeRef.current = unsubscribe;
       } catch (e) {
         if ((e as Error).cause === "logout") {
           axios.get("/api/logout");
@@ -138,28 +132,11 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
         }
       }
     });
-
+    unsubscribeRef.current = unsubscribe;
     return () => {
       unsubscribe();
     };
   }, []);
-
-  useEffect(() => {
-    if (newOnline && !state.onlineMembers.includes(newOnline.uid)) {
-      dispatch({
-        type: "update-online-members",
-        payload: [...state.onlineMembers, newOnline.uid],
-      });
-    } else if (
-      newOnline?.action === "signout" &&
-      state.onlineMembers.includes(newOnline.uid)
-    ) {
-      dispatch({
-        type: "update-online-members",
-        payload: state.onlineMembers.filter((uid) => uid !== newOnline.uid),
-      });
-    }
-  }, [newOnline, state.onlineMembers]);
 
   const loadAllUsers = async () => {
     try {

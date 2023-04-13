@@ -9,7 +9,6 @@ import {
 } from "@react-pdf/renderer";
 import { ThesisItems } from "@/context/types.d";
 
-// Register font
 Font.register({
   family: "Ubuntu",
   fonts: [
@@ -37,7 +36,6 @@ const styles = StyleSheet.create({
 const MyDocument = (props: ThesisItems) => (
   <Document>
     {props.abstract.map((url, index) => (
-      // <Image key={index} src={url} />
       <Page key={index} size="LETTER" style={styles.page}>
         <Image
           style={{

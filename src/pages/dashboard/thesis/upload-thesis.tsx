@@ -170,6 +170,7 @@ const Page = (props: { _id: string }) => {
                 suffix={<AiOutlineUser />}
               />
               <PriButton
+                tabIndex={-1}
                 shape="circle"
                 onClick={() => handleResearcherRemove(index)}
               >

@@ -159,7 +159,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       }
       case "POST": {
         const thesisItem = req.body;
-        const new_id = new ObjectId();
+        const new_id = new ObjectId(req.body._id);
         (thesisItem._id as any) = new_id;
         thesisItem.id = new_id.toString();
         if (typeof thesisItem.dateAdded === "string") {

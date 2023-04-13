@@ -52,7 +52,7 @@ export type ThesisItems = {
   title: string;
   researchers: string[];
   course: Course;
-  abstract: string;
+  abstract: string[];
   year: number;
   dateAdded: Date;
   _id?: string;

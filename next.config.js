@@ -45,9 +45,6 @@ const nextConfig = withPWA({
     }
     return config;
   },
-  compiler: {
-    removeConsole: process.env.NODE_ENV === "production",
-  },
   headers: async () => [
     {
       // Apply these headers to all routes in your application.

@@ -128,7 +128,7 @@ export const calculateThesisCount = async () => {
 };
 
 export const pusherInit = () => {
-  let secretKey: string = process.env.PUSER ?? "";
+  let secretKey: string = process.env.PUSHER ?? "";
   if (process.env.NODE_ENV === "development") {
     console.log("pusher devs");
     secretKey =

@@ -154,13 +154,20 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             if (!insertResult.acknowledged)
               return res.status(204).json({ error: "Insert Data failed" });
 
-            updateActivityLog(
+            const activityLog = updateActivityLog(
               isValidated.decodedToken as DecodedIdToken,
               "accepted the invite",
               insertResult.insertedId,
               new Date(),
               req.body.email
             );
+
+            const pusher = pusherInit();
+
+            pusher.trigger("admin-update", "update", {
+              activityLog,
+            });
+
             return res.status(200).json(req.body);
           }
           case "update-activity-log": {

@@ -12,7 +12,6 @@ import {
 } from "@/lib/mongo";
 import { ActivitylogReason, CollectionName } from "@/lib/types";
 import {
-  calculateThesisCount,
   parseQuery,
   updateActivityLog,
   validateAuth,

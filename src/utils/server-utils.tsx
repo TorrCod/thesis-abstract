@@ -131,7 +131,6 @@ export const pusherInit = () => {
   let secretKey: string = process.env.PUSER ?? "";
   if (process.env.NODE_ENV === "development") {
     console.log("pusher devs");
-
     secretKey =
       '{"appId": "1583848","key": "866c012957a8a998c831","secret": "91b4cac0e12d5bf9cc07","cluster": "ap1","useTLS": true}';
   }

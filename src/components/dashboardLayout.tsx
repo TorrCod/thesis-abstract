@@ -156,8 +156,13 @@ function DashboardLayout({ children }: DashboardProps) {
           if (isLogExist || isThesisExist) return;
           addThesisItem(thesisUpdate.addedData);
 
-          const newAL = { ...userState.activityLog };
-          newAL.document.push(thesisUpdate.activityLog);
+          const newAL = {
+            ...userState.activityLog,
+            document: [
+              thesisUpdate.activityLog,
+              ...userState.activityLog.document,
+            ],
+          };
           dispatch({ type: "load-activity-log", payload: newAL });
           globalDispatch({
             type: "load-thesis-count",
@@ -176,8 +181,13 @@ function DashboardLayout({ children }: DashboardProps) {
           removeThesisItem(thesisUpdate.activityLog.data.itemId);
           recycleThesis(thesisUpdate.addedData);
 
-          const newAL = { ...userState.activityLog };
-          newAL.document.push(thesisUpdate.activityLog);
+          const newAL = {
+            ...userState.activityLog,
+            document: [
+              thesisUpdate.activityLog,
+              ...userState.activityLog.document,
+            ],
+          };
           dispatch({ type: "load-activity-log", payload: newAL });
           globalDispatch({
             type: "load-thesis-count",
@@ -195,8 +205,13 @@ function DashboardLayout({ children }: DashboardProps) {
           if (isLogExist || isThesisExist) return;
           addThesisItem(thesisUpdate.addedData);
           restoreThesis(thesisUpdate.activityLog.data.itemId);
-          const newAL = { ...userState.activityLog };
-          newAL.document.push(thesisUpdate.activityLog);
+          const newAL = {
+            ...userState.activityLog,
+            document: [
+              thesisUpdate.activityLog,
+              ...userState.activityLog.document,
+            ],
+          };
           dispatch({ type: "load-activity-log", payload: newAL });
           globalDispatch({
             type: "load-thesis-count",
@@ -222,8 +237,13 @@ function DashboardLayout({ children }: DashboardProps) {
       if (isLogExist) return;
       loadAllUsers()
         .then(() => {
-          const newAL = { ...userState.activityLog };
-          newAL.document.push(adminUpdate.activityLog);
+          const newAL = {
+            ...userState.activityLog,
+            document: [
+              adminUpdate.activityLog,
+              ...userState.activityLog.document,
+            ],
+          };
           dispatch({ type: "load-activity-log", payload: newAL });
         })
         .catch((error) => {

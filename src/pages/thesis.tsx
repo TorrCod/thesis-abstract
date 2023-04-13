@@ -126,12 +126,12 @@ const Items = ({
             className="hover:text-sky-700 hover:underline hover:decoration-1"
             href={`/thesis/${_id}`}
           >
-            <h2>{title}</h2>
+            <h2>{title.toLocaleUpperCase()}</h2>
           </Link>
         </div>
         <div>
           <span className="text-sm text-[#38649C]">Course</span>
-          <h2>{course}</h2>
+          <h2>{(course as string).toLocaleUpperCase()}</h2>
         </div>
         <div>
           <span className="text-sm text-[#38649C]">year</span>
@@ -143,16 +143,13 @@ const Items = ({
         <div className="pl-5">
           <ul className="list-disc">
             {researchers.map((child, index) => {
-              return <li key={index}>{child}</li>;
+              return <li key={index}>{child.toLocaleUpperCase()}</li>;
             })}
           </ul>
         </div>
       </div>
-      <div className="div1 h-52 overflow-h_idden text-[0.7em] relative text-justify justify-self-center leading-4 w-full">
-        <Link
-          className="hover:text-sky-700 hover:underline hover:decoration-1"
-          href={`/thesis/${_id}`}
-        >
+      <Link className="div1" href={`/thesis/${_id}`}>
+        <div className="h-52 relative">
           <Image
             className="object-contain"
             src={abstract[0]}
@@ -161,8 +158,8 @@ const Items = ({
             sizes="1"
             priority
           />
-        </Link>
-      </div>
+        </div>
+      </Link>
     </div>
   );
 };

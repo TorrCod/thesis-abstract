@@ -10,6 +10,7 @@ import { sleep } from "@/utils/helper";
 import {
   calculateThesisCount,
   parseQuery,
+  pusherInit,
   updateActivityLog,
   validateAuth,
 } from "@/utils/server-utils";
@@ -77,7 +78,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             );
 
             const thesisCount = await calculateThesisCount();
-            const pusher = new Pusher(JSON.parse(process.env.PUSHER || "{}"));
+            const pusher = pusherInit();
             pusher.trigger("thesis-update", "remove-thesis", {
               addedData: thesisItems,
               activityLog,
@@ -128,7 +129,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               thesisItems.title
             );
 
-            const pusher = new Pusher(JSON.parse(process.env.PUSHER || "{}"));
+            const pusher = pusherInit();
             const thesisCount = await calculateThesisCount();
 
             pusher.trigger("thesis-update", "remove-thesis", {
@@ -178,7 +179,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           thesisItem.title
         );
 
-        const pusher = new Pusher(JSON.parse(process.env.PUSHER || "{}"));
+        const pusher = pusherInit();
         const thesisCount = await calculateThesisCount();
 
         pusher.trigger("thesis-update", "add-thesis", {

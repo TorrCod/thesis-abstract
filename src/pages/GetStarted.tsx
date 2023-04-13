@@ -18,10 +18,10 @@ const styles: { [key: string]: CSSProperties } = {
     alignContent: "center",
   },
   block: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
     backgroundColor: "white",
     height: "400px",
     width: "600px",
@@ -30,13 +30,12 @@ const styles: { [key: string]: CSSProperties } = {
     padding: "20px",
   },
   image: {
-    height: '250px',
+    height: "250px",
   },
   //First to Last steps
   first: {
     gridColumn: "1 / span 2",
     gridRow: "2",
-    
   },
   second: {
     gridColumn: "2 / span 2",
@@ -56,7 +55,7 @@ const styles: { [key: string]: CSSProperties } = {
   },
   h1: {
     borderBottom: "1px solid black",
-  }
+  },
 };
 
 function GetStarted() {
@@ -72,7 +71,7 @@ function GetStarted() {
             Once you have accessed the website, you will see a search bar. Enter
             the keywords or phrases that you want to search for in this bar.
           </p>
-          <img src="/1-Step.jpg" alt="Step 1" style={styles.image}/>
+          <img src="/1-Step.jpg" alt="Step 1" style={styles.image} />
         </div>
         <div style={{ ...styles.block, ...styles.second }}>
           <h1 style={styles.h1}>Step 2: Refine your Search</h1>
@@ -81,7 +80,7 @@ function GetStarted() {
             search by using the filters provided on the website. These filters
             may include the course and the year of publication.
           </p>
-          <img src="/2-Step.jpg" alt="Step 2" style={styles.image}/>
+          <img src="/2-Step.jpg" alt="Step 2" style={styles.image} />
         </div>
         <div style={{ ...styles.block, ...styles.third }}>
           <h1 style={styles.h1}>Step 3: View Your Results</h1>
@@ -91,7 +90,7 @@ function GetStarted() {
             results. You will see a list of theses that match your search
             criteria.
           </p>
-          <img src="/3-Step.jpg" alt="Step 3" style={styles.image}/>
+          <img src="/3-Step.jpg" alt="Step 3" style={styles.image} />
         </div>
         <div style={{ ...styles.block, ...styles.fourth }}>
           <h1 style={styles.h1}>Step 4: View Thesis Details</h1>
@@ -110,13 +109,11 @@ function GetStarted() {
             available for download. If it is, simply click on the download
             button to get a copy of the thesis.
           </p>
-          <img src="/5-Step.jpg" alt="Step 5" style={styles.image}/>
+          <img src="/5-Step.jpg" alt="Step 5" style={styles.image} />
         </div>
       </div>
-      
     </>
   );
-
 }
 
 export default GetStarted;

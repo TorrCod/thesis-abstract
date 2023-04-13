@@ -108,6 +108,7 @@ const Page = (props: { _id: string }) => {
     accept: ".pdf,.jpg,.jpeg,.png",
     showUploadList: false,
     action: "/api/ping",
+    multiple: true,
     onChange(info) {
       const { status, originFileObj } = info.file;
       setLoadingText(status !== "done");
@@ -211,12 +212,12 @@ const Page = (props: { _id: string }) => {
             </div>
             <AiFillFileImage className="m-auto" size={"3em"} />
             <p className="text-center">
-              Upload a thesis abstract in a pdf or image format
+              Upload a thesis abstract in a image format
             </p>
           </Upload>
           <Tooltip
             placement="bottom"
-            title="Upload a file that contains abstract's body only"
+            title="The title page should be the first"
           >
             <p className="flex items-center gap-1 mx-auto mt-1 w-fit">
               Help

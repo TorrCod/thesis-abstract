@@ -1,12 +1,7 @@
 import { PriButton } from "@/components/button";
-import { LoadingGlobal } from "@/context/globalContext";
 import { Course, UserDetails } from "@/context/types.d";
 import useUserContext from "@/context/userContext";
-import { auth } from "@/lib/firebase";
-import { addUserAccount } from "@/utils/account-utils";
 import { Form, Input, message, Select } from "antd";
-import { isSignInWithEmailLink, signInWithEmailLink } from "firebase/auth";
-import { useRouter } from "next/router";
 
 const courseOpt: { value: Course; label: Course }[] = [
   { value: "Civil Engineer", label: "Civil Engineer" },
@@ -18,8 +13,6 @@ const courseOpt: { value: Course; label: Course }[] = [
 import { GetServerSideProps } from "next";
 import { getOneData } from "@/lib/mongo";
 import { ObjectId } from "mongodb";
-import { signIn } from "next-auth/react";
-import useSocketContext from "@/context/socketContext";
 import { Socket, io } from "socket.io-client";
 import { ClientToServerEvents, ServerToClientEvents } from "@/lib/types";
 

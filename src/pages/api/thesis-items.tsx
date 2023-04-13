@@ -1,4 +1,3 @@
-import { ThesisItems } from "@/context/types.d";
 import {
   addData,
   addDataWithExpiration,
@@ -6,7 +5,6 @@ import {
   getDataWithPaging,
 } from "@/lib/mongo";
 import { CollectionName } from "@/lib/types";
-import { sleep } from "@/utils/helper";
 import {
   calculateThesisCount,
   parseQuery,
@@ -17,7 +15,6 @@ import {
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import { ObjectId } from "mongodb";
 import { NextApiRequest, NextApiResponse } from "next";
-import Pusher from "pusher";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
@@ -205,7 +202,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
   } catch (e) {
     console.error(e);
-    return res.status(500).json({ error: "server error" });
+    return res.status(500).json({ error: "server error", message: e });
   }
 };
 

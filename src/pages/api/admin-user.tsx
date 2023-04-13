@@ -1,4 +1,3 @@
-import { ActivityLog, ThesisItems } from "@/context/types.d";
 import { createSessionCookies, verifyIdToken } from "@/lib/firebase-admin";
 import {
   addData,
@@ -7,7 +6,6 @@ import {
   getData,
   getDataWithPaging,
   getOneData,
-  getRawData,
   updateData,
 } from "@/lib/mongo";
 import { ActivitylogReason, CollectionName } from "@/lib/types";
@@ -230,7 +228,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
   } catch (e) {
     console.error(e);
-    return res.status(500).json({ error: "server error" });
+    return res.status(500).json({ error: "server error", message: e });
   }
 };
 

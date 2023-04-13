@@ -22,7 +22,7 @@ const styles: { [key: string]: CSSProperties } = {
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: "#F5E5E5",
+    backgroundColor: "white",
     height: "400px",
     width: "600px",
     borderRadius: "10px",
@@ -113,6 +113,7 @@ function GetStarted() {
           <img src="/5-Step.jpg" alt="Step 5" style={styles.image}/>
         </div>
       </div>
+      
     </>
   );
 

@@ -84,6 +84,7 @@ const Thesis = () => {
               onChange={handlePageChange}
               hideOnSinglePage
               pageSize={globalState.searchingAction.pageSize}
+              showSizeChanger={false}
             />
           </ConfigProvider>
           <div className="grid gap-2 w-full place-items-center lg:grid-cols-2 relative md:px-5">

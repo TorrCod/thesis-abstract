@@ -60,7 +60,6 @@ const Page = (props: { _id: string }) => {
   const userCtx = useUserContext();
   const [form] = Form.useForm<FormValues>();
   const router = useRouter();
-  const { triggerSocket } = useSocketContext();
 
   const onFinish = async (values: FormValues) => {
     try {
@@ -80,7 +79,6 @@ const Page = (props: { _id: string }) => {
         researchers: researchers,
       };
       await userCtx.saveUploadThesis(payload);
-      triggerSocket("thesis-update");
       message.success("Success");
       router.push("/dashboard/thesis/success");
     } catch (e) {

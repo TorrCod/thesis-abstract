@@ -12,6 +12,7 @@ import React, {
   useContext,
   useEffect,
   useReducer,
+  useRef,
   useState,
 } from "react";
 import { io } from "socket.io-client";
@@ -26,6 +27,7 @@ import {
   ThesisItems,
 } from "./types.d";
 import Router from "next/router";
+import axios from "axios";
 
 const totalDataInit: { course: Course; count: number }[] = [
   { course: "Civil Engineer", count: 0 },
@@ -115,6 +117,7 @@ const globalReducer = (
 
 export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(globalReducer, globalStateInit);
+  const cancelToken = useRef(axios.CancelToken.source());
 
   useEffect(() => {
     loadYearsOpt();
@@ -144,6 +147,8 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
     option?: SearchOption,
     searchingAction?: SearchAction
   ) => {
+    cancelToken.current.cancel("Cancel Request Loadthesis");
+    cancelToken.current = axios.CancelToken.source();
     const searchAction = searchingAction ?? state.searchingAction;
     const { searchTitle: title } = searchAction;
     const { option: course, default: courseDefault } =
@@ -172,12 +177,18 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
         },
       },
       searchAction.pageNo ?? 1,
-      searchAction.pageSize
-    );
-    dispatch({
-      type: "load-thesis",
-      payload: thesisItems,
+      searchAction.pageSize,
+      cancelToken.current.token
+    ).catch((e) => {
+      console.error(e);
     });
+
+    if (thesisItems) {
+      dispatch({
+        type: "load-thesis",
+        payload: thesisItems,
+      });
+    }
   };
 
   const loadRecycle = async (

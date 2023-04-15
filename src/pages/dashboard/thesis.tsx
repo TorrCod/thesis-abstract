@@ -110,17 +110,23 @@ const Page: NextPageWithLayout = () => {
         </div>
         <div className="grid md:grid-cols-2 gap-2 grid-rows-6 md:grid-rows-3">
           {globalState.totalThesisCount.thesisCount.map((child, index) => (
-            <Card
-              className="cursor-pointer hover:scale-105 hover:z-10 transition duration-200 ease-out"
+            <Link
               key={index}
-              bordered={false}
+              href={`/thesis?&course=${encodeURIComponent(
+                JSON.stringify([child.course])
+              )}`}
             >
-              <Statistic
-                title={child.course}
-                prefix={<BsBookFill size={"0.9em"} />}
-                value={child.count}
-              />
-            </Card>
+              <Card
+                className="cursor-pointer hover:scale-105 hover:z-10 transition duration-200 ease-out h-full"
+                bordered={false}
+              >
+                <Statistic
+                  title={child.course}
+                  prefix={<BsBookFill size={"0.9em"} />}
+                  value={child.count}
+                />
+              </Card>
+            </Link>
           ))}
           <Link
             href="/dashboard/thesis/upload-thesis"

@@ -5,7 +5,7 @@ import {
   ThesisItems,
   ThesisState,
 } from "@/context/types.d";
-import axios from "axios";
+import axios, { CancelToken } from "axios";
 import { userConfig } from "./account-utils";
 import { stringifyURI } from "./helper";
 
@@ -13,12 +13,14 @@ export const getAllThesis = async (
   query?: SearchQuery,
   option?: SearchOption,
   pageNo?: number,
-  pageSize?: number
+  pageSize?: number,
+  cancleToken?: CancelToken
 ) => {
   const res = await axios.get(
     `${process.env.NEXT_PUBLIC_DOMAIN}/api/public/thesis?${
       pageNo ? `&pageNo=${pageNo}` : ``
-    }${pageSize ? `&pageSize=${pageSize}` : ``}${stringifyURI(query, option)}`
+    }${pageSize ? `&pageSize=${pageSize}` : ``}${stringifyURI(query, option)}`,
+    { cancelToken: cancleToken }
   );
   const data = res.data as ThesisState;
   return data;

@@ -16,18 +16,36 @@ const Thesis = () => {
   } = useGlobalContext();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [thesisItems, setThesisItems] = useState<ThesisItems[]>([]);
 
   useEffect(() => {
     return () => {
-      updateSearchAction().clear;
+      updateSearchAction().clear();
       clearDefault();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
+    if (globalState.thesisItems.document.length) {
+      const requiredValue = ["abstract", "researchers"];
+      const value = Object.keys(
+        globalState.thesisItems.document[0]
+      ) as string[];
+      const containsRequired = requiredValue.every((val) =>
+        value.includes(val)
+      );
+      if (containsRequired) {
+        setThesisItems(globalState.thesisItems.document);
+      }
+    }
+  }, [globalState.thesisItems.document]);
+
+  useEffect(() => {
     setLoading(true);
     const { title, course, year } = router.query as SearchQuery;
+    console.log({ title, course, year });
+
     const decodedCourse = course
       ? JSON.parse(decodeURIComponent(course as unknown as string))
       : undefined;
@@ -98,7 +116,7 @@ const Thesis = () => {
                 <ItemsLoading />
               </>
             ) : (
-              globalState.thesisItems.document.map((thesisItem) => {
+              thesisItems.map((thesisItem) => {
                 return <Items key={thesisItem._id} {...thesisItem} />;
               })
             )}

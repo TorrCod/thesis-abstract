@@ -103,8 +103,15 @@ const Page = (props: { _id: string }) => {
     name: "file",
     accept: ".pdf,.jpg,.jpeg,.png",
     showUploadList: false,
-    action: "/api/ping",
     multiple: true,
+    action: "/api/ping",
+    beforeUpload: async (file) => {
+      if (file.size >= 500000) {
+        message.error("An Image must be less than 500kb");
+        return false;
+      }
+      return true;
+    },
     onChange(info) {
       const { status, originFileObj } = info.file;
       setLoadingText(status !== "done");
@@ -112,6 +119,8 @@ const Page = (props: { _id: string }) => {
         getBase64(originFileObj).then((url) => {
           setAbstract((oldValue) => [...oldValue, url]);
         });
+      } else if (info.file.size ? info.file.size >= 500 : false) {
+        setLoadingText(false);
       }
     },
   };

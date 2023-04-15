@@ -153,7 +153,7 @@ h3 {
 }
 
 .sk_bg {
-  animation-duration: 1s;
+  animation-duration: 2s;
   animation-fill-mode: forwards;
   animation-iteration-count: infinite;
   animation-name: sk_bg_animation;
@@ -166,10 +166,10 @@ h3 {
 
 @keyframes sk_bg_animation {
   0% {
-    background-position: -468px 0;
+    background-position: -4000px 0;
   }
   100% {
-    background-position: 468px 0;
+    background-position: 4000px 0;
   }
 }
 

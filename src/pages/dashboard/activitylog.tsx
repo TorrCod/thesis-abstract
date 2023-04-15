@@ -94,11 +94,11 @@ const Page: NextPageWithLayout = () => {
       <div className="opacity-80 mb-3">Dashboard {">"} Activity Log</div>
       <div className="bg-white rounded-md p-5 grid gap-2 overflow-hidden relative">
         <p className="opacity-60 mb-5">History</p>
-        {loading && (
+        {/* {loading && (
           <div className="w-full h-full grid justify-center absolute top-0 left-0 bg-black/30 z-10">
             <LoadingIcon />
           </div>
-        )}
+        )} */}
         <div className="md:-translate-x-40 lg:-translate-x-60">
           <ActivityTimeline />
         </div>
@@ -116,10 +116,25 @@ Page.getLayout = function getLayout(page: ReactElement) {
 
 export default Page;
 
-export const ActivityTimeline = (props: { maxSize?: number }) => {
+export const ActivityTimeline = (props: {
+  maxSize?: number;
+  loadData?: boolean;
+}) => {
   const [log, setLog] = useState<TimelineItemProps[]>([]);
-  const userCtx = useUserContext();
-  const { activityLog } = userCtx.state;
+  const { state: userState, loadActivityLog } = useUserContext();
+  const { activityLog } = userState;
+  const [loading, setLoading] = useState(props.loadData);
+
+  useEffect(() => {
+    if (userState.userDetails && props.loadData) {
+      loadActivityLog()
+        .catch((e) => {
+          console.error(e);
+        })
+        .finally(() => setLoading(false));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userState.userDetails, props.loadData]);
 
   useEffect(() => {
     const newLog = activityLog.document.slice(0, props.maxSize).map((item) => {
@@ -135,7 +150,11 @@ export const ActivityTimeline = (props: { maxSize?: number }) => {
     setLog(newLogFiltered as any);
   }, [activityLog, props.maxSize]);
 
-  return <Timeline mode="left" items={log} />;
+  return loading ? (
+    <LoadingIcon className="m-auto" />
+  ) : (
+    <Timeline mode="left" items={log} />
+  );
 };
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {

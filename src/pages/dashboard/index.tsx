@@ -78,7 +78,10 @@ const DashboardOverview: NextPageWithLayout = () => {
               All Activitylog <GoLinkExternal />
             </div>
           </Link>
-          <ActivityTimeline maxSize={globalState.searchingAction.pageSize} />
+          <ActivityTimeline
+            loadData
+            maxSize={globalState.searchingAction.pageSize}
+          />
         </div>
       </div>
     </>

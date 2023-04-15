@@ -5,6 +5,7 @@ import {
   getDataWithPaging,
 } from "@/lib/mongo";
 import { CollectionName } from "@/lib/types";
+import { sleep } from "@/utils/helper";
 import {
   calculateThesisCount,
   parseQuery,
@@ -17,6 +18,7 @@ import { ObjectId } from "mongodb";
 import { NextApiRequest, NextApiResponse } from "next";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+  await sleep(2000);
   try {
     const isValidated = await validateAuth(req, res);
     if (isValidated.error) {

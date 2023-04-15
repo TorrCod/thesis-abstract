@@ -1,16 +1,12 @@
-import { ThesisCount, ThesisState } from "@/context/types.d";
-import {
-  getDistinctData,
-  getOneData,
-  dataAgregate,
-  getDataWithPaging,
-} from "@/lib/mongo";
+import { ThesisState } from "@/context/types.d";
+import { getDistinctData, getOneData, getDataWithPaging } from "@/lib/mongo";
 import { calculateThesisCount, parseQuery, sleep } from "@/utils/server-utils";
 import { ObjectId } from "mongodb";
 import { NextApiRequest, NextApiResponse } from "next";
 import NextCors from "nextjs-cors";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+  await sleep(2000);
   await NextCors(req, res, {
     // Options
     methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],

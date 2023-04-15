@@ -1,5 +1,4 @@
 import { GlobalWrapper } from "@/context/globalContext";
-import { SocketWrapper } from "@/context/socketContext";
 import { UserWrapper } from "@/context/userContext";
 import AntD_Config from "@/styles/antd_config";
 import Background from "./background";
@@ -10,13 +9,11 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     <GlobalWrapper>
       <UserWrapper>
         <AntD_Config>
-          {/* <SocketWrapper> */}
           <NavBar />
-          <main>
+          <main className="overflow-hidden md:overflow-auto">
             <Background />
             {children}
           </main>
-          {/* </SocketWrapper> */}
         </AntD_Config>
       </UserWrapper>
     </GlobalWrapper>

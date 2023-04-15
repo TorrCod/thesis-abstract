@@ -10,7 +10,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       <UserWrapper>
         <AntD_Config>
           <NavBar />
-          <main className="overflow-hidden md:overflow-auto">
+          <main className="overflow-hidden">
             <Background />
             {children}
           </main>

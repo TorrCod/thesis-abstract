@@ -1,5 +1,6 @@
 import { PriButton } from "@/components/button";
-import { Avatar, Card, Divider, Form, Input } from "antd";
+import { Avatar, Card, Divider, Form, FormProps, Input, message } from "antd";
+import { useForm } from "antd/lib/form/Form";
 import Head from "next/head";
 import Image from "next/image";
 import { AiOutlineMail, AiOutlinePhone } from "react-icons/ai";
@@ -126,23 +127,7 @@ const AboutUs = () => {
           <div className="grid place-content-center w-full">
             <div className="bg-slate-100 mx-5 w-full shadow-md rounded-xl p-5 max-w-sm lg:absolute md:w-full md:max-w-sm md:z-10">
               <h3 className="py-5 opacity-80">Direct Message</h3>
-              <Form>
-                <Form.Item>
-                  <Input placeholder="name" />
-                </Form.Item>
-                <Form.Item>
-                  <Input placeholder="email" />
-                </Form.Item>
-                <Form.Item>
-                  <Input.TextArea
-                    autoSize={{ minRows: 8 }}
-                    placeholder="message... "
-                  />
-                </Form.Item>
-                <Form.Item>
-                  <PriButton>SEND</PriButton>
-                </Form.Item>
-              </Form>
+              <MessageForm />
             </div>
           </div>
         </div>
@@ -192,6 +177,41 @@ const AboutUs = () => {
         </div>
       </div>
     </>
+  );
+};
+
+const MessageForm = () => {
+  const [form] = useForm<{ name: string; email: string }>();
+
+  const handleSubmit: FormProps["onFinish"] = async (values) => {
+    form.resetFields();
+    message.success("Message sent");
+  };
+
+  return (
+    <Form form={form} onFinish={handleSubmit}>
+      <Form.Item
+        name={"name"}
+        rules={[{ required: true, message: "Please enter your name" }]}
+      >
+        <Input placeholder="name" />
+      </Form.Item>
+      <Form.Item
+        name={"email"}
+        rules={[{ required: true, message: "Please enter your email" }]}
+      >
+        <Input placeholder="email" />
+      </Form.Item>
+      <Form.Item
+        name={"message"}
+        rules={[{ required: true, message: "Please enter your message" }]}
+      >
+        <Input.TextArea autoSize={{ minRows: 8 }} placeholder="message... " />
+      </Form.Item>
+      <Form.Item>
+        <PriButton htmlType="submit">SEND</PriButton>
+      </Form.Item>
+    </Form>
   );
 };
 

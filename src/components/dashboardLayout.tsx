@@ -259,23 +259,21 @@ function DashboardLayout({ children }: DashboardProps) {
   }, [userState.listOfAdmins, userState.activityLog, adminUpdate]);
 
   useEffect(() => {
-    (
-      document.getElementsByClassName("navbar")[0] as HTMLDivElement
-    ).style.display = "none";
-    (
-      document.getElementsByClassName("bg-circle")[0] as HTMLDivElement
-    ).style.display = "none";
-    return () => {
-      (
-        document.getElementsByClassName("navbar")[0] as HTMLDivElement
-      ).style.display = "flex";
-      (
-        document.getElementsByClassName("bg-circle")[0] as HTMLDivElement
-      ).style.display = "grid";
-
-      clearDefault();
-    };
-
+    // (
+    //   document.getElementsByClassName("navbar")[0] as HTMLDivElement
+    // ).style.display = "none";
+    // (
+    //   document.getElementsByClassName("bg-circle")[0] as HTMLDivElement
+    // ).style.display = "none";
+    // return () => {
+    //   (
+    //     document.getElementsByClassName("navbar")[0] as HTMLDivElement
+    //   ).style.display = "flex";
+    //   (
+    //     document.getElementsByClassName("bg-circle")[0] as HTMLDivElement
+    //   ).style.display = "grid";
+    //   clearDefault();
+    // };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

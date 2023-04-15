@@ -5,7 +5,6 @@ import {
   getDataWithPaging,
 } from "@/lib/mongo";
 import { CollectionName } from "@/lib/types";
-import { sleep } from "@/utils/helper";
 import {
   calculateThesisCount,
   parseQuery,

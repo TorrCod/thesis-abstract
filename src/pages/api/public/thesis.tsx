@@ -1,6 +1,6 @@
 import { ThesisState } from "@/context/types.d";
 import { getDistinctData, getOneData, getDataWithPaging } from "@/lib/mongo";
-import { calculateThesisCount, parseQuery, sleep } from "@/utils/server-utils";
+import { calculateThesisCount, parseQuery } from "@/utils/server-utils";
 import { ObjectId } from "mongodb";
 import { NextApiRequest, NextApiResponse } from "next";
 import NextCors from "nextjs-cors";

@@ -138,10 +138,16 @@ function DashboardLayout({ children }: DashboardProps) {
       setAdminUpdate(arg);
     });
 
+    const navRef = document.getElementsByClassName(
+      "navbar"
+    )[0] as HTMLDivElement;
+    if (navRef) navRef.style.visibility = "hidden";
+
     return () => {
       pusher.unsubscribe("thesis-update");
       adminChannel.unsubscribe();
       clearDefault();
+      if (navRef) navRef.style.visibility = "visible";
     };
   }, []);
 

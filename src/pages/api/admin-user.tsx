@@ -151,7 +151,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             if (!insertResult.acknowledged)
               return res.status(204).json({ error: "Insert Data failed" });
 
-            const activityLog = updateActivityLog(
+            const activityLog = await updateActivityLog(
               isValidated.decodedToken as DecodedIdToken,
               "accepted the invite",
               insertResult.insertedId,

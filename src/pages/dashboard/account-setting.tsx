@@ -8,6 +8,7 @@ import { getBase64, isObjectIncluded } from "@/utils/helper";
 import {
   Divider,
   Form,
+  FormProps,
   Input,
   message,
   Modal,
@@ -199,23 +200,27 @@ const InformationForm = () => {
   const userDetails = userCtx.state.userDetails;
   const loadAllUsers = userCtx.loadAllUsers;
   const allUsers = userCtx.state.listOfAdmins;
-  const [form] = useForm();
+  const [form] = useForm<UserDetails>();
   const [infoSave, setInfoSave] = useState(true);
   const [newData, setNewData] = useState<UserDetails>();
   const [loading, setLoading] = useState({ status: false, name: "" });
 
   useEffect(() => {
-    if (userDetails && newData) {
-      const isInclude = isObjectIncluded(newData, userDetails);
-      setInfoSave(isInclude);
+    if (userDetails) {
       form.setFieldsValue({ ...userDetails });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [newData, userDetails]);
+  }, [userDetails]);
 
-  const handleInfoChange = () => {
-    const infoFieldsData = form.getFieldsValue();
-    setNewData(infoFieldsData);
+  useEffect(() => {
+    if (newData) {
+      const isInclude = isObjectIncluded(newData, userDetails);
+      setInfoSave(isInclude);
+    }
+  }, [newData]);
+
+  const handleInfoChange: FormProps["onValuesChange"] = (_, values) => {
+    setNewData(values);
   };
 
   const onInfoSave = async () => {
@@ -234,7 +239,7 @@ const InformationForm = () => {
   return (
     <Form
       onValuesChange={handleInfoChange}
-      initialValues={{ ...userDetails }}
+      // initialValues={{ ...userDetails }}
       form={form}
       layout="vertical"
     >

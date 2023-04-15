@@ -128,7 +128,7 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
           axios.get("/api/logout");
         } else {
           console.error(e);
-          await auth.signOut();
+          logOut();
         }
       }
     });
@@ -217,8 +217,11 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
       undefined,
       pageNo ?? 1,
       globalState.searchingAction.pageSize
-    );
-    dispatch({ type: "load-activity-log", payload: activityLog });
+    ).catch((e) => {
+      console.error(e);
+    });
+    if (activityLog)
+      dispatch({ type: "load-activity-log", payload: activityLog });
     return clearActivitylog;
   };
 

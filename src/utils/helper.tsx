@@ -3,6 +3,7 @@ import {
   SearchOption,
   SearchQuery,
   ThesisItems,
+  UserDetails,
 } from "@/context/types.d";
 import { ActivitylogReason, GeneratedTextRes, QueryPost } from "@/lib/types";
 import { RcFile } from "antd/es/upload";

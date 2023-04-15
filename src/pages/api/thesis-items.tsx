@@ -18,7 +18,6 @@ import { ObjectId } from "mongodb";
 import { NextApiRequest, NextApiResponse } from "next";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  await sleep(2000);
   try {
     const isValidated = await validateAuth(req, res);
     if (isValidated.error) {

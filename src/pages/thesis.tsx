@@ -189,25 +189,7 @@ const ItemsLoading = () => {
         <h2 className="w-full h-3 sk_bg"></h2>
         <h2 className="w-full h-3 sk_bg"></h2>
       </div>
-      <div className="div1 p-3 bg-white shadow-md rounded-sm h-52 relative w-full ">
-        <div className="overflow-hidden w-full grid gap-1 h-fit">
-          <div className="w-1/4 h-2 sk_bg m-auto"></div>
-          <div className="w-10/12 h-2 sk_bg place-self-end"></div>
-          <div className="w-full h-2 sk_bg"></div>
-          <div className="w-full h-2 sk_bg"></div>
-          <div className="w-full h-2 sk_bg"></div>
-          <div className="w-full h-2 sk_bg"></div>
-          <div className="w-full h-2 sk_bg"></div>
-          <div className="w-full h-2 sk_bg"></div>
-          <div className="w-full h-2 sk_bg"></div>
-          <div className="w-full h-2 sk_bg"></div>
-          <div className="w-full h-2 sk_bg"></div>
-          <div className="w-full h-2 sk_bg"></div>
-          <div className="w-full h-2 sk_bg"></div>
-          <div className="w-full h-2 sk_bg"></div>
-          <div className="w-full h-2 sk_bg"></div>
-        </div>
-      </div>
+      <div className="div1 p-3 bg-white shadow-md rounded-sm h-52 relative w-3/5 m-auto sk_bg"></div>
     </div>
   );
 };

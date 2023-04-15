@@ -306,14 +306,6 @@ function DashboardLayout({ children }: DashboardProps) {
     },
   ];
 
-  useEffect(() => {
-    if (userState.userDetails) {
-      loadActivityLog();
-      loadThesisCount();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userState.userDetails]);
-
   return (
     <>
       <Head>

@@ -91,17 +91,21 @@ const UserProfile = ({ payloadUser }: { payloadUser: UserDetails }) => {
   const [history, setHistory] = useState<TimelineProps["items"]>([]);
   const { state, loadActivityLog } = useUserContext();
   const { updateSearchAction, state: globalState } = useGlobalContext();
+  const [loading, setLoading] = useState(true);
 
   useEffectOnce(() => updateSearchAction().clear);
 
   useEffect(() => {
+    setLoading(true);
     if (state.userDetails) {
       loadActivityLog(
         { userId: payloadUser.uid },
         globalState.searchingAction.pageNo
-      ).catch((error) => {
-        console.error(error);
-      });
+      )
+        .catch((error) => {
+          console.error(error);
+        })
+        .finally(() => setLoading(false));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.userDetails, payloadUser, globalState.searchingAction.pageNo]);
@@ -188,18 +192,24 @@ const UserProfile = ({ payloadUser }: { payloadUser: UserDetails }) => {
           </>
         )}
       </div>
-      <div className="bg-white rounded-md p-3 row-span-2">
-        <div className="opacity-80">History</div>
-        <div className="w-full mt-10">
-          <Timeline mode="left" items={history} />
-          <Pagination
-            current={globalState.searchingAction.pageNo ?? 1}
-            total={state.activityLog.totalCount}
-            showSizeChanger={false}
-            onChange={handlePageChange}
-            pageSize={globalState.searchingAction.pageSize}
-          />
-        </div>
+      <div
+        className={`bg-white rounded-md p-3 row-span-2 ${loading && `sk_bg`}`}
+      >
+        {!loading && (
+          <>
+            <div className="opacity-80">History</div>
+            <div className="w-full mt-10">
+              <Timeline mode="left" items={history} />
+              <Pagination
+                current={globalState.searchingAction.pageNo ?? 1}
+                total={state.activityLog.totalCount}
+                showSizeChanger={false}
+                onChange={handlePageChange}
+                pageSize={globalState.searchingAction.pageSize}
+              />
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

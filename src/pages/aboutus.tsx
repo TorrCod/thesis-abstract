@@ -3,6 +3,7 @@ import { Avatar, Card, Divider, Form, Input } from "antd";
 import Head from "next/head";
 import Image from "next/image";
 import { AiOutlineMail, AiOutlinePhone } from "react-icons/ai";
+import { ImUser } from "react-icons/im";
 import { IoLocationOutline } from "react-icons/io5";
 
 const AboutUs = () => {
@@ -110,11 +111,11 @@ const AboutUs = () => {
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-3 mt-5">
                 <AiOutlinePhone color="#38649C" size={"1.5em"} />
-                torreschristian@gmail.com
+                tech@tams-app.site
               </div>
               <div className="flex items-center gap-3 mt-2">
                 <AiOutlineMail color="#38649C" size={"1.5em"} />
-                09683680391
+                09683680492
               </div>
               <div className="flex items-center gap-3 mt-2">
                 <IoLocationOutline color="#38649C" size={"1.5em"} />
@@ -150,21 +151,37 @@ const AboutUs = () => {
         <div className="text-white p-2 bg-[#38649C]">
           <h1 className="text-center py-10">RESEARCHER</h1>
           <div className="grid grid-cols-2 gap-5 md:grid-cols-4 max-w-3xl m-auto">
-            <div className="flex flex-col gap-2 place-items-center">
-              <Avatar className="h-28 w-28" size={"large"} />
-              <div>Christian Bert Torres</div>
+            <div className="flex flex-col gap-2 place-items-center text-center">
+              <Avatar
+                src="/tor-profile.png"
+                className="h-28 w-28"
+                size={"large"}
+              />
+              <div>Christian Bert C. Torres</div>
             </div>
-            <div className="flex flex-col gap-2 place-items-center">
-              <Avatar className="h-28 w-28" size={"large"} />
-              <div>Christian Bert Torres</div>
+            <div className="flex flex-col gap-2 place-items-center text-center">
+              <Avatar
+                src="/pat-profile.png"
+                className="h-28 w-28"
+                size={"large"}
+              />
+              <div>John Patrick B. Alcantara</div>
             </div>
-            <div className="flex flex-col gap-2 place-items-center">
-              <Avatar className="h-28 w-28" size={"large"} />
-              <div>Christian Bert Torres</div>
+            <div className="flex flex-col gap-2 place-items-center text-center">
+              <Avatar
+                icon={<ImUser size={"6em"} />}
+                className="h-28 w-28 grid place-content-center"
+                size={"large"}
+              />
+              <div>Randyll Aradanas</div>
             </div>
-            <div className="flex flex-col gap-2 place-items-center">
-              <Avatar className="h-28 w-28" size={"large"} />
-              <div>Christian Bert Torres</div>
+            <div className="flex flex-col gap-2 place-items-center text-center">
+              <Avatar
+                src="/profile3.jpg"
+                className="h-28 w-28"
+                size={"large"}
+              />
+              <div>Ildefonso Matthew Perry P. Pateña</div>
             </div>
           </div>
           <p className="text-center py-10 opacity-80 max-w-lg m-auto">

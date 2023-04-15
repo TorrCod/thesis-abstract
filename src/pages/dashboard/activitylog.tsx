@@ -27,7 +27,6 @@ const Page: NextPageWithLayout = () => {
   const isOnScreen = useOnScreen<HTMLDivElement | null>(bottomRef, "200px");
   const [isFetching, setIsFetching] = useState(false);
   const [isAllData, setIsAllData] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [newActivityLog, setNewActivityLog] = useState<ActivityLog[]>([]);
 
   useEffect(() => {
@@ -78,8 +77,7 @@ const Page: NextPageWithLayout = () => {
 
   useEffect(() => {
     if (userState.userDetails) {
-      setLoading(true);
-      loadActivityLog().finally(() => setLoading(false));
+      loadActivityLog();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userState.userDetails]);
@@ -94,11 +92,6 @@ const Page: NextPageWithLayout = () => {
       <div className="opacity-80 mb-3">Dashboard {">"} Activity Log</div>
       <div className="bg-white rounded-md p-5 grid gap-2 overflow-hidden relative">
         <p className="opacity-60 mb-5">History</p>
-        {/* {loading && (
-          <div className="w-full h-full grid justify-center absolute top-0 left-0 bg-black/30 z-10">
-            <LoadingIcon />
-          </div>
-        )} */}
         <div className="md:-translate-x-40 lg:-translate-x-60">
           <ActivityTimeline />
         </div>

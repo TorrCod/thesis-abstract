@@ -103,7 +103,7 @@ const Thesis = () => {
               showSizeChanger={false}
             />
           </ConfigProvider>
-          <div className="grid gap-2 w-full place-items-center lg:grid-cols-2 relative md:px-5">
+          <div className="grid gap-2 w-full place-items-center md:grid-cols-2 lg:grid-cols-3 relative md:px-5">
             {loading ? (
               <>
                 <ItemsLoading />

@@ -423,6 +423,7 @@ const SearchItem = (
   useEffect(() => {
     clearTimeout(searchTimeoutRef.current ?? 0);
     cancelTokenRef.current.cancel();
+    props.searchDispatch({ type: "onfocus", payload: true });
     searchTimeoutRef.current = setTimeout(() => {
       cancelTokenRef.current = axios.CancelToken.source();
       setLoading(true);
@@ -470,6 +471,7 @@ const SearchItem = (
           } else setMenuItem(myMenu as any);
         })
         .catch((e) => {
+          if (e?.name === "CanceledError") return;
           console.error(e);
         })
         .finally(() => setLoading(false));

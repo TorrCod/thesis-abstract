@@ -180,16 +180,11 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
       customPageNo ?? searchAction.pageNo ?? 1,
       searchAction.pageSize,
       cancelToken.current.token
-    ).catch((e) => {
-      console.error(e);
+    );
+    dispatch({
+      type: "load-thesis",
+      payload: thesisItems,
     });
-
-    if (thesisItems) {
-      dispatch({
-        type: "load-thesis",
-        payload: thesisItems,
-      });
-    }
   };
 
   const loadRecycle = async (

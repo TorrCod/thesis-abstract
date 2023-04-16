@@ -6,6 +6,7 @@ const withPWA = require("next-pwa")({
   dest: "public",
   disable: process.env.NODE_ENV === "development",
 });
+
 const runtimeCaching = require("next-pwa/cache");
 
 const ContentSecurityPolicy = `
@@ -36,7 +37,7 @@ const securityHeaders = [
   },
 ];
 
-const nextConfig = withPWA({
+const nextConfig = {
   reactStrictMode: true,
   output: "standalone",
   webpack: (config, { isServer }) => {
@@ -63,9 +64,10 @@ const nextConfig = withPWA({
     ],
     unoptimized: true,
   },
-});
+};
 
-module.exports = nextConfig;
+module.exports =
+  process.env.NODE_ENV !== "development" ? withPWA(nextConfig) : nextConfig;
 
 // {
 //   key: "Content-Security-Policy-Report-Only",

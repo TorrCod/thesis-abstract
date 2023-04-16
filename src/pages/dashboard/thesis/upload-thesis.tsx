@@ -119,14 +119,13 @@ const Page = (props: { _id: string }) => {
         getBase64(originFileObj).then((url) => {
           setAbstract((oldValue) => [...oldValue, url]);
         });
-      } else if (info.file.size ? info.file.size >= 500 : false) {
+      } else if (info.file.size ? info.file.size >= 500000 : false) {
         setLoadingText(false);
       }
     },
   };
 
   const handleRemove = (index: number) => {
-    console.log(index);
     setAbstract((oldVal) => oldVal.filter((_, valIndex) => index !== valIndex));
   };
 
@@ -174,13 +173,15 @@ const Page = (props: { _id: string }) => {
                 style={{ marginBottom: 8 }}
                 suffix={<AiOutlineUser />}
               />
-              <PriButton
-                tabIndex={-1}
-                shape="circle"
-                onClick={() => handleResearcherRemove(index)}
-              >
-                <FaTrash className="m-auto" />
-              </PriButton>
+              {researchers.length > 1 && (
+                <PriButton
+                  tabIndex={-1}
+                  shape="circle"
+                  onClick={() => handleResearcherRemove(index)}
+                >
+                  <FaTrash className="m-auto" />
+                </PriButton>
+              )}
             </div>
           ))}
           <PriButton

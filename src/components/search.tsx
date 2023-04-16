@@ -104,7 +104,7 @@ const Search = ({ className, limit, onSearch, showFilter }: SearchProps) => {
         <Input
           onChange={handleChange}
           prefix={<BsSearch color="#38649C" />}
-          placeholder="Search"
+          placeholder="Search Title"
         />
         <Link
           aria-label="Goto Collection of Thesis"

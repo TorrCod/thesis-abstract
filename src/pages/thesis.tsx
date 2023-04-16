@@ -44,8 +44,6 @@ const Thesis = () => {
   useEffect(() => {
     setLoading(true);
     const { title, course, year } = router.query as SearchQuery;
-    console.log({ title, course, year });
-
     const decodedCourse = course
       ? JSON.parse(decodeURIComponent(course as unknown as string))
       : undefined;

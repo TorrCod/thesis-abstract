@@ -29,6 +29,7 @@ import { getAllThesis } from "@/utils/thesis-item-utils";
 import { useClickAway } from "react-use";
 import { TbSearchOff } from "react-icons/tb";
 import { useRouter } from "next/router";
+import axios from "axios";
 
 const searchReducer: (
   state: SearchState,
@@ -417,11 +418,14 @@ const SearchItem = (
   let searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [loading, setLoading] = useState(false);
   const { state } = useGlobalContext();
-  const router = useRouter();
+  const cancelTokenRef = useRef(axios.CancelToken.source());
+
   useEffect(() => {
-    setLoading(true);
     clearTimeout(searchTimeoutRef.current ?? 0);
+    cancelTokenRef.current.cancel();
     searchTimeoutRef.current = setTimeout(() => {
+      cancelTokenRef.current = axios.CancelToken.source();
+      setLoading(true);
       getAllThesis(
         {
           title: state.searchingAction.searchTitle,
@@ -431,7 +435,10 @@ const SearchItem = (
         {
           limit: props.limit ?? 10,
           projection: { _id: 1, title: 1 },
-        }
+        },
+        undefined,
+        undefined,
+        cancelTokenRef.current.token
       )
         .then((res) => {
           const myMenu: MenuProps["items"] = res.document.map((item) => {

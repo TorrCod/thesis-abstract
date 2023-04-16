@@ -110,6 +110,7 @@ const Search = ({ className, limit, onSearch, showFilter }: SearchProps) => {
           prefix={<BsSearch color="#38649C" />}
           placeholder="Search Title"
           ref={inputRef}
+          value={state.searchingAction.searchTitle}
         />
         <Link
           aria-label="Goto Collection of Thesis"

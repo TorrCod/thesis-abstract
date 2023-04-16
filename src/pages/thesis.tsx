@@ -175,7 +175,7 @@ const Thesis = () => {
               !thesisItems.length && !loading ? "" : "hidden"
             }`}
           >
-            <Image src="/404.svg" alt="404" fill priority />
+            <Image src="/not-found.svg" alt="404" fill priority />
           </div>
         </div>
       </section>

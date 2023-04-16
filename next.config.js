@@ -61,6 +61,7 @@ const nextConfig = withPWA({
         pathname: "/v0/b/thesis-abstract-account.appspot.com/**",
       },
     ],
+    unoptimized: true,
   },
 });
 

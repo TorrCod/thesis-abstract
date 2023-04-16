@@ -51,19 +51,61 @@ const Thesis = () => {
       ? JSON.parse(decodeURIComponent(year as unknown as string))
       : undefined;
     const query = { title, course: decodedCourse, year: decodedYear };
-    loadThesisItems(query, {
-      projection: { title: 1, course: 1, year: 1, researchers: 1, abstract: 1 },
-    })
+    loadThesisItems(
+      query,
+      {
+        projection: {
+          title: 1,
+          course: 1,
+          year: 1,
+          researchers: 1,
+          abstract: 1,
+        },
+      },
+      undefined,
+      1
+    )
       .catch((e) => {
         console.error(e);
       })
       .finally(() => setLoading(false));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router.query, globalState.searchingAction.pageNo]);
+  }, [router.query]);
 
   const handlePageChange = (pageNo: number) => {
+    setLoading(true);
     updateSearchAction().update({ ...globalState.searchingAction, pageNo });
+    const { title, course, year } = router.query as SearchQuery;
+    const decodedCourse = course
+      ? JSON.parse(decodeURIComponent(course as unknown as string))
+      : undefined;
+    const decodedYear = year
+      ? JSON.parse(decodeURIComponent(year as unknown as string))
+      : undefined;
+    const query = { title, course: decodedCourse, year: decodedYear };
+    loadThesisItems(
+      query,
+      {
+        projection: {
+          title: 1,
+          course: 1,
+          year: 1,
+          researchers: 1,
+          abstract: 1,
+        },
+      },
+      { ...globalState.searchingAction, pageNo }
+    )
+      .catch((e) => {
+        console.error(e);
+      })
+      .finally(() => setLoading(false));
   };
+
+  const handleSearch = () => {
+    updateSearchAction().update({ ...globalState.searchingAction, pageNo: 1 });
+  };
+
   return (
     <>
       <Head>
@@ -80,6 +122,7 @@ const Thesis = () => {
             <Search
               showFilter={true}
               className="place-self-center my-5 w-full max-w-3xl z-10 absolute top-0"
+              onSearch={handleSearch}
             />
             <Divider className="bg-white/30 mt-40" />
           </div>
@@ -164,7 +207,7 @@ const Items = ({
           </ul>
         </div>
       </div>
-      <Link className="div1" href={`/thesis/${_id}`}>
+      <Link className="div1 relative" href={`/thesis/${_id}`}>
         <div className="h-52 relative">
           <Image
             className="object-contain"

@@ -106,8 +106,8 @@ const Page = (props: { _id: string }) => {
     multiple: true,
     action: "/api/ping",
     beforeUpload: async (file) => {
-      if (file.size >= 500000) {
-        message.error("An Image must be less than 500kb");
+      if (file.size >= 4000000) {
+        message.error("An Image must be less than 4mb");
         return false;
       }
       return true;
@@ -119,7 +119,7 @@ const Page = (props: { _id: string }) => {
         getBase64(originFileObj).then((url) => {
           setAbstract((oldValue) => [...oldValue, url]);
         });
-      } else if (info.file.size ? info.file.size >= 500000 : false) {
+      } else if (info.file.size ? info.file.size >= 4000000 : false) {
         setLoadingText(false);
       }
     },
@@ -179,7 +179,7 @@ const Page = (props: { _id: string }) => {
                   shape="circle"
                   onClick={() => handleResearcherRemove(index)}
                 >
-                  <FaTrash className="m-auto" />
+                  <FaTrash className="m-auto" size={"0.8em"} />
                 </PriButton>
               )}
             </div>

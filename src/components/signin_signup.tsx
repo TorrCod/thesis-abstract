@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Modal, Form, Input, Divider, message } from "antd";
+import { Modal, Form, Input, Divider, message, InputProps } from "antd";
 import { PriButton } from "./button";
 import useUserContext from "@/context/userContext";
 import AdminProfile from "./admin";
@@ -19,6 +19,7 @@ const SignInSignUp = () => {
   const promtToSignIn = state.signIn;
   const [loading, setLoading] = useState(false);
   const session = useSession();
+  const [isCapsLockOn, setIsCapsLockOn] = useState(false);
 
   useEffect(() => {
     if (promtToSignIn) {
@@ -56,6 +57,14 @@ const SignInSignUp = () => {
     setOpen(true);
   };
 
+  const handleKeyUp: InputProps["onKeyUp"] = (event) => {
+    if (event.getModifierState("CapsLock")) {
+      setIsCapsLockOn(true);
+    } else {
+      setIsCapsLockOn(false);
+    }
+  };
+
   return session.status === "authenticated" ? (
     <AdminProfile userDetails={userCtx.state.userDetails} />
   ) : (
@@ -85,7 +94,19 @@ const SignInSignUp = () => {
             name="sign-in-password"
             rules={[{ required: true, message: "Please enter your password" }]}
           >
-            <Input.Password placeholder="Password" />
+            <Input.Password
+              prefix={
+                isCapsLockOn ? (
+                  <div className="h-full text-[10px] grid place-content-center rounded-md px-1 bg-[#F8B49C] text-white">
+                    Capslock
+                  </div>
+                ) : (
+                  <></>
+                )
+              }
+              onKeyUp={handleKeyUp}
+              placeholder="Password"
+            />
           </Form.Item>
           <Link onClick={() => setOpen(false)} href="/forgot-password">
             forgot password?

@@ -4,6 +4,7 @@ import {
   Dropdown,
   Form,
   Input,
+  InputRef,
   Menu,
   MenuProps,
   Row,
@@ -74,12 +75,14 @@ const Search = ({ className, limit, onSearch, showFilter }: SearchProps) => {
   useClickAway(searchRef, () => {
     searchDispatch({ type: "onfocus", payload: false });
   });
+  const inputRef = useRef<InputRef>(null);
 
   const handleSearch = () => {
     const title = searchState.searchTitle;
     const course: Course[] = courseOpt.option as any;
     const year = yearsOpt.option;
     onSearch?.({ title, course, year });
+    inputRef.current?.blur();
     searchDispatch({ type: "onfocus", payload: false });
   };
 
@@ -106,6 +109,7 @@ const Search = ({ className, limit, onSearch, showFilter }: SearchProps) => {
           onChange={handleChange}
           prefix={<BsSearch color="#38649C" />}
           placeholder="Search Title"
+          ref={inputRef}
         />
         <Link
           aria-label="Goto Collection of Thesis"
@@ -423,7 +427,6 @@ const SearchItem = (
   useEffect(() => {
     clearTimeout(searchTimeoutRef.current ?? 0);
     cancelTokenRef.current.cancel();
-    props.searchDispatch({ type: "onfocus", payload: true });
     searchTimeoutRef.current = setTimeout(() => {
       cancelTokenRef.current = axios.CancelToken.source();
       setLoading(true);

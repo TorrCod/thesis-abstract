@@ -15,7 +15,7 @@ const Thesis = () => {
     clearDefault,
   } = useGlobalContext();
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [thesisItems, setThesisItems] = useState<ThesisItems[]>([]);
 
   useEffect(() => {
@@ -35,14 +35,14 @@ const Thesis = () => {
       const containsRequired = requiredValue.every((val) =>
         value.includes(val)
       );
-      if (containsRequired) {
-        setThesisItems(globalState.thesisItems.document);
-      }
+      if (!containsRequired) return;
     }
+    setThesisItems(globalState.thesisItems.document);
   }, [globalState.thesisItems.document]);
 
   useEffect(() => {
     setLoading(true);
+    let canceled: boolean;
     const { title, course, year } = router.query as SearchQuery;
     const decodedCourse = course
       ? JSON.parse(decodeURIComponent(course as unknown as string))
@@ -51,19 +51,69 @@ const Thesis = () => {
       ? JSON.parse(decodeURIComponent(year as unknown as string))
       : undefined;
     const query = { title, course: decodedCourse, year: decodedYear };
-    loadThesisItems(query, {
-      projection: { title: 1, course: 1, year: 1, researchers: 1, abstract: 1 },
-    })
+
+    loadThesisItems(
+      query,
+      {
+        projection: {
+          title: 1,
+          course: 1,
+          year: 1,
+          researchers: 1,
+          abstract: 1,
+        },
+      },
+      undefined,
+      1
+    )
+      .catch((e) => {
+        if (e?.name === "CanceledError") {
+          canceled = true;
+          return;
+        }
+        console.error(e);
+      })
+      .finally(() => {
+        if (canceled) return;
+        setLoading(false);
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.query]);
+
+  const handlePageChange = (pageNo: number) => {
+    setLoading(true);
+    updateSearchAction().update({ ...globalState.searchingAction, pageNo });
+    const { title, course, year } = router.query as SearchQuery;
+    const decodedCourse = course
+      ? JSON.parse(decodeURIComponent(course as unknown as string))
+      : undefined;
+    const decodedYear = year
+      ? JSON.parse(decodeURIComponent(year as unknown as string))
+      : undefined;
+    const query = { title, course: decodedCourse, year: decodedYear };
+    loadThesisItems(
+      query,
+      {
+        projection: {
+          title: 1,
+          course: 1,
+          year: 1,
+          researchers: 1,
+          abstract: 1,
+        },
+      },
+      { ...globalState.searchingAction, pageNo }
+    )
       .catch((e) => {
         console.error(e);
       })
       .finally(() => setLoading(false));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router.query, globalState.searchingAction.pageNo]);
-
-  const handlePageChange = (pageNo: number) => {
-    updateSearchAction().update({ ...globalState.searchingAction, pageNo });
   };
+
+  const handleSearch = () => {
+    updateSearchAction().update({ ...globalState.searchingAction, pageNo: 1 });
+  };
+
   return (
     <>
       <Head>
@@ -80,6 +130,7 @@ const Thesis = () => {
             <Search
               showFilter={true}
               className="place-self-center my-5 w-full max-w-3xl z-10 absolute top-0"
+              onSearch={handleSearch}
             />
             <Divider className="bg-white/30 mt-40" />
           </div>
@@ -118,6 +169,13 @@ const Thesis = () => {
                 return <Items key={thesisItem._id} {...thesisItem} />;
               })
             )}
+          </div>
+          <div
+            className={`relative m-auto w-[40em] h-[40em] ${
+              !thesisItems.length && !loading ? "" : "hidden"
+            }`}
+          >
+            <Image src="/not-found.svg" alt="404" fill priority />
           </div>
         </div>
       </section>
@@ -164,7 +222,7 @@ const Items = ({
           </ul>
         </div>
       </div>
-      <Link className="div1" href={`/thesis/${_id}`}>
+      <Link className="div1 relative" href={`/thesis/${_id}`}>
         <div className="h-52 relative">
           <Image
             className="object-contain"

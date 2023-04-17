@@ -29,6 +29,8 @@ if (process.env.NODE_ENV === "development") {
   console.log("emulator connected");
   connectAuthEmulator(auth, "http://localhost:9099");
   process.env.FIREBASE_AUTH_EMULATOR_HOST = process.env.EMULATOR_HOST;
+  process.env.FIREBASE_STORAGE_EMULATOR_HOST =
+    process.env.STORAGE_EMULATOR_HOST;
   connectStorageEmulator(firebaseStorage, "localhost", 9199);
 }
 

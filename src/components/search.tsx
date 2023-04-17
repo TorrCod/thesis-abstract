@@ -4,6 +4,7 @@ import {
   Dropdown,
   Form,
   Input,
+  InputRef,
   Menu,
   MenuProps,
   Row,
@@ -29,6 +30,7 @@ import { getAllThesis } from "@/utils/thesis-item-utils";
 import { useClickAway } from "react-use";
 import { TbSearchOff } from "react-icons/tb";
 import { useRouter } from "next/router";
+import axios from "axios";
 
 const searchReducer: (
   state: SearchState,
@@ -73,12 +75,14 @@ const Search = ({ className, limit, onSearch, showFilter }: SearchProps) => {
   useClickAway(searchRef, () => {
     searchDispatch({ type: "onfocus", payload: false });
   });
+  const inputRef = useRef<InputRef>(null);
 
   const handleSearch = () => {
     const title = searchState.searchTitle;
     const course: Course[] = courseOpt.option as any;
     const year = yearsOpt.option;
     onSearch?.({ title, course, year });
+    inputRef.current?.blur();
     searchDispatch({ type: "onfocus", payload: false });
   };
 
@@ -105,6 +109,8 @@ const Search = ({ className, limit, onSearch, showFilter }: SearchProps) => {
           onChange={handleChange}
           prefix={<BsSearch color="#38649C" />}
           placeholder="Search Title"
+          ref={inputRef}
+          value={state.searchingAction.searchTitle}
         />
         <Link
           aria-label="Goto Collection of Thesis"
@@ -417,11 +423,14 @@ const SearchItem = (
   let searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [loading, setLoading] = useState(false);
   const { state } = useGlobalContext();
-  const router = useRouter();
+  const cancelTokenRef = useRef(axios.CancelToken.source());
+
   useEffect(() => {
-    setLoading(true);
     clearTimeout(searchTimeoutRef.current ?? 0);
+    cancelTokenRef.current.cancel();
     searchTimeoutRef.current = setTimeout(() => {
+      cancelTokenRef.current = axios.CancelToken.source();
+      setLoading(true);
       getAllThesis(
         {
           title: state.searchingAction.searchTitle,
@@ -431,7 +440,10 @@ const SearchItem = (
         {
           limit: props.limit ?? 10,
           projection: { _id: 1, title: 1 },
-        }
+        },
+        undefined,
+        undefined,
+        cancelTokenRef.current.token
       )
         .then((res) => {
           const myMenu: MenuProps["items"] = res.document.map((item) => {
@@ -463,6 +475,7 @@ const SearchItem = (
           } else setMenuItem(myMenu as any);
         })
         .catch((e) => {
+          if (e?.name === "CanceledError") return;
           console.error(e);
         })
         .finally(() => setLoading(false));

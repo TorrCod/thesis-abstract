@@ -67,8 +67,37 @@ export default function Home() {
 }
 
 // import { GetServerSideProps } from "next";
-// import { getData } from "@/lib/mongo";
+// import { getData, updateData } from "@/lib/mongo";
+// import { ObjectId } from "bson";
 // import { adminUploadFile } from "@/lib/firebase-admin";
+
+// export const getServerSideProps: GetServerSideProps = async (ctx) => {
+//   const thesisAbstract = (await getData(
+//     "thesis-abstract",
+//     "thesis-items",
+//     undefined,
+//     { projection: { abstract: 1, id: 1 } }
+//   )) as unknown as { id: string; abstract: string[]; _id: ObjectId }[];
+//   const newUrl = thesisAbstract.map((item) => {
+//     const newAbstractUrl = item.abstract.map((url) =>
+//       url.replace("http://127.0.0:9199", "http://127.0.1:9199")
+//     );
+//     return { ...item, abstract: newAbstractUrl };
+//   });
+
+//   for (const thesisItem of newUrl) {
+//     await updateData(
+//       "thesis-abstract",
+//       "thesis-items",
+//       { _id: thesisItem._id },
+//       { abstract: thesisItem.abstract }
+//     ).catch((e) => {
+//       console.error(e);
+//     });
+//   }
+
+//   return { props: {} };
+// };
 
 // export const getServerSideProps: GetServerSideProps = async (ctx) => {
 //   const thesisAbstract = (await getData(

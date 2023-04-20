@@ -7,7 +7,7 @@ import useGlobalContext from "@/context/globalContext";
 import { useRouter } from "next/router";
 import Link from "next/link";
 
-export default function Home() {
+export default function Home(props: { data: string }) {
   const { promptToSignIn } = useGlobalContext();
   const router = useRouter();
   useEffect(() => {
@@ -15,6 +15,7 @@ export default function Home() {
       promptToSignIn();
     }
     document.body.style.overflow = "hidden";
+    console.log(JSON.parse(props.data));
     return () => {
       document.body.style.overflow = "visible";
     };
@@ -65,3 +66,43 @@ export default function Home() {
     </>
   );
 }
+import { GetServerSideProps } from "next";
+import { getData } from "@/lib/mongo";
+import { adminUploadFile } from "@/lib/firebase-admin";
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const thesisAbstract = (await getData(
+    "thesis-abstract",
+    "thesis-items",
+    undefined,
+    { projection: { abstract: 1, id: 1 } }
+  )) as unknown as { id: string; abstract: string[] }[];
+
+  const response: any[] = [];
+
+  for (const thesisItem of thesisAbstract) {
+    thesisItem.abstract.forEach((_, index) => {
+      const destination = `${thesisItem.id}/${index}`;
+      const filePath = `../storage/thesis-abstract-account.appspot.com/abstract/${destination}`;
+      adminUploadFile(filePath, destination)
+        .then((res) => {
+          response.push(res);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    });
+  }
+
+  const destination = `abstract/${thesisAbstract[0].id}/0`;
+  const filePath = `../storage/thesis-abstract-account.appspot.com/${destination}`;
+  await adminUploadFile(filePath, destination).catch((error) => {
+    console.error(error);
+  });
+
+  return {
+    props: { data: JSON.stringify(response) },
+  };
+};
+
+//http://localhost:9199/v0/b/thesis-abstract-account.appspot.com/o/abstract%2F643bac4f3db9712e40639e10%2F2?alt=media&token=8715e31c-ad53-467f-916f-c38f25f71d35

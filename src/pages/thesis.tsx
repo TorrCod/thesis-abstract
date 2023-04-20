@@ -163,6 +163,9 @@ const Thesis = () => {
                 <ItemsLoading />
                 <ItemsLoading />
                 <ItemsLoading />
+                <ItemsLoading />
+                <ItemsLoading />
+                <ItemsLoading />
               </>
             ) : (
               thesisItems.map((thesisItem) => {

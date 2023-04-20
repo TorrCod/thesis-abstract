@@ -62,7 +62,6 @@ const nextConfig = {
         pathname: "/v0/b/thesis-abstract-account.appspot.com/**",
       },
     ],
-    unoptimized: true,
   },
 };
 

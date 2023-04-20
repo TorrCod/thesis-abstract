@@ -51,7 +51,6 @@ const Thesis = () => {
       ? JSON.parse(decodeURIComponent(year as unknown as string))
       : undefined;
     const query = { title, course: decodedCourse, year: decodedYear };
-    console.log(query);
     loadThesisItems(
       query,
       {
@@ -174,7 +173,7 @@ const Thesis = () => {
             )}
           </div>
           <div
-            className={`relative m-auto w-full max-w-xl h-[40em] ${
+            className={`relative m-auto w-full max-w-xl md:h-[40em] h-[30em] ${
               !thesisItems.length && !loading ? "" : "hidden"
             }`}
           >

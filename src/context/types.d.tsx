@@ -114,7 +114,8 @@ export type GlobalValue = {
   loadThesisItems: (
     query?: SearchQuery,
     option?: SearchOption,
-    searchingAction?: SearchAction
+    searchingAction?: SearchAction,
+    customPageNo?: number
   ) => Promise<void>;
   loadRecycle: (
     query?: SearchQuery,

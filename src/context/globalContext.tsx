@@ -145,7 +145,8 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
   const loadThesisItems = async (
     query?: SearchQuery,
     option?: SearchOption,
-    searchingAction?: SearchAction
+    searchingAction?: SearchAction,
+    customPageNo?: number
   ) => {
     cancelToken.current.cancel("Cancel Request Loadthesis");
     cancelToken.current = axios.CancelToken.source();
@@ -176,19 +177,14 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
           dateAdded: 1,
         },
       },
-      searchAction.pageNo ?? 1,
+      customPageNo ?? searchAction.pageNo ?? 1,
       searchAction.pageSize,
       cancelToken.current.token
-    ).catch((e) => {
-      console.error(e);
+    );
+    dispatch({
+      type: "load-thesis",
+      payload: thesisItems,
     });
-
-    if (thesisItems) {
-      dispatch({
-        type: "load-thesis",
-        payload: thesisItems,
-      });
-    }
   };
 
   const loadRecycle = async (

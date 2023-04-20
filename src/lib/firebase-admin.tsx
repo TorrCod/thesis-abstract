@@ -54,3 +54,25 @@ export const verifySessionCookie = async (sessionCookies: string) => {
   const decodedClaims = await auth.verifySessionCookie(sessionCookies);
   return decodedClaims;
 };
+
+export const adminUploadFile = async (
+  filePath: string,
+  destination: string,
+  contentType?: string
+) => {
+  const admin = firebaseAdminInit();
+  const bucket = admin.storage().bucket();
+  const response = await bucket.upload(filePath, {
+    destination,
+    preconditionOpts: { ifGenerationMatch: 0 },
+    contentType,
+  });
+  return response;
+};
+
+export const downloadFile = async () => {
+  const admin = firebaseAdminInit();
+  const bucket = admin.storage().bucket();
+  // const response = bucket.file('').baseUrl
+  return { bucket: bucket.baseUrl };
+};

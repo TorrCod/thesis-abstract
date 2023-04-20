@@ -72,7 +72,7 @@ const nextConfig = {
 };
 
 module.exports =
-  process.env.NODE_ENV == "development" ? nextConfig : withPWA(nextConfig);
+  process.env.NODE_ENV === "development" ? nextConfig : withPWA(nextConfig);
 
 // {
 //   key: "Content-Security-Policy-Report-Only",

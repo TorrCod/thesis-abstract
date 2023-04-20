@@ -7,7 +7,7 @@ import useGlobalContext from "@/context/globalContext";
 import { useRouter } from "next/router";
 import Link from "next/link";
 
-export default function Home(props: { data: string }) {
+export default function Home() {
   const { promptToSignIn } = useGlobalContext();
   const router = useRouter();
   useEffect(() => {
@@ -15,7 +15,6 @@ export default function Home(props: { data: string }) {
       promptToSignIn();
     }
     document.body.style.overflow = "hidden";
-    console.log(JSON.parse(props.data));
     return () => {
       document.body.style.overflow = "visible";
     };

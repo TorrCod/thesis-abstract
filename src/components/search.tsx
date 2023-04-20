@@ -307,6 +307,7 @@ const DropDownCourse = ({
       onOpenChange={handleOpenCourse}
       dropdownRender={dropdownContentCourse}
       getPopupContainer={() => document.getElementById("filter-component")!}
+      trigger={["click", "hover"]}
       destroyPopupOnHide
       autoAdjustOverflow
     >
@@ -400,6 +401,7 @@ const DropdownYear = ({
       onOpenChange={handleOpenDate}
       dropdownRender={dropdownContentDate}
       getPopupContainer={() => document.getElementById("filter-component")!}
+      trigger={["click", "hover"]}
       destroyPopupOnHide
     >
       <div className="cursor-pointer text-slate-900">

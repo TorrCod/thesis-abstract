@@ -20,11 +20,17 @@ const Thesis = () => {
 
   useEffect(() => {
     return () => {
-      updateSearchAction().clear();
       clearDefault();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    return () => {
+      updateSearchAction().clear();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [globalState.dateOption]);
 
   useEffect(() => {
     if (globalState.thesisItems.document.length) {
@@ -51,7 +57,6 @@ const Thesis = () => {
       ? JSON.parse(decodeURIComponent(year as unknown as string))
       : undefined;
     const query = { title, course: decodedCourse, year: decodedYear };
-
     loadThesisItems(
       query,
       {
@@ -78,7 +83,7 @@ const Thesis = () => {
         setLoading(false);
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router.query]);
+  }, [router.query.course, router.query.title, router.query.year]);
 
   const handlePageChange = (pageNo: number) => {
     setLoading(true);
@@ -154,9 +159,12 @@ const Thesis = () => {
               showSizeChanger={false}
             />
           </ConfigProvider>
-          <div className="grid gap-2 w-full place-items-center md:grid-cols-2 lg:grid-cols-3 relative md:px-5">
+          <div className="grid gap-2 w-full place-items-center lg:grid-cols-2 xl:grid-cols-3 relative md:px-5">
             {loading ? (
               <>
+                <ItemsLoading />
+                <ItemsLoading />
+                <ItemsLoading />
                 <ItemsLoading />
                 <ItemsLoading />
                 <ItemsLoading />
@@ -171,7 +179,7 @@ const Thesis = () => {
             )}
           </div>
           <div
-            className={`relative m-auto w-[40em] h-[40em] ${
+            className={`relative m-auto w-full max-w-xl md:h-[40em] h-[30em] ${
               !thesisItems.length && !loading ? "" : "hidden"
             }`}
           >
@@ -192,10 +200,10 @@ const Items = ({
   year,
 }: ThesisItems) => {
   return (
-    <div className="thesis_items w-full bg-slate-100 max-w-[50em] shadow-md rounded-md p-5 gap-2 md:gap-5 grid h-full">
+    <div className="thesis_items w-full bg-slate-100 max-w-[50em] shadow-md rounded-md p-5 gap-2 md:gap-5 grid h-full text-xs">
       <div className="div2 flex flex-col gap-2">
         <div>
-          <span className="text-sm text-[#38649C]">Title</span>
+          <span className="text-[#38649C]">Title</span>
           <Link
             className="hover:text-sky-700 hover:underline hover:decoration-1"
             href={`/thesis/${_id}`}
@@ -204,16 +212,16 @@ const Items = ({
           </Link>
         </div>
         <div>
-          <span className="text-sm text-[#38649C]">Course</span>
+          <span className="text-[#38649C]">Course</span>
           <h2>{(course as string).toLocaleUpperCase()}</h2>
         </div>
         <div>
-          <span className="text-sm text-[#38649C]">year</span>
+          <span className="text-[#38649C]">year</span>
           <h2>{year}</h2>
         </div>
       </div>
       <div className="div3">
-        <span className="text-sm text-[#38649C]">Researchers</span>
+        <span className="text-[#38649C]">Researchers</span>
         <div className="pl-5">
           <ul className="list-disc">
             {researchers.map((child, index) => {

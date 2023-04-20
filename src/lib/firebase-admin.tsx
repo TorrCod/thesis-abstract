@@ -65,7 +65,8 @@ export const adminUploadFile = async (
   const response = await bucket.upload(filePath, {
     destination,
     preconditionOpts: { ifGenerationMatch: 0 },
-    contentType,
+    contentType: contentType ?? "image/jpeg",
+    public: true,
   });
   return response;
 };

@@ -50,9 +50,9 @@ const ThesisItemsView = () => {
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
-      <section className="flex flex-col gap-1 md:pt-20 items-center mb-10 px-0">
+      <section className="flex flex-col gap-1 md:pt-20 items-center mb-10 px-1">
         <div className="relative z-10 w-full">
-          <Search className="w-screen max-w-lg absolute top-0 left-0 right-0 m-auto" />
+          <Search className="w-full max-w-xl absolute top-0 left-0 right-0 m-auto" />
         </div>
         <Divider />
         <div className="rs-container bg-slate-100 rounded-md max-w-5xl grid p-5 gap-2 md:gap-5 w-full relative">

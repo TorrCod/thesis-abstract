@@ -51,7 +51,7 @@ const Thesis = () => {
       ? JSON.parse(decodeURIComponent(year as unknown as string))
       : undefined;
     const query = { title, course: decodedCourse, year: decodedYear };
-
+    console.log(query);
     loadThesisItems(
       query,
       {
@@ -78,7 +78,7 @@ const Thesis = () => {
         setLoading(false);
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router.query]);
+  }, [router.query.course, router.query.title, router.query.year]);
 
   const handlePageChange = (pageNo: number) => {
     setLoading(true);
@@ -174,7 +174,7 @@ const Thesis = () => {
             )}
           </div>
           <div
-            className={`relative m-auto w-[40em] h-[40em] ${
+            className={`relative m-auto w-full max-w-xl h-[40em] ${
               !thesisItems.length && !loading ? "" : "hidden"
             }`}
           >

@@ -57,17 +57,22 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: isDevlopmemt ? "http" : "https",
+        hostname: isDevlopmemt ? "127.0.0.1" : "firebasestorage.googleapis.com",
+        port: isDevlopmemt ? "9199" : "",
+        pathname: "/v0/b/thesis-abstract-account.appspot.com/**",
+      },
+      {
+        protocol: isDevlopmemt ? "http" : "https",
         hostname: isDevlopmemt ? "localhost" : "firebasestorage.googleapis.com",
         port: isDevlopmemt ? "9199" : "",
         pathname: "/v0/b/thesis-abstract-account.appspot.com/**",
       },
     ],
-    unoptimized: true,
   },
 };
 
 module.exports =
-  process.env.NODE_ENV !== "development" ? withPWA(nextConfig) : nextConfig;
+  process.env.NODE_ENV === "development" ? nextConfig : withPWA(nextConfig);
 
 // {
 //   key: "Content-Security-Policy-Report-Only",

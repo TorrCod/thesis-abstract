@@ -130,7 +130,7 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
     };
     const clear = () => {
       const newFilterState = { ...state.searchingAction.filterState };
-      newFilterState.years.option = newFilterState.years.default;
+      newFilterState.years.option = state.dateOption;
       dispatch({
         type: "on-search-action",
         payload: {
@@ -158,7 +158,7 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
       searchAction.filterState.years;
     const thesisItems = await getAllThesis(
       {
-        title: title,
+        title: query?.title ?? title,
         course:
           query?.course ??
           (year?.length && course?.length !== courseDefault.length

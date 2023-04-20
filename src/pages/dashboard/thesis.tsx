@@ -266,7 +266,12 @@ export const ThesisTable = () => {
 
   useEffect(() => {
     loadingState.add("thesis-table");
-    loadThesisItems().finally(() => loadingState.remove("thesis-table"));
+    loadThesisItems()
+      .catch((error) => {
+        if (error?.code === "ERR_CANCELED") return;
+        console.error(error);
+      })
+      .finally(() => loadingState.remove("thesis-table"));
     return () => {
       updateSearchAction().clear();
       clearDefault();

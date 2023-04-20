@@ -16,6 +16,7 @@
 /build
 /public/sw.js
 **/fallback*
+/test-data
 
 
 # misc

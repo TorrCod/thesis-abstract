@@ -217,7 +217,7 @@ const InformationForm = () => {
       const isInclude = isObjectIncluded(newData, userDetails);
       setInfoSave(isInclude);
     }
-  }, [newData]);
+  }, [newData, userDetails]);
 
   const handleInfoChange: FormProps["onValuesChange"] = (_, values) => {
     setNewData(values);

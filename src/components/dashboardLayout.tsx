@@ -149,6 +149,7 @@ function DashboardLayout({ children }: DashboardProps) {
       clearDefault();
       if (navRef) navRef.style.visibility = "visible";
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

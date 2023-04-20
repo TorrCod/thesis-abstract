@@ -184,7 +184,7 @@ export const stringifyURI = (
   query: SearchQuery | undefined,
   option: SearchOption | undefined
 ) => {
-  const { title, year, course } = query || {};
+  let { title, year, course } = query || {};
   return `${title ? `&title=${title}` : ""}${
     course ? `&course=${encodeURIComponent(JSON.stringify(course))}` : ""
   }${year ? `&year=${encodeURIComponent(JSON.stringify(year))}` : ""}${

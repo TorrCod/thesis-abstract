@@ -154,11 +154,12 @@ const AboutUs = () => {
             </div>
             <div className="flex flex-col gap-2 place-items-center text-center">
               <Avatar
-                icon={<ImUser size={"6em"} />}
+                // icon={<ImUser size={"6em"} />}
+                src="/randyll-profile.jpg"
                 className="h-28 w-28 grid place-content-center"
                 size={"large"}
               />
-              <div>Randyll Aradanas</div>
+              <div>Randyl Son Aradanas</div>
             </div>
             <div className="flex flex-col gap-2 place-items-center text-center">
               <Avatar

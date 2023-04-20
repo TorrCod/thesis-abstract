@@ -130,7 +130,7 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
     };
     const clear = () => {
       const newFilterState = { ...state.searchingAction.filterState };
-      newFilterState.years.option = newFilterState.years.default;
+      newFilterState.years.option = state.dateOption;
       dispatch({
         type: "on-search-action",
         payload: {

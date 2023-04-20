@@ -20,11 +20,17 @@ const Thesis = () => {
 
   useEffect(() => {
     return () => {
-      updateSearchAction().clear();
       clearDefault();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    return () => {
+      updateSearchAction().clear();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [globalState.dateOption]);
 
   useEffect(() => {
     if (globalState.thesisItems.document.length) {

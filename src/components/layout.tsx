@@ -13,7 +13,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         <AntD_Config>
           <NavBar />
           <main className="overflow-hidden">
-            <DevTools />
             <Background />
             {children}
           </main>
@@ -23,14 +22,4 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-const DevTools = () =>
-  process.env.NODE_ENV === "development" ? (
-    <div className="debug fixed top-0 left-0 p-10 z-50">
-      <Space>
-        <PriButton>Firebase Import</PriButton>
-      </Space>
-    </div>
-  ) : (
-    <></>
-  );
 export default Layout;

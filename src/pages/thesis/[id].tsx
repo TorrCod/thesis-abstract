@@ -50,7 +50,7 @@ const ThesisItemsView = () => {
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
-      <section className="flex flex-col gap-1 md:pt-20 items-center mb-10 px-1">
+      <section className="flex flex-col gap-1 md:pt-20 items-center mb-10 px-2">
         <div className="relative z-10 w-full">
           <Search className="w-full max-w-xl absolute top-0 left-0 right-0 m-auto" />
         </div>
@@ -65,20 +65,20 @@ const ThesisItemsView = () => {
           </div>
           <div className="rs-details grid gap-2">
             <div>
-              <span className="text-sm text-[#38649C]">Title</span>
+              <span className="text-xs text-[#38649C]">Title</span>
               <h2>{data.title.toLocaleUpperCase()}</h2>
             </div>
             <div>
-              <span className="text-sm text-[#38649C]">Course</span>
+              <span className="text-xs text-[#38649C]">Course</span>
               <h2>{(data.course as string).toLocaleUpperCase()}</h2>
             </div>
             <div>
-              <span className="text-sm text-[#38649C]">Year</span>
+              <span className="text-xs text-[#38649C]">Year</span>
               <h2>{data.year}</h2>
             </div>
           </div>
           <div className="rs-researchers">
-            <span className="text-sm text-[#38649C]">Researchers</span>
+            <span className="text-xs text-[#38649C]">Researchers</span>
             <div className="pl-5">
               <ul className="list-disc">
                 {data.researchers.map((child, index) => (

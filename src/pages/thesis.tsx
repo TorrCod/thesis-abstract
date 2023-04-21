@@ -203,7 +203,7 @@ const Items = ({
     <div className="thesis_items w-full bg-slate-100 max-w-[50em] shadow-md rounded-md p-5 gap-2 md:gap-5 grid h-full text-sm">
       <div className="div2 flex flex-col gap-2">
         <div>
-          <span className="text-[#38649C]">Title</span>
+          <span className="text-[#38649C] text-xs">Title</span>
           <Link
             className="hover:text-sky-700 hover:underline hover:decoration-1"
             href={`/thesis/${_id}`}
@@ -212,17 +212,17 @@ const Items = ({
           </Link>
         </div>
         <div>
-          <span className="text-[#38649C]">Course</span>
+          <span className="text-[#38649C] text-xs">Course</span>
           <h2>{(course as string).toLocaleUpperCase()}</h2>
         </div>
         <div>
-          <span className="text-[#38649C]">Year</span>
+          <span className="text-[#38649C] text-xs">Year</span>
           <h2>{year}</h2>
         </div>
       </div>
       <div className="div3">
-        <span className="text-[#38649C]">Researchers</span>
-        <div className="pl-5 text-xs">
+        <span className="text-[#38649C] text-xs">Researchers</span>
+        <div className="pl-5 text-sm">
           <ul className="list-disc">
             {researchers.map((child, index) => {
               return <li key={index}>{child.toLocaleUpperCase()}</li>;

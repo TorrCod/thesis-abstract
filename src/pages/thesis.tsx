@@ -159,7 +159,7 @@ const Thesis = () => {
               showSizeChanger={false}
             />
           </ConfigProvider>
-          <div className="grid gap-2 w-full place-items-center lg:grid-cols-2 xl:grid-cols-3 relative md:px-5">
+          <div className="grid gap-2 w-full place-items-center lg:grid-cols-2 2xl:grid-cols-3 relative md:px-5">
             {loading ? (
               <>
                 <ItemsLoading />
@@ -200,7 +200,7 @@ const Items = ({
   year,
 }: ThesisItems) => {
   return (
-    <div className="thesis_items w-full bg-slate-100 max-w-[50em] shadow-md rounded-md p-5 gap-2 md:gap-5 grid h-full text-xs">
+    <div className="thesis_items w-full bg-slate-100 max-w-[50em] shadow-md rounded-md p-5 gap-2 md:gap-5 grid h-full text-sm">
       <div className="div2 flex flex-col gap-2">
         <div>
           <span className="text-[#38649C]">Title</span>
@@ -222,7 +222,7 @@ const Items = ({
       </div>
       <div className="div3">
         <span className="text-[#38649C]">Researchers</span>
-        <div className="pl-5">
+        <div className="pl-5 text-xs">
           <ul className="list-disc">
             {researchers.map((child, index) => {
               return <li key={index}>{child.toLocaleUpperCase()}</li>;

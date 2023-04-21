@@ -216,7 +216,7 @@ const Items = ({
           <h2>{(course as string).toLocaleUpperCase()}</h2>
         </div>
         <div>
-          <span className="text-[#38649C]">year</span>
+          <span className="text-[#38649C]">Year</span>
           <h2>{year}</h2>
         </div>
       </div>

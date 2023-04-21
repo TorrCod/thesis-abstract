@@ -34,6 +34,8 @@ const SignInSignUp = () => {
       const email = formSignIn.getFieldValue("sign-in-email");
       const password = formSignIn.getFieldValue("sign-in-password");
       await signIn(email, password);
+      formSignIn.resetFields();
+      setOpen(false);
     } catch (error) {
       const errorMessage = error as FirebaseError;
       if ((errorMessage.code = "auth/wrong-password")) {
@@ -43,8 +45,6 @@ const SignInSignUp = () => {
       }
     } finally {
       setLoading(false);
-      formSignIn.resetFields();
-      setOpen(false);
     }
   };
 
@@ -123,7 +123,9 @@ const SignInSignUp = () => {
         </Form>
         <Divider />
         <div className="text-center opacity-80">
-          This Feature is for admin only
+          To gain access, sign-in is required by either an admin or a faculty
+          member. If you do not have login credentials, please reach out to an
+          authorized user who can send you an invitation to join.
         </div>
       </Modal>
     </>

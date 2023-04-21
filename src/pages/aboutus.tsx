@@ -111,11 +111,11 @@ const AboutUs = () => {
             </p>
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-3 mt-5">
-                <AiOutlinePhone color="#38649C" size={"1.5em"} />
+                <AiOutlineMail color="#38649C" size={"1.5em"} />
                 tech@tams-app.site
               </div>
               <div className="flex items-center gap-3 mt-2">
-                <AiOutlineMail color="#38649C" size={"1.5em"} />
+                <AiOutlinePhone color="#38649C" size={"1.5em"} />
                 09683680492
               </div>
               <div className="flex items-center gap-3 mt-2">

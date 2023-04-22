@@ -36,15 +36,15 @@ export default function Home() {
             </h1>
             <div className="text-white/80 drop-shadow-lg relative z-10">
               Find related Ideas for your projects
-              <div className="absolute w-[97vw] md:w-full lg:w-[35em]">
+              <div className="absolute w-[97vw] md:w-full lg:w-[35em] md:top-8">
                 <Search className="w-full" limit={5} />
               </div>
             </div>
-            <div className="z-[1] mt-12">
+            {/* <div className="z-[1] mt-12">
               <Link href="/GetStarted">
                 <PriButton size="large">Get Started</PriButton>
               </Link>
-            </div>
+            </div> */}
           </div>
           <div className="relative md:min-w-[50em] w-full h-[25em] md:w-full md:h-3/4 md:min-h-96 -z-10">
             <Image

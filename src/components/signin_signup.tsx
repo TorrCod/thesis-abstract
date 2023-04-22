@@ -123,8 +123,7 @@ const SignInSignUp = () => {
         </Form>
         <Divider />
         <div className="text-center opacity-80">
-          To gain access, sign-in is required by either an admin or a faculty
-          member. If you do not have login credentials, please reach out to an
+          If you do not have login credentials, please reach out to an
           authorized user who can send you an invitation to join.
         </div>
       </Modal>

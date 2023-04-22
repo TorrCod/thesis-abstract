@@ -37,7 +37,7 @@ export default function Home() {
             <div className="text-white/80 drop-shadow-lg relative z-10">
               Find related Ideas for your projects
               <div className="absolute w-[97vw] md:w-full lg:w-[35em] md:top-8">
-                <Search className="w-full" limit={5} />
+                <Search className="w-full" limit={4} />
               </div>
             </div>
             {/* <div className="z-[1] mt-12">

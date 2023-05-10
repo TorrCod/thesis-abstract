@@ -69,12 +69,14 @@ const Page: NextPageWithLayout = () => {
       ) : (
         <div className="bg-white rounded-md p-5 flex flex-col gap-2 md:min-h-[85vh]">
           <p className="opacity-60 mb-5">Manage Co-Admins</p>
-          <AddAdmin />
-          <QuerySearch
-            onSearch={(e) => {
-              router.push(`/dashboard/admins${e ? `?username=${e}` : ``}`);
-            }}
-          />
+          <div className="flex gap-2">
+            <QuerySearch
+              onSearch={(e) => {
+                router.push(`/dashboard/admins${e ? `?username=${e}` : ``}`);
+              }}
+            />
+            <AddAdmin />
+          </div>
           <AdminTable />
         </div>
       )}

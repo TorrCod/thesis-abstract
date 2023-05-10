@@ -5,7 +5,7 @@ import { Avatar, Dropdown, Form, Input, Menu, MenuProps, message } from "antd";
 import { useForm } from "antd/lib/form/Form";
 import { sendSignInLinkToEmail } from "firebase/auth";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { BiLogOut } from "react-icons/bi";
 import { BsPersonFillAdd } from "react-icons/bs";
 import { GrUserSettings } from "react-icons/gr";
@@ -15,6 +15,7 @@ import SignInSignUp from "./signin_signup";
 import { AdminProps } from "./types.d";
 import { AxiosError } from "axios";
 import useGlobalContext from "@/context/globalContext";
+import { useSession } from "next-auth/react";
 
 function AdminProfile({ userDetails, size, src }: AdminProps) {
   return (
@@ -32,7 +33,8 @@ export const AdminMenu = ({
   position?: "bottomLeft" | "bottomRight" | "bottomCenter";
 }) => {
   const { logOut } = useUserContext();
-  const userMenu: MenuProps["items"] = [
+  const session = useSession();
+  const [userMenu, setUserMenu] = useState<MenuProps["items"]>([
     {
       key: "/dashboard/account-setting",
       icon: (
@@ -43,21 +45,46 @@ export const AdminMenu = ({
       label: <Link href={"/dashboard/account-setting"}>Account Setting</Link>,
     },
     {
-      key: "/dashboard",
-      icon: (
-        <Link href={"/dashboard"}>
-          <RiDashboardLine size={"1.25em"} />
-        </Link>
-      ),
-      label: <Link href={"/dashboard"}>Dashboard</Link>,
-    },
-    {
       key: "logout",
       icon: <BiLogOut />,
       label: "Logout",
       onClick: logOut,
     },
-  ];
+  ]);
+
+  useEffect(() => {
+    if ((session.data as any).customClaims.role === "admin") {
+      setUserMenu([
+        {
+          key: "/dashboard/account-setting",
+          icon: (
+            <Link href={"/dashboard/account-setting"}>
+              <GrUserSettings size={"1.25em"} />
+            </Link>
+          ),
+          label: (
+            <Link href={"/dashboard/account-setting"}>Account Setting</Link>
+          ),
+        },
+        {
+          key: "/dashboard",
+          icon: (
+            <Link href={"/dashboard"}>
+              <RiDashboardLine size={"1.25em"} />
+            </Link>
+          ),
+          label: <Link href={"/dashboard"}>Dashboard</Link>,
+        },
+        {
+          key: "logout",
+          icon: <BiLogOut />,
+          label: "Logout",
+          onClick: logOut,
+        },
+      ]);
+    }
+  }, [session]);
+
   return (
     <Dropdown
       trigger={["click"]}

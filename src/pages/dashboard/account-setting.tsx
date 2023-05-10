@@ -28,11 +28,11 @@ import { getServerSession } from "next-auth";
 import { getCsrfToken } from "next-auth/react";
 import { NextPageWithLayout } from "../_app";
 import { authOptions } from "../api/auth/[...nextauth]";
-const courseOpt: { value: Course; label: Course }[] = [
-  { value: "Civil Engineer", label: "Civil Engineer" },
-  { value: "Computer Engineer", label: "Computer Engineer" },
-  { value: "Electrical Engineer", label: "Electrical Engineer" },
-  { value: "Mechanical Engineer", label: "Mechanical Engineer" },
+const courseOpt: { value: Course; label: String }[] = [
+  { value: "Civil Engineer", label: "Civil Engineering" },
+  { value: "Computer Engineer", label: "Computer Engineering" },
+  { value: "Electrical Engineer", label: "Electrical Engineering" },
+  { value: "Mechanical Engineer", label: "Mechanical Engineering" },
 ];
 
 const Page: NextPageWithLayout = () => {

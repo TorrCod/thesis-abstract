@@ -105,7 +105,7 @@ const NavBar = () => {
     },
   ];
 
-  return status ? (
+  return status === "unauthenticated" ? (
     <></>
   ) : (
     <div

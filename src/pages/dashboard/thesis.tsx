@@ -121,7 +121,7 @@ const Page: NextPageWithLayout = () => {
                 bordered={false}
               >
                 <Statistic
-                  title={child.course}
+                  title={child.course?.replace(/Engineer/g, "Engineering")}
                   prefix={<BsBookFill size={"0.9em"} />}
                   value={child.count}
                 />

@@ -1,7 +1,18 @@
 import useUserContext from "@/context/userContext";
 import { auth } from "@/lib/firebase";
 import { inviteUser } from "@/utils/account-utils";
-import { Avatar, Dropdown, Form, Input, Menu, MenuProps, message } from "antd";
+import {
+  Avatar,
+  Button,
+  Dropdown,
+  Form,
+  Input,
+  Menu,
+  MenuProps,
+  Modal,
+  Select,
+  message,
+} from "antd";
 import { useForm } from "antd/lib/form/Form";
 import { sendSignInLinkToEmail } from "firebase/auth";
 import Link from "next/link";
@@ -111,6 +122,7 @@ export const AddAdmin = () => {
   const userDetails = state.userDetails;
   const [form] = useForm();
   const { loadingState } = useGlobalContext();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const onFinish = ({ email }: any) => {
     loadingState.add("admin-table");
@@ -145,9 +157,9 @@ export const AddAdmin = () => {
       })
       .finally(() => loadingState.remove("admin-table"));
   };
-  return (
-    <div className="max-w-[20em]">
-      <Form form={form} onFinish={onFinish} className="flex gap-2">
+  const Ui = () => (
+    <div className="pt-5">
+      <Form form={form} onFinish={onFinish}>
         <Form.Item
           name={"email"}
           rules={[
@@ -163,7 +175,25 @@ export const AddAdmin = () => {
         >
           <Input placeholder="Email" />
         </Form.Item>
-        <Form.Item>
+        <Form.Item
+          className="w-36"
+          name="role"
+          rules={[
+            {
+              required: true,
+              message: "Please select a role",
+            },
+          ]}
+        >
+          <Select
+            placeholder="Role"
+            options={[
+              { value: "student", label: "Student" },
+              { value: "admin", label: "Admin" },
+            ]}
+          />
+        </Form.Item>
+        <Form.Item className="grid place-content-end">
           <PriButton htmlType="submit">
             <BsPersonFillAdd />
             Invite
@@ -171,6 +201,30 @@ export const AddAdmin = () => {
         </Form.Item>
       </Form>
     </div>
+  );
+
+  return (
+    <>
+      <div>
+        <PriButton onClick={() => setIsModalOpen(true)}>
+          <BsPersonFillAdd />
+          Invite User
+        </PriButton>
+      </div>
+      <Modal
+        title={
+          <div className="flex items-center gap-2">
+            <BsPersonFillAdd /> Invite User
+          </div>
+        }
+        open={isModalOpen}
+        onCancel={() => setIsModalOpen(false)}
+        okButtonProps={{ style: { display: "none" } }}
+        cancelButtonProps={{ style: { display: "none" } }}
+      >
+        <Ui />
+      </Modal>
+    </>
   );
 };
 

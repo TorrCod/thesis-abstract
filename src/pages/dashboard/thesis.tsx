@@ -177,6 +177,8 @@ export const ThesisCharts = () => {
   const { state: globalStatate, loadThesisCount } = useGlobalContext();
   useEffect(() => {
     loadThesisCount();
+    console.log(globalStatate.totalThesisCount.thesisCount);
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
@@ -184,7 +186,12 @@ export const ThesisCharts = () => {
       <ResponsiveContainer width={"99%"} height="99%">
         <RadarChart
           outerRadius={90}
-          data={globalStatate.totalThesisCount.thesisCount}
+          data={globalStatate.totalThesisCount.thesisCount.map((child) => {
+            child.course =
+              (child.course?.replace(/Engineer/g, "Engineering") as Course) ??
+              "Computer Engineer";
+            return child;
+          })}
         >
           <PolarGrid />
           <PolarAngleAxis dataKey="course" />

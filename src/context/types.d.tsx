@@ -181,6 +181,7 @@ export type UserDetails = {
   _id?: any;
   password?: string;
   dateAdded?: string;
+  role?: "student" | "admin";
   status?: "Pending" | "Admin";
 };
 

@@ -124,7 +124,7 @@ export const AddAdmin = () => {
   const { loadingState } = useGlobalContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const onFinish = ({ email }: any) => {
+  const onFinish = ({ email, role }: any) => {
     loadingState.add("admin-table");
     auth.currentUser
       ?.getIdToken()
@@ -132,7 +132,9 @@ export const AddAdmin = () => {
         const response = await inviteUser(token, {
           email: email,
           approove: `${userDetails?.userName}`,
+          role,
         });
+
         const _id = response.addedData._id;
         if (!_id) throw new Error("undefined _id");
         const actionCodeSettings = {
@@ -242,7 +244,7 @@ export const AdminDetails = ({
       <div className={` ${!state.userDetails && "hidden"}`}>
         <p>{`${state.userDetails?.firstName} ${state.userDetails?.lastName}`}</p>
         <p className="text-[0.8em] opacity-80">
-          {(state.userDetails?.course as string).replace(
+          {(state.userDetails?.course as string)?.replace(
             /Engineer/g,
             "Engineering"
           )}

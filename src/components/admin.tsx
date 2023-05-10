@@ -241,7 +241,12 @@ export const AdminDetails = ({
       <SignInSignUp />
       <div className={` ${!state.userDetails && "hidden"}`}>
         <p>{`${state.userDetails?.firstName} ${state.userDetails?.lastName}`}</p>
-        <p className="text-[0.8em] opacity-80">{state.userDetails?.course}</p>
+        <p className="text-[0.8em] opacity-80">
+          {(state.userDetails?.course as string).replace(
+            /Engineer/g,
+            "Engineering"
+          )}
+        </p>
       </div>
     </>
   );

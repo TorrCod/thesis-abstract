@@ -105,7 +105,9 @@ const NavBar = () => {
     },
   ];
 
-  return (
+  return status ? (
+    <></>
+  ) : (
     <div
       className={
         "navbar px-2 py-2 fixed md:flex top-0 z-50 w-full md:justify-center md:items-center " +

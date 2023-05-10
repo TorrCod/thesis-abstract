@@ -302,12 +302,9 @@ export const AdminTable = ({
             (expirationDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24)
           );
 
-          if (record.role === "student") {
+          if (record.role === "student" && value !== "Pending") {
             value = record.role;
           }
-
-          console.log(value);
-
           return (
             <>
               <div

@@ -71,6 +71,7 @@ const Page: NextPageWithLayout = () => {
           <p className="opacity-60 mb-5">Manage Co-Admins</p>
           <div className="flex gap-2">
             <QuerySearch
+              placeholder="Search username or email"
               onSearch={(e) => {
                 router.push(`/dashboard/admins${e ? `?username=${e}` : ``}`);
               }}

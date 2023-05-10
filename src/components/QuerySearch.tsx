@@ -4,9 +4,10 @@ import { PriButton } from "./button";
 
 type Props = {
   onSearch: (query: string) => void;
+  placeholder?: string;
 };
 
-const QuerySearch: React.FC<Props> = ({ onSearch }) => {
+const QuerySearch: React.FC<Props> = ({ onSearch, placeholder }) => {
   const [query, setQuery] = useState("");
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -25,7 +26,7 @@ const QuerySearch: React.FC<Props> = ({ onSearch }) => {
         type="text"
         value={query}
         onChange={handleInputChange}
-        placeholder="Search"
+        placeholder={placeholder ?? "Search"}
       />
       <PriButton className="shadow-md bg-[#F8B49C]" htmlType="submit">
         <FaSearch />

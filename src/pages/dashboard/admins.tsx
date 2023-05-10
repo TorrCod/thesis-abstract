@@ -226,6 +226,109 @@ export const AdminTable = ({
   noAction?: boolean;
   max_content?: number;
 }) => {
+  const dataColumnType = (userDetails: UserDetails | undefined) => {
+    const tableColumn: ColumnsType<AdminData> = [
+      {
+        title: "Username",
+        dataIndex: "userName",
+        key: "userName",
+        render: (val, record) => {
+          const userId = userDetails?._id;
+          const isUser = Object.values(record).includes(userId);
+          return (
+            <Link href={`/dashboard/admins?_id=${record.key}`}>
+              {val ? (
+                <Space direction="horizontal">
+                  <div>{val}</div>
+                  {isUser && (
+                    <div className="bg-[#38649C] text-white px-3 rounded-md text-center">
+                      you
+                    </div>
+                  )}
+                </Space>
+              ) : (
+                <div>------</div>
+              )}
+            </Link>
+          );
+        },
+      },
+      {
+        title: "Date Added",
+        dataIndex: "dateAdded",
+        key: "dateAdded",
+        render: (val, record) => {
+          const dateAdded = new Date(val as string);
+          const localString = dateAdded.toLocaleString();
+          return localString;
+        },
+      },
+      {
+        title: "Email",
+        dataIndex: "email",
+        key: "email",
+      },
+      {
+        title: "Course",
+        dataIndex: "course",
+        key: "course",
+        render: (val) => {
+          return val?.replace(/Engineer/g, "Engineering") ?? "-------";
+        },
+      },
+      {
+        title: "Status",
+        dataIndex: "status",
+        key: "status",
+        render: (value, record) => {
+          // Set the date the item was added
+          const addedDate = new Date(record.dateAdded);
+
+          // Calculate the expiration date
+          const expirationDate = new Date(
+            addedDate.getTime() + 7 * 24 * 60 * 60 * 1000
+          );
+
+          // Calculate the remaining days
+          const remainingDays = Math.ceil(
+            (expirationDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+          );
+
+          if (record.role === "student") {
+            value = record.role;
+          }
+
+          console.log(value);
+
+          return (
+            <>
+              <div
+                className={`grid ${
+                  value === `Pending`
+                    ? `bg-yellow-500`
+                    : value === "Admin"
+                    ? "bg-[#001529]"
+                    : `bg-lime-500`
+                } place-items-center rounded-xl w-[6em] py-1 text-white`}
+              >
+                {value}
+              </div>
+              {value === "Pending" && (
+                <div className="text-sm">Expire in {remainingDays} days</div>
+              )}
+            </>
+          );
+        },
+      },
+      {
+        title: "Action",
+        key: "action",
+        render: (_, record) => <RemoveAdmin record={record} />,
+      },
+    ];
+    return tableColumn;
+  };
+
   const { state, loadAllUsers } = useUserContext();
   const { state: globalState, loadingState } = useGlobalContext();
   const [dataCol, setDataCol] = useState<ColumnsType<AdminData>>(
@@ -374,99 +477,6 @@ const RemoveAdmin = ({ record }: { record: AdminData }) => {
       </Modal>
     </>
   );
-};
-
-const dataColumnType = (userDetails: UserDetails | undefined) => {
-  const tableColumn: ColumnsType<AdminData> = [
-    {
-      title: "Username",
-      dataIndex: "userName",
-      key: "userName",
-      render: (val, record) => {
-        const userId = userDetails?._id;
-        const isUser = Object.values(record).includes(userId);
-        return (
-          <Link href={`/dashboard/admins?_id=${record.key}`}>
-            {val ? (
-              <Space direction="horizontal">
-                <div>{val}</div>
-                {isUser && (
-                  <div className="bg-[#38649C] text-white px-3 rounded-md text-center">
-                    you
-                  </div>
-                )}
-              </Space>
-            ) : (
-              <div>------</div>
-            )}
-          </Link>
-        );
-      },
-    },
-    {
-      title: "Date Added",
-      dataIndex: "dateAdded",
-      key: "dateAdded",
-      render: (val, record) => {
-        const dateAdded = new Date(val as string);
-        const localString = dateAdded.toLocaleString();
-        return localString;
-      },
-    },
-    {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
-    },
-    {
-      title: "Course",
-      dataIndex: "course",
-      key: "course",
-      render: (val) => {
-        return val?.replace(/Engineer/g, "Engineering") ?? "-------";
-      },
-    },
-    {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-      render: (value, record) => {
-        // Set the date the item was added
-        const addedDate = new Date(record.dateAdded);
-
-        // Calculate the expiration date
-        const expirationDate = new Date(
-          addedDate.getTime() + 7 * 24 * 60 * 60 * 1000
-        );
-
-        // Calculate the remaining days
-        const remainingDays = Math.ceil(
-          (expirationDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24)
-        );
-
-        return (
-          <>
-            <div
-              className={`grid ${
-                value === `Pending` ? `bg-yellow-500` : `bg-lime-500`
-              } place-items-center rounded-xl w-[6em] py-1 text-white`}
-            >
-              {value}
-            </div>
-            {value === "Pending" && (
-              <div className="text-sm">Expire in {remainingDays} days</div>
-            )}
-          </>
-        );
-      },
-    },
-    {
-      title: "Action",
-      key: "action",
-      render: (_, record) => <RemoveAdmin record={record} />,
-    },
-  ];
-  return tableColumn;
 };
 
 export const getServerSideProps: GetServerSideProps = async (ctx) =>

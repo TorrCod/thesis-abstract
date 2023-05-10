@@ -48,7 +48,7 @@ const siderMenu: MenuProps["items"] = [
   },
   {
     key: "/dashboard/admins",
-    label: <Link href={"/dashboard/admins"}>Admins</Link>,
+    label: <Link href={"/dashboard/admins"}>Users</Link>,
     icon: <ImUserCheck size={"1.1em"} />,
   },
   {

@@ -29,6 +29,7 @@ import {
   ThesisItems,
   UserDetails,
 } from "@/context/types.d";
+import { useSession } from "next-auth/react";
 
 type DashboardProps = {
   children?: React.ReactNode;
@@ -89,6 +90,7 @@ function DashboardLayout({ children }: DashboardProps) {
     activityLog: ActivityLog;
   }>();
   const router = useRouter();
+  const session = useSession();
 
   useEffect(() => {
     const pusher = pusherInit();
@@ -339,12 +341,14 @@ function DashboardLayout({ children }: DashboardProps) {
               width={"15vw"}
             >
               <div className="">
-                <Menu
-                  selectedKeys={[selectedSider]}
-                  className="place-self-start"
-                  items={siderMenu}
-                  onSelect={handleSeletect}
-                />
+                {(session.data as any).customClaims.role === "admin" && (
+                  <Menu
+                    selectedKeys={[selectedSider]}
+                    className="place-self-start"
+                    items={siderMenu}
+                    onSelect={handleSeletect}
+                  />
+                )}
                 <Divider />
 
                 <AdminDetails />

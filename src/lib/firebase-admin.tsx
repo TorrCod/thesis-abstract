@@ -55,6 +55,12 @@ export const verifySessionCookie = async (sessionCookies: string) => {
   return decodedClaims;
 };
 
+export const getCustomClaims = async (uid: string) => {
+  const adminApp = firebaseAdminInit();
+  const customClaims = (await adminApp.auth().getUser(uid)).customClaims;
+  return customClaims;
+};
+
 export const adminUploadFile = async (
   filePath: string,
   destination: string,

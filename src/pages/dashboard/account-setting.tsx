@@ -176,11 +176,10 @@ const Page: NextPageWithLayout = () => {
             <Divider />
             <div className="px-10">
               <p className="mb-5 opacity-80">
-                Would you like to delete your account?
-              </p>
-              <p className="mb-5 opacity-80">
-                This will wipe all your data including your saved thesis but not
-                approoved thesis abstract.
+                Before you proceed with deleting your account, please be aware
+                that this action is permanent and all your data will be
+                permanently erased. Are you absolutely sure you want to delete
+                your account?
               </p>
               <p
                 onClick={() => warning()}

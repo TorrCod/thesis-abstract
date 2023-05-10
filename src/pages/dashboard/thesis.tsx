@@ -315,6 +315,9 @@ export const ThesisTable = () => {
       title: "Course",
       dataIndex: "course",
       key: "course",
+      render: (text) => {
+        return text.replace(/Engineer/g, "Engineering");
+      },
     },
     {
       title: "Date Added",

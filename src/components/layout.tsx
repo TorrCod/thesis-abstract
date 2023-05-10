@@ -8,8 +8,8 @@ import { PriButton } from "./button";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <UserWrapper>
-      <GlobalWrapper>
+    <GlobalWrapper>
+      <UserWrapper>
         <AntD_Config>
           <NavBar />
           <main className="overflow-hidden">
@@ -17,8 +17,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             {children}
           </main>
         </AntD_Config>
-      </GlobalWrapper>
-    </UserWrapper>
+      </UserWrapper>
+    </GlobalWrapper>
   );
 };
 

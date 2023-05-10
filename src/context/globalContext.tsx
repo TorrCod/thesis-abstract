@@ -29,6 +29,7 @@ import {
 import Router from "next/router";
 import axios from "axios";
 import { useSession } from "next-auth/react";
+import useUserContext from "./userContext";
 
 const totalDataInit: { course: Course; count: number }[] = [
   { course: "Civil Engineer", count: 0 },
@@ -120,11 +121,13 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(globalReducer, globalStateInit);
   const cancelToken = useRef(axios.CancelToken.source());
   const nextAuth = useSession();
+  const { state: userState } = useUserContext();
 
   useEffect(() => {
-    if (nextAuth.status === "authenticated") loadYearsOpt();
+    if (nextAuth.status === "authenticated" && userState.userDetails)
+      loadYearsOpt();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [auth]);
+  }, [nextAuth, userState.userDetails]);
 
   const updateSearchAction = () => {
     const update = (payload: SearchAction) => {

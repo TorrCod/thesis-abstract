@@ -121,7 +121,7 @@ const Page: NextPageWithLayout = () => {
                 bordered={false}
               >
                 <Statistic
-                  title={child.course}
+                  title={child.course?.replace(/Engineer/g, "Engineering")}
                   prefix={<BsBookFill size={"0.9em"} />}
                   value={child.count}
                 />
@@ -177,8 +177,6 @@ export const ThesisCharts = () => {
   const { state: globalStatate, loadThesisCount } = useGlobalContext();
   useEffect(() => {
     loadThesisCount();
-    console.log(globalStatate.totalThesisCount.thesisCount);
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (

@@ -8,10 +8,30 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { getOneById } from "@/utils/thesis-item-utils";
 import { Image } from "antd";
+import { GetServerSideProps } from "next";
+import { getServerSession } from "next-auth";
+import { getCsrfToken } from "next-auth/react";
+import { authOptions } from "../api/auth/[...nextauth]";
 
 const PdfLink = dynamic(() => import("@/components/pdfDocs"), {
   ssr: false,
 });
+
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+  const session = await getServerSession(req, res, authOptions);
+  const csrfToken = await getCsrfToken({ req });
+  if (!session)
+    return {
+      redirect: { destination: "/login" },
+      props: { data: [] },
+    };
+  if (!csrfToken) return { notFound: true };
+  return {
+    props: {
+      data: [],
+    },
+  };
+};
 
 const ThesisItemsView = () => {
   const router = useRouter();

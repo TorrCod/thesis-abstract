@@ -7,6 +7,10 @@ import { useEffect, useState } from "react";
 import useGlobalContext from "@/context/globalContext";
 import { useRouter } from "next/router";
 import Image from "next/image";
+import { GetServerSideProps } from "next";
+import { getServerSession } from "next-auth";
+import { getCsrfToken } from "next-auth/react";
+import { authOptions } from "./api/auth/[...nextauth]";
 const Thesis = () => {
   const {
     state: globalState,
@@ -278,6 +282,22 @@ const ItemsLoading = () => {
       <div className="div1 p-3 bg-white shadow-md rounded-sm h-52 relative w-3/5 m-auto sk_bg"></div>
     </div>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+  const session = await getServerSession(req, res, authOptions);
+  const csrfToken = await getCsrfToken({ req });
+  if (!session)
+    return {
+      redirect: { destination: "/login" },
+      props: { data: [] },
+    };
+  if (!csrfToken) return { notFound: true };
+  return {
+    props: {
+      data: [],
+    },
+  };
 };
 
 export default Thesis;

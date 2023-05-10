@@ -1,11 +1,15 @@
 import { PriButton } from "@/components/button";
 import { Avatar, Card, Divider, Form, FormProps, Input, message } from "antd";
 import { useForm } from "antd/lib/form/Form";
+import { GetServerSideProps } from "next";
+import { getServerSession } from "next-auth";
+import { getCsrfToken } from "next-auth/react";
 import Head from "next/head";
 import Image from "next/image";
 import { AiOutlineMail, AiOutlinePhone } from "react-icons/ai";
 import { ImUser } from "react-icons/im";
 import { IoLocationOutline } from "react-icons/io5";
+import { authOptions } from "./api/auth/[...nextauth]";
 
 const AboutUs = () => {
   return (
@@ -214,6 +218,22 @@ const MessageForm = () => {
       </Form.Item>
     </Form>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+  const session = await getServerSession(req, res, authOptions);
+  const csrfToken = await getCsrfToken({ req });
+  if (!session)
+    return {
+      redirect: { destination: "/login" },
+      props: { data: [] },
+    };
+  if (!csrfToken) return { notFound: true };
+  return {
+    props: {
+      data: [],
+    },
+  };
 };
 
 export default AboutUs;

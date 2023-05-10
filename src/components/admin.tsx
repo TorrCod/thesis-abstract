@@ -144,6 +144,7 @@ export const AddAdmin = () => {
         await sendSignInLinkToEmail(auth, email, actionCodeSettings);
         message.success("Invite Sent");
         form.resetFields();
+        setIsModalOpen(false);
       })
       .catch((e) => {
         const error: AxiosError = e;

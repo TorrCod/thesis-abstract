@@ -111,7 +111,6 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(userReducer, userStateInit);
   const unsubscribeRef = useRef<Unsubscribe | null>(null);
   const { dispatch: gloablDispatch, state: globalState } = useGlobalContext();
-
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       try {

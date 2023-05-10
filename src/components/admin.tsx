@@ -180,21 +180,35 @@ export const AdminDetails = ({
   onClick?: () => void | Promise<void>;
 }) => {
   const { state } = useUserContext();
+  const session = useSession();
 
   return (
-    <>
-      <Link
-        onClick={onClick}
-        className="flex gap-2 items-center mx-5 pb-3 border-b-[1px]"
-        href={`/dashboard/admins?_id=${state.userDetails?._id}`}
-      >
-        <SignInSignUp />
-        <div className={` ${!state.userDetails && "hidden"}`}>
-          <p>{`${state.userDetails?.firstName} ${state.userDetails?.lastName}`}</p>
-          <p className="text-[0.8em] opacity-80">{state.userDetails?.course}</p>
-        </div>
-      </Link>
-    </>
+    <div className="flex gap-2 items-center mx-5 pb-3 border-b-[1px]">
+      {(session.data as any)?.customClaims?.role === "admin" ? (
+        <Link
+          onClick={onClick}
+          href={`/dashboard/admins?_id=${state.userDetails?._id}`}
+        >
+          <SignInSignUp />
+          <div className={` ${!state.userDetails && "hidden"}`}>
+            <p>{`${state.userDetails?.firstName} ${state.userDetails?.lastName}`}</p>
+            <p className="text-[0.8em] opacity-80">
+              {state.userDetails?.course}
+            </p>
+          </div>
+        </Link>
+      ) : (
+        <>
+          <SignInSignUp />
+          <div className={` ${!state.userDetails && "hidden"}`}>
+            <p>{`${state.userDetails?.firstName} ${state.userDetails?.lastName}`}</p>
+            <p className="text-[0.8em] opacity-80">
+              {state.userDetails?.course}
+            </p>
+          </div>
+        </>
+      )}
+    </div>
   );
 };
 

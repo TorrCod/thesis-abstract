@@ -156,7 +156,7 @@ export const validateSession: GetServerSideProps = async (
       props: { data: [] },
     };
   if (!csrfToken) return { notFound: true };
-  if ((session as any)?.customClaims.role !== "admin" && admin)
+  if ((session as any)?.customClaims?.role !== "admin" && admin)
     return { notFound: true };
   return {
     props: {

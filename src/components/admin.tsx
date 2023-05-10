@@ -64,7 +64,7 @@ export const AdminMenu = ({
   ]);
 
   useEffect(() => {
-    if ((session.data as any).customClaims.role === "admin") {
+    if ((session.data as any)?.customClaims?.role === "admin") {
       setUserMenu([
         {
           key: "/dashboard/account-setting",

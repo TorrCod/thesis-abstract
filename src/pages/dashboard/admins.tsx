@@ -435,7 +435,7 @@ const dataColumnType = (userDetails: UserDetails | undefined) => {
       dataIndex: "course",
       key: "course",
       render: (val) => {
-        return val ?? "-------";
+        return val.replace(/Engineer/g, "Engineering") ?? "-------";
       },
     },
     {

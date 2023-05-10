@@ -368,11 +368,13 @@ function DashboardLayout({ children }: DashboardProps) {
             >
               {children}
             </div>
-            <BotomMenu
-              onchange={(info) => {
-                router.push(info);
-              }}
-            />
+            {(session.data as any).customClaims.role === "admin" && (
+              <BotomMenu
+                onchange={(info) => {
+                  router.push(info);
+                }}
+              />
+            )}
           </div>
         </div>
       </div>

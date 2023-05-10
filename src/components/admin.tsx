@@ -193,18 +193,21 @@ export const AdminDetails = ({
   );
 
   return (
-    <div className="flex gap-2 items-center mx-5 pb-3 border-b-[1px]">
+    <>
       {(session.data as any)?.customClaims?.role === "admin" ? (
         <Link
+          className="flex gap-2 items-center mx-5 pb-3 border-b-[1px]"
           onClick={onClick}
           href={`/dashboard/admins?_id=${state.userDetails?._id}`}
         >
           <Details />
         </Link>
       ) : (
-        <Details />
+        <div className="flex gap-2 items-center mx-5 pb-3 border-b-[1px]">
+          <Details />
+        </div>
       )}
-    </div>
+    </>
   );
 };
 

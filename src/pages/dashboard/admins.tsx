@@ -178,7 +178,7 @@ const UserProfile = ({ payloadUser }: { payloadUser: UserDetails }) => {
               </div>
               <div>
                 <div className="text-sm opacity-80 ">Course</div>
-                {payloadUser.course}
+                {payloadUser.course?.replace(/Engineer/g, "Engineering")}
               </div>
               <div>
                 <div className="text-sm opacity-80 ">Invited By</div>

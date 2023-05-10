@@ -39,6 +39,7 @@ import { readActivityLogReason } from "@/utils/helper";
 import useSocketContext from "@/context/socketContext";
 import { NextPageWithLayout } from "../_app";
 import { useEffectOnce } from "react-use";
+import { validateSession } from "@/utils/server-utils";
 
 const Page: NextPageWithLayout = () => {
   const router = useRouter();
@@ -372,22 +373,6 @@ const RemoveAdmin = ({ record }: { record: AdminData }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-  const session = await getServerSession(req, res, authOptions);
-  const csrfToken = await getCsrfToken({ req });
-  if (!session)
-    return {
-      redirect: { destination: "/?signin" },
-      props: { data: [] },
-    };
-  if (!csrfToken) return { notFound: true };
-  return {
-    props: {
-      data: [],
-    },
-  };
-};
-
 const dataColumnType = (userDetails: UserDetails | undefined) => {
   const tableColumn: ColumnsType<AdminData> = [
     {
@@ -480,3 +465,6 @@ const dataColumnType = (userDetails: UserDetails | undefined) => {
   ];
   return tableColumn;
 };
+
+export const getServerSideProps: GetServerSideProps = async (ctx) =>
+  (validateSession as any)(ctx, true);

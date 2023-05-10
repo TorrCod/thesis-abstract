@@ -14,6 +14,7 @@ import { getActivityLog } from "@/utils/account-utils";
 import { auth } from "@/lib/firebase";
 import { ActivityLog } from "@/context/types.d";
 import LoadingIcon from "@/components/loadingIcon";
+import { validateSession } from "@/utils/server-utils";
 
 const Page: NextPageWithLayout = () => {
   const bottomRef = useRef<HTMLDivElement | null>(null);
@@ -150,18 +151,5 @@ export const ActivityTimeline = (props: {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-  const session = await getServerSession(req, res, authOptions);
-  const csrfToken = await getCsrfToken({ req });
-  if (!session)
-    return {
-      redirect: { destination: "/?signin" },
-      props: { data: [] },
-    };
-  if (!csrfToken) return { notFound: true };
-  return {
-    props: {
-      data: [],
-    },
-  };
-};
+export const getServerSideProps: GetServerSideProps = async (ctx) =>
+  (validateSession as any)(ctx, true);

@@ -28,6 +28,7 @@ import { getServerSession } from "next-auth";
 import { getCsrfToken } from "next-auth/react";
 import { NextPageWithLayout } from "../_app";
 import { authOptions } from "../api/auth/[...nextauth]";
+import { validateSession } from "@/utils/server-utils";
 const courseOpt: { value: Course; label: String }[] = [
   { value: "Civil Engineer", label: "Civil Engineering" },
   { value: "Computer Engineer", label: "Computer Engineering" },
@@ -423,24 +424,11 @@ const PasswordForm = () => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-  const session = await getServerSession(req, res, authOptions);
-  const csrfToken = await getCsrfToken({ req });
-  if (!session)
-    return {
-      redirect: { destination: "/?signin" },
-      props: { data: [] },
-    };
-  if (!csrfToken) return { notFound: true };
-  return {
-    props: {
-      data: [],
-    },
-  };
-};
-
 Page.getLayout = function getLayout(page: ReactElement) {
   return <DashboardLayout>{page}</DashboardLayout>;
 };
+
+export const getServerSideProps: GetServerSideProps = async (ctx) =>
+  validateSession(ctx);
 
 export default Page;

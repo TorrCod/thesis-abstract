@@ -23,7 +23,7 @@ import {
   Table,
 } from "antd";
 import { ColumnsType } from "antd/es/table";
-import { GetServerSideProps } from "next";
+import { GetServerSideProps, NextPageContext } from "next";
 import { getServerSession } from "next-auth";
 import { getCsrfToken } from "next-auth/react";
 import Link from "next/link";
@@ -47,6 +47,7 @@ import { NextPageWithLayout } from "../_app";
 import useUserContext from "@/context/userContext";
 import LoadingIcon from "@/components/loadingIcon";
 import useOnScreen from "@/hook/useOnScreen";
+import { validateSession } from "@/utils/server-utils";
 
 const menuItems: MenuProps["items"] = [
   { key: "thesis-items", label: "Thesis Items" },
@@ -533,21 +534,8 @@ const RestoreThesis = (props: DataType & { id: string }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-  const session = await getServerSession(req, res, authOptions);
-  const csrfToken = await getCsrfToken({ req });
-  if (!session)
-    return {
-      redirect: { destination: "/?signin" },
-      props: { data: [] },
-    };
-  if (!csrfToken) return { notFound: true };
-  return {
-    props: {
-      data: [],
-    },
-  };
-};
+export const getServerSideProps: GetServerSideProps = async (ctx) =>
+  (validateSession as any)(ctx, true);
 
 type DataType = {
   key: string;

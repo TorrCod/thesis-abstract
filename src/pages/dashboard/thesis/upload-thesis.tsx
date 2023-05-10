@@ -32,6 +32,7 @@ import { FaTrash } from "react-icons/fa";
 import { uploadAbstract } from "@/lib/firebase";
 import { ObjectId } from "mongodb";
 import useGlobalContext from "@/context/globalContext";
+import { validateSession } from "@/utils/server-utils";
 
 interface FormValues {
   title: string;
@@ -248,22 +249,8 @@ const Page = (props: { _id: string }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-  const session = await getServerSession(req, res, authOptions);
-  const csrfToken = await getCsrfToken({ req });
-  const _id = new ObjectId().toString();
-  if (!session)
-    return {
-      redirect: { destination: "/?signin" },
-      props: { data: [] },
-    };
-  if (!csrfToken) return { notFound: true };
-  return {
-    props: {
-      _id,
-    },
-  };
-};
+export const getServerSideProps: GetServerSideProps = async (ctx) =>
+  (validateSession as any)(ctx, true);
 
 Page.getLayout = function getLayout(page: ReactElement) {
   return <DashboardLayout>{page}</DashboardLayout>;

@@ -341,7 +341,7 @@ function DashboardLayout({ children }: DashboardProps) {
               width={"15vw"}
             >
               <div className="">
-                {(session.data as any).customClaims.role === "admin" && (
+                {(session.data as any)?.customClaims?.role === "admin" && (
                   <Menu
                     selectedKeys={[selectedSider]}
                     className="place-self-start"
@@ -368,7 +368,7 @@ function DashboardLayout({ children }: DashboardProps) {
             >
               {children}
             </div>
-            {(session.data as any).customClaims.role === "admin" && (
+            {(session.data as any)?.customClaims?.role === "admin" && (
               <BotomMenu
                 onchange={(info) => {
                   router.push(info);

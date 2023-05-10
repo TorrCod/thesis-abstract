@@ -70,7 +70,11 @@ const ThesisItemsView = () => {
             </div>
             <div>
               <span className="text-xs text-[#38649C]">Course</span>
-              <h2>{(data.course as string).toLocaleUpperCase()}</h2>
+              <h2>
+                {(data.course as string)
+                  .replace(/Engineer/g, "Engineering")
+                  .toLocaleUpperCase()}
+              </h2>
             </div>
             <div>
               <span className="text-xs text-[#38649C]">Year</span>

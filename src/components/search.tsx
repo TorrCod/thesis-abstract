@@ -292,7 +292,9 @@ const DropDownCourse = ({
           {courseOption.map((course, index) => {
             return (
               <Col key={index} span={12}>
-                <Checkbox value={course}>{course}</Checkbox>
+                <Checkbox value={course}>
+                  {course?.replace(/Engineer/g, "Engineering")}
+                </Checkbox>
               </Col>
             );
           })}

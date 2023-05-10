@@ -1,7 +1,7 @@
 import DashboardLayout from "@/components/dashboardLayout";
 import QuerySearch from "@/components/QuerySearch";
 import useGlobalContext from "@/context/globalContext";
-import { Course } from "@/context/types.d";
+import { Course, ThesisCount } from "@/context/types.d";
 import { auth } from "@/lib/firebase";
 import { thesisToDataType } from "@/utils/helper";
 import {
@@ -121,7 +121,7 @@ const Page: NextPageWithLayout = () => {
                 bordered={false}
               >
                 <Statistic
-                  title={child.course}
+                  title={child.course?.replace(/Engineer/g, "Engineering")}
                   prefix={<BsBookFill size={"0.9em"} />}
                   value={child.count}
                 />
@@ -175,17 +175,29 @@ export default Page;
 
 export const ThesisCharts = () => {
   const { state: globalStatate, loadThesisCount } = useGlobalContext();
+  const [thesisCount, setThesisCount] = useState<ThesisCount>([]);
   useEffect(() => {
     loadThesisCount();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  useEffect(() => {
+    const tCount = JSON.parse(
+      JSON.stringify(globalStatate.totalThesisCount.thesisCount)
+    ) as ThesisCount;
+    setThesisCount(
+      tCount.map((child) => {
+        child.course =
+          (child.course?.replace(/Engineer/g, "Engineering") as Course) ??
+          "Computer Engineer";
+        return child;
+      })
+    );
+  }, [globalStatate.totalThesisCount.thesisCount]);
+
   return (
     <>
       <ResponsiveContainer width={"99%"} height="99%">
-        <RadarChart
-          outerRadius={90}
-          data={globalStatate.totalThesisCount.thesisCount}
-        >
+        <RadarChart outerRadius={90} data={thesisCount}>
           <PolarGrid />
           <PolarAngleAxis dataKey="course" />
           <Radar
@@ -303,6 +315,9 @@ export const ThesisTable = () => {
       title: "Course",
       dataIndex: "course",
       key: "course",
+      render: (text) => {
+        return text.replace(/Engineer/g, "Engineering");
+      },
     },
     {
       title: "Date Added",

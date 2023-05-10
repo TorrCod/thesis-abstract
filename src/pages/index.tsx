@@ -66,10 +66,10 @@ export default function Home() {
   );
 }
 
-import { GetServerSideProps } from "next";
-import { getData, updateData } from "@/lib/mongo";
-import { ObjectId } from "bson";
-import { adminUploadFile } from "@/lib/firebase-admin";
+// import { GetServerSideProps } from "next";
+// import { getData, updateData } from "@/lib/mongo";
+// import { ObjectId } from "bson";
+// import { adminUploadFile } from "@/lib/firebase-admin";
 
 // Change asbtract url
 /*

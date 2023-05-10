@@ -213,7 +213,11 @@ const Items = ({
         </div>
         <div>
           <span className="text-[#38649C] text-xs">Course</span>
-          <h2>{(course as string).toLocaleUpperCase()}</h2>
+          <h2>
+            {(course as string)
+              .replace(/Engineer/g, "Engineering")
+              .toLocaleUpperCase()}
+          </h2>
         </div>
         <div>
           <span className="text-[#38649C] text-xs">Year</span>

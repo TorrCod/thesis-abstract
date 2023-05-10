@@ -42,11 +42,11 @@ interface FormValues {
 }
 
 const courseOptions = [
-  { label: "Computer Engineer", value: "Computer Engineer" },
-  { label: "Mechanical Engineer", value: "Mechanical Engineer" },
-  { label: "Civil Engineer", value: "Civil Engineer" },
-  { label: "Electronics Engineer", value: "Electronics Engineer" },
-  { label: "Electrical Engineer", value: "Electrical Engineer" },
+  { label: "Computer Engineering", value: "Computer Engineer" },
+  { label: "Mechanical Engineering", value: "Mechanical Engineer" },
+  { label: "Civil Engineering", value: "Civil Engineer" },
+  { label: "Electronics Engineering", value: "Electronics Engineer" },
+  { label: "Electrical Engineering", value: "Electrical Engineer" },
 ];
 
 const Page = (props: { _id: string }) => {

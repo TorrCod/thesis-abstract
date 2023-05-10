@@ -8,6 +8,7 @@ import {
 import axios, { CancelToken } from "axios";
 import { userConfig } from "./account-utils";
 import { stringifyURI } from "./helper";
+import { auth } from "@/lib/firebase";
 
 export const getAllThesis = async (
   query?: SearchQuery,
@@ -16,11 +17,15 @@ export const getAllThesis = async (
   pageSize?: number,
   cancleToken?: CancelToken
 ) => {
+  const authToken = await auth.currentUser?.getIdToken();
+  if (!authToken) {
+    throw new Error("undefined token");
+  }
   const res = await axios.get(
     `${process.env.NEXT_PUBLIC_DOMAIN}/api/public/thesis?${
       pageNo ? `&pageNo=${pageNo}` : ``
     }${pageSize ? `&pageSize=${pageSize}` : ``}${stringifyURI(query, option)}`,
-    { cancelToken: cancleToken }
+    { cancelToken: cancleToken, ...userConfig(authToken) }
   );
   const data = res.data as ThesisState;
   return data;
@@ -30,6 +35,10 @@ export const getOneById = async (
   _id: string,
   projection?: Record<string, 1 | 0>
 ) => {
+  const authToken = await auth.currentUser?.getIdToken();
+  if (!authToken) {
+    throw new Error("undefined token");
+  }
   const res = await axios.get(
     `${
       process.env.NEXT_PUBLIC_DOMAIN
@@ -37,23 +46,34 @@ export const getOneById = async (
       projection
         ? `&projection=${encodeURIComponent(JSON.stringify(projection))}`
         : ``
-    }`
+    }`,
+    { ...userConfig(authToken) }
   );
   const data = res.data as ThesisItems;
   return data;
 };
 
 export const getDistincYear = async () => {
+  const authToken = await auth.currentUser?.getIdToken();
+  if (!authToken) {
+    throw new Error("undefined token");
+  }
   const res = await axios.get(
-    `${process.env.NEXT_PUBLIC_DOMAIN}/api/public/thesis?&objective=get-distinct-years`
+    `${process.env.NEXT_PUBLIC_DOMAIN}/api/public/thesis?&objective=get-distinct-years`,
+    { ...userConfig(authToken) }
   );
   const data = res.data as string[];
   return data;
 };
 
 export const getThesisCount = async () => {
+  const authToken = await auth.currentUser?.getIdToken();
+  if (!authToken) {
+    throw new Error("undefined token");
+  }
   const res = await axios.get(
-    `${process.env.NEXT_PUBLIC_DOMAIN}/api/public/thesis?objective=get-thesis-count`
+    `${process.env.NEXT_PUBLIC_DOMAIN}/api/public/thesis?objective=get-thesis-count`,
+    { ...userConfig(authToken) }
   );
   const data = res.data as { thesisCount: ThesisCount; totalCount: number };
   return data;

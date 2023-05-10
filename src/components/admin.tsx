@@ -182,6 +182,16 @@ export const AdminDetails = ({
   const { state } = useUserContext();
   const session = useSession();
 
+  const Details = () => (
+    <>
+      <SignInSignUp />
+      <div className={` ${!state.userDetails && "hidden"}`}>
+        <p>{`${state.userDetails?.firstName} ${state.userDetails?.lastName}`}</p>
+        <p className="text-[0.8em] opacity-80">{state.userDetails?.course}</p>
+      </div>
+    </>
+  );
+
   return (
     <div className="flex gap-2 items-center mx-5 pb-3 border-b-[1px]">
       {(session.data as any)?.customClaims?.role === "admin" ? (
@@ -189,24 +199,10 @@ export const AdminDetails = ({
           onClick={onClick}
           href={`/dashboard/admins?_id=${state.userDetails?._id}`}
         >
-          <SignInSignUp />
-          <div className={` ${!state.userDetails && "hidden"}`}>
-            <p>{`${state.userDetails?.firstName} ${state.userDetails?.lastName}`}</p>
-            <p className="text-[0.8em] opacity-80">
-              {state.userDetails?.course}
-            </p>
-          </div>
+          <Details />
         </Link>
       ) : (
-        <>
-          <SignInSignUp />
-          <div className={` ${!state.userDetails && "hidden"}`}>
-            <p>{`${state.userDetails?.firstName} ${state.userDetails?.lastName}`}</p>
-            <p className="text-[0.8em] opacity-80">
-              {state.userDetails?.course}
-            </p>
-          </div>
-        </>
+        <Details />
       )}
     </div>
   );

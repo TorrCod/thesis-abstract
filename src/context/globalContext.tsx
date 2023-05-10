@@ -28,6 +28,7 @@ import {
 } from "./types.d";
 import Router from "next/router";
 import axios from "axios";
+import { useSession } from "next-auth/react";
 
 const totalDataInit: { course: Course; count: number }[] = [
   { course: "Civil Engineer", count: 0 },
@@ -118,11 +119,12 @@ const globalReducer = (
 export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(globalReducer, globalStateInit);
   const cancelToken = useRef(axios.CancelToken.source());
+  const nextAuth = useSession();
 
   useEffect(() => {
-    loadYearsOpt();
+    if (nextAuth.status === "authenticated") loadYearsOpt();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [auth]);
 
   const updateSearchAction = () => {
     const update = (payload: SearchAction) => {

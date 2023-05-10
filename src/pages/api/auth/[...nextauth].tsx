@@ -25,9 +25,9 @@ export const authOptions: AuthOptions = {
     }),
   ],
   pages: {
-    signIn: "/?signin",
-    signOut: "/",
-    error: "/?signin", // Error code passed in query string as ?error=
+    signIn: "/login",
+    signOut: "/login",
+    error: "/login", // Error code passed in query string as ?error=
   },
   debug: process.env.NODE_ENV === "development",
 };

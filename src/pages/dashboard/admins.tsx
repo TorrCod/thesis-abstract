@@ -60,7 +60,7 @@ const Page: NextPageWithLayout = () => {
         Dashboard {">"} <Link href={"/dashboard/admins"}>Admin</Link>
         {userDetails ? (
           <>
-            {">"} {userDetails.userName ?? userDetails._id}
+            {" >"} {userDetails.userName ?? userDetails._id}
           </>
         ) : null}
       </div>
@@ -166,8 +166,16 @@ const UserProfile = ({ payloadUser }: { payloadUser: UserDetails }) => {
               <div>
                 {payloadUser?.firstName} {payloadUser?.lastName}
               </div>
-              <div className="text-sm bg-lime-500 w-fit m-auto text-white px-2 rounded-md">
-                {payloadUser.status}
+              <div
+                className={`text-sm ${
+                  payloadUser.role === "student"
+                    ? `bg-lime-500`
+                    : "bg-[#001529]"
+                } w-fit m-auto text-white px-2 rounded-md`}
+              >
+                {payloadUser.role === "student"
+                  ? "Student"
+                  : payloadUser.status}
               </div>
             </div>
 

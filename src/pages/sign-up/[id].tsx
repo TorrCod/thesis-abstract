@@ -83,9 +83,7 @@ const HandleInviteLink = (props: {
   return (
     <section className="md:pt-20 max-w-md m-auto">
       <Form className="bg-white py-2 px-5 rounded-md" form={formSignUp}>
-        <h3 className="text-center my-5 text-[#38649C]">
-          Account initialization
-        </h3>
+        <h3 className="text-center my-5 text-[#38649C]">Sign Up</h3>
         <p className="m-5">
           Before we continue we would like to know more about you.
         </p>
@@ -164,7 +162,7 @@ const HandleInviteLink = (props: {
         </Form.Item>
         <Form.Item className="grid place-items-end">
           <PriButton htmlType="submit" onClick={handleSignUp}>
-            Initialize
+            Sign Up
           </PriButton>
         </Form.Item>
       </Form>

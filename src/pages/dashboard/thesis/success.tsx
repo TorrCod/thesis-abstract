@@ -2,6 +2,7 @@ import { PriButton } from "@/components/button";
 import DashboardLayout from "@/components/dashboardLayout";
 import { NextPageWithLayout } from "@/pages/_app";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import { validateSession } from "@/utils/server-utils";
 import { Space } from "antd";
 import { GetServerSideProps } from "next";
 import { getServerSession } from "next-auth";
@@ -33,21 +34,8 @@ const Page: NextPageWithLayout = () => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-  const session = await getServerSession(req, res, authOptions);
-  const csrfToken = await getCsrfToken({ req });
-  if (!session)
-    return {
-      redirect: { destination: "/?signin" },
-      props: { data: [] },
-    };
-  if (!csrfToken) return { notFound: true };
-  return {
-    props: {
-      data: [],
-    },
-  };
-};
+export const getServerSideProps: GetServerSideProps = async (ctx) =>
+  (validateSession as any)(ctx, true);
 
 Page.getLayout = function getLayout(page: ReactElement) {
   return <DashboardLayout>{page}</DashboardLayout>;

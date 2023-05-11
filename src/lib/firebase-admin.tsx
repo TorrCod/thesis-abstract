@@ -55,6 +55,12 @@ export const verifySessionCookie = async (sessionCookies: string) => {
   return decodedClaims;
 };
 
+export const getCustomClaims = async (uid: string) => {
+  const adminApp = firebaseAdminInit();
+  const customClaims = (await adminApp.auth().getUser(uid)).customClaims;
+  return customClaims as { role: string };
+};
+
 export const adminUploadFile = async (
   filePath: string,
   destination: string,
@@ -76,4 +82,10 @@ export const downloadFile = async () => {
   const bucket = admin.storage().bucket();
   // const response = bucket.file('').baseUrl
   return { bucket: bucket.baseUrl };
+};
+
+export const generateCustomToken = async (uid: string) => {
+  const admin = firebaseAdminInit();
+  const customToken = await admin.auth().createCustomToken(uid);
+  return customToken;
 };

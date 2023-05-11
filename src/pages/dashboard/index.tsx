@@ -7,27 +7,12 @@ import { ActivityTimeline } from "./activitylog";
 import { AdminTable } from "./admins";
 import { ThesisCharts } from "./thesis";
 import { GetServerSideProps } from "next";
-import { getServerSession } from "next-auth";
-import { authOptions } from "../api/auth/[...nextauth]";
-import { getCsrfToken } from "next-auth/react";
 import { NextPageWithLayout } from "../_app";
 import useGlobalContext from "@/context/globalContext";
+import { validateSession } from "@/utils/server-utils";
 
-export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-  const session = await getServerSession(req, res, authOptions);
-  const csrfToken = await getCsrfToken({ req });
-  if (!session)
-    return {
-      redirect: { destination: "/?signin" },
-      props: { data: [] },
-    };
-  if (!csrfToken) return { notFound: true };
-  return {
-    props: {
-      data: [],
-    },
-  };
-};
+export const getServerSideProps: GetServerSideProps = async (ctx) =>
+  (validateSession as any)(ctx, true);
 
 const DashboardOverview: NextPageWithLayout = () => {
   const { state: globalState } = useGlobalContext();

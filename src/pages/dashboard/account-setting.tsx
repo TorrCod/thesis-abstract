@@ -28,6 +28,7 @@ import { getServerSession } from "next-auth";
 import { getCsrfToken } from "next-auth/react";
 import { NextPageWithLayout } from "../_app";
 import { authOptions } from "../api/auth/[...nextauth]";
+import { validateSession } from "@/utils/server-utils";
 const courseOpt: { value: Course; label: String }[] = [
   { value: "Civil Engineer", label: "Civil Engineering" },
   { value: "Computer Engineer", label: "Computer Engineering" },
@@ -129,7 +130,16 @@ const Page: NextPageWithLayout = () => {
         <div className="grid gap-2 relative max-w-6xl m-auto ">
           {/* <h3 className="text-black/90">Account Setting</h3> */}
           <div className="bg-white p-5 rounded-md shadow-md">
-            <p>Information</p>
+            <div className="flex gap-2 items-center">
+              <p>Information</p>
+              <div
+                className={`${
+                  userDetails?.role ? `bg-lime-500` : `bg-[#001529]`
+                } grid place-items-center rounded-xl w-[6em] py-1 text-white`}
+              >
+                {userDetails?.role ?? "Admin"}
+              </div>
+            </div>
             <Divider />
             <InformationForm />
           </div>
@@ -175,11 +185,10 @@ const Page: NextPageWithLayout = () => {
             <Divider />
             <div className="px-10">
               <p className="mb-5 opacity-80">
-                Would you like to delete your account?
-              </p>
-              <p className="mb-5 opacity-80">
-                This will wipe all your data including your saved thesis but not
-                approoved thesis abstract.
+                Before you proceed with deleting your account, please be aware
+                that this action is permanent and all your data will be
+                permanently erased. Are you absolutely sure you want to delete
+                your account?
               </p>
               <p
                 onClick={() => warning()}
@@ -423,24 +432,11 @@ const PasswordForm = () => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-  const session = await getServerSession(req, res, authOptions);
-  const csrfToken = await getCsrfToken({ req });
-  if (!session)
-    return {
-      redirect: { destination: "/?signin" },
-      props: { data: [] },
-    };
-  if (!csrfToken) return { notFound: true };
-  return {
-    props: {
-      data: [],
-    },
-  };
-};
-
 Page.getLayout = function getLayout(page: ReactElement) {
   return <DashboardLayout>{page}</DashboardLayout>;
 };
+
+export const getServerSideProps: GetServerSideProps = async (ctx) =>
+  validateSession(ctx);
 
 export default Page;

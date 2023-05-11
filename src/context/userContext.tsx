@@ -111,7 +111,6 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(userReducer, userStateInit);
   const unsubscribeRef = useRef<Unsubscribe | null>(null);
   const { dispatch: gloablDispatch, state: globalState } = useGlobalContext();
-
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       try {
@@ -157,7 +156,7 @@ export const UserWrapper = ({ children }: { children: React.ReactNode }) => {
     const token = await credential.user.getIdToken();
     userDetails.uid = credential.user.uid;
     await addUserAccount(token, userDetails);
-    signIn("credentials", { callbackUrl: "/dashboard" }, { tokenId: token });
+    signIn("credentials", { callbackUrl: "/" }, { tokenId: token });
   };
 
   const userUpdateInfo = async (userDetails: UserDetails) => {

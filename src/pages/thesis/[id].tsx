@@ -8,19 +8,45 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { getOneById } from "@/utils/thesis-item-utils";
 import { Image } from "antd";
+import { GetServerSideProps } from "next";
+import { getServerSession } from "next-auth";
+import { getCsrfToken } from "next-auth/react";
+import { authOptions } from "../api/auth/[...nextauth]";
+import useGlobalContext from "@/context/globalContext";
 
 const PdfLink = dynamic(() => import("@/components/pdfDocs"), {
   ssr: false,
 });
 
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+  const session = await getServerSession(req, res, authOptions);
+  const csrfToken = await getCsrfToken({ req });
+  if (!session)
+    return {
+      redirect: { destination: "/login" },
+      props: { data: [] },
+    };
+  if (!csrfToken) return { notFound: true };
+  return {
+    props: {
+      data: [],
+    },
+  };
+};
+
 const ThesisItemsView = () => {
   const router = useRouter();
   const [data, setData] = useState<ThesisItems>();
+  const { tokenId } = useGlobalContext();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const thesisItem = await getOneById(router.query.id as string);
+        const thesisItem = await getOneById(
+          router.query.id as string,
+          undefined,
+          tokenId
+        );
         setData(thesisItem);
         localStorage.setItem(
           `thabs-${router.query.id}`,
@@ -31,12 +57,12 @@ const ThesisItemsView = () => {
       }
     };
     const cachedData = localStorage.getItem(`thabs-${router.query.id}`);
-    if (router.query.id && !cachedData) {
+    if (router.query.id && !cachedData && tokenId) {
       fetchData();
     } else if (cachedData) {
       setData(JSON.parse(cachedData));
     }
-  }, [router]);
+  }, [router, tokenId]);
 
   return !data ? (
     <Loading />

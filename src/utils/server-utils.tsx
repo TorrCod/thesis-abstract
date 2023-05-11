@@ -5,11 +5,17 @@ import { ActivitylogReason, CollectionName, DatabaseName } from "@/lib/types";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import { ObjectId } from "mongodb";
-import { NextApiRequest, NextApiResponse } from "next";
+import {
+  GetServerSideProps,
+  GetServerSidePropsResult,
+  NextApiRequest,
+  NextApiResponse,
+} from "next";
 import { getServerSession } from "next-auth";
 import { getCsrfToken } from "next-auth/react";
 import { serialize } from "cookie";
 import Pusher from "pusher";
+import { IncomingMessage, ServerResponse } from "node:http";
 
 export const validateAuth = async (
   req: NextApiRequest,
@@ -136,4 +142,25 @@ export const pusherInit = () => {
   }
   const pusher = new Pusher(JSON.parse(secretKey));
   return pusher;
+};
+
+export const validateSession: GetServerSideProps = async (
+  { req, res },
+  admin?: boolean
+) => {
+  const session = await getServerSession(req, res, authOptions);
+  const csrfToken = await getCsrfToken({ req });
+  if (!session)
+    return {
+      redirect: { destination: "/?signin" },
+      props: { data: [] },
+    };
+  if (!csrfToken) return { notFound: true };
+  if ((session as any)?.customClaims?.role !== "admin" && admin)
+    return { notFound: true };
+  return {
+    props: {
+      data: [],
+    },
+  };
 };

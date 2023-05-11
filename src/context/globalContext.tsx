@@ -28,6 +28,9 @@ import {
 } from "./types.d";
 import Router from "next/router";
 import axios from "axios";
+import { useSession } from "next-auth/react";
+import useUserContext from "./userContext";
+import { signInWithCustomToken } from "firebase/auth";
 
 const totalDataInit: { course: Course; count: number }[] = [
   { course: "Civil Engineer", count: 0 },
@@ -77,6 +80,7 @@ const globalCtxInit: GlobalValue = {
   },
   clearDefault() {},
   async refreshThesis() {},
+  nextAuth: { data: null, status: "loading" },
 };
 
 const GlobalContext = createContext<GlobalValue>(globalCtxInit);
@@ -118,11 +122,24 @@ const globalReducer = (
 export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(globalReducer, globalStateInit);
   const cancelToken = useRef(axios.CancelToken.source());
+  const nextAuth = useSession();
+  const [tokenId, setTokenId] = useState<string>();
 
   useEffect(() => {
-    loadYearsOpt();
+    if (nextAuth.data?.customToken) {
+      signInWithCustomToken(auth, nextAuth.data.customToken).then(
+        async (user) => {
+          const token = await user.user.getIdToken();
+          setTokenId(token);
+        }
+      );
+    }
+  }, [nextAuth]);
+
+  useEffect(() => {
+    if (tokenId) loadYearsOpt(tokenId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [tokenId]);
 
   const updateSearchAction = () => {
     const update = (payload: SearchAction) => {
@@ -179,7 +196,8 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
       },
       customPageNo ?? searchAction.pageNo ?? 1,
       searchAction.pageSize,
-      cancelToken.current.token
+      cancelToken.current.token,
+      tokenId
     );
     dispatch({
       type: "load-thesis",
@@ -232,8 +250,8 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const loadYearsOpt = async () => {
-    const distinctYear = await getDistincYear();
+  const loadYearsOpt = async (token: string) => {
+    const distinctYear = await getDistincYear(token);
     dispatch({ type: "update-default-years", payload: distinctYear });
     dispatch({
       type: "on-search-action",
@@ -348,6 +366,8 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
         addThesisItem,
         removeThesisItem,
         updateSearchAction,
+        nextAuth,
+        tokenId,
       }}
     >
       <LoadingGlobal>{children}</LoadingGlobal>

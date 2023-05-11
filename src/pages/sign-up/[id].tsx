@@ -27,6 +27,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
           email: response.email,
           _id: response._id.toString(),
           approove: response.approove,
+          role: response.role,
         },
       },
     };
@@ -37,7 +38,12 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 };
 
 const HandleInviteLink = (props: {
-  data: { email: string; _id: string; approove: string };
+  data: {
+    email: string;
+    _id: string;
+    approove: string;
+    role: "admin" | "student";
+  };
   hasError: boolean;
 }) => {
   const [formSignUp] = Form.useForm();
@@ -57,6 +63,7 @@ const HandleInviteLink = (props: {
         profilePic: undefined,
         approove: props.data.approove,
         _id: props.data._id,
+        role: props.data.role,
       };
       unsubscribeRef.current?.();
       await userSignUp?.(userDetails);

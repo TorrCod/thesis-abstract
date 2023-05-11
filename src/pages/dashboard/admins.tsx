@@ -39,6 +39,7 @@ import { readActivityLogReason } from "@/utils/helper";
 import useSocketContext from "@/context/socketContext";
 import { NextPageWithLayout } from "../_app";
 import { useEffectOnce } from "react-use";
+import { validateSession } from "@/utils/server-utils";
 
 const Page: NextPageWithLayout = () => {
   const router = useRouter();
@@ -59,7 +60,7 @@ const Page: NextPageWithLayout = () => {
         Dashboard {">"} <Link href={"/dashboard/admins"}>Admin</Link>
         {userDetails ? (
           <>
-            {">"} {userDetails.userName ?? userDetails._id}
+            {" >"} {userDetails.userName ?? userDetails._id}
           </>
         ) : null}
       </div>
@@ -68,12 +69,15 @@ const Page: NextPageWithLayout = () => {
       ) : (
         <div className="bg-white rounded-md p-5 flex flex-col gap-2 md:min-h-[85vh]">
           <p className="opacity-60 mb-5">Manage Co-Admins</p>
-          <AddAdmin />
-          <QuerySearch
-            onSearch={(e) => {
-              router.push(`/dashboard/admins${e ? `?username=${e}` : ``}`);
-            }}
-          />
+          <div className="flex gap-2">
+            <QuerySearch
+              placeholder="Search username or email"
+              onSearch={(e) => {
+                router.push(`/dashboard/admins${e ? `?username=${e}` : ``}`);
+              }}
+            />
+            <AddAdmin />
+          </div>
           <AdminTable />
         </div>
       )}
@@ -162,8 +166,16 @@ const UserProfile = ({ payloadUser }: { payloadUser: UserDetails }) => {
               <div>
                 {payloadUser?.firstName} {payloadUser?.lastName}
               </div>
-              <div className="text-sm bg-lime-500 w-fit m-auto text-white px-2 rounded-md">
-                {payloadUser.status}
+              <div
+                className={`text-sm ${
+                  payloadUser.role === "student"
+                    ? `bg-lime-500`
+                    : "bg-[#001529]"
+                } w-fit m-auto text-white px-2 rounded-md`}
+              >
+                {payloadUser.role === "student"
+                  ? "Student"
+                  : payloadUser.status}
               </div>
             </div>
 
@@ -222,6 +234,106 @@ export const AdminTable = ({
   noAction?: boolean;
   max_content?: number;
 }) => {
+  const dataColumnType = (userDetails: UserDetails | undefined) => {
+    const tableColumn: ColumnsType<AdminData> = [
+      {
+        title: "Username",
+        dataIndex: "userName",
+        key: "userName",
+        render: (val, record) => {
+          const userId = userDetails?._id;
+          const isUser = Object.values(record).includes(userId);
+          return (
+            <Link href={`/dashboard/admins?_id=${record.key}`}>
+              {val ? (
+                <Space direction="horizontal">
+                  <div>{val}</div>
+                  {isUser && (
+                    <div className="bg-[#38649C] text-white px-3 rounded-md text-center">
+                      you
+                    </div>
+                  )}
+                </Space>
+              ) : (
+                <div>------</div>
+              )}
+            </Link>
+          );
+        },
+      },
+      {
+        title: "Date Added",
+        dataIndex: "dateAdded",
+        key: "dateAdded",
+        render: (val, record) => {
+          const dateAdded = new Date(val as string);
+          const localString = dateAdded.toLocaleString();
+          return localString;
+        },
+      },
+      {
+        title: "Email",
+        dataIndex: "email",
+        key: "email",
+      },
+      {
+        title: "Course",
+        dataIndex: "course",
+        key: "course",
+        render: (val) => {
+          return val?.replace(/Engineer/g, "Engineering") ?? "-------";
+        },
+      },
+      {
+        title: "Status",
+        dataIndex: "status",
+        key: "status",
+        render: (value, record) => {
+          // Set the date the item was added
+          const addedDate = new Date(record.dateAdded);
+
+          // Calculate the expiration date
+          const expirationDate = new Date(
+            addedDate.getTime() + 7 * 24 * 60 * 60 * 1000
+          );
+
+          // Calculate the remaining days
+          const remainingDays = Math.ceil(
+            (expirationDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+          );
+
+          if (record.role === "student" && value !== "Pending") {
+            value = record.role;
+          }
+          return (
+            <>
+              <div
+                className={`grid ${
+                  value === `Pending`
+                    ? `bg-yellow-500`
+                    : value === "Admin"
+                    ? "bg-[#001529]"
+                    : `bg-lime-500`
+                } place-items-center rounded-xl w-[6em] py-1 text-white`}
+              >
+                {value}
+              </div>
+              {value === "Pending" && (
+                <div className="text-sm">Expire in {remainingDays} days</div>
+              )}
+            </>
+          );
+        },
+      },
+      {
+        title: "Action",
+        key: "action",
+        render: (_, record) => <RemoveAdmin record={record} />,
+      },
+    ];
+    return tableColumn;
+  };
+
   const { state, loadAllUsers } = useUserContext();
   const { state: globalState, loadingState } = useGlobalContext();
   const [dataCol, setDataCol] = useState<ColumnsType<AdminData>>(
@@ -372,111 +484,5 @@ const RemoveAdmin = ({ record }: { record: AdminData }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-  const session = await getServerSession(req, res, authOptions);
-  const csrfToken = await getCsrfToken({ req });
-  if (!session)
-    return {
-      redirect: { destination: "/?signin" },
-      props: { data: [] },
-    };
-  if (!csrfToken) return { notFound: true };
-  return {
-    props: {
-      data: [],
-    },
-  };
-};
-
-const dataColumnType = (userDetails: UserDetails | undefined) => {
-  const tableColumn: ColumnsType<AdminData> = [
-    {
-      title: "Username",
-      dataIndex: "userName",
-      key: "userName",
-      render: (val, record) => {
-        const userId = userDetails?._id;
-        const isUser = Object.values(record).includes(userId);
-        return (
-          <Link href={`/dashboard/admins?_id=${record.key}`}>
-            {val ? (
-              <Space direction="horizontal">
-                <div>{val}</div>
-                {isUser && (
-                  <div className="bg-[#38649C] text-white px-3 rounded-md text-center">
-                    you
-                  </div>
-                )}
-              </Space>
-            ) : (
-              <div>------</div>
-            )}
-          </Link>
-        );
-      },
-    },
-    {
-      title: "Date Added",
-      dataIndex: "dateAdded",
-      key: "dateAdded",
-      render: (val, record) => {
-        const dateAdded = new Date(val as string);
-        const localString = dateAdded.toLocaleString();
-        return localString;
-      },
-    },
-    {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
-    },
-    {
-      title: "Course",
-      dataIndex: "course",
-      key: "course",
-      render: (val) => {
-        return val.replace(/Engineer/g, "Engineering") ?? "-------";
-      },
-    },
-    {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-      render: (value, record) => {
-        // Set the date the item was added
-        const addedDate = new Date(record.dateAdded);
-
-        // Calculate the expiration date
-        const expirationDate = new Date(
-          addedDate.getTime() + 7 * 24 * 60 * 60 * 1000
-        );
-
-        // Calculate the remaining days
-        const remainingDays = Math.ceil(
-          (expirationDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24)
-        );
-
-        return (
-          <>
-            <div
-              className={`grid ${
-                value === `Pending` ? `bg-yellow-500` : `bg-lime-500`
-              } place-items-center rounded-xl w-[6em] py-1 text-white`}
-            >
-              {value}
-            </div>
-            {value === "Pending" && (
-              <div className="text-sm">Expire in {remainingDays} days</div>
-            )}
-          </>
-        );
-      },
-    },
-    {
-      title: "Action",
-      key: "action",
-      render: (_, record) => <RemoveAdmin record={record} />,
-    },
-  ];
-  return tableColumn;
-};
+export const getServerSideProps: GetServerSideProps = async (ctx) =>
+  (validateSession as any)(ctx, true);

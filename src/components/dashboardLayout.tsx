@@ -29,6 +29,7 @@ import {
   ThesisItems,
   UserDetails,
 } from "@/context/types.d";
+import { useSession } from "next-auth/react";
 
 type DashboardProps = {
   children?: React.ReactNode;
@@ -47,7 +48,7 @@ const siderMenu: MenuProps["items"] = [
   },
   {
     key: "/dashboard/admins",
-    label: <Link href={"/dashboard/admins"}>Admins</Link>,
+    label: <Link href={"/dashboard/admins"}>Users</Link>,
     icon: <ImUserCheck size={"1.1em"} />,
   },
   {
@@ -89,6 +90,7 @@ function DashboardLayout({ children }: DashboardProps) {
     activityLog: ActivityLog;
   }>();
   const router = useRouter();
+  const session = useSession();
 
   useEffect(() => {
     const pusher = pusherInit();
@@ -339,12 +341,14 @@ function DashboardLayout({ children }: DashboardProps) {
               width={"15vw"}
             >
               <div className="">
-                <Menu
-                  selectedKeys={[selectedSider]}
-                  className="place-self-start"
-                  items={siderMenu}
-                  onSelect={handleSeletect}
-                />
+                {(session.data as any)?.customClaims?.role === "admin" && (
+                  <Menu
+                    selectedKeys={[selectedSider]}
+                    className="place-self-start"
+                    items={siderMenu}
+                    onSelect={handleSeletect}
+                  />
+                )}
                 <Divider />
 
                 <AdminDetails />
@@ -364,11 +368,13 @@ function DashboardLayout({ children }: DashboardProps) {
             >
               {children}
             </div>
-            <BotomMenu
-              onchange={(info) => {
-                router.push(info);
-              }}
-            />
+            {(session.data as any)?.customClaims?.role === "admin" && (
+              <BotomMenu
+                onchange={(info) => {
+                  router.push(info);
+                }}
+              />
+            )}
           </div>
         </div>
       </div>

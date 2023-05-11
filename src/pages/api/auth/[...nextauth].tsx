@@ -1,5 +1,9 @@
 import { UserDetails } from "@/context/types.d";
-import { verifyIdToken } from "@/lib/firebase-admin";
+import {
+  generateCustomToken,
+  getCustomClaims,
+  verifyIdToken,
+} from "@/lib/firebase-admin";
 import { getData } from "@/lib/mongo";
 import NextAuth, { AuthOptions, User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
@@ -25,11 +29,21 @@ export const authOptions: AuthOptions = {
     }),
   ],
   pages: {
-    signIn: "/?signin",
-    signOut: "/",
-    error: "/?signin", // Error code passed in query string as ?error=
+    signIn: "/login",
+    signOut: "/login",
+    error: "/login", // Error code passed in query string as ?error=
   },
   debug: process.env.NODE_ENV === "development",
+  callbacks: {
+    async session({ session, token }) {
+      if (token.sub) {
+        const customClaims = await getCustomClaims(token.sub);
+        (session as unknown as any).customClaims = customClaims;
+        session.customToken = await generateCustomToken(token.sub);
+      }
+      return session;
+    },
+  },
 };
 
 export default NextAuth(authOptions);

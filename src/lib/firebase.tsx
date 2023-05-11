@@ -41,7 +41,7 @@ export const signIn = async (email: string, password: string) => {
     password
   );
   const tokenId = await userCredential.user.getIdToken();
-  await nextSignIn("credentials", { callbackUrl: "/dashboard" }, { tokenId });
+  await nextSignIn("credentials", { callbackUrl: "/" }, { tokenId });
 };
 
 export const signUp = async (details: UserDetails) => {

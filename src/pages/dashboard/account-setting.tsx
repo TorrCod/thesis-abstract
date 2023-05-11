@@ -130,7 +130,16 @@ const Page: NextPageWithLayout = () => {
         <div className="grid gap-2 relative max-w-6xl m-auto ">
           {/* <h3 className="text-black/90">Account Setting</h3> */}
           <div className="bg-white p-5 rounded-md shadow-md">
-            <p>Information</p>
+            <div className="flex gap-2 items-center">
+              <p>Information</p>
+              <div
+                className={`${
+                  userDetails?.role ? `bg-lime-500` : `bg-[#001529]`
+                } grid place-items-center rounded-xl w-[6em] py-1 text-white`}
+              >
+                {userDetails?.role ?? "Admin"}
+              </div>
+            </div>
             <Divider />
             <InformationForm />
           </div>

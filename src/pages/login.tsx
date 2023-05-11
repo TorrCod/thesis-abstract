@@ -15,7 +15,6 @@ const Login = () => {
   });
   return (
     <section>
-      <div className="bg-black opacity-40 w-full h-full absolute -z-10" />
       <div className="bg-white p-5 rounded-md max-w-lg m-auto md:mt-20">
         <LogInUi />
       </div>

@@ -137,8 +137,6 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
   }, [nextAuth]);
 
   useEffect(() => {
-    console.log(nextAuth);
-
     if (tokenId) loadYearsOpt(tokenId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tokenId]);

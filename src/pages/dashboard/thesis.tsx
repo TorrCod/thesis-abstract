@@ -62,13 +62,14 @@ const Page: NextPageWithLayout = () => {
     loadingState,
     loadRecycle,
     loadThesisCount,
+    tokenId,
   } = useGlobalContext();
   const router = useRouter();
 
   useEffect(() => {
-    loadThesisCount();
+    if (tokenId) loadThesisCount();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [tokenId]);
 
   const handleMenu: MenuProps["onSelect"] = (item) => {
     router.push(`/dashboard/thesis?tab=${item.key}`);

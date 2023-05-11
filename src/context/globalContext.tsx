@@ -283,7 +283,7 @@ export const GlobalWrapper = ({ children }: { children: React.ReactNode }) => {
 
   const loadThesisCount = async () => {
     try {
-      const countThesis = await getThesisCount();
+      const countThesis = await getThesisCount(tokenId);
       dispatch({ type: "load-thesis-count", payload: countThesis });
     } catch (e) {
       console.error(e);

@@ -1,5 +1,9 @@
 import { UserDetails } from "@/context/types.d";
-import { getCustomClaims, verifyIdToken } from "@/lib/firebase-admin";
+import {
+  generateCustomToken,
+  getCustomClaims,
+  verifyIdToken,
+} from "@/lib/firebase-admin";
 import { getData } from "@/lib/mongo";
 import NextAuth, { AuthOptions, User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
@@ -32,11 +36,10 @@ export const authOptions: AuthOptions = {
   debug: process.env.NODE_ENV === "development",
   callbacks: {
     async session({ session, token }) {
-      // Return a cookie value as part of the session
-      // This is read when `req.query.nextauth.includes("session") && req.method === "GET"`
       if (token.sub) {
         const customClaims = await getCustomClaims(token.sub);
         (session as unknown as any).customClaims = customClaims;
+        session.customToken = await generateCustomToken(token.sub);
       }
       return session;
     },

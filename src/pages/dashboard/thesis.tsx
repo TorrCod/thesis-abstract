@@ -225,6 +225,7 @@ export const ThesisTable = () => {
     dispatch,
     loadingState,
     clearDefault,
+    tokenId,
   } = useGlobalContext();
   const [thesisTableData, setThesisTableData] = useState<DataType[]>([]);
   const [isFetching, setIsFetching] = useState(false);
@@ -252,7 +253,9 @@ export const ThesisTable = () => {
             },
           },
           searchAction.pageNo,
-          searchAction.pageSize
+          searchAction.pageSize,
+          undefined,
+          tokenId
         );
         if (thesisItems.document.length) {
           const newThesisITemsState = { ...state.thesisItems };
@@ -271,14 +274,16 @@ export const ThesisTable = () => {
     };
     if (
       isOnScreen &&
-      !(state.thesisItems.document.length === state.thesisItems.totalCount)
+      !(state.thesisItems.document.length === state.thesisItems.totalCount) &&
+      tokenId
     ) {
       fetchData();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOnScreen]);
+  }, [isOnScreen, tokenId]);
 
   useEffect(() => {
+    if (!tokenId) return;
     loadingState.add("thesis-table");
     loadThesisItems()
       .catch((error) => {
@@ -291,7 +296,7 @@ export const ThesisTable = () => {
       clearDefault();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [tokenId]);
 
   useEffect(() => {
     const thesisItems = state.thesisItems;

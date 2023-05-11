@@ -332,9 +332,9 @@ function DashboardLayout({ children }: DashboardProps) {
           <div className="flex md:h-full">
             <Sider
               className="md:bg-white z-10 hidden md:block opacity-80 relative"
-              width={"15vw"}
+              width={"15em"}
             >
-              <div className="">
+              <div>
                 {(session.data as any)?.customClaims?.role === "admin" && (
                   <Menu
                     selectedKeys={[selectedSider]}

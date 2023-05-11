@@ -32,15 +32,21 @@ export const validateAuth = async (
       throw new Error("UNAUTHORIZE ACCESS");
     }
     if (!req.headers.authorization) throw new Error("Insufficient Input");
-    const token = req.headers.authorization?.slice(7);
-    const checkAuth = await verifyIdToken(token);
-    if (!checkAuth) throw new Error("Invalid User");
-    return { validated: true, decodedToken: checkAuth };
+    const decodedToken = await verifyUserToken(req);
+    return { validated: true, decodedToken };
   } catch (e) {
     clearNextAuthCookie(res);
     res.setHeader("Location", req.headers.referer || "/");
     return { error: (e as Error).message };
   }
+};
+
+export const verifyUserToken = async (req: NextApiRequest) => {
+  const token = req.headers.authorization?.slice(7);
+  if (!token) throw new Error("undefined token");
+  const checkAuth = await verifyIdToken(token);
+  if (!checkAuth) throw new Error("Invalid User");
+  return checkAuth;
 };
 
 export const clearNextAuthCookie = (res: NextApiResponse) => {

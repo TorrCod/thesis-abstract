@@ -173,7 +173,7 @@ const Search = ({ className, limit, onSearch, showFilter }: SearchProps) => {
           </div>
         </div>
       </div>
-      <div className={`w-fulls rounded-md overflow-hidden relative z-20`}>
+      {/* <div className={`w-fulls rounded-md overflow-hidden relative z-20`}>
         {searchState.focus && (
           <SearchItem
             searchDispatch={searchDispatch}
@@ -182,7 +182,7 @@ const Search = ({ className, limit, onSearch, showFilter }: SearchProps) => {
             onShowMore={handleShowMore}
           />
         )}
-      </div>
+      </div> */}
     </div>
   );
 };

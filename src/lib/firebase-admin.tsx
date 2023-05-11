@@ -89,3 +89,11 @@ export const generateCustomToken = async (uid: string) => {
   const customToken = await admin.auth().createCustomToken(uid);
   return customToken;
 };
+
+export const setCustomClaims = async (uid: string) => {
+  const admin = firebaseAdminInit();
+  const auth = admin.auth();
+  await auth.setCustomUserClaims(uid, { role: "admin" });
+  const user = await auth.getUser(uid);
+  return user.customClaims;
+};

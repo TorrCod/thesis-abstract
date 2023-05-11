@@ -1,9 +1,11 @@
 import { UserDetails } from "@/context/types.d";
+import { setAdmin } from "@/utils/account-utils";
 import { initializeApp } from "firebase/app";
 import {
   connectAuthEmulator,
   createUserWithEmailAndPassword,
   getAuth,
+  signInWithCustomToken,
   signInWithEmailAndPassword,
   updateProfile,
 } from "firebase/auth";
@@ -45,7 +47,7 @@ export const signIn = async (email: string, password: string) => {
 };
 
 export const signUp = async (details: UserDetails) => {
-  const res = await createUserWithEmailAndPassword(
+  let res = await createUserWithEmailAndPassword(
     auth,
     details.email,
     details.password!
@@ -53,6 +55,13 @@ export const signUp = async (details: UserDetails) => {
   updateProfile(res.user, {
     displayName: details.userName,
   });
+
+  if (details.role === "admin") {
+    const token = await res.user.getIdToken();
+    const { customToken } = await setAdmin(token);
+    res = await signInWithCustomToken(auth, customToken);
+  }
+
   return res;
 };
 

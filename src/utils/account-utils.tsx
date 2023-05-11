@@ -210,3 +210,8 @@ const stringifyUserUri = (
 
 export const findUser = (_id: string, arr: UserDetails[]) =>
   arr.filter((item) => item.uid === _id);
+
+export const setAdmin = async (token: string) => {
+  const res = await axios.get("/api/set-admin-claim", { ...userConfig(token) });
+  return res.data as { customToken: string };
+};

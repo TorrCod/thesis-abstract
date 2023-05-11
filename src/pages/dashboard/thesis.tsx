@@ -176,12 +176,12 @@ Page.getLayout = function getLayout(page: ReactElement) {
 export default Page;
 
 export const ThesisCharts = () => {
-  const { state: globalStatate, loadThesisCount } = useGlobalContext();
+  const { state: globalStatate, loadThesisCount, tokenId } = useGlobalContext();
   const [thesisCount, setThesisCount] = useState<ThesisCount>([]);
   useEffect(() => {
-    loadThesisCount();
+    if (tokenId) loadThesisCount();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [tokenId]);
   useEffect(() => {
     const tCount = JSON.parse(
       JSON.stringify(globalStatate.totalThesisCount.thesisCount)

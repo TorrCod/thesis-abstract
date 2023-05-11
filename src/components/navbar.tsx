@@ -14,6 +14,7 @@ import { RiDashboardLine } from "react-icons/ri";
 import { GrUserSettings } from "react-icons/gr";
 import { AdminMenu } from "./admin";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 
 const MENU_LIST = [
   { text: "Home", href: "/", icon: <AiOutlineHome /> },
@@ -71,6 +72,14 @@ const NavBar = () => {
   const { state, logOut } = useUserContext();
   const userCtxState = state;
   const { status } = useSession();
+  const router = useRouter();
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    if (!router.asPath.includes("/dashboard")) {
+      setVisible(true);
+    } else setVisible(false);
+  }, [router.asPath]);
 
   useEffect(() => {
     if (pathname) {
@@ -105,7 +114,7 @@ const NavBar = () => {
     },
   ];
 
-  return status !== "authenticated" ? (
+  return status !== "authenticated" || !visible ? (
     <></>
   ) : (
     <div

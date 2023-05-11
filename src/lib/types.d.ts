@@ -1,4 +1,5 @@
 import { UserDetails } from "@/context/types.d"
+import NextAuth, { DefaultSession } from "next-auth"
 
 export type CollectionName = "thesis-items"|"user"|"admin"|"profiles"|"pdf-files"|"pending"|"deleted-thesis"|"activity-log"
 
@@ -96,4 +97,18 @@ export type SocketEmitEvent =
   
   interface ClientToServerEvents {
     hello: () => void;
+  }
+
+  declare module "next-auth" {
+    /**
+     * Returned by `useSession`, `getSession` and received as a prop on the `SessionProvider` React Context
+     */
+    interface Session {
+      user: {
+        /** The user's postal address. */
+        address: string
+      } & DefaultSession["user"]
+      customClaims:{role:string}
+      customToken:string
+    }
   }

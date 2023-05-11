@@ -48,7 +48,7 @@ const DashboardOverview: NextPageWithLayout = () => {
           </Link>
           <Link href="/dashboard/admins">
             <div className="opacity-60 flex items-center gap-2 mb-5 hover:underline hover:decoration-1 hover:text-blue-800">
-              Manage Co-Admins <GoLinkExternal />
+              Manage Users <GoLinkExternal />
             </div>
           </Link>
           <div className="overflow-auto">

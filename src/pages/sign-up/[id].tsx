@@ -3,12 +3,12 @@ import { Course, UserDetails } from "@/context/types.d";
 import useUserContext from "@/context/userContext";
 import { Form, Input, message, Select } from "antd";
 
-const courseOpt: { value: Course; label: Course }[] = [
-  { value: "Civil Engineer", label: "Civil Engineer" },
-  { value: "Computer Engineer", label: "Computer Engineer" },
-  { value: "Electrical Engineer", label: "Electrical Engineer" },
-  { value: "Mechanical Engineer", label: "Mechanical Engineer" },
-  { value: "Electronics Engineer", label: "Electronics Engineer" },
+const courseOpt: { value: Course; label: String }[] = [
+  { value: "Civil Engineer", label: "Civil Engineering" },
+  { value: "Computer Engineer", label: "Computer Engineering" },
+  { value: "Electrical Engineer", label: "Electrical Engineering" },
+  { value: "Mechanical Engineer", label: "Mechanical Engineering" },
+  { value: "Electronics Engineer", label: "Electronics Engineering" },
 ];
 import { GetServerSideProps } from "next";
 import { getOneData } from "@/lib/mongo";

@@ -15,9 +15,9 @@ export const getAllThesis = async (
   option?: SearchOption,
   pageNo?: number,
   pageSize?: number,
-  cancleToken?: CancelToken
+  cancleToken?: CancelToken,
+  authToken?: string
 ) => {
-  const authToken = await auth.currentUser?.getIdToken();
   if (!authToken) {
     throw new Error("undefined token");
   }
@@ -33,9 +33,9 @@ export const getAllThesis = async (
 
 export const getOneById = async (
   _id: string,
-  projection?: Record<string, 1 | 0>
+  projection?: Record<string, 1 | 0>,
+  authToken?: string
 ) => {
-  const authToken = await auth.currentUser?.getIdToken();
   if (!authToken) {
     throw new Error("undefined token");
   }
@@ -53,21 +53,19 @@ export const getOneById = async (
   return data;
 };
 
-export const getDistincYear = async () => {
-  const authToken = await auth.currentUser?.getIdToken();
-  if (!authToken) {
+export const getDistincYear = async (token: string) => {
+  if (!token) {
     throw new Error("undefined token");
   }
   const res = await axios.get(
     `${process.env.NEXT_PUBLIC_DOMAIN}/api/public/thesis?&objective=get-distinct-years`,
-    { ...userConfig(authToken) }
+    { ...userConfig(token) }
   );
   const data = res.data as string[];
   return data;
 };
 
-export const getThesisCount = async () => {
-  const authToken = await auth.currentUser?.getIdToken();
+export const getThesisCount = async (authToken?: string) => {
   if (!authToken) {
     throw new Error("undefined token");
   }

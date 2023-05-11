@@ -1,5 +1,7 @@
 import { ActivitylogReason, SocketEmitEvent, _Socket } from "@/lib/types";
 import { Unsubscribe } from "firebase/auth";
+import { Session } from "next-auth";
+import { SessionContextValue } from "next-auth/react";
 import { Dispatch, MutableRefObject } from "react";
 
 export interface GlobalState {
@@ -142,6 +144,8 @@ export type GlobalValue = {
   };
   clearDefault: () => void;
   refreshThesis: () => Promise<void>;
+  nextAuth: SessionContextValue;
+  tokenId?: string;
 };
 
 export type AdminData = {

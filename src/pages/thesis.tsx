@@ -21,6 +21,7 @@ const Thesis = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [thesisItems, setThesisItems] = useState<ThesisItems[]>([]);
+  const { tokenId } = useGlobalContext();
 
   useEffect(() => {
     return () => {
@@ -51,6 +52,7 @@ const Thesis = () => {
   }, [globalState.thesisItems.document]);
 
   useEffect(() => {
+    if (!tokenId) return;
     setLoading(true);
     let canceled: boolean;
     const { title, course, year } = router.query as SearchQuery;
@@ -87,7 +89,7 @@ const Thesis = () => {
         setLoading(false);
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router.query.course, router.query.title, router.query.year]);
+  }, [router.query.course, router.query.title, router.query.year, tokenId]);
 
   const handlePageChange = (pageNo: number) => {
     setLoading(true);

@@ -134,7 +134,9 @@ const Page: NextPageWithLayout = () => {
               <p>Information</p>
               <div
                 className={`${
-                  userDetails?.role ? `bg-lime-500` : `bg-[#001529]`
+                  userDetails?.role === "student"
+                    ? `bg-lime-500`
+                    : `bg-[#001529]`
                 } grid place-items-center rounded-xl w-[6em] py-1 text-white`}
               >
                 {userDetails?.role ?? "Admin"}
